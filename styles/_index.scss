@@ -1,0 +1,125 @@
+@charset "UTF-8";
+.home {
+  .main {
+    padding: 0 0 54px;
+  }
+
+  .input_area {
+    width: 445px;
+    margin: 0 auto 56px;
+    .radio_wrapper {
+      display: flex;
+      margin: 0 0 17px;
+      .radio {
+        margin: 0 34px 0 0;
+      }
+    }
+
+    .textarea {
+      display: flex;
+      &__input {
+        width: 330px;
+        height: 100px;
+        margin: 0 15px 0 0;
+      }
+    }
+  }
+
+  .drawing_area {
+    margin: 0 auto 36px;
+    .point {
+      width: 8px;
+      height: 8px;
+      margin: 0 12px;
+      border-radius: 50%;
+      border: 1px solid $gray01;
+      background: $white;
+    }
+    .tab_wrapper {
+      display: flex;
+      justify-content: center;
+    }
+
+    .panel {
+      padding: 25px 0 0;
+      border: {
+        top: 1px solid $gray02;
+        bottom: 1px solid $gray02;
+      }
+      background: $gray03;
+
+      &__button {
+        display: flex;
+        justify-content: flex-end;
+        max-width: 987px;
+        margin: 0 auto;
+        padding: 0 0 94px;
+        text-align: right;
+        .button_pull_down__wrapper {
+          margin: 0 0 0 auto;
+        }
+      }
+
+      &__inner {
+        padding: 0 calc((100vw - 987px) /2) 107px;
+        margin: 0 auto;
+        overflow: auto;
+        .exprore {
+          display: flex;
+        }
+        .data {
+          width: 100%;
+          th {
+            height: 40px;
+            font-size: 1.4rem;
+            color: $gray07;
+            font-weight: 100;
+            background: $blue04;
+          }
+          td {
+            height: 40px;
+            font-size: 1.4rem;
+            color: $blue02;
+            text-decoration: underline;
+            text-align: center;
+            border-bottom: 1px solid $gray06;
+          }
+        }
+      }
+
+      .drawing {
+        display: flex;
+        align-items: flex-start;
+        margin: 0 13px 0 0;
+        .item_wrapper {
+          display: flex;
+          align-items: center;
+        }
+        .result_wrapper {
+          margin: 0 0 0 400px;
+          li {
+            display: flex;
+            align-items: center;
+            margin: 0 0 15px;
+          }
+        }
+      }
+    }
+  }
+
+  .notice_area {
+    max-width: 987px;
+    color: $textColor02;
+    padding: 16px 19px;
+    margin: 0 auto;
+    border-radius: 15px;
+    background: $gray03;
+    .heading {
+      font-size: 1.4rem;
+      margin: 0 0 15px;
+    }
+    .text {
+      font-size: 1.2rem;
+    }
+  }
+}

@@ -1,64 +1,259 @@
 import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import React, { useState } from "react";
 
 export default function Home() {
+  const [pullMenuStatus, setPullMenuStatus] = useState(false);
+  const [tabStatus, setTabStatus] = useState('EXPRORE');
+
   return (
-    <div className={styles.container}>
+    <div className="home">
       <Head>
         <title>Create Next App</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+      <header className="header">
+        <h1 className="header__title">
+          <img src="/images/logo.png" alt="ロゴ画像：TOGO ID"/>
         </h1>
+      </header>
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
+      <main className="main">
+        <div className="input_area">
+          <div className="radio_wrapper">
+            <div className="radio">
+              <input type="radio" id="textField" name="input_type" className="radio__input"/>
+              <label htmlFor="textField" className="radio__label">INPUT from text field</label>
+            </div>
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+            <div className="radio">
+              <input type="radio" id="csv" name="input_type" className="radio__input"/>
+              <label htmlFor="csv" className="radio__label">INPUT from CSV</label>
+            </div>
+          </div>
 
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
+          <div className="textarea">
+            <textarea cols="30" rows="10" placeholder="Enter IDs" className="textarea__input"/>
+            <input type="submit" value="EXECUTE" className="button_large"/>
+          </div>
+        </div>
 
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
+        <div className="drawing_area">
+          <div className="tab_wrapper">
+            <button
+              onClick={() => setTabStatus("EXPRORE")}
+              className={tabStatus === "EXPRORE" ? "button_tab active" : "button_tab"}>
+              EXPRORE
+            </button>
+            <button
+              onClick={() => setTabStatus("DATA")}
+              className={tabStatus === "DATA" ? "button_tab active" : "button_tab"}>
+              DATA
+            </button>
+          </div>
 
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+          <div className="panel">
+            <div className="panel__button">
+              {tabStatus === "DATA" ? (
+                <div className="input_search">
+                  <svg className="input_search__icon" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" />
+                  </svg>
+                  <input type="search" className="input_search__input"/>
+                </div>
+              ) : (
+                ""
+              )}
+              <div className="button_pull_down__wrapper">
+                <button
+                  onClick={() => setPullMenuStatus(!pullMenuStatus)}
+                  className={pullMenuStatus ? "button_pull_down active" : "button_pull_down" }>
+                  Operation
+                </button>
+                {pullMenuStatus ?
+                  (
+                    <div className="button_pull_down__children">
+                      <button className="button_pull_down__children__item">
+                        <svg className="icon" viewBox="0 0 24 24">
+                          <path fill="currentColor" d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
+                        </svg>
+                        Export as CSV
+                      </button>
+                      <button className="button_pull_down__children__item">
+                        <svg className="icon" viewBox="0 0 24 24">
+                          <path fill="currentColor" d="M13.5,7A6.5,6.5 0 0,1 20,13.5A6.5,6.5 0 0,1 13.5,20H10V18H13.5C16,18 18,16 18,13.5C18,11 16,9 13.5,9H7.83L10.91,12.09L9.5,13.5L4,8L9.5,2.5L10.92,3.91L7.83,7H13.5M6,18H8V20H6V18Z" />
+                        </svg>
+                        Reset
+                      </button>
+                    </div>
+                  ) : (
+                    ""
+                )}
+              </div>
+            </div>
+            <div className="panel__inner">
+              {tabStatus === "DATA" ? (
+                <table className="data">
+                  <thead>
+                  <tr>
+                    <th>NCBI Gene</th>
+                    <th>xxx</th>
+                    <th>HGNC</th>
+                    <th>xxx</th>
+                    <th>yyy</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr>
+                    <td>xxx-xxx-xxxx</td>
+                    <td>xxx-xxx-xxxx</td>
+                    <td>xxx-xxx-xxxx</td>
+                    <td>xxx-xxx-xxxx</td>
+                    <td>xxx-xxx-xxxx</td>
+                  </tr>
+                  <tr>
+                    <td>xxx-xxx-xxxx</td>
+                    <td>xxx-xxx-xxxx</td>
+                    <td>xxx-xxx-xxxx</td>
+                    <td>xxx-xxx-xxxx</td>
+                    <td>xxx-xxx-xxxx</td>
+                  </tr>
+                  <tr>
+                    <td>xxx-xxx-xxxx</td>
+                    <td>xxx-xxx-xxxx</td>
+                    <td>xxx-xxx-xxxx</td>
+                    <td>xxx-xxx-xxxx</td>
+                    <td>xxx-xxx-xxxx</td>
+                  </tr>
+                  </tbody>
+                </table>
+              ) : (
+                <div className="exprore">
+                  <div className="drawing">
+                    <div className="item_wrapper">
+                      <select name="" id="" className="select green">
+                        <option value="">NCBI Gene</option>
+                      </select>
+                      <div className="point"/>
+                    </div>
+
+                    <div className="item_wrapper">
+                      <select name="" id="" className="select white">
+                        <option value="">rdfs:seeAlso</option>
+                      </select>
+                      <div className="point"/>
+                    </div>
+
+                    <div className="result_wrapper">
+                      <ul className="result_list">
+                        <li>
+                          <div className="point"/>
+                          <div className="checkbox">
+                            <input type="checkbox" id="result01" className="checkbox__input"/>
+                            <label htmlFor="result01" className="checkbox__large_label green">HGNC</label>
+                          </div>
+                        </li>
+
+                        <li>
+                          <div className="point"/>
+                          <div className="checkbox">
+                            <input type="checkbox" id="result02" className="checkbox__input"/>
+                            <label htmlFor="result02" className="checkbox__large_label green">xxx</label>
+                          </div>
+                        </li>
+
+                        <li>
+                          <div className="point"/>
+                          <div className="checkbox">
+                            <input type="checkbox" id="result03" className="checkbox__input"/>
+                            <label htmlFor="result03" className="checkbox__large_label purple">yyy</label>
+                          </div>
+                        </li>
+
+                        <li>
+                          <div className="point"/>
+                          <div className="checkbox">
+                            <input type="checkbox" id="result04" className="checkbox__input"/>
+                            <label htmlFor="result04" className="checkbox__large_label orange">zzz</label>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div className="drawing">
+                    <div className="item_wrapper">
+                      <select name="" id="" className="select green">
+                        <option value="">NCBI Gene</option>
+                      </select>
+                      <div className="point"/>
+                    </div>
+
+                    <div className="item_wrapper">
+                      <select name="" id="" className="select white">
+                        <option value="">rdfs:seeAlso</option>
+                      </select>
+                      <div className="point"/>
+                    </div>
+
+                    <div className="result_wrapper">
+                      <ul className="result_list">
+                        <li>
+                          <div className="point"/>
+                          <div className="checkbox">
+                            <input type="checkbox" id="result01" className="checkbox__input"/>
+                            <label htmlFor="result01" className="checkbox__large_label green">HGNC</label>
+                          </div>
+                        </li>
+
+                        <li>
+                          <div className="point"/>
+                          <div className="checkbox">
+                            <input type="checkbox" id="result02" className="checkbox__input"/>
+                            <label htmlFor="result02" className="checkbox__large_label green">xxx</label>
+                          </div>
+                        </li>
+
+                        <li>
+                          <div className="point"/>
+                          <div className="checkbox">
+                            <input type="checkbox" id="result03" className="checkbox__input"/>
+                            <label htmlFor="result03" className="checkbox__large_label purple">yyy</label>
+                          </div>
+                        </li>
+
+                        <li>
+                          <div className="point"/>
+                          <div className="checkbox">
+                            <input type="checkbox" id="result04" className="checkbox__input"/>
+                            <label htmlFor="result04" className="checkbox__large_label orange">zzz</label>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="notice_area">
+          <p className="heading">NOTICE</p>
+          <p className="text">
+            - Your IDs match with “NCBI Gene”<br/>
+            - Relation(s) found: “HGNC”, “xxx”, “yyy”, “zzz”<br/>
+            - LINE 999 “xxx-xxx-xxxx“ is not match the pattern. <br/>
+            - LINE 999 “xxx-xxx-xxxx“ is not match the pattern.
+          </p>
         </div>
       </main>
 
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
+      <footer className="footer">
+        <div className="footer__inner">
+          <img src="/images/footer_logo.png" alt="" className="footer__logo"/>
+          <p className="footer__text">Address: Univ. of Tokyo Kashiwa-no-ha Campus Station Satellite 6F. 178-4-4 Wakashiba, Kashiwa-shi, Chiba 277-0871, JAPAN</p>
+          <p className="footer__text">Phone: +81 (4) 7135 5508</p>
+          <p className="footer__text">Copyright © 2019 Database Center for Life Science (DBCLS)</p>
+        </div>
       </footer>
     </div>
   )
