@@ -1,12 +1,25 @@
 import Head from 'next/head'
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 
 export default function Home() {
   const [pullMenuStatus, setPullMenuStatus] = useState(false);
-  const [tabStatus, setTabStatus] = useState('EXPRORE');
-
+  const [tabStatus, setTabStatus] = useState('EXPLORE');
+  const [inputStatus, setInputStatus] = useState(0)
+  const [inputText, setInputText] = useState('');
+  const [ids, setIds] = useState([]);
+  
+  useEffect(() => {
+    const splitText = inputText.split('\n')
+    setIds(splitText);
+  }, [inputText]);
+  
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    // TODO idを特定、検索、EXPLOREエリアにセット
+  }
+  
   return (
     <div className="home">
       <Head>
@@ -19,28 +32,33 @@ export default function Home() {
         <div className="input_area">
           <div className="radio_wrapper">
             <div className="radio">
-              <input type="radio" id="textField" name="input_type" className="radio__input"/>
+              <input type="radio" id="textField" name="input_type" className="radio__input"
+                     checked={inputStatus === 0} onChange={() => setInputStatus(0)}/>
               <label htmlFor="textField" className="radio__label">INPUT from text field</label>
             </div>
 
             <div className="radio">
-              <input type="radio" id="csv" name="input_type" className="radio__input"/>
+              <input type="radio" id="csv" name="input_type" className="radio__input"
+                     checked={inputStatus === 1} onChange={() => setInputStatus(1)}/>
               <label htmlFor="csv" className="radio__label">INPUT from CSV</label>
             </div>
           </div>
 
           <div className="textarea">
-            <textarea cols="30" rows="10" placeholder="Enter IDs" className="textarea__input"/>
-            <input type="submit" value="EXECUTE" className="button_large"/>
+            <form onSubmit={handleSubmit}>
+              <textarea cols="30" rows="10" placeholder="Enter IDs" className="textarea__input"
+                        value={inputText} onChange={(e) => setInputText(e.target.value)}/>
+              <input type="submit" value="EXECUTE" className="button_large"/>
+            </form>
           </div>
         </div>
 
         <div className="drawing_area">
           <div className="tab_wrapper">
             <button
-              onClick={() => setTabStatus("EXPRORE")}
-              className={tabStatus === "EXPRORE" ? "button_tab active" : "button_tab"}>
-              EXPRORE
+              onClick={() => setTabStatus("EXPLORE")}
+              className={tabStatus === "EXPLORE" ? "button_tab active" : "button_tab"}>
+              EXPLORE
             </button>
             <button
               onClick={() => setTabStatus("DATA")}
@@ -125,7 +143,7 @@ export default function Home() {
                   </tbody>
                 </table>
               ) : (
-                <div className="exprore">
+                <div className="explore">
                   <div className="drawing">
                     <div className="item_wrapper">
                       <select name="" id="" className="select green">
@@ -184,14 +202,12 @@ export default function Home() {
                       </select>
                       <div className="point"/>
                     </div>
-
                     <div className="item_wrapper">
                       <select name="" id="" className="select white">
                         <option value="">rdfs:seeAlso</option>
                       </select>
                       <div className="point"/>
                     </div>
-
                     <div className="result_wrapper">
                       <ul className="result_list">
                         <li>
@@ -201,7 +217,6 @@ export default function Home() {
                             <label htmlFor="result01" className="checkbox__large_label green">HGNC</label>
                           </div>
                         </li>
-
                         <li>
                           <div className="point"/>
                           <div className="checkbox">
@@ -209,7 +224,6 @@ export default function Home() {
                             <label htmlFor="result02" className="checkbox__large_label green">xxx</label>
                           </div>
                         </li>
-
                         <li>
                           <div className="point"/>
                           <div className="checkbox">
@@ -217,7 +231,6 @@ export default function Home() {
                             <label htmlFor="result03" className="checkbox__large_label purple">yyy</label>
                           </div>
                         </li>
-
                         <li>
                           <div className="point"/>
                           <div className="checkbox">
