@@ -1,30 +1,68 @@
 import Head from 'next/head'
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import axios from 'axios'
 
-export default function Home() {
-  const [pullMenuStatus, setPullMenuStatus] = useState(false);
-  const [tabStatus, setTabStatus] = useState('EXPLORE');
+const idPatterns = {
+  hgnc: {
+    label: "HGNC",
+    regexp: "^((HGNC|hgnc):)?\\d{1,5}$",
+  },
+  ncbigene: {
+    label: "NCBI Gene",
+    regexp: "^\\d+$",
+  },
+};
+
+const q = (q) => {
+  return axios.get(process.env.NEXT_PUBLIC_SPARQL_ENDOPOINT, {
+    params: {
+      query: q,
+      format: 'application/sparql-results+json',
+    },
+  }).then((d) => {
+    return d.data.results.bindings
+  })
+}
+
+export default function Home () {
+  const [pullMenuStatus, setPullMenuStatus] = useState(false)
+  const [tabStatus, setTabStatus] = useState('EXPLORE')
   const [inputStatus, setInputStatus] = useState(0)
-  const [inputText, setInputText] = useState('');
-  const [ids, setIds] = useState([]);
-  
+  const [inputText, setInputText] = useState('')
+  const [ids, setIds] = useState([])
+
   useEffect(() => {
     const splitText = inputText.split('\n')
-    setIds(splitText);
-  }, [inputText]);
-  
+    setIds(splitText)
+  }, [inputText])
+
   const handleSubmit = (event) => {
     event.preventDefault()
-    // TODO idを特定、検索、EXPLOREエリアにセット
+    // TODO idPatternsを使ってidを特定、検索、EXPLOREエリアにセット
+    // 現時点では、ids[0]のみを対象に検索で良い
+    // idPatternsのキーが名前空間となる。これとIDを組み合わせて、identifiers.orgのURIを合成する
+    // 接頭辞(ncbigene:など)がない場合には、これを補ってあげる
+    // 例1) 	https://identifiers.org/ncbigene:100010
+    // 例2) 	https://identifiers.org/hgnc:2674
+
+    // 仮置き
+    const namespace = 'ncbigene'
+    const id = ids[0]
+
+    q(`select * where { 
+  <http://identifiers.org/${namespace}:${id}> rdfs:seeAlso ?o 
+ }`).then((results) => {
+      console.log(results)
+    })
   }
-  
+
   return (
     <div className="home">
       <Head>
         <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.ico"/>
       </Head>
       <Header/>
 
@@ -56,33 +94,34 @@ export default function Home() {
         <div className="drawing_area">
           <div className="tab_wrapper">
             <button
-              onClick={() => setTabStatus("EXPLORE")}
-              className={tabStatus === "EXPLORE" ? "button_tab active" : "button_tab"}>
+              onClick={() => setTabStatus('EXPLORE')}
+              className={tabStatus === 'EXPLORE' ? 'button_tab active' : 'button_tab'}>
               EXPLORE
             </button>
             <button
-              onClick={() => setTabStatus("DATA")}
-              className={tabStatus === "DATA" ? "button_tab active" : "button_tab"}>
+              onClick={() => setTabStatus('DATA')}
+              className={tabStatus === 'DATA' ? 'button_tab active' : 'button_tab'}>
               DATA
             </button>
           </div>
 
           <div className="panel">
             <div className="panel__button">
-              {tabStatus === "DATA" ? (
+              {tabStatus === 'DATA' ? (
                 <div className="input_search">
                   <svg className="input_search__icon" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" />
+                    <path fill="currentColor"
+                          d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"/>
                   </svg>
                   <input type="search" className="input_search__input"/>
                 </div>
               ) : (
-                ""
+                ''
               )}
               <div className="button_pull_down__wrapper">
                 <button
                   onClick={() => setPullMenuStatus(!pullMenuStatus)}
-                  className={pullMenuStatus ? "button_pull_down active" : "button_pull_down" }>
+                  className={pullMenuStatus ? 'button_pull_down active' : 'button_pull_down'}>
                   Operation
                 </button>
                 {pullMenuStatus ?
@@ -90,24 +129,25 @@ export default function Home() {
                     <div className="button_pull_down__children">
                       <button className="button_pull_down__children__item">
                         <svg className="icon" viewBox="0 0 24 24">
-                          <path fill="currentColor" d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
+                          <path fill="currentColor" d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/>
                         </svg>
                         Export as CSV
                       </button>
                       <button className="button_pull_down__children__item">
                         <svg className="icon" viewBox="0 0 24 24">
-                          <path fill="currentColor" d="M13.5,7A6.5,6.5 0 0,1 20,13.5A6.5,6.5 0 0,1 13.5,20H10V18H13.5C16,18 18,16 18,13.5C18,11 16,9 13.5,9H7.83L10.91,12.09L9.5,13.5L4,8L9.5,2.5L10.92,3.91L7.83,7H13.5M6,18H8V20H6V18Z" />
+                          <path fill="currentColor"
+                                d="M13.5,7A6.5,6.5 0 0,1 20,13.5A6.5,6.5 0 0,1 13.5,20H10V18H13.5C16,18 18,16 18,13.5C18,11 16,9 13.5,9H7.83L10.91,12.09L9.5,13.5L4,8L9.5,2.5L10.92,3.91L7.83,7H13.5M6,18H8V20H6V18Z"/>
                         </svg>
                         Reset
                       </button>
                     </div>
                   ) : (
-                    ""
-                )}
+                    ''
+                  )}
               </div>
             </div>
             <div className="panel__inner">
-              {tabStatus === "DATA" ? (
+              {tabStatus === 'DATA' ? (
                 <table className="data">
                   <thead>
                   <tr>
