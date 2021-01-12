@@ -52,7 +52,7 @@ export default function Home () {
     const id = ids[0]
 
     q(`select * where { 
-  <http://identifiers.org/${namespace}:${id}> rdfs:seeAlso ?o 
+  <http://identifiers.org/${namespace}/${id}> rdfs:seeAlso ?o 
  }`).then((results) => {
       console.log(results)
     })
