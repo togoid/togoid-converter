@@ -23,7 +23,7 @@ const idPatterns = {
   // },
   'kegg.genes': {
     label: "KEGG Genes",
-    regexp: "^\\w+:[\\w\\d\\.-]*$"
+    regexp: "^\w+:[\w\d\.-]*$"
   },
   'hgnc': {
     label: "HGNC",
@@ -65,7 +65,7 @@ const idPatterns = {
     label: "NCBI Protein",
     regexp: "^(\w+\d+(\.\d+)?)|(NP_\d+)$"
   },
-  '	pdb': {
+  'pdb': {
     label: "Protein Data Bank",
     regexp: "^[0-9][A-Za-z0-9]{3}$"
   },
@@ -109,47 +109,70 @@ export default function Home () {
   const [inputText, setInputText] = useState('')
   const [ids, setIds] = useState([])
   const [dbNames, setDbNames] = useState([])
+  const [pattern, setPattern] = useState([])
+  const [namespace, setNamespace] = useState('')
 
   useEffect(() => {
     const splitText = inputText.split('\n')
     setIds(splitText)
-  }, [inputText])
+    setNamespace(pattern[0].name)
+  }, [inputText, pattern])
 
   const handleSubmit = (event) => {
     event.preventDefault()
     // TODO idPatternsを使ってidを特定、検索、EXPLOREエリアにセット
     // 現時点では、ids[0]のみを対象に検索で良い
     // idPatternsのキーが名前空間となる。これとIDを組み合わせて、identifiers.orgのURIを合成する
-    // 接頭辞(ncbigene:など)がない場合には、これを補ってあげる
+    // 接頭辞(ncbigene:など)がない場合には、これを補う
     // 例1) 	https://identifiers.org/ncbigene:100010
     // 例2) 	https://identifiers.org/hgnc:2674
-
+    
     // 仮置き
-    const namespace = 'ncbigene'
+    // const namespace = 'ncbigene'
     const id = ids[0]
-
+    let patterns = {}
+    ids.forEach(id => {
+      for (let key in idPatterns) {
+        if (id.match(idPatterns[key].regexp)) {
+          if (patterns.hasOwnProperty(key)) {
+            patterns[key] +=1
+          } else {
+            patterns[key] = 1
+          }
+        }
+      }
+    })
+    let patternArray = Object.keys(patterns).map((key)=>({ name: key, value: patterns[key] }))
+    patternArray.sort(function(a,b){
+      if(a.value < b.value) return 1
+      if(a.value > b.value) return -1
+      return 0
+    });
+    console.log(patternArray)
+    setPattern(patternArray)
+    console.log(namespace)
+    
     q(`select * where { 
   <http://identifiers.org/${namespace}/${id}> rdfs:seeAlso ?o 
  }`).then((results) => {
-   let prefsArray = []
-   let prefs = {}
+   let pref = {}
       results.forEach(v => {
         if (v.o.value.match(/^http?:\/\/identifiers.org/)) {
           let splitArray = v.o.value.replace('http://identifiers.org/', '').split('/')
-          if (prefs.hasOwnProperty(splitArray[0])) {
-            prefs[splitArray[0]] +=1
+          if (pref.hasOwnProperty(splitArray[0])) {
+            pref[splitArray[0]] +=1
           } else {
-            prefs[splitArray[0]] = 1
+            pref[splitArray[0]] = 1
           }
         }
       })
-      let arr = Object.keys(prefs).map((key)=>({ name: key, value: prefs[key] }))
-      arr.sort(function(a,b){
+      let prefArray = Object.keys(pref).map((key)=>({ name: key, value: pref[key] }))
+      prefArray.sort(function(a,b){
         if(a.value < b.value) return 1
         if(a.value > b.value) return -1
         return 0
       });
-      setDbNames(arr)
+      setDbNames(prefArray)
       // TODO dbNamesに分類の色を持たせる
     })
   }
@@ -173,7 +196,7 @@ export default function Home () {
 
             <div className="radio">
               <input type="radio" id="csv" name="input_type" className="radio__input"
-                     checked={inputStatus === 1} onChange={() => setInputStatus(1)}/>
+                     checked={inputStatus === 1} onChange={(e) => setInputStatus(1)}/>
               <label htmlFor="csv" className="radio__label">INPUT from CSV</label>
             </div>
           </div>
@@ -282,8 +305,12 @@ export default function Home () {
                 <div className="explore">
                   <div className="drawing">
                     <div className="item_wrapper">
-                      <select name="" id="" className="select green">
-                        <option value="">NCBI Gene</option>
+                      <select name="" id="" className="select green" value={namespace.name} onChange={(e) => setNamespace(e.target.value)}>
+                        {pattern && pattern.length > 0 ? pattern.map((v, i) => {
+                            return <option key={i} value={v.name}>{v.name}</option>
+                          })
+                          : null
+                        }
                       </select>
                       <div className="point"/>
                     </div>
@@ -294,7 +321,7 @@ export default function Home () {
                       </select>
                       <div className="point"/>
                     </div>
-
+                    
                     <div className="result_wrapper">
                       <ul className="result_list">
                         {dbNames && dbNames.length > 0 ? dbNames.map((v, i) => {
