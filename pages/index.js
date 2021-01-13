@@ -32,6 +32,7 @@ export default function Home () {
   const [inputStatus, setInputStatus] = useState(0)
   const [inputText, setInputText] = useState('')
   const [ids, setIds] = useState([])
+  const [dbNames, setDbNames] = useState([])
 
   useEffect(() => {
     const splitText = inputText.split('\n')
@@ -54,7 +55,26 @@ export default function Home () {
     q(`select * where { 
   <http://identifiers.org/${namespace}/${id}> rdfs:seeAlso ?o 
  }`).then((results) => {
-      console.log(results)
+   let prefsArray = []
+   let prefs = {}
+      results.forEach(v => {
+        if (v.o.value.match(/^http?:\/\/identifiers.org/)) {
+          let splitArray = v.o.value.replace('http://identifiers.org/', '').split('/')
+          if (prefs.hasOwnProperty(splitArray[0])) {
+            prefs[splitArray[0]] +=1
+          } else {
+            prefs[splitArray[0]] = 1
+          }
+        }
+      })
+      let arr = Object.keys(prefs).map((key)=>({ name: key, value: prefs[key] }))
+      arr.sort(function(a,b){
+        if(a.value < b.value) return 1
+        if(a.value > b.value) return -1
+        return 0
+      });
+      setDbNames(arr)
+      // TODO dbNamesに分類の色を持たせる
     })
   }
 
@@ -201,83 +221,17 @@ export default function Home () {
 
                     <div className="result_wrapper">
                       <ul className="result_list">
-                        <li>
-                          <div className="point"/>
-                          <div className="checkbox">
-                            <input type="checkbox" id="result01" className="checkbox__input"/>
-                            <label htmlFor="result01" className="checkbox__large_label green">HGNC</label>
-                          </div>
-                        </li>
-
-                        <li>
-                          <div className="point"/>
-                          <div className="checkbox">
-                            <input type="checkbox" id="result02" className="checkbox__input"/>
-                            <label htmlFor="result02" className="checkbox__large_label green">xxx</label>
-                          </div>
-                        </li>
-
-                        <li>
-                          <div className="point"/>
-                          <div className="checkbox">
-                            <input type="checkbox" id="result03" className="checkbox__input"/>
-                            <label htmlFor="result03" className="checkbox__large_label purple">yyy</label>
-                          </div>
-                        </li>
-
-                        <li>
-                          <div className="point"/>
-                          <div className="checkbox">
-                            <input type="checkbox" id="result04" className="checkbox__input"/>
-                            <label htmlFor="result04" className="checkbox__large_label orange">zzz</label>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                  <div className="drawing">
-                    <div className="item_wrapper">
-                      <select name="" id="" className="select green">
-                        <option value="">NCBI Gene</option>
-                      </select>
-                      <div className="point"/>
-                    </div>
-                    <div className="item_wrapper">
-                      <select name="" id="" className="select white">
-                        <option value="">rdfs:seeAlso</option>
-                      </select>
-                      <div className="point"/>
-                    </div>
-                    <div className="result_wrapper">
-                      <ul className="result_list">
-                        <li>
-                          <div className="point"/>
-                          <div className="checkbox">
-                            <input type="checkbox" id="result01" className="checkbox__input"/>
-                            <label htmlFor="result01" className="checkbox__large_label green">HGNC</label>
-                          </div>
-                        </li>
-                        <li>
-                          <div className="point"/>
-                          <div className="checkbox">
-                            <input type="checkbox" id="result02" className="checkbox__input"/>
-                            <label htmlFor="result02" className="checkbox__large_label green">xxx</label>
-                          </div>
-                        </li>
-                        <li>
-                          <div className="point"/>
-                          <div className="checkbox">
-                            <input type="checkbox" id="result03" className="checkbox__input"/>
-                            <label htmlFor="result03" className="checkbox__large_label purple">yyy</label>
-                          </div>
-                        </li>
-                        <li>
-                          <div className="point"/>
-                          <div className="checkbox">
-                            <input type="checkbox" id="result04" className="checkbox__input"/>
-                            <label htmlFor="result04" className="checkbox__large_label orange">zzz</label>
-                          </div>
-                        </li>
+                        {dbNames && dbNames.length > 0 ? dbNames.map((v, i) => {
+                            return <li key={i}>
+                              <div className="point"/>
+                              <div className="checkbox">
+                                <input type="checkbox" id={`result-${i}`} className="checkbox__input"/>
+                                <label htmlFor={`result-${i}`} className="checkbox__large_label green">{v.name}</label>
+                              </div>
+                            </li>
+                          })
+                          : null
+                        }
                       </ul>
                     </div>
                   </div>
