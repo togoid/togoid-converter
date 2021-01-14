@@ -108,65 +108,71 @@ export default function Home () {
   const [inputStatus, setInputStatus] = useState(0)
   const [inputText, setInputText] = useState('')
   const [ids, setIds] = useState([])
-  const [dbNames, setDbNames] = useState([])
-  const [pattern, setPattern] = useState([])
+  const [namespaces, setNamespaces] = useState([])  // EXPLOREエリアの左側のリスト
   const [namespace, setNamespace] = useState('')
-
+  const [dbNames, setDbNames] = useState([])        // EXPLOREエリアの右側のリスト*変数名に再考の余地あり
+  
   useEffect(() => {
-    const splitText = inputText.split('\n')
-    setIds(splitText)
-    if (pattern && pattern.length > 0) setNamespace(pattern[0].name)
-  }, [inputText, pattern])
-
+    if (inputText === '') {
+      setDbNames([])
+    } else {
+      const splitText = inputText.split('\n')
+      setIds(splitText)
+    }
+  }, [inputText])
+  
+  useEffect(() => {
+    if (ids && ids.length > 0) {
+      const id = ids[0]
+      const patternArray = []
+      ids.forEach(id => {
+        for (let key in idPatterns) {
+          if (id.match(idPatterns[key].regexp)) {
+            let index = patternArray.findIndex(namespaces => namespaces.name === key)
+            if (index >= 0) {
+              patternArray[index].value +=1
+            } else {
+              patternArray.push({name: key, value: 1})
+            }
+          }
+        }
+      })
+      patternArray.sort(function(a,b){
+        if(a.value < b.value) return 1
+        if(a.value > b.value) return -1
+        return 0
+      });
+      setNamespaces(patternArray)
+      setNamespace(patternArray[0].name)
+    }
+  }, [ids])
+  
   const handleSubmit = (event) => {
     event.preventDefault()
-    // TODO idPatternsを使ってidを特定、検索、EXPLOREエリアにセット
     // 現時点では、ids[0]のみを対象に検索で良い
     // idPatternsのキーが名前空間となる。これとIDを組み合わせて、identifiers.orgのURIを合成する
     // 接頭辞(ncbigene:など)がない場合には、これを補う
     // 例1) 	https://identifiers.org/ncbigene:100010
     // 例2) 	https://identifiers.org/hgnc:2674
     
-    // 仮置き
-    // const namespace = 'ncbigene'
     const id = ids[0]
-    let patterns = {}
-    ids.forEach(id => {
-      for (let key in idPatterns) {
-        if (id.match(idPatterns[key].regexp)) {
-          if (patterns.hasOwnProperty(key)) {
-            patterns[key] +=1
-          } else {
-            patterns[key] = 1
-          }
-        }
-      }
-    })
-    let patternArray = Object.keys(patterns).map((key)=>({ name: key, value: patterns[key] }))
-    patternArray.sort(function(a,b){
-      if(a.value < b.value) return 1
-      if(a.value > b.value) return -1
-      return 0
-    });
-    console.log(patternArray)
-    setPattern(patternArray)
-    console.log(namespace)
     
     q(`select * where { 
   <http://identifiers.org/${namespace}/${id}> rdfs:seeAlso ?o 
  }`).then((results) => {
-   let pref = {}
+      const prefArray = []
       results.forEach(v => {
         if (v.o.value.match(/^http?:\/\/identifiers.org/)) {
           let splitArray = v.o.value.replace('http://identifiers.org/', '').split('/')
-          if (pref.hasOwnProperty(splitArray[0])) {
-            pref[splitArray[0]] +=1
+          let name = splitArray[0]
+          let index = prefArray.findIndex(pref => pref.name === name)
+          if (index >= 0) {
+            prefArray[index].value +=1
           } else {
-            pref[splitArray[0]] = 1
+            prefArray.push({name: name, value: 1})
           }
         }
       })
-      let prefArray = Object.keys(pref).map((key)=>({ name: key, value: pref[key] }))
       prefArray.sort(function(a,b){
         if(a.value < b.value) return 1
         if(a.value > b.value) return -1
@@ -304,24 +310,28 @@ export default function Home () {
               ) : (
                 <div className="explore">
                   <div className="drawing">
-                    <div className="item_wrapper">
-                      <select name="" id="" className="select green" value={namespace.name} onChange={(e) => setNamespace(e.target.value)}>
-                        {pattern && pattern.length > 0 ? pattern.map((v, i) => {
-                            return <option key={i} value={v.name}>{v.name}</option>
-                          })
-                          : null
-                        }
-                      </select>
-                      <div className="point"/>
-                    </div>
-
-                    <div className="item_wrapper">
-                      <select name="" id="" className="select white">
-                        <option value="">rdfs:seeAlso</option>
-                      </select>
-                      <div className="point"/>
-                    </div>
-                    
+                    {inputText ?
+                      <div className="item_wrapper">
+                        <select name="" id="" className="select green" value={namespace.name} onChange={(e) => setNamespace(e.target.value)}>
+                          {namespaces && namespaces.length > 0 ? namespaces.map((v, i) => {
+                              return <option key={i} value={v.name}>{v.name}</option>
+                            })
+                            : null
+                          }
+                        </select>
+                        <div className="point"/>
+                      </div>
+                      : null
+                    }
+                    {inputText ?
+                      <div className="item_wrapper">
+                        <select name="" id="" className="select white">
+                          <option value="">rdfs:seeAlso</option>
+                        </select>
+                        <div className="point"/>
+                      </div>
+                      : null
+                    }
                     <div className="result_wrapper">
                       <ul className="result_list">
                         {dbNames && dbNames.length > 0 ? dbNames.map((v, i) => {
