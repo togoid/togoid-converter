@@ -115,7 +115,7 @@ export default function Home () {
   useEffect(() => {
     const splitText = inputText.split('\n')
     setIds(splitText)
-    setNamespace(pattern[0].name)
+    if (pattern && pattern.length > 0) setNamespace(pattern[0].name)
   }, [inputText, pattern])
 
   const handleSubmit = (event) => {
