@@ -93,7 +93,11 @@
         margin: 0 13px 0 0;
         .item_wrapper {
           display: flex;
-          align-items: center;
+          li {
+            display: flex;
+            align-items: center;
+            margin: 0 0 15px;
+          }
         }
         .result_wrapper {
           margin: 0 0 0 400px;

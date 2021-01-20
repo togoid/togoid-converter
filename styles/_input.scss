@@ -132,6 +132,61 @@
   }
 }
 
+.radio {
+  position: relative;
+  &__large_label {
+    display: inline-block;
+    width: 150px;
+    font-size: 1.2rem;
+    color: $textColor02;
+    margin: 0 0 0 33px;
+    line-height: 40px;
+    text-align: center;
+    border-radius: 5px;
+    &.green {
+      background: $green01;
+    }
+    &.purple {
+      background: $purple01;
+    }
+    &.orange {
+      background: $orange01;
+    }
+
+    &:before {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      display: inline-block;
+      content: '';
+      width: 18px;
+      height: 18px;
+      transform: translateY(-50%);
+      border-radius: 50%;
+      border: 1px solid $gray01;
+    }
+  }
+  &__input {
+    display: none;
+    &:checked {
+      & + .radio__large_label {
+        &:after {
+          position: absolute;
+          top: 50%;
+          left: 3px;
+          content: '';
+          display: inline-block;
+          width: 14px;
+          height: 14px;
+          transform: translateY(-50%);
+          border-radius: 50%;
+          background: $blue01;
+        }
+      }
+    }
+  }
+}
+
 .checkbox {
   position: relative;
   &__large_label {
