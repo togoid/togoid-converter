@@ -102,20 +102,17 @@ const q = (q) => {
   })
 }
 
-export default function Home () {
+const Home = () => {
   const [pullMenuStatus, setPullMenuStatus] = useState(false)
   const [tabStatus, setTabStatus] = useState('EXPLORE')
   const [inputStatus, setInputStatus] = useState(0)
   const [inputText, setInputText] = useState('')
   const [ids, setIds] = useState([])
-  const [namespaces, setNamespaces] = useState([])  // EXPLOREエリアの左側のリスト
-  const [namespace, setNamespace] = useState('')
-  const [dbNames, setDbNames] = useState([])        // EXPLOREエリアの右側のリスト*変数名に再考の余地あり
-  
+  const [namespaceList, setNamespaceList] = useState([])
+  const [namespace, setNamespace] = useState([])
+ 
   useEffect(() => {
-    if (inputText === '') {
-      setDbNames([])
-    } else {
+    if (inputText !== '') {
       const splitText = inputText.split('\n')
       setIds(splitText)
     }
@@ -123,53 +120,49 @@ export default function Home () {
   
   useEffect(() => {
     if (ids && ids.length > 0) {
-      const id = ids[0]
       const patternArray = []
       ids.forEach(id => {
         for (let key in idPatterns) {
           if (id.match(idPatterns[key].regexp)) {
-            let index = patternArray.findIndex(namespaces => namespaces.name === key)
+            let index = patternArray.findIndex(namespaceList => namespaceList.name === key)
             if (index >= 0) {
               patternArray[index].value +=1
             } else {
-              patternArray.push({name: key, value: 1})
+              patternArray.push({name: key, value: 1, ids: [id]})
             }
           }
         }
       })
-      patternArray.sort(function(a,b){
-        if(a.value < b.value) return 1
-        if(a.value > b.value) return -1
-        return 0
-      });
-      setNamespaces(patternArray)
-      setNamespace(patternArray[0].name)
+      if (patternArray && patternArray.length > 0) {
+        patternArray.sort(function(a,b){
+          if(a.value < b.value) return 1
+          if(a.value > b.value) return -1
+          return 0
+        });
+        setNamespaceList([patternArray])
+        console.log(patternArray)
+        setNamespace([patternArray[0].name])
+      }
     }
   }, [ids])
   
-  const handleSubmit = (event) => {
-    event.preventDefault()
-    // 現時点では、ids[0]のみを対象に検索で良い
-    // idPatternsのキーが名前空間となる。これとIDを組み合わせて、identifiers.orgのURIを合成する
-    // 接頭辞(ncbigene:など)がない場合には、これを補う
-    // 例1) 	https://identifiers.org/ncbigene:100010
-    // 例2) 	https://identifiers.org/hgnc:2674
-    
-    const id = ids[0]
-    
-    q(`select * where { 
-  <http://identifiers.org/${namespace}/${id}> rdfs:seeAlso ?o 
+  const executeQuery = (namespace, id) => {
+    q(`select * where {
+  <http://identifiers.org/${namespace}/${id}> rdfs:seeAlso ?o
  }`).then((results) => {
+      const newNamespaceList = JSON.parse(JSON.stringify(namespaceList))
       const prefArray = []
       results.forEach(v => {
         if (v.o.value.match(/^http?:\/\/identifiers.org/)) {
           let splitArray = v.o.value.replace('http://identifiers.org/', '').split('/')
           let name = splitArray[0]
+          let id = splitArray[1]
           let index = prefArray.findIndex(pref => pref.name === name)
           if (index >= 0) {
             prefArray[index].value +=1
+            prefArray[index].ids.push(id)
           } else {
-            prefArray.push({name: name, value: 1})
+            prefArray.push({name: name, value: 1, ids: [id]})
           }
         }
       })
@@ -178,9 +171,43 @@ export default function Home () {
         if(a.value > b.value) return -1
         return 0
       });
-      setDbNames(prefArray)
-      // TODO dbNamesに分類の色を持たせる
+      console.log(prefArray)
+      newNamespaceList.push(prefArray)
+      setNamespaceList(newNamespaceList)
+      // TODO 分類の色を持たせる
     })
+  }
+  
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    // 現時点では、ids[0]のみを対象に検索で良い
+    // idPatternsのキーが名前空間となる。これとIDを組み合わせて、identifiers.orgのURIを合成する
+    // 接頭辞(ncbigene:など)がない場合には、これを補う
+    // 例1) 	https://identifiers.org/ncbigene:100010
+    // 例2) 	https://identifiers.org/hgnc:2674
+  
+    if (namespaceList.length === 1) {
+      executeQuery(namespace[0], ids[0])
+    }
+  }
+  
+  const selectNamespace = (name, index) => {
+    let array = JSON.parse(JSON.stringify(namespace))
+    let newNamespaceList = JSON.parse(JSON.stringify(namespaceList))
+    if (array.length - 1 >= index) {
+      array[index] = name
+      // 変更したら、それ以下のリストを削除
+      if (array.length - 1 > index) {
+        array.splice(index + 1, array.length - (index + 1))
+      }
+      if (newNamespaceList.length - 1 > index) {
+        newNamespaceList.splice(index + 1, newNamespaceList.length - (index + 1))
+      }
+    } else {
+      array.push(name)
+    }
+    setNamespace(array)
+    setNamespaceList(newNamespaceList)
   }
 
   return (
@@ -202,7 +229,7 @@ export default function Home () {
 
             <div className="radio">
               <input type="radio" id="csv" name="input_type" className="radio__input"
-                     checked={inputStatus === 1} onChange={(e) => setInputStatus(1)}/>
+                     checked={inputStatus === 1} onChange={() => setInputStatus(1)}/>
               <label htmlFor="csv" className="radio__label">INPUT from CSV</label>
             </div>
           </div>
@@ -310,43 +337,30 @@ export default function Home () {
               ) : (
                 <div className="explore">
                   <div className="drawing">
-                    {inputText ?
-                      <div className="item_wrapper">
-                        <select name="" id="" className="select green" value={namespace.name} onChange={(e) => setNamespace(e.target.value)}>
-                          {namespaces && namespaces.length > 0 ? namespaces.map((v, i) => {
-                              return <option key={i} value={v.name}>{v.name}</option>
+                    {namespaceList && namespaceList.length > 0 ? namespaceList.map((array, i) => {
+                      return <div className="item_wrapper" key={i}>
+                        <ul className="result_list">
+                          {array.map((v, j) => {
+                              return <li key={j}>
+                                <div className="radio green">
+                                  <input type="radio" id={`result${i}-${j}`} className="radio__input"
+                                         checked={namespace[i] === v.name} onChange={() => selectNamespace(v.name, i)}/>
+                                  <label htmlFor={`result${i}-${j}`} className="radio__large_label green">{v.name}</label>
+                                  {i > 0 && namespace[i] === v.name ? <button onClick={() => executeQuery(v.name, v.ids[0])}/> : null}
+                                </div>
+                              </li>
                             })
-                            : null
                           }
-                        </select>
+                        </ul>
                         <div className="point"/>
-                      </div>
-                      : null
-                    }
-                    {inputText ?
-                      <div className="item_wrapper">
                         <select name="" id="" className="select white">
                           <option value="">rdfs:seeAlso</option>
                         </select>
                         <div className="point"/>
                       </div>
+                      })
                       : null
                     }
-                    <div className="result_wrapper">
-                      <ul className="result_list">
-                        {dbNames && dbNames.length > 0 ? dbNames.map((v, i) => {
-                            return <li key={i}>
-                              <div className="point"/>
-                              <div className="checkbox">
-                                <input type="checkbox" id={`result-${i}`} className="checkbox__input"/>
-                                <label htmlFor={`result-${i}`} className="checkbox__large_label green">{v.name}</label>
-                              </div>
-                            </li>
-                          })
-                          : null
-                        }
-                      </ul>
-                    </div>
                   </div>
                 </div>
               )}
@@ -369,3 +383,5 @@ export default function Home () {
     </div>
   )
 }
+
+export default Home
