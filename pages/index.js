@@ -104,7 +104,6 @@ const q = (q) => {
 
 const Home = () => {
   const [pullMenuStatus, setPullMenuStatus] = useState(false)
-  const [tabStatus, setTabStatus] = useState('EXPLORE')
   const [inputStatus, setInputStatus] = useState(0)
   const [inputText, setInputText] = useState('')
   const [ids, setIds] = useState([])
@@ -171,8 +170,8 @@ const Home = () => {
         if(a.value > b.value) return -1
         return 0
       });
-      console.log(prefArray)
       newNamespaceList.push(prefArray)
+      console.log(newNamespaceList)
       setNamespaceList(newNamespaceList)
       // TODO 分類の色を持たせる
     })
@@ -244,32 +243,8 @@ const Home = () => {
         </div>
 
         <div className="drawing_area">
-          <div className="tab_wrapper">
-            <button
-              onClick={() => setTabStatus('EXPLORE')}
-              className={tabStatus === 'EXPLORE' ? 'button_tab active' : 'button_tab'}>
-              EXPLORE
-            </button>
-            <button
-              onClick={() => setTabStatus('DATA')}
-              className={tabStatus === 'DATA' ? 'button_tab active' : 'button_tab'}>
-              DATA
-            </button>
-          </div>
-
           <div className="panel">
             <div className="panel__button">
-              {tabStatus === 'DATA' ? (
-                <div className="input_search">
-                  <svg className="input_search__icon" viewBox="0 0 24 24">
-                    <path fill="currentColor"
-                          d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"/>
-                  </svg>
-                  <input type="search" className="input_search__input"/>
-                </div>
-              ) : (
-                ''
-              )}
               <div className="button_pull_down__wrapper">
                 <button
                   onClick={() => setPullMenuStatus(!pullMenuStatus)}
@@ -299,71 +274,34 @@ const Home = () => {
               </div>
             </div>
             <div className="panel__inner">
-              {tabStatus === 'DATA' ? (
-                <table className="data">
-                  <thead>
-                  <tr>
-                    <th>NCBI Gene</th>
-                    <th>xxx</th>
-                    <th>HGNC</th>
-                    <th>xxx</th>
-                    <th>yyy</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr>
-                    <td>xxx-xxx-xxxx</td>
-                    <td>xxx-xxx-xxxx</td>
-                    <td>xxx-xxx-xxxx</td>
-                    <td>xxx-xxx-xxxx</td>
-                    <td>xxx-xxx-xxxx</td>
-                  </tr>
-                  <tr>
-                    <td>xxx-xxx-xxxx</td>
-                    <td>xxx-xxx-xxxx</td>
-                    <td>xxx-xxx-xxxx</td>
-                    <td>xxx-xxx-xxxx</td>
-                    <td>xxx-xxx-xxxx</td>
-                  </tr>
-                  <tr>
-                    <td>xxx-xxx-xxxx</td>
-                    <td>xxx-xxx-xxxx</td>
-                    <td>xxx-xxx-xxxx</td>
-                    <td>xxx-xxx-xxxx</td>
-                    <td>xxx-xxx-xxxx</td>
-                  </tr>
-                  </tbody>
-                </table>
-              ) : (
-                <div className="explore">
-                  <div className="drawing">
-                    {namespaceList && namespaceList.length > 0 ? namespaceList.map((array, i) => {
-                      return <div className="item_wrapper" key={i}>
-                        <ul className="result_list">
-                          {array.map((v, j) => {
-                              return <li key={j}>
-                                <div className="radio green">
-                                  <input type="radio" id={`result${i}-${j}`} className="radio__input"
-                                         checked={namespace[i] === v.name} onChange={() => selectNamespace(v.name, i)}/>
-                                  <label htmlFor={`result${i}-${j}`} className="radio__large_label green">{v.name}</label>
-                                  {i > 0 && namespace[i] === v.name ? <button onClick={() => executeQuery(v.name, v.ids[0])}/> : null}
-                                </div>
-                              </li>
-                            })
-                          }
-                        </ul>
-                        <div className="point"/>
-                        <select name="" id="" className="select white">
-                          <option value="">rdfs:seeAlso</option>
-                        </select>
-                        <div className="point"/>
-                      </div>
-                      })
-                      : null
-                    }
-                  </div>
+              <div className="explore">
+                <div className="drawing">
+                  {namespaceList && namespaceList.length > 0 ? namespaceList.map((array, i) => {
+                    return <div className="item_wrapper" key={i}>
+                      <ul className="result_list">
+                        {array.map((v, j) => {
+                            return <li key={j}>
+                              <div className="radio green">
+                                <input type="radio" id={`result${i}-${j}`} className="radio__input"
+                                       checked={namespace[i] === v.name} onChange={() => selectNamespace(v.name, i)}/>
+                                <label htmlFor={`result${i}-${j}`} className="radio__large_label green">{v.name}</label>
+                                {i > 0 && namespace[i] === v.name ? <button onClick={() => executeQuery(v.name, v.ids[0])}/> : null}
+                              </div>
+                            </li>
+                          })
+                        }
+                      </ul>
+                      <div className="point"/>
+                      <select name="" id="" className="select white">
+                        <option value="">rdfs:seeAlso</option>
+                      </select>
+                      <div className="point"/>
+                    </div>
+                    })
+                    : null
+                  }
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </div>
