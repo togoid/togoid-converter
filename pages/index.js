@@ -106,46 +106,66 @@ const Home = () => {
   const [pullMenuStatus, setPullMenuStatus] = useState(false)
   const [inputStatus, setInputStatus] = useState(0)
   const [inputText, setInputText] = useState('')
-  const [ids, setIds] = useState([])
+  // const [ids, setIds] = useState([])
   const [namespaceList, setNamespaceList] = useState([])
-  const [namespace, setNamespace] = useState([])
+  const [selectedNamespace, setSelectedNamespace] = useState([])
+  const [executed, setExecuted] = useState(false)
  
   useEffect(() => {
-    if (inputText !== '') {
-      const splitText = inputText.split('\n')
-      setIds(splitText)
-    }
+    setNamespaceList([])
+    setSelectedNamespace([])
+    setExecuted(false)
   }, [inputText])
   
   useEffect(() => {
-    if (ids && ids.length > 0) {
-      const patternArray = []
-      ids.forEach(id => {
-        for (let key in idPatterns) {
-          if (id.match(idPatterns[key].regexp)) {
-            let index = patternArray.findIndex(namespaceList => namespaceList.name === key)
-            if (index >= 0) {
-              patternArray[index].value +=1
-            } else {
-              patternArray.push({name: key, value: 1, ids: [id]})
-            }
+    // １回目だけ(setStateのタイミングがわからないので)
+    if (selectedNamespace.length === 1 && !executed) {
+      console.log(namespaceList[0])
+      const namespace = namespaceList[0].filter(namespace => namespace.name === selectedNamespace[0])
+      executeQuery(namespace[0])
+      setExecuted(true)
+    }
+  }, [selectedNamespace, executed])
+
+  const matchPattern = () => {
+    if (inputText === '') return
+    let ids = inputText.split('\n')
+    const patternArray = []
+    ids.forEach(id => {
+      for (let key in idPatterns) {
+        if (id.match(idPatterns[key].regexp)) {
+          let index = patternArray.findIndex(namespaceList => namespaceList.name === key)
+          if (index >= 0) {
+            patternArray[index].value +=1
+          } else {
+            patternArray.push({name: key, value: 1, ids: [id]})
           }
         }
-      })
-      if (patternArray && patternArray.length > 0) {
-        patternArray.sort(function(a,b){
-          if(a.value < b.value) return 1
-          if(a.value > b.value) return -1
-          return 0
-        });
-        setNamespaceList([patternArray])
-        console.log(patternArray)
-        setNamespace([patternArray[0].name])
       }
+    })
+    if (patternArray && patternArray.length > 0) {
+      patternArray.sort(function(a,b){
+        if(a.value < b.value) return 1
+        if(a.value > b.value) return -1
+        return 0
+      });
+      setNamespaceList([patternArray])
+      console.log(patternArray)
+      setSelectedNamespace([patternArray[0].name])
     }
-  }, [ids])
+    return patternArray
+  }
   
-  const executeQuery = (namespace, id) => {
+  const executeQuery = (namespaceInfo) => {
+    // 現時点では、ids[0]のみを対象に検索で良い
+    // idPatternsのキーが名前空間となる。これとIDを組み合わせて、identifiers.orgのURIを合成する
+    // 接頭辞(ncbigene:など)がない場合には、これを補う
+    // 例1) 	https://identifiers.org/ncbigene:100010
+    // 例2) 	https://identifiers.org/hgnc:2674
+  
+    const namespace = namespaceInfo.name
+    const id = namespaceInfo.ids[0]
+    console.log(namespaceList)
     q(`select * where {
   <http://identifiers.org/${namespace}/${id}> rdfs:seeAlso ?o
  }`).then((results) => {
@@ -179,19 +199,13 @@ const Home = () => {
   
   const handleSubmit = (event) => {
     event.preventDefault()
-    // 現時点では、ids[0]のみを対象に検索で良い
-    // idPatternsのキーが名前空間となる。これとIDを組み合わせて、identifiers.orgのURIを合成する
-    // 接頭辞(ncbigene:など)がない場合には、これを補う
-    // 例1) 	https://identifiers.org/ncbigene:100010
-    // 例2) 	https://identifiers.org/hgnc:2674
-  
-    if (namespaceList.length === 1) {
-      executeQuery(namespace[0], ids[0])
-    }
+    
+    const res = matchPattern()
+    executeQuery(res[0])
   }
   
   const selectNamespace = (name, index) => {
-    let array = JSON.parse(JSON.stringify(namespace))
+    let array = JSON.parse(JSON.stringify(selectedNamespace))
     let newNamespaceList = JSON.parse(JSON.stringify(namespaceList))
     if (array.length - 1 >= index) {
       array[index] = name
@@ -205,7 +219,7 @@ const Home = () => {
     } else {
       array.push(name)
     }
-    setNamespace(array)
+    setSelectedNamespace(array)
     setNamespaceList(newNamespaceList)
   }
 
@@ -276,16 +290,16 @@ const Home = () => {
             <div className="panel__inner">
               <div className="explore">
                 <div className="drawing">
-                  {namespaceList && namespaceList.length > 0 ? namespaceList.map((array, i) => {
+                  {namespaceList && namespaceList.length > 0 ? namespaceList.map((namespace, i) => {
                     return <div className="item_wrapper" key={i}>
                       <ul className="result_list">
-                        {array.map((v, j) => {
+                        {namespace.map((v, j) => {
                             return <li key={j}>
                               <div className="radio green">
                                 <input type="radio" id={`result${i}-${j}`} className="radio__input"
-                                       checked={namespace[i] === v.name} onChange={() => selectNamespace(v.name, i)}/>
+                                       checked={selectedNamespace[i] === v.name} onChange={() => selectNamespace(v.name, i)}/>
                                 <label htmlFor={`result${i}-${j}`} className="radio__large_label green">{v.name}</label>
-                                {i > 0 && namespace[i] === v.name ? <button onClick={() => executeQuery(v.name, v.ids[0])}/> : null}
+                                {selectedNamespace[i] === v.name ? <button onClick={() => executeQuery(v)}/> : null}
                               </div>
                             </li>
                           })
