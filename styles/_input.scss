@@ -86,6 +86,7 @@
     position: absolute;
     top: 100%;
     right: 0;
+    z-index: 10;
     width: 156px;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
     border-radius: 5px;
@@ -165,6 +166,19 @@
       border-radius: 50%;
       border: 1px solid $gray01;
     }
+    &__inner {
+      position: relative;
+      display: block;
+      .icon {
+        position: absolute;
+        top: 7px;
+        left: 7px;
+        width: 26px;
+        height: 26px;
+        overflow: hidden;
+        border-radius: 50%;
+      }
+    }
   }
   &__input {
     display: none;
@@ -184,6 +198,16 @@
         }
       }
     }
+  }
+  &__three_dots {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    transform: translateY(-50%);
+    border: none;
+    background: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 24 24"><path fill="%235A5A5A" d="M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z" /></svg>') no-repeat center center/ contain;
   }
 }
 

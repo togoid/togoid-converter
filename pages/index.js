@@ -110,13 +110,13 @@ const Home = () => {
   const [namespaceList, setNamespaceList] = useState([])
   const [selectedNamespace, setSelectedNamespace] = useState([])
   const [executed, setExecuted] = useState(false)
- 
+
   useEffect(() => {
     setNamespaceList([])
     setSelectedNamespace([])
     setExecuted(false)
   }, [inputText])
-  
+
   useEffect(() => {
     // １回目だけ(setStateのタイミングがわからないので)
     if (selectedNamespace.length === 1 && !executed) {
@@ -155,14 +155,14 @@ const Home = () => {
     }
     return patternArray
   }
-  
+
   const executeQuery = (namespaceInfo) => {
     // 現時点では、ids[0]のみを対象に検索で良い
     // idPatternsのキーが名前空間となる。これとIDを組み合わせて、identifiers.orgのURIを合成する
     // 接頭辞(ncbigene:など)がない場合には、これを補う
     // 例1) 	https://identifiers.org/ncbigene:100010
     // 例2) 	https://identifiers.org/hgnc:2674
-  
+
     const namespace = namespaceInfo.name
     const id = namespaceInfo.ids[0]
     console.log(namespaceList)
@@ -196,14 +196,14 @@ const Home = () => {
       // TODO 分類の色を持たせる
     })
   }
-  
+
   const handleSubmit = (event) => {
     event.preventDefault()
-    
+
     const res = matchPattern()
     executeQuery(res[0])
   }
-  
+
   const selectNamespace = (name, index) => {
     let array = JSON.parse(JSON.stringify(selectedNamespace))
     let newNamespaceList = JSON.parse(JSON.stringify(namespaceList))
@@ -247,13 +247,11 @@ const Home = () => {
             </div>
           </div>
 
-          <div className="textarea">
-            <form onSubmit={handleSubmit}>
-              <textarea cols="30" rows="10" placeholder="Enter IDs" className="textarea__input"
-                        value={inputText} onChange={(e) => setInputText(e.target.value)}/>
-              <input type="submit" value="EXECUTE" className="button_large"/>
-            </form>
-          </div>
+          <form onSubmit={handleSubmit} className="textarea">
+            <textarea cols="30" rows="10" placeholder="Enter IDs" className="textarea__input"
+                      value={inputText} onChange={(e) => setInputText(e.target.value)}/>
+            <input type="submit" value="EXECUTE" className="button_large"/>
+          </form>
         </div>
 
         <div className="drawing_area">
@@ -298,8 +296,27 @@ const Home = () => {
                               <div className="radio green">
                                 <input type="radio" id={`result${i}-${j}`} className="radio__input"
                                        checked={selectedNamespace[i] === v.name} onChange={() => selectNamespace(v.name, i)}/>
-                                <label htmlFor={`result${i}-${j}`} className="radio__large_label green">{v.name}</label>
-                                {selectedNamespace[i] === v.name ? <button onClick={() => executeQuery(v)}/> : null}
+                                <label htmlFor={`result${i}-${j}`} className="radio__large_label green">
+                                  <span className="radio__large_label__inner">
+                                    <img src="/images/icon_rat.png" alt="アイコン画像：ラット" className="icon"/>
+                                    {v.name}
+                                  </span>
+                                </label>
+                                {selectedNamespace[i] === v.name ? <button onClick={() => executeQuery(v)} className="radio__three_dots"/> : null}
+                                <div className="button_pull_down__children">
+                                  <button className="button_pull_down__children__item">
+                                    <svg className="icon" viewBox="0 0 24 24">
+                                      <path fill="currentColor" d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z" />
+                                    </svg>
+                                    Forward via this
+                                  </button>
+                                  <button className="button_pull_down__children__item">
+                                    <svg className="icon" viewBox="0 0 24 24">
+                                      <path fill="currentColor" d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z" />
+                                    </svg>
+                                    Resolve with this
+                                  </button>
+                                </div>
                               </div>
                             </li>
                           })
