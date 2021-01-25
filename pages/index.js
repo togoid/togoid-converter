@@ -106,7 +106,6 @@ const Home = () => {
   const [pullMenuStatus, setPullMenuStatus] = useState(false)
   const [inputStatus, setInputStatus] = useState(0)
   const [inputText, setInputText] = useState('')
-  // const [ids, setIds] = useState([])
   const [namespaceList, setNamespaceList] = useState([])
   const [selectedNamespace, setSelectedNamespace] = useState([])
   const [executed, setExecuted] = useState(false)
@@ -121,7 +120,6 @@ const Home = () => {
   useEffect(() => {
     // １回目だけ(setStateのタイミングがわからないので)
     if (selectedNamespace.length === 1 && !executed) {
-      console.log(namespaceList[0])
       const namespace = namespaceList[0].filter(namespace => namespace.name === selectedNamespace[0])
       executeQuery(namespace[0])
       setExecuted(true)
@@ -139,7 +137,7 @@ const Home = () => {
           if (index >= 0) {
             patternArray[index].value +=1
           } else {
-            patternArray.push({name: key, value: 1, ids: [id]})
+            patternArray.push({name: key, value: 1, ids: [id], displayMenu: false})
           }
         }
       }
@@ -151,13 +149,12 @@ const Home = () => {
         return 0
       });
       setNamespaceList([patternArray])
-      console.log(patternArray)
       setSelectedNamespace([patternArray[0].name])
     }
     return patternArray
   }
 
-  const executeQuery = (namespaceInfo) => {
+  const executeQuery = (namespaceInfo, index1, index2) => {
     // 現時点では、ids[0]のみを対象に検索で良い
     // idPatternsのキーが名前空間となる。これとIDを組み合わせて、identifiers.orgのURIを合成する
     // 接頭辞(ncbigene:など)がない場合には、これを補う
@@ -166,11 +163,14 @@ const Home = () => {
 
     const namespace = namespaceInfo.name
     const id = namespaceInfo.ids[0]
-    console.log(namespaceList)
     q(`select * where {
   <http://identifiers.org/${namespace}/${id}> rdfs:seeAlso ?o
  }`).then((results) => {
       const newNamespaceList = JSON.parse(JSON.stringify(namespaceList))
+      if (newNamespaceList.length > 0 && (typeof index1 !== 'undefined' && typeof index2 !== 'undefined')) {
+        let newNamespace = newNamespaceList[index1]
+        newNamespace[index2].displayMenu = !newNamespace[index2].displayMenu
+      }
       const prefArray = []
       results.forEach(v => {
         if (v.o.value.match(/^http?:\/\/identifiers.org/)) {
@@ -182,7 +182,7 @@ const Home = () => {
             prefArray[index].value +=1
             prefArray[index].ids.push(id)
           } else {
-            prefArray.push({name: name, value: 1, ids: [id]})
+            prefArray.push({name: name, value: 1, ids: [id], displayMenu: false})
           }
         }
       })
@@ -192,7 +192,6 @@ const Home = () => {
         return 0
       });
       newNamespaceList.push(prefArray)
-      console.log(newNamespaceList)
       setNamespaceList(newNamespaceList)
       // TODO 分類の色を持たせる
     })
@@ -223,7 +222,19 @@ const Home = () => {
     setSelectedNamespace(array)
     setNamespaceList(newNamespaceList)
   }
-
+  
+  const showDisplayMenu = (index1, index2) => {
+    const newNamespaceList = JSON.parse(JSON.stringify(namespaceList))
+    let newNamespace = newNamespaceList[index1]
+    newNamespace[index2].displayMenu = !newNamespace[index2].displayMenu
+    setNamespaceList(newNamespaceList)
+  }
+  
+  const showModal = (index1, index2) => {
+    showDisplayMenu(index1, index2)
+    setModalStatus(!modalStatus)
+  }
+  
   return (
     <div className="home">
       <Head>
@@ -303,19 +314,19 @@ const Home = () => {
                                     {v.name}
                                   </span>
                                 </label>
-                                {selectedNamespace[i] === v.name ? <button onClick={() => executeQuery(v)} className="radio__three_dots"/> : null}
-                                {selectedNamespace[i] === v.name ? (
+                                {selectedNamespace[i] === v.name && namespaceList.length - 1 === i?
+                                  <button className="radio__three_dots" onClick={() => showDisplayMenu(i, j)} /> : null}
+                                {v.displayMenu ? (
                                   <div className="button_pull_down__children">
-                                    <button
-                                      className="button_pull_down__children__item">
+                                    <button className="button_pull_down__children__item"
+                                            onClick={() => executeQuery(v, i, j)} >
                                       <svg className="icon" viewBox="0 0 24 24">
                                         <path fill="currentColor"
                                               d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"/>
                                       </svg>
                                       Forward via this
                                     </button>
-                                    <button
-                                      className="button_pull_down__children__item">
+                                    <button className="button_pull_down__children__item" onClick={() => showModal(i, j)}>
                                       <svg className="icon" viewBox="0 0 24 24">
                                         <path fill="currentColor"
                                               d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z"/>
