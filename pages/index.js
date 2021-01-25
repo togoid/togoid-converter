@@ -110,7 +110,7 @@ const Home = () => {
   const [namespaceList, setNamespaceList] = useState([])
   const [selectedNamespace, setSelectedNamespace] = useState([])
   const [executed, setExecuted] = useState(false)
-  const [modalStatus, setModalStatus] = useState(true)
+  const [modalStatus, setModalStatus] = useState(false)
 
   useEffect(() => {
     setNamespaceList([])
