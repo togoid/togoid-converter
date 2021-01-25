@@ -1,0 +1,29 @@
+@charset "UTF-8";
+.table {
+  width: 100%;
+  th,
+  td {
+    font-size: 1.4rem;
+    color: $gray07;
+    padding: 0 26px;
+    border-bottom: 1px solid $gray06;
+  }
+  thead {
+    th {
+      height: 40px;
+      font-weight: 100;
+      text-align: left;
+      background: $blue04;
+    }
+  }
+  tbody {
+    td {
+      padding: 11px 26px 17px;
+    }
+    tr:last-child {
+      td {
+        border: none;
+      }
+    }
+  }
+}
