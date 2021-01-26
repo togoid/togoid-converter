@@ -203,7 +203,11 @@ const Home = () => {
     const res = matchPattern()
     executeQuery(res[0])
   }
-
+  /**
+   * namespaceのラジオボタンを選択する
+   * @param name　選択されたnamespace
+   * @param index　選択されたnamespaceの階層番号
+   */
   const selectNamespace = (name, index) => {
     let array = JSON.parse(JSON.stringify(selectedNamespace))
     let newNamespaceList = JSON.parse(JSON.stringify(namespaceList))
@@ -222,14 +226,23 @@ const Home = () => {
     setSelectedNamespace(array)
     setNamespaceList(newNamespaceList)
   }
-  
+  /**
+   * ３点リーダサブメニューの表示非表示を切り替える
+   * @param index1
+   * @param index2
+   */
   const showDisplayMenu = (index1, index2) => {
     const newNamespaceList = JSON.parse(JSON.stringify(namespaceList))
     let newNamespace = newNamespaceList[index1]
     newNamespace[index2].displayMenu = !newNamespace[index2].displayMenu
     setNamespaceList(newNamespaceList)
   }
-  
+  /**
+   * モーダルの表示非表示を切り替える
+   * 　モーダルを表示する際に３点リーダサブメニューを閉じる
+   * @param index1
+   * @param index2
+   */
   const showModal = (index1, index2) => {
     showDisplayMenu(index1, index2)
     setModalStatus(!modalStatus)
@@ -314,7 +327,7 @@ const Home = () => {
                                     {v.name}
                                   </span>
                                 </label>
-                                {selectedNamespace[i] === v.name && namespaceList.length - 1 === i?
+                                {selectedNamespace[i] === v.name && namespaceList.length - 1 === i ?
                                   <button className="radio__three_dots" onClick={() => showDisplayMenu(i, j)} /> : null}
                                 {v.displayMenu ? (
                                   <div className="button_pull_down__children">
