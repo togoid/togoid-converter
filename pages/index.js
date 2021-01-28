@@ -91,7 +91,7 @@ const idPatterns = {
   }
 };
 
-const q = (q) => {
+const q = async (q) => {
   return axios.get(process.env.NEXT_PUBLIC_SPARQL_ENDOPOINT, {
     params: {
       query: q,
@@ -99,7 +99,7 @@ const q = (q) => {
     },
   }).then((d) => {
     return d.data.results.bindings
-  })
+  }).catch(e => console.log(e))
 }
 
 const Home = () => {
@@ -136,6 +136,7 @@ const Home = () => {
           let index = patternArray.findIndex(namespaceList => namespaceList.name === key)
           if (index >= 0) {
             patternArray[index].value +=1
+            patternArray[index].ids.push(id)
           } else {
             patternArray.push({name: key, value: 1, ids: [id], displayMenu: false})
           }
@@ -154,47 +155,67 @@ const Home = () => {
     return patternArray
   }
 
-  const executeQuery = (namespaceInfo, index1, index2) => {
-    // 現時点では、ids[0]のみを対象に検索で良い
-    // idPatternsのキーが名前空間となる。これとIDを組み合わせて、identifiers.orgのURIを合成する
-    // 接頭辞(ncbigene:など)がない場合には、これを補う
-    // 例1) 	https://identifiers.org/ncbigene:100010
-    // 例2) 	https://identifiers.org/hgnc:2674
-
+  const executeQuery = async (namespaceInfo, index1, index2) => {
+    const newNamespaceList = JSON.parse(JSON.stringify(namespaceList))
+    if (newNamespaceList.length > 0 && (typeof index1 !== 'undefined' && typeof index2 !== 'undefined')) {
+      let newNamespace = newNamespaceList[index1]
+      newNamespace[index2].displayMenu = !newNamespace[index2].displayMenu
+    }
     const namespace = namespaceInfo.name
-    const id = namespaceInfo.ids[0]
-    q(`select * where {
-  <http://identifiers.org/${namespace}/${id}> rdfs:seeAlso ?o
- }`).then((results) => {
-      const newNamespaceList = JSON.parse(JSON.stringify(namespaceList))
-      if (newNamespaceList.length > 0 && (typeof index1 !== 'undefined' && typeof index2 !== 'undefined')) {
-        let newNamespace = newNamespaceList[index1]
-        newNamespace[index2].displayMenu = !newNamespace[index2].displayMenu
-      }
-      const prefArray = []
-      results.forEach(v => {
-        if (v.o.value.match(/^http?:\/\/identifiers.org/)) {
-          let splitArray = v.o.value.replace('http://identifiers.org/', '').split('/')
-          let name = splitArray[0]
-          let id = splitArray[1]
-          let index = prefArray.findIndex(pref => pref.name === name)
-          if (index >= 0) {
-            prefArray[index].value +=1
-            prefArray[index].ids.push(id)
-          } else {
-            prefArray.push({name: name, value: 1, ids: [id], displayMenu: false})
-          }
+    let selectSentence = ''
+    const sentenceList = []
+    if (namespaceInfo.ids.length === 1) {
+      const id = namespaceInfo.ids[0]
+      selectSentence = `select * where {<http://identifiers.org/${namespace}/${id}> rdfs:seeAlso ?o}`
+      sentenceList.push(selectSentence)
+    } else {
+      
+      let count = 0
+      selectSentence = 'select * where {VALUES ?s { '
+      namespaceInfo.ids.forEach((id) => {
+        if (count < 100) {
+          selectSentence = selectSentence.concat(`<http://identifiers.org/${namespace}/${id}>`)
+          count ++
+        } else {
+          selectSentence = selectSentence.concat('}?s  rdfs:seeAlso ?o}')
+          sentenceList.push(selectSentence)
+          count = 0
+          selectSentence = 'select * where {VALUES ?s { '
         }
       })
-      prefArray.sort(function(a,b){
-        if(a.value < b.value) return 1
-        if(a.value > b.value) return -1
-        return 0
-      });
-      newNamespaceList.push(prefArray)
-      setNamespaceList(newNamespaceList)
-      // TODO 分類の色を持たせる
+      selectSentence = selectSentence.concat('}?s  rdfs:seeAlso ?o}')
+      sentenceList.push(selectSentence)
+    }
+    const resultAll = await Promise.all(sentenceList.map(sentence => {
+      return q(sentence)
+    }))
+    let results = []
+    resultAll.forEach(res => {
+      results = results.concat(res )
     })
+    const prefArray = []
+    results.forEach(v => {
+      if (v.o.value.match(/^http?:\/\/identifiers.org/)) {
+        let splitArray = v.o.value.replace('http://identifiers.org/', '').split('/')
+        let name = splitArray[0]
+        let id = splitArray[1]
+        let index = prefArray.findIndex(pref => pref.name === name)
+        if (index >= 0) {
+          prefArray[index].value +=1
+          prefArray[index].ids.push(id)
+        } else {
+          prefArray.push({name: name, value: 1, ids: [id], displayMenu: false})
+        }
+      }
+    })
+    prefArray.sort(function(a,b){
+      if(a.value < b.value) return 1
+      if(a.value > b.value) return -1
+      return 0
+    });
+    newNamespaceList.push(prefArray)
+    setNamespaceList(newNamespaceList)
+    // TODO 分類の色を持たせる
   }
 
   const handleSubmit = (event) => {
