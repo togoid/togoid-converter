@@ -117,15 +117,18 @@ const Home = () => {
     setExecuted(false)
   }, [inputText])
 
-  useEffect(() => {
+  useEffect(async () => {
     // １回目だけ(setStateのタイミングがわからないので)
     if (selectedNamespace.length === 1 && !executed) {
       const namespace = namespaceList[0].filter(namespace => namespace.name === selectedNamespace[0])
-      executeQuery(namespace[0])
+      await executeQuery(namespace[0])
       setExecuted(true)
     }
   }, [selectedNamespace, executed])
-
+  
+  /**
+   * inputTextに入力されたIDまたはIDリストをidPatternsから正規表現で検索
+   */
   const matchPattern = () => {
     if (inputText === '') return
     let ids = inputText.split('\n')
@@ -152,10 +155,17 @@ const Home = () => {
       setNamespaceList([patternArray])
       setSelectedNamespace([patternArray[0].name])
     }
-    return patternArray
   }
-
+  
+  /**
+   * クエリを実行し結果から次のリストを作成。index1,index2がある場合は該当するサブメニューを閉じる
+   * @param namespaceInfo 検索する対象のnamespace情報
+   * @param index1 namespaceList(array)の添字
+   * @param index2 namespaceListの要素(array)の添字
+   * @returns {Promise<void>}
+   */
   const executeQuery = async (namespaceInfo, index1, index2) => {
+    // TODO クエリ実行中にloading画面を表示させる
     const newNamespaceList = JSON.parse(JSON.stringify(namespaceList))
     if (newNamespaceList.length > 0 && (typeof index1 !== 'undefined' && typeof index2 !== 'undefined')) {
       let newNamespace = newNamespaceList[index1]
@@ -191,15 +201,15 @@ const Home = () => {
     }))
     let results = []
     resultAll.forEach(res => {
-      results = results.concat(res )
+      results = results.concat(res)
     })
     const prefArray = []
     results.forEach(v => {
       if (v.o.value.match(/^http?:\/\/identifiers.org/)) {
-        let splitArray = v.o.value.replace('http://identifiers.org/', '').split('/')
-        let name = splitArray[0]
-        let id = splitArray[1]
-        let index = prefArray.findIndex(pref => pref.name === name)
+        const splitArray = v.o.value.replace('http://identifiers.org/', '').split('/')
+        const name = splitArray[0]
+        const id = splitArray[1]
+        const index = prefArray.findIndex(pref => pref.name === name)
         if (index >= 0) {
           prefArray[index].value +=1
           prefArray[index].ids.push(id)
@@ -215,14 +225,11 @@ const Home = () => {
     });
     newNamespaceList.push(prefArray)
     setNamespaceList(newNamespaceList)
-    // TODO 分類の色を持たせる
   }
 
   const handleSubmit = (event) => {
     event.preventDefault()
-
-    const res = matchPattern()
-    executeQuery(res[0])
+    matchPattern()
   }
   /**
    * namespaceのラジオボタンを選択する
