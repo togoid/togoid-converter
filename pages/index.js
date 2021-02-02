@@ -111,11 +111,11 @@ const Home = () => {
   const [executed, setExecuted] = useState(false)
   const [modalStatus, setModalStatus] = useState(false)
 
-  useEffect(() => {
-    setNamespaceList([])
-    setSelectedNamespace([])
-    setExecuted(false)
-  }, [inputText])
+  // useEffect(() => {
+  //   setNamespaceList([])
+  //   setSelectedNamespace([])
+  //   setExecuted(false)
+  // }, [inputText])
 
   useEffect(() => {
     // １回目だけ(setStateのタイミングがわからないので)
@@ -225,10 +225,23 @@ const Home = () => {
     });
     newNamespaceList.push(prefArray)
     setNamespaceList(newNamespaceList)
+    console.log(newNamespaceList)
   }
-
+  /**
+   * 表示されているリストをクリアする
+   */
+  const clearList = () => {
+    setNamespaceList([])
+    setSelectedNamespace([])
+    setExecuted(false)
+  }
+  /**
+   * Executeボタン押下
+   * @param event
+   */
   const handleSubmit = (event) => {
     event.preventDefault()
+    clearList()
     matchPattern()
   }
   /**
