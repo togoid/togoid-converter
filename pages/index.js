@@ -117,11 +117,11 @@ const Home = () => {
     setExecuted(false)
   }, [inputText])
 
-  useEffect(async () => {
+  useEffect(() => {
     // １回目だけ(setStateのタイミングがわからないので)
     if (selectedNamespace.length === 1 && !executed) {
       const namespace = namespaceList[0].filter(namespace => namespace.name === selectedNamespace[0])
-      await executeQuery(namespace[0])
+      executeQuery(namespace[0])
       setExecuted(true)
     }
   }, [selectedNamespace, executed])
