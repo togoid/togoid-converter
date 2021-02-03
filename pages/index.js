@@ -110,21 +110,24 @@ const Home = () => {
   const [selectedNamespace, setSelectedNamespace] = useState([])
   const [executed, setExecuted] = useState(false)
   const [modalStatus, setModalStatus] = useState(false)
-
+  const [currentIndex, setCurrentIndex] = useState(0)
+  
   // useEffect(() => {
-  //   setNamespaceList([])
-  //   setSelectedNamespace([])
-  //   setExecuted(false)
-  // }, [inputText])
-
+  //   console.log(selectedNamespace, currentIndex)
+  //   // １回目だけ(setStateのタイミングがわからないので)
+  //   if (selectedNamespace.length === 1 && !executed) {
+  //     const namespace = namespaceList[0].filter(namespace => namespace.name === selectedNamespace[0])
+  //     executeQuery(namespace[0])
+  //     setExecuted(true)
+  //   }
+  // }, [selectedNamespace, executed])
+  
   useEffect(() => {
-    // １回目だけ(setStateのタイミングがわからないので)
-    if (selectedNamespace.length === 1 && !executed) {
-      const namespace = namespaceList[0].filter(namespace => namespace.name === selectedNamespace[0])
+    if (selectedNamespace.length > 0) {
+      const namespace = namespaceList[currentIndex].filter(namespace => namespace.name === selectedNamespace[currentIndex])
       executeQuery(namespace[0])
-      setExecuted(true)
     }
-  }, [selectedNamespace, executed])
+  },[selectedNamespace])
   
   /**
    * inputTextに入力されたIDまたはIDリストをidPatternsから正規表現で検索
@@ -172,29 +175,29 @@ const Home = () => {
       newNamespace[index2].displayMenu = !newNamespace[index2].displayMenu
     }
     const namespace = namespaceInfo.name
-    let selectSentence = ''
+    let query = ''
     const sentenceList = []
     if (namespaceInfo.ids.length === 1) {
       const id = namespaceInfo.ids[0]
-      selectSentence = `select * where {<http://identifiers.org/${namespace}/${id}> rdfs:seeAlso ?o}`
-      sentenceList.push(selectSentence)
+      query = `select * where {<http://identifiers.org/${namespace}/${id}> rdfs:seeAlso ?o}`
+      sentenceList.push(query)
     } else {
       
       let count = 0
-      selectSentence = 'select * where {VALUES ?s { '
+      query = 'select * where {VALUES ?s { '
       namespaceInfo.ids.forEach((id) => {
         if (count < 100) {
-          selectSentence = selectSentence.concat(`<http://identifiers.org/${namespace}/${id}>`)
+          query = query.concat(`<http://identifiers.org/${namespace}/${id}>`)
           count ++
         } else {
-          selectSentence = selectSentence.concat('}?s  rdfs:seeAlso ?o}')
-          sentenceList.push(selectSentence)
+          query = query.concat('}?s  rdfs:seeAlso ?o}')
+          sentenceList.push(query)
           count = 0
-          selectSentence = 'select * where {VALUES ?s { '
+          query = 'select * where {VALUES ?s { '
         }
       })
-      selectSentence = selectSentence.concat('}?s  rdfs:seeAlso ?o}')
-      sentenceList.push(selectSentence)
+      query = query.concat('}?s  rdfs:seeAlso ?o}')
+      sentenceList.push(query)
     }
     const resultAll = await Promise.all(sentenceList.map(sentence => {
       return q(sentence)
@@ -225,7 +228,6 @@ const Home = () => {
     });
     newNamespaceList.push(prefArray)
     setNamespaceList(newNamespaceList)
-    console.log(newNamespaceList)
   }
   /**
    * 表示されているリストをクリアする
@@ -250,6 +252,7 @@ const Home = () => {
    * @param index　選択されたnamespaceの階層番号
    */
   const selectNamespace = (name, index) => {
+    setCurrentIndex(index)
     let array = JSON.parse(JSON.stringify(selectedNamespace))
     let newNamespaceList = JSON.parse(JSON.stringify(namespaceList))
     if (array.length - 1 >= index) {
@@ -368,18 +371,10 @@ const Home = () => {
                                     {v.name}
                                   </span>
                                 </label>
-                                {selectedNamespace[i] === v.name && namespaceList.length - 1 === i ?
+                                {selectedNamespace[i] === v.name ?
                                   <button className="radio__three_dots" onClick={() => showDisplayMenu(i, j)} /> : null}
                                 {v.displayMenu ? (
                                   <div className="button_pull_down__children">
-                                    <button className="button_pull_down__children__item"
-                                            onClick={() => executeQuery(v, i, j)} >
-                                      <svg className="icon" viewBox="0 0 24 24">
-                                        <path fill="currentColor"
-                                              d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"/>
-                                      </svg>
-                                      Forward via this
-                                    </button>
                                     <button className="button_pull_down__children__item" onClick={() => showModal(i, j)}>
                                       <svg className="icon" viewBox="0 0 24 24">
                                         <path fill="currentColor"
