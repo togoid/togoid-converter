@@ -108,19 +108,9 @@ const Home = () => {
   const [inputText, setInputText] = useState('')
   const [namespaceList, setNamespaceList] = useState([])
   const [selectedNamespace, setSelectedNamespace] = useState([])
-  const [executed, setExecuted] = useState(false)
   const [modalStatus, setModalStatus] = useState(false)
   const [currentIndex, setCurrentIndex] = useState(0)
-  
-  // useEffect(() => {
-  //   console.log(selectedNamespace, currentIndex)
-  //   // １回目だけ(setStateのタイミングがわからないので)
-  //   if (selectedNamespace.length === 1 && !executed) {
-  //     const namespace = namespaceList[0].filter(namespace => namespace.name === selectedNamespace[0])
-  //     executeQuery(namespace[0])
-  //     setExecuted(true)
-  //   }
-  // }, [selectedNamespace, executed])
+  const [modalData, setModalData] = useState({})
   
   useEffect(() => {
     if (selectedNamespace.length > 0) {
@@ -128,7 +118,10 @@ const Home = () => {
       executeQuery(namespace[0])
     }
   },[selectedNamespace])
-  
+
+  useEffect( () => {
+    if (modalData.length > 0) setModalStatus(!modalStatus)
+  }, [modalData])
   /**
    * inputTextに入力されたIDまたはIDリストをidPatternsから正規表現で検索
    */
@@ -155,8 +148,15 @@ const Home = () => {
         if(a.value > b.value) return -1
         return 0
       });
-      setNamespaceList([patternArray])
-      setSelectedNamespace([patternArray[0].name])
+      // path生成
+      const namespaceList = patternArray.map(v => {
+        const path = v.ids.map(id => {
+          return {o: `http://identifiers.org/${v.name}/${id}`}
+        })
+        return {name: v.name, value: v.value, displayMenu: false, paths: path}
+      })
+      setNamespaceList([namespaceList])
+      setSelectedNamespace([namespaceList[0].name])
     }
   }
   
@@ -177,28 +177,21 @@ const Home = () => {
     const namespace = namespaceInfo.name
     let query = ''
     const sentenceList = []
-    if (namespaceInfo.ids.length === 1) {
-      const id = namespaceInfo.ids[0]
-      query = `select * where {<http://identifiers.org/${namespace}/${id}> rdfs:seeAlso ?o}`
-      sentenceList.push(query)
-    } else {
-      
-      let count = 0
-      query = 'select * where {VALUES ?s { '
-      namespaceInfo.ids.forEach((id) => {
-        if (count < 100) {
-          query = query.concat(`<http://identifiers.org/${namespace}/${id}>`)
-          count ++
-        } else {
-          query = query.concat('}?s  rdfs:seeAlso ?o}')
-          sentenceList.push(query)
-          count = 0
-          query = 'select * where {VALUES ?s { '
-        }
-      })
-      query = query.concat('}?s  rdfs:seeAlso ?o}')
-      sentenceList.push(query)
-    }
+    let count = 0
+    query = 'select * where {VALUES ?s { '
+    namespaceInfo.paths.forEach((path) => {
+      if (count < 100) {
+        query = query.concat(`<${path.o}>`)
+        count ++
+      } else {
+        query = query.concat('}?s  rdfs:seeAlso ?o}')
+        sentenceList.push(query)
+        count = 0
+        query = 'select * where {VALUES ?s { '
+      }
+    })
+    query = query.concat('}?s  rdfs:seeAlso ?o}')
+    sentenceList.push(query)
     const resultAll = await Promise.all(sentenceList.map(sentence => {
       return q(sentence)
     }))
@@ -215,12 +208,15 @@ const Home = () => {
         const index = prefArray.findIndex(pref => pref.name === name)
         if (index >= 0) {
           prefArray[index].value +=1
-          prefArray[index].ids.push(id)
+          prefArray[index].paths.push({s: v.s.value, o: v.o.value})
         } else {
-          prefArray.push({name: name, value: 1, ids: [id], displayMenu: false})
+          prefArray.push({
+            name: name, value: 1, displayMenu: false, paths: [{s: v.s.value, o: v.o.value}]
+          })
         }
       }
     })
+    console.log(prefArray)
     prefArray.sort(function(a,b){
       if(a.value < b.value) return 1
       if(a.value > b.value) return -1
@@ -235,7 +231,7 @@ const Home = () => {
   const clearList = () => {
     setNamespaceList([])
     setSelectedNamespace([])
-    setExecuted(false)
+    setCurrentIndex(0)
   }
   /**
    * Executeボタン押下
@@ -281,6 +277,9 @@ const Home = () => {
     newNamespace[index2].displayMenu = !newNamespace[index2].displayMenu
     setNamespaceList(newNamespaceList)
   }
+  const getNamespace = (uri) => {
+  
+  }
   /**
    * モーダルの表示非表示を切り替える
    * 　モーダルを表示する際に３点リーダサブメニューを閉じる
@@ -289,7 +288,58 @@ const Home = () => {
    */
   const showModal = (index1, index2) => {
     showDisplayMenu(index1, index2)
-    setModalStatus(!modalStatus)
+    const modalData = []
+    namespaceList.forEach((v, i) => {
+      if(i <= index1) {
+        const data =  v.filter(v2 => {
+          if(v2.name === selectedNamespace[i]) {
+            return v2
+          }
+        })
+        modalData.push(data[0].paths)
+      }
+    })
+    console.log(modalData)
+    const arrList = []
+    modalData.forEach((line, i) => {
+      line.forEach((v, j) => {
+        const splitArrayO = v.o.replace('http://identifiers.org/', '').split('/')
+        const nameO = splitArrayO[0]
+        const idO = splitArrayO[1]
+        if (i === 0) {
+          if (j === 0) {
+            arrList.push([nameO])
+          }
+        } else if (i === 1) {
+          if (j === 0) {
+            arrList[0].push(nameO)
+          }
+          const splitArrayS = v.s.replace('http://identifiers.org/', '').split('/')
+          const idS = splitArrayS[1]
+          arrList.push([idS, idO])
+        } else {
+          if (j === 0) {
+            arrList[0].push(nameO)
+          }
+          const splitArrayS = v.s.replace('http://identifiers.org/', '').split('/')
+          const idS = splitArrayS[1]
+          arrList.forEach((arr, index) => {
+            if (arr.find(v => v === idS)) {
+              if (i < arr.length && arr[i] !== idO) {
+                const newArray = arr.filter((item, k) => k < i)
+                newArray.push(idO)
+                arrList.push(newArray)
+              } else {
+                arrList[index].push(idO)
+              }
+            }
+            
+          })
+        }
+      })
+    })
+    console.log(arrList)
+    setModalData(arrList)
   }
   
   return (
@@ -371,7 +421,7 @@ const Home = () => {
                                     {v.name}
                                   </span>
                                 </label>
-                                {selectedNamespace[i] === v.name ?
+                                {i > 0 && selectedNamespace[i] === v.name ?
                                   <button className="radio__three_dots" onClick={() => showDisplayMenu(i, j)} /> : null}
                                 {v.displayMenu ? (
                                   <div className="button_pull_down__children">
@@ -438,100 +488,34 @@ const Home = () => {
                               </div>
 
                             </div>
-
                             <table className="table">
                               <thead>
-                              <tr>
-                                <th>NCBI Gene</th>
-                                <th>HGNC</th>
-                                <th>PATH</th>
-                              </tr>
+                                <tr>
+                                  {modalData && modalData.length > 0 ? modalData[0].map((v, i) => {
+                                    return <th key={i}>{v}</th>
+                                  }): null}
+                                </tr>
                               </thead>
                               <tbody>
-                              <tr>
-                                <td>Xxx-xxx-xxxx</td>
-                                <td>Zzz-zzz-zzzz</td>
-                                <td>
-                                  <ul className="buttons">
-                                    <li>
-                                      <button className="button_small green">NCBI Gene</button>
-                                    </li>
-                                    <li>
-                                      <button className="button_small white">rdfs:seeAlso</button>
-                                    </li>
-                                  </ul>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>Xxx-xxx-xxxx</td>
-                                <td>Zzz-zzz-zzzz</td>
-                                <td>
-                                  <ul className="buttons">
-                                    <li>
-                                      <button className="button_small green">NCBI Gene</button>
-                                    </li>
-                                    <li>
-                                      <button className="button_small white">rdfs:seeAlso</button>
-                                    </li>
-                                  </ul>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>Xxx-xxx-xxxx</td>
-                                <td>Zzz-zzz-zzzz</td>
-                                <td>
-                                  <ul className="buttons">
-                                    <li>
-                                      <button className="button_small green">NCBI Gene</button>
-                                    </li>
-                                    <li>
-                                      <button className="button_small white">rdfs:seeAlso</button>
-                                    </li>
-                                  </ul>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>Xxx-xxx-xxxx</td>
-                                <td>Zzz-zzz-zzzz</td>
-                                <td>
-                                  <ul className="buttons">
-                                    <li>
-                                      <button className="button_small green">NCBI Gene</button>
-                                    </li>
-                                    <li>
-                                      <button className="button_small white">rdfs:seeAlso</button>
-                                    </li>
-                                  </ul>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>Xxx-xxx-xxxx</td>
-                                <td>Zzz-zzz-zzzz</td>
-                                <td>
-                                  <ul className="buttons">
-                                    <li>
-                                      <button className="button_small green">NCBI Gene</button>
-                                    </li>
-                                    <li>
-                                      <button className="button_small white">rdfs:seeAlso</button>
-                                    </li>
-                                  </ul>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>Xxx-xxx-xxxx</td>
-                                <td>Zzz-zzz-zzzz</td>
-                                <td>
-                                  <ul className="buttons">
-                                    <li>
-                                      <button className="button_small green">NCBI Gene</button>
-                                    </li>
-                                    <li>
-                                      <button className="button_small white">rdfs:seeAlso</button>
-                                    </li>
-                                  </ul>
-                                </td>
-                              </tr>
+                              {modalData && modalData.length > 0 ? modalData.map((data, i) => {
+                                if (i > 0) {
+                                  return <tr key={i}>
+                                  {data.map((d, j) => {
+                                    return <td key={j}>{d}</td>
+                                      {/*   <td>*/}
+                                      {/*      <ul className="buttons">*/}
+                                      {/*        <li>*/}
+                                      {/*          <button className="button_small green">NCBI Gene</button>*/}
+                                      {/*        </li>*/}
+                                      {/*        <li>*/}
+                                      {/*          <button className="button_small white">rdfs:seeAlso</button>*/}
+                                      {/*        </li>*/}
+                                      {/*      </ul>*/}
+                                      {/*    </td>*/}
+                                  })}
+                                  </tr>
+                                }
+                              }): null}
                               </tbody>
                             </table>
                             <button className="button_more">MORE</button>
@@ -540,7 +524,6 @@ const Home = () => {
                       </div>
                     ) : ("")
                   }
-
                 </div>
               </div>
             </div>
