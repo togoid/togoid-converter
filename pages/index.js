@@ -216,7 +216,6 @@ const Home = () => {
         }
       }
     })
-    console.log(prefArray)
     prefArray.sort(function(a,b){
       if(a.value < b.value) return 1
       if(a.value > b.value) return -1
@@ -299,14 +298,15 @@ const Home = () => {
         modalData.push(data[0].paths)
       }
     })
-    console.log(modalData)
-    const arrList = []
+    let arrList = []
+    let newArrayList = []
     modalData.forEach((line, i) => {
       line.forEach((v, j) => {
         const splitArrayO = v.o.replace('http://identifiers.org/', '').split('/')
         const nameO = splitArrayO[0]
         const idO = splitArrayO[1]
         if (i === 0) {
+          // 1列目はnamespace
           if (j === 0) {
             arrList.push([nameO])
           }
@@ -314,31 +314,30 @@ const Home = () => {
           if (j === 0) {
             arrList[0].push(nameO)
           }
+          // 2列目はsとoで1列目と2列目のリストを追加
           const splitArrayS = v.s.replace('http://identifiers.org/', '').split('/')
           const idS = splitArrayS[1]
           arrList.push([idS, idO])
         } else {
           if (j === 0) {
             arrList[0].push(nameO)
+            newArrayList.push(arrList[0])
           }
+          // 3列目以降は列または行追加
           const splitArrayS = v.s.replace('http://identifiers.org/', '').split('/')
           const idS = splitArrayS[1]
-          arrList.forEach((arr, index) => {
-            if (arr.find(v => v === idS)) {
-              if (i < arr.length && arr[i] !== idO) {
-                const newArray = arr.filter((item, k) => k < i)
-                newArray.push(idO)
-                arrList.push(newArray)
-              } else {
-                arrList[index].push(idO)
-              }
+          let aaa = []
+          arrList.forEach( (row, i) => {
+            let colIndex = row.indexOf(idS);
+            if ( colIndex >= 0 ) {
+              aaa = row.filter((v, i) => i <= colIndex)
+              newArrayList.push(aaa.concat(idO))
             }
-            
           })
         }
       })
+      if (i >= 2) arrList = newArrayList
     })
-    console.log(arrList)
     setModalData(arrList)
   }
   
