@@ -112,13 +112,18 @@ const Home = () => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [modalData, setModalData] = useState({})
   
+  /**
+   * 選択されたnameSpaceがstatusにセットされたら、クエリを実行する
+   */
   useEffect(() => {
     if (selectedNamespace.length > 0) {
       const namespace = namespaceList[currentIndex].filter(namespace => namespace.name === selectedNamespace[currentIndex])
       executeQuery(namespace[0])
     }
   },[selectedNamespace])
-
+  /**
+   * modalDataがstatusにセットされたら、データモーダルを表示する
+   */
   useEffect( () => {
     if (modalData.length > 0) setModalStatus(!modalStatus)
   }, [modalData])
@@ -174,7 +179,6 @@ const Home = () => {
       let newNamespace = newNamespaceList[index1]
       newNamespace[index2].displayMenu = !newNamespace[index2].displayMenu
     }
-    const namespace = namespaceInfo.name
     let query = ''
     const sentenceList = []
     let count = 0
@@ -204,7 +208,6 @@ const Home = () => {
       if (v.o.value.match(/^http?:\/\/identifiers.org/)) {
         const splitArray = v.o.value.replace('http://identifiers.org/', '').split('/')
         const name = splitArray[0]
-        const id = splitArray[1]
         const index = prefArray.findIndex(pref => pref.name === name)
         if (index >= 0) {
           prefArray[index].value +=1
@@ -276,9 +279,6 @@ const Home = () => {
     newNamespace[index2].displayMenu = !newNamespace[index2].displayMenu
     setNamespaceList(newNamespaceList)
   }
-  const getNamespace = (uri) => {
-  
-  }
   /**
    * モーダルの表示非表示を切り替える
    * 　モーダルを表示する際に３点リーダサブメニューを閉じる
@@ -327,7 +327,7 @@ const Home = () => {
           const splitArrayS = v.s.replace('http://identifiers.org/', '').split('/')
           const idS = splitArrayS[1]
           let aaa = []
-          arrList.forEach( (row, i) => {
+          arrList.forEach(row => {
             let colIndex = row.indexOf(idS);
             if ( colIndex >= 0 ) {
               aaa = row.filter((v, i) => i <= colIndex)
