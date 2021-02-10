@@ -326,12 +326,12 @@ const Home = () => {
           // 3列目以降は列または行追加
           const splitArrayS = v.s.replace('http://identifiers.org/', '').split('/')
           const idS = splitArrayS[1]
-          let aaa = []
+          let newRow = []
           arrList.forEach(row => {
             let colIndex = row.indexOf(idS);
             if ( colIndex >= 0 ) {
-              aaa = row.filter((v, i) => i <= colIndex)
-              newArrayList.push(aaa.concat(idO))
+              newRow = row.filter((v, i) => i <= colIndex)
+              newArrayList.push(newRow.concat(idO))
             }
           })
         }
