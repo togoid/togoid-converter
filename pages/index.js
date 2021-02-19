@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import axios from 'axios'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 const idPatterns = {
   'ncbigene': {
@@ -111,6 +112,9 @@ const Home = () => {
   const [modalStatus, setModalStatus] = useState(false)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [modalData, setModalData] = useState({})
+  const [clippedText, setClippedText] = useState('')
+  const [copied, setCopied] = useState(false)
+  
   
   /**
    * 選択されたnameSpaceがstatusにセットされたら、クエリを実行する
@@ -127,6 +131,9 @@ const Home = () => {
   useEffect( () => {
     if (modalData.length > 0) setModalStatus(!modalStatus)
   }, [modalData])
+  useEffect(() => {
+    if (modalStatus) setCopied(false)
+  }, [modalStatus])
   /**
    * inputTextに入力されたIDまたはIDリストをidPatternsから正規表現で検索
    */
@@ -339,6 +346,26 @@ const Home = () => {
       if (i >= 2) arrList = newArrayList
     })
     setModalData(arrList)
+    console.log(modalData)
+    setClippedText(createClippedText(arrList))
+  }
+  
+  const createClippedText = (array) => {
+    let text = ''
+    array.forEach((v, i) => {
+      if (i > 1) {
+        text = text.concat('\n')
+      }
+      if (i > 0) {
+        text = text.concat(v[v.length-1])
+      }
+    })
+    console.log(text)
+    return text
+  }
+  
+  const exportCSV = () => {
+    console.log('exportCSV')
   }
   
   return (
@@ -481,8 +508,16 @@ const Home = () => {
                                   </svg>
                                   <input type="search" className="input_search__input"/>
                                 </div>
-
-                                <button className="button_icon">
+                                {copied ? <span>Copied.</span> : null}
+                                <CopyToClipboard text={clippedText} onCopy={() => setCopied(true)}>
+                                  <button className="button_icon">
+                                    <svg className="button_icon__icon" viewBox="0 0 24 24">
+                                      <path fill="currentColor" d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
+                                    </svg>
+                                    <span className="button_icon__label">copy</span>
+                                  </button>
+                                </CopyToClipboard>
+                                <button className="button_icon" onClick={() => exportCSV()}>
                                   <svg className="button_icon__icon" viewBox="0 0 24 24">
                                     <path fill="currentColor" d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
                                   </svg>
