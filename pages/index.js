@@ -346,7 +346,6 @@ const Home = () => {
       if (i >= 2) arrList = newArrayList
     })
     setModalData(arrList)
-    console.log(modalData)
     setClippedText(createClippedText(arrList))
   }
   
@@ -365,7 +364,16 @@ const Home = () => {
   }
   
   const exportCSV = () => {
-    console.log('exportCSV')
+    let data = modalData.map((record)=>record.join(',')).join('\r\n');
+    let bom  = new Uint8Array([0xEF, 0xBB, 0xBF]);
+    let blob = new Blob([bom, data], {type: 'text/csv'});
+    let url = (window.URL || window.webkitURL).createObjectURL(blob);
+    let link = document.createElement('a');
+    link.download = 'result.csv';
+    link.href = url;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
   
   return (
