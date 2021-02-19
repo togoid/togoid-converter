@@ -439,11 +439,15 @@ const Home = () => {
                           })
                         }
                       </ul>
-                      <div className="point"/>
-                      <select name="" id="" className="select white">
-                        <option value="">rdfs:seeAlso</option>
-                      </select>
-                      <div className="point"/>
+                      {i < namespaceList.length - 1 ?
+                        <React.Fragment>
+                          <div className="point"/>
+                          <select name="" id="" className="select white">
+                            <option value="">rdfs:seeAlso</option>
+                          </select>
+                          <div className="point"/>
+                        </React.Fragment>
+                      : null}
                     </div>
                     })
                     : null
