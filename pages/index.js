@@ -143,7 +143,7 @@ const Home = () => {
             patternArray[index].value += 1
             patternArray[index].ids.push(id)
           } else {
-            patternArray.push({ name: key, value: 1, ids: [id], displayMenu: false })
+            patternArray.push({ name: key, value: 1, ids: [id], hasMenu: false })
           }
         }
       }
@@ -155,7 +155,7 @@ const Home = () => {
         return 0
       })
       const namespaceList = patternArray.map(v => {
-        return { name: v.name, value: v.value, displayMenu: false, paths: v.ids.map(id => {return { o: id }}) }
+        return { name: v.name, value: v.value, hasMenu: false, ids: v.ids.map(id => {return { o: id }}) }
       })
       setNamespaceList([namespaceList])
       setSelectedNamespace([namespaceList[0].name])
@@ -165,18 +165,18 @@ const Home = () => {
   const executeQuery = async (namespaceInfo) => {
     // TODO クエリ実行中にloading画面を表示させる
     const newNamespaceList = JSON.parse(JSON.stringify(namespaceList))
-    namespaceInfo.paths.map(v => v.o)
-    const d = await q(namespaceInfo.name, namespaceInfo.paths.map(v => v.o))
+    namespaceInfo.ids.map(v => v.o)
+    const d = await q(namespaceInfo.name, namespaceInfo.ids.map(v => v.o))
     if (d) {
       const prefArray = []
       d.result.forEach(v => {
         const index = prefArray.findIndex(pref => pref.name === v.tn)
         if (index >= 0) {
           prefArray[index].value += 1
-          prefArray[index].paths.push({ s: v.f, o: v.t })
+          prefArray[index].ids.push({ s: v.f, o: v.t })
         } else {
           prefArray.push({
-            name: v.tn, value: 1, displayMenu: false, paths: [{ s: v.f, o: v.t }],
+            name: v.tn, value: 1, hasMenu: false, ids: [{ s: v.f, o: v.t }],
           })
         }
       })
@@ -235,10 +235,10 @@ const Home = () => {
    * @param index1
    * @param index2
    */
-  const showDisplayMenu = (index1, index2) => {
+  const toggleHasMenu = (index1, index2) => {
     const newNamespaceList = JSON.parse(JSON.stringify(namespaceList))
     let newNamespace = newNamespaceList[index1]
-    newNamespace[index2].displayMenu = !newNamespace[index2].displayMenu
+    newNamespace[index2].hasMenu = !newNamespace[index2].hasMenu
     setNamespaceList(newNamespaceList)
   }
   /**
@@ -248,7 +248,7 @@ const Home = () => {
    * @param index2
    */
   const showModal = (index1, index2) => {
-    showDisplayMenu(index1, index2)
+    toggleHasMenu(index1, index2)
     const results = []
     const headings = []
     namespaceList.forEach((v, i) => {
@@ -258,7 +258,7 @@ const Home = () => {
             return v2
           }
         })
-        results.push(data[0].paths)
+        results.push(data[0].ids)
         headings.push(data[0].name)
       }
     })
@@ -392,8 +392,8 @@ const Home = () => {
                                   </span>
                                 </label>
                                 {i > 0 && selectedNamespace[i] === v.name ?
-                                  <button className="radio__three_dots" onClick={() => showDisplayMenu(i, j)}/> : null}
-                                {v.displayMenu ? (
+                                  <button className="radio__three_dots" onClick={() => toggleHasMenu(i, j)}/> : null}
+                                {v.hasMenu ? (
                                   <div className="button_pull_down__children">
                                     <button className="button_pull_down__children__item" onClick={() => showModal(i, j)}>
                                       <svg className="icon" viewBox="0 0 24 24">
