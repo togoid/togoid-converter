@@ -6,29 +6,29 @@ import axios from 'axios'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 const idPatterns = {
-  'ncbigene': {
-    label: "NCBI Gene",
-    regexp: "^\\d+$",
-  },
+  // 'ncbigene': {
+  //   label: "NCBI Gene",
+  //   regexp: "^\\d+$",
+  // },
   // 'RefSeq(未)': {
   //   label: "RefSeq",
   //   regexp: "^(((AC|AP|NC|NG|NM|NP|NR|NT|NW|XM|XP|XR|YP|ZP)_\d+)|(NZ\_[A-Z]{2,4}\d+))(\.\d+)?$"
   // },
-  // 'Ensembl (ENSG)(未)': {
-  //   label: "Ensembl (ENSG)",
-  //   regexp: "^((ENSG\\d{11}(\\.\\d+)?)|(FB\\w{2}\\d{7})|(Y[A-Z]{2}\\d{3}[a-zA-Z](\\-[A-Z])?)|([A-Z_a-z0-9]+(\\.)?(t)?(\\d+)?([a-z])?))$"
-  // },
-  // 'Ensembl (ENST)(未)': {
-  //   label: "Ensembl (ENST)",
-  //   regexp: "^((ENST\\d{11}(\\.\\d+)?)|(FB\\w{2}\\d{7})|(Y[A-Z]{2}\\d{3}[a-zA-Z](\\-[A-Z])?)|([A-Z_a-z0-9]+(\\.)?(t)?(\\d+)?([a-z])?))$"
-  // },
+  'ensembl.gene': {
+    label: 'Ensembl (ENSG)',
+    regexp: '^((ENSG\\d{11}(\\.\\d+)?)|(FB\\w{2}\\d{7})|(Y[A-Z]{2}\\d{3}[a-zA-Z](\\-[A-Z])?)|([A-Z_a-z0-9]+(\\.)?(t)?(\\d+)?([a-z])?))$',
+  },
+  'ensembl.transcript': {
+    label: 'Ensembl (ENST)',
+    regexp: '^((ENST\\d{11}(\\.\\d+)?)|(FB\\w{2}\\d{7})|(Y[A-Z]{2}\\d{3}[a-zA-Z](\\-[A-Z])?)|([A-Z_a-z0-9]+(\\.)?(t)?(\\d+)?([a-z])?))$',
+  },
   'kegg.genes': {
-    label: "KEGG Genes",
-    regexp: "^\w+:[\w\d\.-]*$"
+    label: 'KEGG Genes',
+    regexp: '^\w+:[\w\d\.-]*$',
   },
   'hgnc': {
-    label: "HGNC",
-    regexp: "^((HGNC|hgnc):)?\\d{1,5}$",
+    label: 'HGNC',
+    regexp: '^((HGNC|hgnc):)?\\d{1,5}$',
   },
   // 'Gene Ontology(未)': {
   //   label: "Gene Ontology",
@@ -39,8 +39,8 @@ const idPatterns = {
   //   regexp: "^tgv\d+$"
   // },
   'dbsnp': {
-    label: "dbSNP",
-    regexp: "^rs\d+$"
+    label: 'dbSNP',
+    regexp: '^rs\d+$',
   },
   // 'dbVar(未)': {
   //   label: "dbVar",
@@ -51,55 +51,50 @@ const idPatterns = {
   //   regexp: "^(\d+|X|Y)-\d+-[ATGC]+-[ATGC]+$"
   // },
   'clinvar': {
-    label: "\tClinVar Variant",
-    regexp: "^\d+$"
+    label: '\tClinVar Variant',
+    regexp: '^\d+$',
   },
   'uniprot': {
-    label: "UniProt Knowledgebase",
-    regexp: "^([A-N,R-Z][0-9]([A-Z][A-Z, 0-9][A-Z, 0-9][0-9]){1,2})|([O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])(\.\d+)?$"
+    label: 'UniProt Knowledgebase',
+    regexp: '^([A-N,R-Z][0-9]([A-Z][A-Z, 0-9][A-Z, 0-9][0-9]){1,2})|([O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])(\.\d+)?$',
   },
-  // 'Ensembl (ENSP)(未)': {
-  //   label: "Ensembl (ENSP)",
-  //   regexp: "^((ENSP\\d{11}(\\.\\d+)?)|(FB\\w{2}\\d{7})|(Y[A-Z]{2}\\d{3}[a-zA-Z](\\-[A-Z])?)|([A-Z_a-z0-9]+(\\.)?(t)?(\\d+)?([a-z])?))$"
-  // },
+  'ensembl.protein': {
+    label: 'Ensembl (ENSP)',
+    regexp: '^((ENSP\\d{11}(\\.\\d+)?)|(FB\\w{2}\\d{7})|(Y[A-Z]{2}\\d{3}[a-zA-Z](\\-[A-Z])?)|([A-Z_a-z0-9]+(\\.)?(t)?(\\d+)?([a-z])?))$',
+  },
   'ncbiprotein': {
-    label: "NCBI Protein",
-    regexp: "^(\w+\d+(\.\d+)?)|(NP_\d+)$"
+    label: 'NCBI Protein',
+    regexp: '^(\w+\d+(\.\d+)?)|(NP_\d+)$',
   },
   'pdb': {
-    label: "Protein Data Bank",
-    regexp: "^[0-9][A-Za-z0-9]{3}$"
+    label: 'Protein Data Bank',
+    regexp: '^[0-9][A-Za-z0-9]{3}$',
   },
   'interpro': {
-    label: "InterPro",
-    regexp: "^IPR\d{6}$"
+    label: 'InterPro',
+    regexp: '^IPR\d{6}$',
   },
   'pfam': {
-    label: "Pfam",
-    regexp: "^PF\d{5}$"
+    label: 'Pfam',
+    regexp: '^PF\d{5}$',
   },
   'intact': {
-    label: "IntAct",
-    regexp: "^EBI\-[0-9]+$"
-  // },
-  // 'HINT(未)': {
-  //   label: "HINT",
-  //   regexp: "^([A-N,R-Z][0-9]([A-Z][A-Z, 0-9][A-Z, 0-9][0-9]){1,2})|([O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])(\.\d+)?\-([A-N,R-Z][0-9]([A-Z][A-Z, 0-9][A-Z, 0-9][0-9]){1,2})|([O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])(\.\d+)?$"
-  // },
-  // 'Instruct(未)': {
-  //   label: "Instruct",
-  //   regexp: "^([A-N,R-Z][0-9]([A-Z][A-Z, 0-9][A-Z, 0-9][0-9]){1,2})|([O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])(\.\d+)?\-([A-N,R-Z][0-9]([A-Z][A-Z, 0-9][A-Z, 0-9][0-9]){1,2})|([O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])(\.\d+)?$"
-  }
-};
+    label: 'IntAct',
+    regexp: '^EBI\-[0-9]+$',
+    // },
+    // 'HINT(未)': {
+    //   label: "HINT",
+    //   regexp: "^([A-N,R-Z][0-9]([A-Z][A-Z, 0-9][A-Z, 0-9][0-9]){1,2})|([O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])(\.\d+)?\-([A-N,R-Z][0-9]([A-Z][A-Z, 0-9][A-Z, 0-9][0-9]){1,2})|([O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])(\.\d+)?$"
+    // },
+    // 'Instruct(未)': {
+    //   label: "Instruct",
+    //   regexp: "^([A-N,R-Z][0-9]([A-Z][A-Z, 0-9][A-Z, 0-9][0-9]){1,2})|([O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])(\.\d+)?\-([A-N,R-Z][0-9]([A-Z][A-Z, 0-9][A-Z, 0-9][0-9]){1,2})|([O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])(\.\d+)?$"
+  },
+}
 
-const q = async (q) => {
-  return axios.get(process.env.NEXT_PUBLIC_SPARQL_ENDOPOINT, {
-    params: {
-      query: q,
-      format: 'application/sparql-results+json',
-    },
-  }).then((d) => {
-    return d.data.results.bindings
+const q = async (tableName, ids) => {
+  return axios.get(process.env.NEXT_PUBLIC_SPARQL_ENDOPOINT + '/' + tableName.replace('.', '_') + '/' + ids.join(',')).then((d) => {
+    return d.data
   }).catch(e => console.log(e))
 }
 
@@ -115,20 +110,19 @@ const Home = () => {
   const [clippedText, setClippedText] = useState('')
   const [copied, setCopied] = useState(false)
 
-
   /**
    * 選択されたnameSpaceがstatusにセットされたら、クエリを実行する
    */
   useEffect(() => {
     if (selectedNamespace.length > 0) {
-      const namespace = namespaceList[currentIndex].filter(namespace => namespace.name === selectedNamespace[currentIndex])
-      executeQuery(namespace[0])
+      const namespace = namespaceList[currentIndex].find(namespace => namespace.name === selectedNamespace[currentIndex])
+      executeQuery(namespace)
     }
-  },[selectedNamespace])
+  }, [selectedNamespace])
   /**
    * modalDataがstatusにセットされたら、データモーダルを表示する
    */
-  useEffect( () => {
+  useEffect(() => {
     if (modalData.length > 0) setModalStatus(!modalStatus)
   }, [modalData])
   useEffect(() => {
@@ -146,94 +140,55 @@ const Home = () => {
         if (id.match(idPatterns[key].regexp)) {
           let index = patternArray.findIndex(namespaceList => namespaceList.name === key)
           if (index >= 0) {
-            patternArray[index].value +=1
+            patternArray[index].value += 1
             patternArray[index].ids.push(id)
           } else {
-            patternArray.push({name: key, value: 1, ids: [id], displayMenu: false})
+            patternArray.push({ name: key, value: 1, ids: [id], displayMenu: false })
           }
         }
       }
     })
     if (patternArray && patternArray.length > 0) {
-      patternArray.sort(function(a,b){
-        if(a.value < b.value) return 1
-        if(a.value > b.value) return -1
+      patternArray.sort(function (a, b) {
+        if (a.value < b.value) return 1
+        if (a.value > b.value) return -1
         return 0
-      });
-      // path生成
+      })
       const namespaceList = patternArray.map(v => {
-        const path = v.ids.map(id => {
-          return {o: `http://identifiers.org/${v.name}/${id}`}
-        })
-        return {name: v.name, value: v.value, displayMenu: false, paths: path}
+        return { name: v.name, value: v.value, displayMenu: false, paths: v.ids.map(id => {return { o: id }}) }
       })
       setNamespaceList([namespaceList])
       setSelectedNamespace([namespaceList[0].name])
     }
   }
 
-  /**
-   * クエリを実行し結果から次のリストを作成。index1,index2がある場合は該当するサブメニューを閉じる
-   * @param namespaceInfo 検索する対象のnamespace情報
-   * @param index1 namespaceList(array)の添字
-   * @param index2 namespaceListの要素(array)の添字
-   * @returns {Promise<void>}
-   */
-  const executeQuery = async (namespaceInfo, index1, index2) => {
-    // TODO クエリ実行中にloading画面を表示させる
-    const newNamespaceList = JSON.parse(JSON.stringify(namespaceList))
-    if (newNamespaceList.length > 0 && (typeof index1 !== 'undefined' && typeof index2 !== 'undefined')) {
-      let newNamespace = newNamespaceList[index1]
-      newNamespace[index2].displayMenu = !newNamespace[index2].displayMenu
+  const executeQuery = async (namespaceInfo) => {
+      // TODO クエリ実行中にloading画面を表示させる
+      const newNamespaceList = JSON.parse(JSON.stringify(namespaceList))
+      namespaceInfo.paths.map(v => v.o)
+      const d = await q(namespaceInfo.name, namespaceInfo.paths.map(v => v.o))
+      if (d) {
+        const prefArray = []
+        d.result.forEach(v => {
+          const index = prefArray.findIndex(pref => pref.name === v.tn)
+          if (index >= 0) {
+            prefArray[index].value += 1
+            prefArray[index].paths.push({ s: v.f, o: v.t })
+          } else {
+            prefArray.push({
+              name: v.tn, value: 1, displayMenu: false, paths: [{ s: v.f, o: v.t }],
+            })
+          }
+        })
+        prefArray.sort(function (a, b) {
+          if (a.value < b.value) return 1
+          if (a.value > b.value) return -1
+          return 0
+        })
+        newNamespaceList.push(prefArray)
+        setNamespaceList(newNamespaceList)
+      }
     }
-    let query = ''
-    const sentenceList = []
-    let count = 0
-    query = 'select * where {VALUES ?s { '
-    namespaceInfo.paths.forEach((path) => {
-      if (count < 100) {
-        query = query.concat(`<${path.o}>`)
-        count ++
-      } else {
-        query = query.concat('}?s  rdfs:seeAlso ?o}')
-        sentenceList.push(query)
-        count = 0
-        query = 'select * where {VALUES ?s { '
-      }
-    })
-    query = query.concat('}?s  rdfs:seeAlso ?o}')
-    sentenceList.push(query)
-    const resultAll = await Promise.all(sentenceList.map(sentence => {
-      return q(sentence)
-    }))
-    let results = []
-    resultAll.forEach(res => {
-      results = results.concat(res)
-    })
-    const prefArray = []
-    results.forEach(v => {
-      if (v.o.value.match(/^http?:\/\/identifiers.org/)) {
-        const splitArray = v.o.value.replace('http://identifiers.org/', '').split('/')
-        const name = splitArray[0]
-        const index = prefArray.findIndex(pref => pref.name === name)
-        if (index >= 0) {
-          prefArray[index].value +=1
-          prefArray[index].paths.push({s: v.s.value, o: v.o.value})
-        } else {
-          prefArray.push({
-            name: name, value: 1, displayMenu: false, paths: [{s: v.s.value, o: v.o.value}]
-          })
-        }
-      }
-    })
-    prefArray.sort(function(a,b){
-      if(a.value < b.value) return 1
-      if(a.value > b.value) return -1
-      return 0
-    });
-    newNamespaceList.push(prefArray)
-    setNamespaceList(newNamespaceList)
-  }
   /**
    * 表示されているリストをクリアする
    */
@@ -296,9 +251,9 @@ const Home = () => {
     showDisplayMenu(index1, index2)
     const modalData = []
     namespaceList.forEach((v, i) => {
-      if(i <= index1) {
-        const data =  v.filter(v2 => {
-          if(v2.name === selectedNamespace[i]) {
+      if (i <= index1) {
+        const data = v.filter(v2 => {
+          if (v2.name === selectedNamespace[i]) {
             return v2
           }
         })
@@ -335,8 +290,8 @@ const Home = () => {
           const idS = splitArrayS[1]
           let newRow = []
           arrList.forEach(row => {
-            let colIndex = row.indexOf(idS);
-            if ( colIndex >= 0 ) {
+            let colIndex = row.indexOf(idS)
+            if (colIndex >= 0) {
               newRow = row.filter((v, i) => i <= colIndex)
               newArrayList.push(newRow.concat(idO))
             }
@@ -356,7 +311,7 @@ const Home = () => {
         text = text.concat('\n')
       }
       if (i > 0) {
-        text = text.concat(v[v.length-1])
+        text = text.concat(v[v.length - 1])
       }
     })
     console.log(text)
@@ -364,16 +319,16 @@ const Home = () => {
   }
 
   const exportCSV = () => {
-    let data = modalData.map((record)=>record.join(',')).join('\r\n');
-    let bom  = new Uint8Array([0xEF, 0xBB, 0xBF]);
-    let blob = new Blob([bom, data], {type: 'text/csv'});
-    let url = (window.URL || window.webkitURL).createObjectURL(blob);
-    let link = document.createElement('a');
-    link.download = 'result.csv';
-    link.href = url;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    let data = modalData.map((record) => record.join(',')).join('\r\n')
+    let bom = new Uint8Array([0xEF, 0xBB, 0xBF])
+    let blob = new Blob([bom, data], { type: 'text/csv' })
+    let url = (window.URL || window.webkitURL).createObjectURL(blob)
+    let link = document.createElement('a')
+    link.download = 'result.csv'
+    link.href = url
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }
 
   return (
@@ -442,9 +397,9 @@ const Home = () => {
               <div className="explore">
                 <div className="drawing">
                   {namespaceList && namespaceList.length > 0 ? namespaceList.map((namespace, i) => {
-                    return <div className="item_wrapper" key={i}>
-                      <ul className="result_list">
-                        {namespace.map((v, j) => {
+                      return <div className="item_wrapper" key={i}>
+                        <ul className="result_list">
+                          {namespace.map((v, j) => {
                             return <li key={j}>
                               <div className="radio green">
                                 <input type="radio" id={`result${i}-${j}`} className="radio__input"
@@ -456,7 +411,7 @@ const Home = () => {
                                   </span>
                                 </label>
                                 {i > 0 && selectedNamespace[i] === v.name ?
-                                  <button className="radio__three_dots" onClick={() => showDisplayMenu(i, j)} /> : null}
+                                  <button className="radio__three_dots" onClick={() => showDisplayMenu(i, j)}/> : null}
                                 {v.displayMenu ? (
                                   <div className="button_pull_down__children">
                                     <button className="button_pull_down__children__item" onClick={() => showModal(i, j)}>
@@ -467,23 +422,23 @@ const Home = () => {
                                       Resolve with this
                                     </button>
                                   </div>
-                                ) : ("")
+                                ) : ('')
                                 }
                               </div>
                             </li>
                           })
-                        }
-                      </ul>
-                      {i < namespaceList.length - 1 ?
-                        <React.Fragment>
-                          <div className="point"/>
-                          <select name="" id="" className="select white">
-                            <option value="">rdfs:seeAlso</option>
-                          </select>
-                          <div className="point"/>
-                        </React.Fragment>
-                      : null}
-                    </div>
+                          }
+                        </ul>
+                        {i < namespaceList.length - 1 ?
+                          <React.Fragment>
+                            <div className="point"/>
+                            <select name="" id="" className="select white">
+                              <option value="">rdfs:seeAlso</option>
+                            </select>
+                            <div className="point"/>
+                          </React.Fragment>
+                          : null}
+                      </div>
                     })
                     : null
                   }
@@ -496,7 +451,7 @@ const Home = () => {
                           <div className="modal__scroll_area">
                             <button onClick={() => setModalStatus(!modalStatus)} className="modal__close">
                               <svg viewBox="0 0 24 24">
-                                <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+                                <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
                               </svg>
                             </button>
                             <h2 className="title">ID forwarding</h2>
@@ -512,7 +467,8 @@ const Home = () => {
                               <div className="item_wrapper">
                                 <div className="input_search">
                                   <svg className="input_search__icon" viewBox="0 0 24 24">
-                                    <path fill="currentColor" d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" />
+                                    <path fill="currentColor"
+                                          d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"/>
                                   </svg>
                                   <input type="search" className="input_search__input"/>
                                 </div>
@@ -520,14 +476,14 @@ const Home = () => {
                                 <CopyToClipboard text={clippedText} onCopy={() => setCopied(true)}>
                                   <button className="button_icon">
                                     <svg className="button_icon__icon" viewBox="0 0 24 24">
-                                      <path fill="currentColor" d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
+                                      <path fill="currentColor" d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/>
                                     </svg>
                                     <span className="button_icon__label">copy</span>
                                   </button>
                                 </CopyToClipboard>
                                 <button className="button_icon" onClick={() => exportCSV()}>
                                   <svg className="button_icon__icon" viewBox="0 0 24 24">
-                                    <path fill="currentColor" d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
+                                    <path fill="currentColor" d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/>
                                   </svg>
                                   <span className="button_icon__label">エクスポート</span>
                                 </button>
@@ -536,18 +492,18 @@ const Home = () => {
                             </div>
                             <table className="table">
                               <thead>
-                                <tr>
-                                  {modalData && modalData.length > 0 ? modalData[0].map((v, i) => {
-                                    return <th key={i}>{v}</th>
-                                  }): null}
-                                </tr>
+                              <tr>
+                                {modalData && modalData.length > 0 ? modalData[0].map((v, i) => {
+                                  return <th key={i}>{v}</th>
+                                }) : null}
+                              </tr>
                               </thead>
                               <tbody>
                               {modalData && modalData.length > 0 ? modalData.map((data, i) => {
                                 if (i > 0) {
                                   return <tr key={i}>
-                                  {data.map((d, j) => {
-                                    return <td key={j}>{d}</td>
+                                    {data.map((d, j) => {
+                                      return <td key={j}>{d}</td>
                                       {/*   <td>*/}
                                       {/*      <ul className="buttons">*/}
                                       {/*        <li>*/}
@@ -558,17 +514,17 @@ const Home = () => {
                                       {/*        </li>*/}
                                       {/*      </ul>*/}
                                       {/*    </td>*/}
-                                  })}
+                                    })}
                                   </tr>
                                 }
-                              }): null}
+                              }) : null}
                               </tbody>
                             </table>
                             <button className="button_more">MORE</button>
                           </div>
                         </div>
                       </div>
-                    ) : ("")
+                    ) : ('')
                   }
                 </div>
               </div>
