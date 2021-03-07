@@ -106,7 +106,7 @@ const Home = () => {
   const [selectedNamespace, setSelectedNamespace] = useState([])
   const [modalStatus, setModalStatus] = useState(false)
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [modalData, setModalData] = useState({})
+  const [modalData, setModalData] = useState({ heading: [], rows: [] })
   const [clippedText, setClippedText] = useState('')
   const [copied, setCopied] = useState(false)
 
@@ -123,7 +123,7 @@ const Home = () => {
    * modalDataがstatusにセットされたら、データモーダルを表示する
    */
   useEffect(() => {
-    if (modalData.length > 0) setModalStatus(!modalStatus)
+    if (modalData.rows.length > 0) setModalStatus(!modalStatus)
   }, [modalData])
   useEffect(() => {
     if (modalStatus) setCopied(false)
@@ -163,32 +163,32 @@ const Home = () => {
   }
 
   const executeQuery = async (namespaceInfo) => {
-      // TODO クエリ実行中にloading画面を表示させる
-      const newNamespaceList = JSON.parse(JSON.stringify(namespaceList))
-      namespaceInfo.paths.map(v => v.o)
-      const d = await q(namespaceInfo.name, namespaceInfo.paths.map(v => v.o))
-      if (d) {
-        const prefArray = []
-        d.result.forEach(v => {
-          const index = prefArray.findIndex(pref => pref.name === v.tn)
-          if (index >= 0) {
-            prefArray[index].value += 1
-            prefArray[index].paths.push({ s: v.f, o: v.t })
-          } else {
-            prefArray.push({
-              name: v.tn, value: 1, displayMenu: false, paths: [{ s: v.f, o: v.t }],
-            })
-          }
-        })
-        prefArray.sort(function (a, b) {
-          if (a.value < b.value) return 1
-          if (a.value > b.value) return -1
-          return 0
-        })
-        newNamespaceList.push(prefArray)
-        setNamespaceList(newNamespaceList)
-      }
+    // TODO クエリ実行中にloading画面を表示させる
+    const newNamespaceList = JSON.parse(JSON.stringify(namespaceList))
+    namespaceInfo.paths.map(v => v.o)
+    const d = await q(namespaceInfo.name, namespaceInfo.paths.map(v => v.o))
+    if (d) {
+      const prefArray = []
+      d.result.forEach(v => {
+        const index = prefArray.findIndex(pref => pref.name === v.tn)
+        if (index >= 0) {
+          prefArray[index].value += 1
+          prefArray[index].paths.push({ s: v.f, o: v.t })
+        } else {
+          prefArray.push({
+            name: v.tn, value: 1, displayMenu: false, paths: [{ s: v.f, o: v.t }],
+          })
+        }
+      })
+      prefArray.sort(function (a, b) {
+        if (a.value < b.value) return 1
+        if (a.value > b.value) return -1
+        return 0
+      })
+      newNamespaceList.push(prefArray)
+      setNamespaceList(newNamespaceList)
     }
+  }
   /**
    * 表示されているリストをクリアする
    */
@@ -249,7 +249,8 @@ const Home = () => {
    */
   const showModal = (index1, index2) => {
     showDisplayMenu(index1, index2)
-    const modalData = []
+    const results = []
+    const headings = []
     namespaceList.forEach((v, i) => {
       if (i <= index1) {
         const data = v.filter(v2 => {
@@ -257,69 +258,49 @@ const Home = () => {
             return v2
           }
         })
-        modalData.push(data[0].paths)
+        results.push(data[0].paths)
+        headings.push(data[0].name)
       }
     })
     let arrList = []
     let newArrayList = []
-    modalData.forEach((line, i) => {
-      line.forEach((v, j) => {
-        const splitArrayO = v.o.replace('http://identifiers.org/', '').split('/')
-        const nameO = splitArrayO[0]
-        const idO = splitArrayO[1]
-        if (i === 0) {
-          // 1列目はnamespace
-          if (j === 0) {
-            arrList.push([nameO])
-          }
-        } else if (i === 1) {
-          if (j === 0) {
-            arrList[0].push(nameO)
-          }
+    results.forEach((rows, i) => {
+      rows.forEach((v) => {
+        if (i === 1) {
           // 2列目はsとoで1列目と2列目のリストを追加
-          const splitArrayS = v.s.replace('http://identifiers.org/', '').split('/')
-          const idS = splitArrayS[1]
-          arrList.push([idS, idO])
-        } else {
-          if (j === 0) {
-            arrList[0].push(nameO)
-            newArrayList.push(arrList[0])
-          }
+          arrList.push([v.s, v.o])
+        } else if (i > 1) {
           // 3列目以降は列または行追加
-          const splitArrayS = v.s.replace('http://identifiers.org/', '').split('/')
-          const idS = splitArrayS[1]
-          let newRow = []
           arrList.forEach(row => {
-            let colIndex = row.indexOf(idS)
+            let colIndex = row.indexOf(v.s)
             if (colIndex >= 0) {
-              newRow = row.filter((v, i) => i <= colIndex)
-              newArrayList.push(newRow.concat(idO))
+              const newRow = row.filter((v, i) => i <= colIndex)
+              newArrayList.push(newRow.concat(v.o))
             }
           })
         }
       })
       if (i >= 2) arrList = newArrayList
     })
-    setModalData(arrList)
+    setModalData({ headings: headings, rows: arrList })
     setClippedText(createClippedText(arrList))
   }
 
   const createClippedText = (array) => {
     let text = ''
     array.forEach((v, i) => {
-      if (i > 1) {
+      if (i > 0) {
         text = text.concat('\n')
       }
-      if (i > 0) {
-        text = text.concat(v[v.length - 1])
-      }
+      text = text.concat(v[v.length - 1])
     })
     console.log(text)
     return text
   }
 
   const exportCSV = () => {
-    let data = modalData.map((record) => record.join(',')).join('\r\n')
+    // todo カンマが万一データに混ざっていたときのために、csv生成用のライブラリを用いる。また見出し行をmodalData.headingsから取得する
+    let data = modalData.rows.map((record) => record.join(',')).join('\r\n')
     let bom = new Uint8Array([0xEF, 0xBB, 0xBF])
     let blob = new Blob([bom, data], { type: 'text/csv' })
     let url = (window.URL || window.webkitURL).createObjectURL(blob)
@@ -493,30 +474,28 @@ const Home = () => {
                             <table className="table">
                               <thead>
                               <tr>
-                                {modalData && modalData.length > 0 ? modalData[0].map((v, i) => {
+                                {modalData && modalData.headings.length > 0 ? modalData.headings.map((v, i) => {
                                   return <th key={i}>{v}</th>
                                 }) : null}
                               </tr>
                               </thead>
                               <tbody>
-                              {modalData && modalData.length > 0 ? modalData.map((data, i) => {
-                                if (i > 0) {
-                                  return <tr key={i}>
-                                    {data.map((d, j) => {
-                                      return <td key={j}>{d}</td>
-                                      {/*   <td>*/}
-                                      {/*      <ul className="buttons">*/}
-                                      {/*        <li>*/}
-                                      {/*          <button className="button_small green">NCBI Gene</button>*/}
-                                      {/*        </li>*/}
-                                      {/*        <li>*/}
-                                      {/*          <button className="button_small white">rdfs:seeAlso</button>*/}
-                                      {/*        </li>*/}
-                                      {/*      </ul>*/}
-                                      {/*    </td>*/}
-                                    })}
-                                  </tr>
-                                }
+                              {modalData && modalData.rows.length > 0 ? modalData.rows.map((data, i) => {
+                                return <tr key={i}>
+                                  {data.map((d, j) => {
+                                    return <td key={j}>{d}</td>
+                                    {/*   <td>*/}
+                                    {/*      <ul className="buttons">*/}
+                                    {/*        <li>*/}
+                                    {/*          <button className="button_small green">NCBI Gene</button>*/}
+                                    {/*        </li>*/}
+                                    {/*        <li>*/}
+                                    {/*          <button className="button_small white">rdfs:seeAlso</button>*/}
+                                    {/*        </li>*/}
+                                    {/*      </ul>*/}
+                                    {/*    </td>*/}
+                                  })}
+                                </tr>
                               }) : null}
                               </tbody>
                             </table>
