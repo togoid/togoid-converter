@@ -133,29 +133,29 @@ const Home = () => {
    */
   const matchPattern = () => {
     if (inputText === '') return
-    let ids = inputText.split('\n')
-    const patternArray = []
+    const ids = inputText.split(/[\s,\n]+/).map(v => v.trim())
+    const convertResults = []
     ids.forEach(id => {
       for (let key in idPatterns) {
         if (id.match(idPatterns[key].regexp)) {
-          let index = patternArray.findIndex(namespaceList => namespaceList.name === key)
-          if (index >= 0) {
-            patternArray[index].value += 1
-            patternArray[index].ids.push(id)
+          const index = convertResults.findIndex(namespaceList => namespaceList.name === key)
+          if (index === -1) {
+            convertResults.push({ name: key, count: 1, ids: [id], hasMenu: false })
           } else {
-            patternArray.push({ name: key, value: 1, ids: [id], hasMenu: false })
+            convertResults[index].count += 1
+            convertResults[index].ids.push(id)
           }
         }
       }
     })
-    if (patternArray && patternArray.length > 0) {
-      patternArray.sort(function (a, b) {
-        if (a.value < b.value) return 1
-        if (a.value > b.value) return -1
+    if (convertResults && convertResults.length > 0) {
+      convertResults.sort(function (a, b) {
+        if (a.count < b.count) return 1
+        if (a.count > b.count) return -1
         return 0
       })
-      const namespaceList = patternArray.map(v => {
-        return { name: v.name, value: v.value, hasMenu: false, ids: v.ids.map(id => {return { to: id }}) }
+      const namespaceList = convertResults.map(v => {
+        return { name: v.name, count: v.count, hasMenu: false, ids: v.ids.map(id => {return { to: id }}) }
       })
       setNamespaceList([namespaceList])
       setSelectedNamespace([namespaceList[0].name])
@@ -165,27 +165,26 @@ const Home = () => {
   const executeQuery = async (namespaceInfo) => {
     // TODO クエリ実行中にloading画面を表示させる
     const newNamespaceList = JSON.parse(JSON.stringify(namespaceList))
-    namespaceInfo.ids.map(v => v.to)
     const d = await q(namespaceInfo.name, namespaceInfo.ids.map(v => v.to))
     if (d) {
-      const prefArray = []
+      const convertResults = []
       d.result.forEach(v => {
-        const index = prefArray.findIndex(pref => pref.name === v.tn)
-        if (index >= 0) {
-          prefArray[index].value += 1
-          prefArray[index].ids.push({ from: v.f, to: v.t })
-        } else {
-          prefArray.push({
-            name: v.tn, value: 1, hasMenu: false, ids: [{ from: v.f, to: v.t }],
+        const index = convertResults.findIndex(pref => pref.name === v.tn)
+        if (index === -1) {
+          convertResults.push({
+            name: v.tn, count: 1, hasMenu: false, ids: [{ from: v.f, to: v.t }],
           })
+        } else {
+          convertResults[index].count += 1
+          convertResults[index].ids.push({ from: v.f, to: v.t })
         }
       })
-      prefArray.sort(function (a, b) {
-        if (a.value < b.value) return 1
-        if (a.value > b.value) return -1
+      convertResults.sort(function (a, b) {
+        if (a.count < b.count) return 1
+        if (a.count > b.count) return -1
         return 0
       })
-      newNamespaceList.push(prefArray)
+      newNamespaceList.push(convertResults)
       setNamespaceList(newNamespaceList)
     }
   }
