@@ -155,7 +155,7 @@ const Home = () => {
         return 0
       })
       const namespaceList = patternArray.map(v => {
-        return { name: v.name, value: v.value, hasMenu: false, ids: v.ids.map(id => {return { o: id }}) }
+        return { name: v.name, value: v.value, hasMenu: false, ids: v.ids.map(id => {return { to: id }}) }
       })
       setNamespaceList([namespaceList])
       setSelectedNamespace([namespaceList[0].name])
@@ -165,18 +165,18 @@ const Home = () => {
   const executeQuery = async (namespaceInfo) => {
     // TODO クエリ実行中にloading画面を表示させる
     const newNamespaceList = JSON.parse(JSON.stringify(namespaceList))
-    namespaceInfo.ids.map(v => v.o)
-    const d = await q(namespaceInfo.name, namespaceInfo.ids.map(v => v.o))
+    namespaceInfo.ids.map(v => v.to)
+    const d = await q(namespaceInfo.name, namespaceInfo.ids.map(v => v.to))
     if (d) {
       const prefArray = []
       d.result.forEach(v => {
         const index = prefArray.findIndex(pref => pref.name === v.tn)
         if (index >= 0) {
           prefArray[index].value += 1
-          prefArray[index].ids.push({ s: v.f, o: v.t })
+          prefArray[index].ids.push({ from: v.f, to: v.t })
         } else {
           prefArray.push({
-            name: v.tn, value: 1, hasMenu: false, ids: [{ s: v.f, o: v.t }],
+            name: v.tn, value: 1, hasMenu: false, ids: [{ from: v.f, to: v.t }],
           })
         }
       })
@@ -268,14 +268,14 @@ const Home = () => {
       rows.forEach((v) => {
         if (i === 1) {
           // 2列目はsとoで1列目と2列目のリストを追加
-          arrList.push([v.s, v.o])
+          arrList.push([v.from, v.to])
         } else if (i > 1) {
           // 3列目以降は列または行追加
           arrList.forEach(row => {
-            let colIndex = row.indexOf(v.s)
+            let colIndex = row.indexOf(v.from)
             if (colIndex >= 0) {
               const newRow = row.filter((v, i) => i <= colIndex)
-              newArrayList.push(newRow.concat(v.o))
+              newArrayList.push(newRow.concat(v.to))
             }
           })
         }
