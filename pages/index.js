@@ -114,8 +114,8 @@ const Home = () => {
   const [modalData, setModalData] = useState({})
   const [clippedText, setClippedText] = useState('')
   const [copied, setCopied] = useState(false)
-  
-  
+
+
   /**
    * 選択されたnameSpaceがstatusにセットされたら、クエリを実行する
    */
@@ -171,7 +171,7 @@ const Home = () => {
       setSelectedNamespace([namespaceList[0].name])
     }
   }
-  
+
   /**
    * クエリを実行し結果から次のリストを作成。index1,index2がある場合は該当するサブメニューを閉じる
    * @param namespaceInfo 検索する対象のnamespace情報
@@ -348,7 +348,7 @@ const Home = () => {
     setModalData(arrList)
     setClippedText(createClippedText(arrList))
   }
-  
+
   const createClippedText = (array) => {
     let text = ''
     array.forEach((v, i) => {
@@ -362,7 +362,7 @@ const Home = () => {
     console.log(text)
     return text
   }
-  
+
   const exportCSV = () => {
     let data = modalData.map((record)=>record.join(',')).join('\r\n');
     let bom  = new Uint8Array([0xEF, 0xBB, 0xBF]);
@@ -375,7 +375,7 @@ const Home = () => {
     link.click();
     document.body.removeChild(link);
   }
-  
+
   return (
     <div className="home">
       <Head>
@@ -500,8 +500,76 @@ const Home = () => {
                               </svg>
                             </button>
                             <h2 className="title">ID forwarding</h2>
-                            <div className="modal__top">
 
+                            <div className="modal__path">
+                              <p className="modal__heading">PATH</p>
+                              <div className="modal__path__frame">
+                                <div className="modal__path__frame__inner">
+
+                                  <div htmlFor={`result`} className="path_label green">
+                                    <span className="path_label__inner">
+                                      <img src="/images/icon_rat.png" alt="アイコン画像：ラット" className="icon"/>
+                                      HGNC
+                                    </span>
+                                  </div>
+
+                                  <div htmlFor={`result`} className="path_label small white">
+                                    <span className="path_label__inner">
+                                      プロパティA
+                                    </span>
+                                  </div>
+
+                                  <div htmlFor={`result`} className="path_label small green">
+                                    <span className="path_label__inner">
+                                      <img src="/images/icon_rat.png" alt="アイコン画像：ラット" className="icon"/>
+                                      HGNC
+                                    </span>
+                                  </div>
+
+                                  <div htmlFor={`result`} className="path_label small white">
+                                    <span className="path_label__inner">
+                                      プロパティA
+                                    </span>
+                                  </div>
+
+                                  <div htmlFor={`result`} className="path_label small purple">
+                                    <span className="path_label__inner">
+                                      <img src="/images/icon_rat.png" alt="アイコン画像：ラット" className="icon"/>
+                                      HGNC
+                                    </span>
+                                  </div>
+
+                                  <div htmlFor={`result`} className="path_label small white">
+                                    <span className="path_label__inner">
+                                      プロパティA
+                                    </span>
+                                  </div>
+
+                                  <div htmlFor={`result`} className="path_label small purple">
+                                    <span className="path_label__inner">
+                                      <img src="/images/icon_rat.png" alt="アイコン画像：ラット" className="icon"/>
+                                      HGNC
+                                    </span>
+                                  </div>
+
+                                  <div htmlFor={`result`} className="path_label small white">
+                                    <span className="path_label__inner">
+                                      プロパティA
+                                    </span>
+                                  </div>
+
+                                  <div htmlFor={`result`} className="path_label purple">
+                                    <span className="path_label__inner">
+                                      <img src="/images/icon_rat.png" alt="アイコン画像：ラット" className="icon"/>
+                                      HGNC
+                                    </span>
+                                  </div>
+
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="modal__top">
                               <div className="option">
                                 <p className="label">Option</p>
                                 <select name="" id="" className="select white">

@@ -35,9 +35,46 @@
       fill: $gray07;
     }
   }
+
+  &__heading {
+    font-size: 1.8rem;
+    margin: 0 0 5px;
+    color: $gray07;
+  }
   .title {
     @include border_title;
     margin: 0 0 26px;
+  }
+
+  &__path {
+    margin: 0 0 27px;
+    &__frame {
+      width: 100%;
+      padding: 18px 0 19px 19px;
+      overflow: auto;
+      background: $gray03;
+      &__inner {
+        display: flex;
+        align-items: center;
+        min-width: 150%;
+        .path_label {
+          & + .path_label {
+            position: relative;
+            margin: 0 0 0 15px;
+            &:before {
+              position: absolute;
+              top: 50%;
+              left: -15px;
+              content: '';
+              display: inline-block;
+              width: 15px;
+              height: 1px;
+              background: $gray06;
+            }
+          }
+        }
+      }
+    }
   }
 
   &__top {
