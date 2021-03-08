@@ -64,7 +64,7 @@
         padding: 0 calc((100vw - 987px) /2) 107px;
         margin: 0 auto;
         overflow: auto;
-        .exprore {
+        .explore {
           display: flex;
         }
         .data {
@@ -105,6 +105,78 @@
             display: flex;
             align-items: center;
             margin: 0 0 15px;
+          }
+        }
+      }
+    }
+  }
+
+  .database {
+    padding: 31px 0 0;
+    background: $gray03;
+    &__top {
+      margin: 0 0 30px;
+      text-align: right;
+      .input_search {
+        display: inline-block;
+      }
+    }
+    &__inner {
+      width: 900px;
+      margin: 0 auto;
+    }
+    &__item {
+      color: $gray04;
+      padding: 19px 0 38px;
+      border-bottom: 1px solid $gray06;
+      &:last-child {
+        border-bottom: none;
+      }
+      .title {
+        font-size: 1.8rem;
+        margin: 0 0 19px;
+        .icon {
+          width: 26px;
+          margin: 0 6px 0 0;
+          vertical-align: middle;
+        }
+      }
+      .description,
+      .path,
+      .data {
+        padding: 0 0 0 26px;
+      }
+      .description {
+        font-size: 1.4rem;
+        margin: 0 0 7px;
+      }
+      .path {
+        display: flex;
+        align-items: center;
+        margin: 0 0 31px;
+        .icon {
+          width: 24px;
+          path {
+            fill: $blue01;
+          }
+        }
+        .path_label {
+          margin: 0 10px 0 0;
+        }
+      }
+      .data {
+        &__wrapper {
+          display: flex;
+          justify-content: space-between;
+          font-size: 1rem;
+          margin: 0 0 8px;
+          dt {
+            width: 40px;
+            color: $gray01;
+            text-align: right;
+          }
+          dd {
+            width: calc(100% - 53px);
           }
         }
       }
