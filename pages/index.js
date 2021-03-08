@@ -105,6 +105,7 @@ const q = async (q) => {
 
 const Home = () => {
   const [pullMenuStatus, setPullMenuStatus] = useState(false)
+  const [pullExportStatus, setPullExportStatus] = useState(false)
   const [inputStatus, setInputStatus] = useState(0)
   const [inputText, setInputText] = useState('')
   const [namespaceList, setNamespaceList] = useState([])
@@ -505,7 +506,7 @@ const Home = () => {
                               <p className="modal__heading">PATH</p>
                               <div className="modal__path__frame">
                                 <div className="modal__path__frame__inner">
-
+                                  {/* Path */}
                                   <div htmlFor={`result`} className="path_label green">
                                     <span className="path_label__inner">
                                       <img src="/images/icon_rat.png" alt="アイコン画像：ラット" className="icon"/>
@@ -564,7 +565,7 @@ const Home = () => {
                                       HGNC
                                     </span>
                                   </div>
-
+                                  {/* Path */}
                                 </div>
                               </div>
                             </div>
@@ -593,12 +594,53 @@ const Home = () => {
                                     <span className="button_icon__label">copy</span>
                                   </button>
                                 </CopyToClipboard>
-                                <button className="button_icon" onClick={() => exportCSV()}>
-                                  <svg className="button_icon__icon" viewBox="0 0 24 24">
-                                    <path fill="currentColor" d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
-                                  </svg>
-                                  <span className="button_icon__label">エクスポート</span>
-                                </button>
+                                <div className="export_button">
+                                  <button className="button_icon" onClick={() => exportCSV()}>
+                                    <svg className="button_icon__icon" viewBox="0 0 24 24">
+                                      <path fill="currentColor" d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
+                                    </svg>
+                                    <span
+                                      onClick={() => setPullExportStatus(!pullExportStatus)}
+                                      className="button_icon__label">
+                                    エクスポート
+                                  </span>
+                                  </button>
+                                  {pullExportStatus ?
+                                    (
+                                      <div className="button_pull_down__children">
+                                        <button className="button_pull_down__children__item">
+                                          <svg className="icon" viewBox="0 0 24 24">
+                                            <path fill="currentColor" d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z" />
+                                          </svg>
+                                          クリップボードにコピー
+                                        </button>
+                                        <button className="button_pull_down__children__item">
+                                          <svg className="icon" viewBox="0 0 24 24">
+                                            <path fill="currentColor"
+                                                  d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z"/>
+                                          </svg>
+                                          ID一覧
+                                        </button>
+                                        <button className="button_pull_down__children__item">
+                                          <svg className="icon" viewBox="0 0 24 24">
+                                            <path fill="currentColor"
+                                                  d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z"/>
+                                          </svg>
+                                          URL一覧
+                                        </button>
+                                        <button className="button_pull_down__children__item">
+                                          <svg className="icon" viewBox="0 0 24 24">
+                                            <path fill="currentColor"
+                                                  d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z"/>
+                                          </svg>
+                                          CSV
+                                        </button>
+                                      </div>
+                                    ) : (
+                                      ""
+                                    )
+                                  }
+                                </div>
                               </div>
 
                             </div>
