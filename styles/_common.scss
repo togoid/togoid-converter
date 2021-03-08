@@ -1,0 +1,56 @@
+@charset "UTF-8";
+.path_label {
+  display: inline-block;
+  width: 150px;
+  font-size: 1.2rem;
+  color: $textColor02;
+  line-height: 38px;
+  text-align: center;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  &.green {
+    background: $green01;
+  }
+  &.purple {
+    background: $purple01;
+  }
+  &.orange {
+    background: $orange01;
+  }
+  &.white {
+    border-color: $gray06;
+    background: $white;
+  }
+
+  &__inner {
+    position: relative;
+    display: block;
+    .icon {
+      position: absolute;
+      top: 7px;
+      left: 7px;
+      width: 26px;
+      height: 26px;
+      overflow: hidden;
+      border-radius: 50%;
+    }
+  }
+
+  &.small {
+    width: auto;
+    min-width: 70px;
+    padding: 0 10px;
+    line-height: 24px;
+    .path_label__inner {
+      position: static;
+      .icon {
+        position: static;
+        display: inline-block;
+        width: 19px;
+        height: 19px;
+        margin: 0 9px 3px 0;
+        vertical-align: middle;
+      }
+    }
+  }
+}
