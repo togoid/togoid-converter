@@ -104,6 +104,7 @@ const q = async (q) => {
 }
 
 const Home = () => {
+  const [tabStatus, setTabStatus] = useState('EXPRORE');
   const [pullMenuStatus, setPullMenuStatus] = useState(false)
   const [pullExportStatus, setPullExportStatus] = useState(false)
   const [inputStatus, setInputStatus] = useState(0)
@@ -409,281 +410,412 @@ const Home = () => {
         </div>
 
         <div className="drawing_area">
-          <div className="panel">
-            <div className="panel__button">
-              <div className="button_pull_down__wrapper">
-                <button
-                  onClick={() => setPullMenuStatus(!pullMenuStatus)}
-                  className={pullMenuStatus ? 'button_pull_down active' : 'button_pull_down'}>
-                  Operation
-                </button>
-                {pullMenuStatus ?
-                  (
-                    <div className="button_pull_down__children">
-                      <button className="button_pull_down__children__item">
-                        <svg className="icon" viewBox="0 0 24 24">
-                          <path fill="currentColor" d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/>
-                        </svg>
-                        Export as CSV
-                      </button>
-                      <button className="button_pull_down__children__item">
-                        <svg className="icon" viewBox="0 0 24 24">
-                          <path fill="currentColor"
-                                d="M13.5,7A6.5,6.5 0 0,1 20,13.5A6.5,6.5 0 0,1 13.5,20H10V18H13.5C16,18 18,16 18,13.5C18,11 16,9 13.5,9H7.83L10.91,12.09L9.5,13.5L4,8L9.5,2.5L10.92,3.91L7.83,7H13.5M6,18H8V20H6V18Z"/>
-                        </svg>
-                        Reset
-                      </button>
-                    </div>
-                  ) : (
-                    ''
-                  )}
+          <div className="tab_wrapper">
+            <button
+              onClick={() => setTabStatus("EXPRORE")}
+              className={tabStatus === "EXPRORE" ? "button_tab active" : "button_tab"}>
+              EXPRORE
+            </button>
+            <button
+              onClick={() => setTabStatus("DATA")}
+              className={tabStatus === "DATA" ? "button_tab active" : "button_tab"}>
+              DATABASE
+            </button>
+          </div>
+          { tabStatus === 'EXPRORE' ? (
+            <div className="panel">
+              <div className="panel__button">
+                <div className="button_pull_down__wrapper">
+                  <button
+                    onClick={() => setPullMenuStatus(!pullMenuStatus)}
+                    className={pullMenuStatus ? 'button_pull_down active' : 'button_pull_down'}>
+                    Operation
+                  </button>
+                  {pullMenuStatus ?
+                    (
+                      <div className="button_pull_down__children">
+                        <button className="button_pull_down__children__item">
+                          <svg className="icon" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/>
+                          </svg>
+                          Export as CSV
+                        </button>
+                        <button className="button_pull_down__children__item">
+                          <svg className="icon" viewBox="0 0 24 24">
+                            <path fill="currentColor"
+                                  d="M13.5,7A6.5,6.5 0 0,1 20,13.5A6.5,6.5 0 0,1 13.5,20H10V18H13.5C16,18 18,16 18,13.5C18,11 16,9 13.5,9H7.83L10.91,12.09L9.5,13.5L4,8L9.5,2.5L10.92,3.91L7.83,7H13.5M6,18H8V20H6V18Z"/>
+                          </svg>
+                          Reset
+                        </button>
+                      </div>
+                    ) : (
+                      ''
+                    )}
+                </div>
               </div>
-            </div>
-            <div className="panel__inner">
-              <div className="explore">
-                <div className="drawing">
-                  {namespaceList && namespaceList.length > 0 ? namespaceList.map((namespace, i) => {
-                    return <div className="item_wrapper" key={i}>
-                      <ul className="result_list">
-                        {namespace.map((v, j) => {
-                            return <li key={j}>
-                              <div className="radio green">
-                                <input type="radio" id={`result${i}-${j}`} className="radio__input"
-                                       checked={selectedNamespace[i] === v.name} onChange={() => selectNamespace(v.name, i)}/>
-                                <label htmlFor={`result${i}-${j}`} className="radio__large_label green">
+              <div className="panel__inner">
+                <div className="explore">
+                  <div className="drawing">
+                    {namespaceList && namespaceList.length > 0 ? namespaceList.map((namespace, i) => {
+                        return <div className="item_wrapper" key={i}>
+                          <ul className="result_list">
+                            {namespace.map((v, j) => {
+                              return <li key={j}>
+                                <div className="radio green">
+                                  <input type="radio" id={`result${i}-${j}`} className="radio__input"
+                                         checked={selectedNamespace[i] === v.name} onChange={() => selectNamespace(v.name, i)}/>
+                                  <label htmlFor={`result${i}-${j}`} className="radio__large_label green">
                                   <span className="radio__large_label__inner">
                                     <img src="/images/icon_rat.png" alt="アイコン画像：ラット" className="icon"/>
                                     {v.name}
                                   </span>
-                                </label>
-                                {i > 0 && selectedNamespace[i] === v.name ?
-                                  <button className="radio__three_dots" onClick={() => showDisplayMenu(i, j)} /> : null}
-                                {v.displayMenu ? (
-                                  <div className="button_pull_down__children">
-                                    <button className="button_pull_down__children__item" onClick={() => showModal(i, j)}>
-                                      <svg className="icon" viewBox="0 0 24 24">
-                                        <path fill="currentColor"
-                                              d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z"/>
-                                      </svg>
-                                      Resolve with this
-                                    </button>
-                                  </div>
-                                ) : ("")
-                                }
-                              </div>
-                            </li>
-                          })
-                        }
-                      </ul>
-                      {i < namespaceList.length - 1 ?
-                        <React.Fragment>
-                          <div className="point"/>
-                          <select name="" id="" className="select white">
-                            <option value="">rdfs:seeAlso</option>
-                          </select>
-                          <div className="point"/>
-                        </React.Fragment>
-                      : null}
-                    </div>
-                    })
-                    : null
-                  }
-
-                  {/* Modal */}
-                  {
-                    modalStatus ? (
-                      <div className="modal">
-                        <div className="modal__inner">
-                          <div className="modal__scroll_area">
-                            <button onClick={() => setModalStatus(!modalStatus)} className="modal__close">
-                              <svg viewBox="0 0 24 24">
-                                <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
-                              </svg>
-                            </button>
-                            <h2 className="title">ID forwarding</h2>
-
-                            <div className="modal__path">
-                              <p className="modal__heading">PATH</p>
-                              <div className="modal__path__frame">
-                                <div className="modal__path__frame__inner">
-                                  {/* Path */}
-                                  <div htmlFor={`result`} className="path_label green">
-                                    <span className="path_label__inner">
-                                      <img src="/images/icon_rat.png" alt="アイコン画像：ラット" className="icon"/>
-                                      HGNC
-                                    </span>
-                                  </div>
-
-                                  <div htmlFor={`result`} className="path_label small white">
-                                    <span className="path_label__inner">
-                                      プロパティA
-                                    </span>
-                                  </div>
-
-                                  <div htmlFor={`result`} className="path_label small green">
-                                    <span className="path_label__inner">
-                                      <img src="/images/icon_rat.png" alt="アイコン画像：ラット" className="icon"/>
-                                      HGNC
-                                    </span>
-                                  </div>
-
-                                  <div htmlFor={`result`} className="path_label small white">
-                                    <span className="path_label__inner">
-                                      プロパティA
-                                    </span>
-                                  </div>
-
-                                  <div htmlFor={`result`} className="path_label small purple">
-                                    <span className="path_label__inner">
-                                      <img src="/images/icon_rat.png" alt="アイコン画像：ラット" className="icon"/>
-                                      HGNC
-                                    </span>
-                                  </div>
-
-                                  <div htmlFor={`result`} className="path_label small white">
-                                    <span className="path_label__inner">
-                                      プロパティA
-                                    </span>
-                                  </div>
-
-                                  <div htmlFor={`result`} className="path_label small purple">
-                                    <span className="path_label__inner">
-                                      <img src="/images/icon_rat.png" alt="アイコン画像：ラット" className="icon"/>
-                                      HGNC
-                                    </span>
-                                  </div>
-
-                                  <div htmlFor={`result`} className="path_label small white">
-                                    <span className="path_label__inner">
-                                      プロパティA
-                                    </span>
-                                  </div>
-
-                                  <div htmlFor={`result`} className="path_label purple">
-                                    <span className="path_label__inner">
-                                      <img src="/images/icon_rat.png" alt="アイコン画像：ラット" className="icon"/>
-                                      HGNC
-                                    </span>
-                                  </div>
-                                  {/* Path */}
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="modal__top">
-                              <div className="option">
-                                <p className="label">Option</p>
-                                <select name="" id="" className="select white">
-                                  <option value="id">ID</option>
-                                </select>
-                              </div>
-
-                              <div className="item_wrapper">
-                                <div className="input_search">
-                                  <svg className="input_search__icon" viewBox="0 0 24 24">
-                                    <path fill="currentColor" d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" />
-                                  </svg>
-                                  <input type="search" className="input_search__input"/>
-                                </div>
-                                {copied ? <span>Copied.</span> : null}
-                                <CopyToClipboard text={clippedText} onCopy={() => setCopied(true)}>
-                                  <button className="button_icon">
-                                    <svg className="button_icon__icon" viewBox="0 0 24 24">
-                                      <path fill="currentColor" d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
-                                    </svg>
-                                    <span className="button_icon__label">copy</span>
-                                  </button>
-                                </CopyToClipboard>
-                                <div className="export_button">
-                                  <button className="button_icon" onClick={() => exportCSV()}>
-                                    <svg className="button_icon__icon" viewBox="0 0 24 24">
-                                      <path fill="currentColor" d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
-                                    </svg>
-                                    <span
-                                      onClick={() => setPullExportStatus(!pullExportStatus)}
-                                      className="button_icon__label">
-                                    エクスポート
-                                  </span>
-                                  </button>
-                                  {pullExportStatus ?
-                                    (
-                                      <div className="button_pull_down__children">
-                                        <button className="button_pull_down__children__item">
-                                          <svg className="icon" viewBox="0 0 24 24">
-                                            <path fill="currentColor" d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z" />
-                                          </svg>
-                                          クリップボードにコピー
-                                        </button>
-                                        <button className="button_pull_down__children__item">
-                                          <svg className="icon" viewBox="0 0 24 24">
-                                            <path fill="currentColor"
-                                                  d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z"/>
-                                          </svg>
-                                          ID一覧
-                                        </button>
-                                        <button className="button_pull_down__children__item">
-                                          <svg className="icon" viewBox="0 0 24 24">
-                                            <path fill="currentColor"
-                                                  d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z"/>
-                                          </svg>
-                                          URL一覧
-                                        </button>
-                                        <button className="button_pull_down__children__item">
-                                          <svg className="icon" viewBox="0 0 24 24">
-                                            <path fill="currentColor"
-                                                  d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z"/>
-                                          </svg>
-                                          CSV
-                                        </button>
-                                      </div>
-                                    ) : (
-                                      ""
-                                    )
+                                  </label>
+                                  {i > 0 && selectedNamespace[i] === v.name ?
+                                    <button className="radio__three_dots" onClick={() => showDisplayMenu(i, j)} /> : null}
+                                  {v.displayMenu ? (
+                                    <div className="button_pull_down__children">
+                                      <button className="button_pull_down__children__item" onClick={() => showModal(i, j)}>
+                                        <svg className="icon" viewBox="0 0 24 24">
+                                          <path fill="currentColor"
+                                                d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z"/>
+                                        </svg>
+                                        Resolve with this
+                                      </button>
+                                    </div>
+                                  ) : ("")
                                   }
                                 </div>
+                              </li>
+                            })
+                            }
+                          </ul>
+                          {i < namespaceList.length - 1 ?
+                            <React.Fragment>
+                              <div className="point"/>
+                              <select name="" id="" className="select white">
+                                <option value="">rdfs:seeAlso</option>
+                              </select>
+                              <div className="point"/>
+                            </React.Fragment>
+                            : null}
+                        </div>
+                      })
+                      : null
+                    }
+
+                    {/* Modal */}
+                    {
+                      modalStatus ? (
+                        <div className="modal">
+                          <div className="modal__inner">
+                            <div className="modal__scroll_area">
+                              <button onClick={() => setModalStatus(!modalStatus)} className="modal__close">
+                                <svg viewBox="0 0 24 24">
+                                  <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+                                </svg>
+                              </button>
+                              <h2 className="title">ID forwarding</h2>
+
+                              <div className="modal__path">
+                                <p className="modal__heading">PATH</p>
+                                <div className="modal__path__frame">
+                                  <div className="modal__path__frame__inner">
+                                    {/* Path */}
+                                    <div htmlFor={`result`} className="path_label green">
+                                    <span className="path_label__inner">
+                                      <img src="/images/icon_rat.png" alt="アイコン画像：ラット" className="icon"/>
+                                      HGNC
+                                    </span>
+                                    </div>
+
+                                    <div htmlFor={`result`} className="path_label small white">
+                                    <span className="path_label__inner">
+                                      プロパティA
+                                    </span>
+                                    </div>
+
+                                    <div htmlFor={`result`} className="path_label small green">
+                                    <span className="path_label__inner">
+                                      <img src="/images/icon_rat.png" alt="アイコン画像：ラット" className="icon"/>
+                                      HGNC
+                                    </span>
+                                    </div>
+
+                                    <div htmlFor={`result`} className="path_label small white">
+                                    <span className="path_label__inner">
+                                      プロパティA
+                                    </span>
+                                    </div>
+
+                                    <div htmlFor={`result`} className="path_label small purple">
+                                    <span className="path_label__inner">
+                                      <img src="/images/icon_rat.png" alt="アイコン画像：ラット" className="icon"/>
+                                      HGNC
+                                    </span>
+                                    </div>
+
+                                    <div htmlFor={`result`} className="path_label small white">
+                                    <span className="path_label__inner">
+                                      プロパティA
+                                    </span>
+                                    </div>
+
+                                    <div htmlFor={`result`} className="path_label small purple">
+                                    <span className="path_label__inner">
+                                      <img src="/images/icon_rat.png" alt="アイコン画像：ラット" className="icon"/>
+                                      HGNC
+                                    </span>
+                                    </div>
+
+                                    <div htmlFor={`result`} className="path_label small white">
+                                    <span className="path_label__inner">
+                                      プロパティA
+                                    </span>
+                                    </div>
+
+                                    <div htmlFor={`result`} className="path_label purple">
+                                    <span className="path_label__inner">
+                                      <img src="/images/icon_rat.png" alt="アイコン画像：ラット" className="icon"/>
+                                      HGNC
+                                    </span>
+                                    </div>
+                                    {/* Path */}
+                                  </div>
+                                </div>
                               </div>
 
-                            </div>
-                            <table className="table">
-                              <thead>
+                              <div className="modal__top">
+                                <div className="option">
+                                  <p className="label">Option</p>
+                                  <select name="" id="" className="select white">
+                                    <option value="id">ID</option>
+                                  </select>
+                                </div>
+
+                                <div className="item_wrapper">
+                                  <div className="input_search">
+                                    <svg className="input_search__icon" viewBox="0 0 24 24">
+                                      <path fill="currentColor" d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" />
+                                    </svg>
+                                    <input type="search" className="input_search__input"/>
+                                  </div>
+                                  {copied ? <span>Copied.</span> : null}
+                                  <CopyToClipboard text={clippedText} onCopy={() => setCopied(true)}>
+                                    <button className="button_icon">
+                                      <svg className="button_icon__icon" viewBox="0 0 24 24">
+                                        <path fill="currentColor" d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
+                                      </svg>
+                                      <span className="button_icon__label">copy</span>
+                                    </button>
+                                  </CopyToClipboard>
+                                  <div className="export_button">
+                                    <button className="button_icon" onClick={() => exportCSV()}>
+                                      <svg className="button_icon__icon" viewBox="0 0 24 24">
+                                        <path fill="currentColor" d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
+                                      </svg>
+                                      <span
+                                        onClick={() => setPullExportStatus(!pullExportStatus)}
+                                        className="button_icon__label">
+                                    エクスポート
+                                  </span>
+                                    </button>
+                                    {pullExportStatus ?
+                                      (
+                                        <div className="button_pull_down__children">
+                                          <button className="button_pull_down__children__item">
+                                            <svg className="icon" viewBox="0 0 24 24">
+                                              <path fill="currentColor" d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z" />
+                                            </svg>
+                                            クリップボードにコピー
+                                          </button>
+                                          <button className="button_pull_down__children__item">
+                                            <svg className="icon" viewBox="0 0 24 24">
+                                              <path fill="currentColor"
+                                                    d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z"/>
+                                            </svg>
+                                            ID一覧
+                                          </button>
+                                          <button className="button_pull_down__children__item">
+                                            <svg className="icon" viewBox="0 0 24 24">
+                                              <path fill="currentColor"
+                                                    d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z"/>
+                                            </svg>
+                                            URL一覧
+                                          </button>
+                                          <button className="button_pull_down__children__item">
+                                            <svg className="icon" viewBox="0 0 24 24">
+                                              <path fill="currentColor"
+                                                    d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z"/>
+                                            </svg>
+                                            CSV
+                                          </button>
+                                        </div>
+                                      ) : (
+                                        ""
+                                      )
+                                    }
+                                  </div>
+                                </div>
+
+                              </div>
+                              <table className="table">
+                                <thead>
                                 <tr>
                                   {modalData && modalData.length > 0 ? modalData[0].map((v, i) => {
                                     return <th key={i}>{v}</th>
                                   }): null}
                                 </tr>
-                              </thead>
-                              <tbody>
-                              {modalData && modalData.length > 0 ? modalData.map((data, i) => {
-                                if (i > 0) {
-                                  return <tr key={i}>
-                                  {data.map((d, j) => {
-                                    return <td key={j}>{d}</td>
-                                      {/*   <td>*/}
-                                      {/*      <ul className="buttons">*/}
-                                      {/*        <li>*/}
-                                      {/*          <button className="button_small green">NCBI Gene</button>*/}
-                                      {/*        </li>*/}
-                                      {/*        <li>*/}
-                                      {/*          <button className="button_small white">rdfs:seeAlso</button>*/}
-                                      {/*        </li>*/}
-                                      {/*      </ul>*/}
-                                      {/*    </td>*/}
-                                  })}
-                                  </tr>
-                                }
-                              }): null}
-                              </tbody>
-                            </table>
-                            <button className="button_more">MORE</button>
+                                </thead>
+                                <tbody>
+                                {modalData && modalData.length > 0 ? modalData.map((data, i) => {
+                                  if (i > 0) {
+                                    return <tr key={i}>
+                                      {data.map((d, j) => {
+                                        return <td key={j}>{d}</td>
+                                        {/*   <td>*/}
+                                        {/*      <ul className="buttons">*/}
+                                        {/*        <li>*/}
+                                        {/*          <button className="button_small green">NCBI Gene</button>*/}
+                                        {/*        </li>*/}
+                                        {/*        <li>*/}
+                                        {/*          <button className="button_small white">rdfs:seeAlso</button>*/}
+                                        {/*        </li>*/}
+                                        {/*      </ul>*/}
+                                        {/*    </td>*/}
+                                      })}
+                                    </tr>
+                                  }
+                                }): null}
+                                </tbody>
+                              </table>
+                              <button className="button_more">MORE</button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ) : ("")
-                  }
+                      ) : ("")
+                    }
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <div className="database">
+              <div className="database__inner">
+                <div className="database__top">
+                  <div className="input_search">
+                    <svg className="input_search__icon" viewBox="0 0 24 24">
+                      <path fill="currentColor" d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" />
+                    </svg>
+                    <input type="text" className="input_search__input"/>
+                  </div>
+                </div>
+
+                <article className="database__item">
+                  <h3 className="title">
+                    <img src="/images/icon_rat.png" alt="アイコン画像：ラット" className="icon"/>
+                    <span className="text">ChEMBL compound</span>
+                  </h3>
+                  <div className="description">
+                    ChEMBL is a manually curated database of bioactive molecules with drug-like properties. It brings together chemical, bioactivity and genomic data to aid the translation of genomic information into effective new drugs.
+                  </div>
+
+                  <div className="path">
+                    <div className="path_label small white">LINK TO</div>
+                    <svg className="icon" viewBox="0 0 24 24">
+                      <path fill="currentColor" d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z" />
+                    </svg>
+                    <div htmlFor={`result`} className="path_label small green">
+                    <span className="path_label__inner">
+                      <img src="/images/icon_rat.png" alt="アイコン画像：ラット" className="icon"/>
+                      HGNC
+                    </span>
+                    </div>
+                    <div htmlFor={`result`} className="path_label small purple">
+                    <span className="path_label__inner">
+                      <img src="/images/icon_rat.png" alt="アイコン画像：ラット" className="icon"/>
+                      HGNC
+                    </span>
+                    </div>
+                  </div>
+
+                  <dl className="data">
+                    <div className="data__wrapper">
+                      <dt>PREFIX</dt>
+                      <dd>http://identifiers.org/chembl.compound/</dd>
+                    </div>
+                    <div className="data__wrapper">
+                      <dt>TYPE</dt>
+                      <dd>Chemical compound</dd>
+                    </div>
+                    <div className="data__wrapper">
+                      <dt>DATE</dt>
+                      <dd>2021/02/17</dd>
+                    </div>
+                    <div className="data__wrapper">
+                      <dt>HOST</dt>
+                      <dd>hogehoge</dd>
+                    </div>
+                    <div className="data__wrapper">
+                      <dt>RECORD</dt>
+                      <dd>765,460 entries</dd>
+                    </div>
+                  </dl>
+                </article>
+                <article className="database__item">
+                  <h3 className="title">
+                    <img src="/images/icon_rat.png" alt="アイコン画像：ラット" className="icon"/>
+                    <span className="text">ChEMBL compound</span>
+                  </h3>
+                  <div className="description">
+                    ChEMBL is a manually curated database of bioactive molecules with drug-like properties. It brings together chemical, bioactivity and genomic data to aid the translation of genomic information into effective new drugs.
+                  </div>
+
+                  <div className="path">
+                    <div className="path_label small white">LINK TO</div>
+                    <svg className="icon" viewBox="0 0 24 24">
+                      <path fill="currentColor" d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z" />
+                    </svg>
+                    <div htmlFor={`result`} className="path_label small green">
+                    <span className="path_label__inner">
+                      <img src="/images/icon_rat.png" alt="アイコン画像：ラット" className="icon"/>
+                      HGNC
+                    </span>
+                    </div>
+                    <div htmlFor={`result`} className="path_label small purple">
+                    <span className="path_label__inner">
+                      <img src="/images/icon_rat.png" alt="アイコン画像：ラット" className="icon"/>
+                      HGNC
+                    </span>
+                    </div>
+                  </div>
+
+                  <dl className="data">
+                    <div className="data__wrapper">
+                      <dt>PREFIX</dt>
+                      <dd>http://identifiers.org/chembl.compound/</dd>
+                    </div>
+                    <div className="data__wrapper">
+                      <dt>TYPE</dt>
+                      <dd>Chemical compound</dd>
+                    </div>
+                    <div className="data__wrapper">
+                      <dt>DATE</dt>
+                      <dd>2021/02/17</dd>
+                    </div>
+                    <div className="data__wrapper">
+                      <dt>HOST</dt>
+                      <dd>hogehoge</dd>
+                    </div>
+                    <div className="data__wrapper">
+                      <dt>RECORD</dt>
+                      <dd>765,460 entries</dd>
+                    </div>
+                  </dl>
+                </article>
+              </div>
+            </div>
+          )}
+
         </div>
 
         <div className="notice_area">
