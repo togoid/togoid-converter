@@ -80,6 +80,13 @@
   &__top {
     margin: 0 0 15px;
 
+    .export_button {
+      position: relative;
+      .button_pull_down__children__item {
+        width: 210px;
+      }
+    }
+
     .option {
       margin: 0 0 30px;
       .label {
