@@ -1,7 +1,8 @@
-import '../styles/style.scss';
+import "../styles/style.scss";
+import React from "react";
 
-function MyApp({ Component, pageProps }) {
+const MyApp = ({ Component, pageProps }) => {
   return <Component {...pageProps} />;
-}
+};
 
 export default MyApp;
