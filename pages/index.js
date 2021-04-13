@@ -96,63 +96,62 @@ const idPatterns = {
   },
 };
 
-const q = async (tableName, ids) =>
+const q = async (ids, route) =>
   axios
     .get(
-      `${process.env.NEXT_PUBLIC_SPARQL_ENDOPOINT}/${tableName.replace(
-        ".",
-        "_"
-      )}/${ids.join(",")}`
+      `${process.env.NEXT_PUBLIC_SPARQL_ENDOPOINT}/convert?ids=${ids.join(
+        ","
+      )}&routes=${route.join(",")}`
     )
     .then((d) => d.data)
     .catch((e) => console.log(e));
 
 const Home = () => {
-  const [tabStatus, setTabStatus] = useState("EXPLORE");
-  const [pullMenuStatus, setPullMenuStatus] = useState(false);
-  const [pullExportStatus, setPullExportStatus] = useState(false);
-  const [inputStatus, setInputStatus] = useState(0);
-  const [inputText, setInputText] = useState("");
-  const [namespaceList, setNamespaceList] = useState([]);
-  const [selectedNamespace, setSelectedNamespace] = useState([]);
-  const [modalStatus, setModalStatus] = useState(false);
+  const [activeTab, setActiveTab] = useState("EXPLORE");
+  const [operationMenuVisibility, setOperationMenuVisibility] = useState(false);
+  const [exportMenuVisibility, setExportMenuVisibility] = useState(false);
+  const [inputType, setInputType] = useState(0);
+  const [ids, setIds] = useState("");
+  const [databases, setDatabases] = useState([]);
+  const [selectedDatabase, setSelectedDatabase] = useState([]);
+  const [modalVisibility, setModalVisibility] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [modalData, setModalData] = useState({ heading: [], rows: [] });
-  const [clippedText, setClippedText] = useState("");
+  const [clipboardText, setClipboardText] = useState("");
   const [copied, setCopied] = useState(false);
 
   /**
-   * 選択されたnameSpaceがstatusにセットされたら、クエリを実行する
+   * 選択されたdatabaseがstatusにセットされたら、クエリを実行する
    */
   useEffect(() => {
-    if (selectedNamespace.length > 0) {
-      const namespace = namespaceList[currentIndex].find(
-        (namespace) => namespace.name === selectedNamespace[currentIndex]
+    if (selectedDatabase.length > 0) {
+      const database = databases[currentIndex].find(
+        (database) => database.name === selectedDatabase[currentIndex]
       );
-      executeQuery(namespace);
+      executeQuery(database);
     }
-  }, [selectedNamespace]);
+  }, [selectedDatabase]);
   /**
    * modalDataがstatusにセットされたら、データモーダルを表示する
    */
   useEffect(() => {
-    if (modalData.rows.length > 0) setModalStatus(!modalStatus);
+    if (modalData.rows.length > 0) setModalVisibility(!modalVisibility);
   }, [modalData]);
   useEffect(() => {
-    if (modalStatus) setCopied(false);
-  }, [modalStatus]);
+    if (modalVisibility) setCopied(false);
+  }, [modalVisibility]);
   /**
-   * inputTextに入力されたIDまたはIDリストをidPatternsから正規表現で検索
+   * idsに入力されたIDまたはIDリストをidPatternsから正規表現で検索
    */
   const matchPattern = () => {
-    if (inputText === "") return;
-    const ids = inputText.split(/[\s,\n]+/).map((v) => v.trim());
+    if (ids === "") return;
+    const ids = ids.split(/[\s,\n]+/).map((v) => v.trim());
     const convertResults = [];
     ids.forEach((id) => {
       for (const key in idPatterns) {
         if (id.match(idPatterns[key].regexp)) {
           const index = convertResults.findIndex(
-            (namespaceList) => namespaceList.name === key
+            (databases) => databases.name === key
           );
           if (index === -1) {
             convertResults.push({
@@ -174,23 +173,23 @@ const Home = () => {
         if (a.count > b.count) return -1;
         return 0;
       });
-      const namespaceList = convertResults.map((v) => ({
+      const databases = convertResults.map((v) => ({
         name: v.name,
         count: v.count,
         hasMenu: false,
         ids: v.ids.map((id) => ({ to: id })),
       }));
-      setNamespaceList([namespaceList]);
-      setSelectedNamespace([namespaceList[0].name]);
+      setDatabases([databases]);
+      setSelectedDatabase([databases[0].name]);
     }
   };
 
-  const executeQuery = async (namespaceInfo) => {
+  const executeQuery = async (databaseInfo) => {
     // TODO クエリ実行中にloading画面を表示させる
-    const newNamespaceList = JSON.parse(JSON.stringify(namespaceList));
+    const newDatabases = JSON.parse(JSON.stringify(databases));
     const d = await q(
-      namespaceInfo.name,
-      namespaceInfo.ids.map((v) => v.to)
+      databaseInfo.name,
+      databaseInfo.ids.map((v) => v.to)
     );
     if (d) {
       const convertResults = [];
@@ -213,16 +212,16 @@ const Home = () => {
         if (a.count > b.count) return -1;
         return 0;
       });
-      newNamespaceList.push(convertResults);
-      setNamespaceList(newNamespaceList);
+      newDatabases.push(convertResults);
+      setDatabases(newDatabases);
     }
   };
   /**
    * 表示されているリストをクリアする
    */
   const clearList = () => {
-    setNamespaceList([]);
-    setSelectedNamespace([]);
+    setDatabases([]);
+    setSelectedDatabase([]);
     setCurrentIndex(0);
   };
   /**
@@ -235,31 +234,28 @@ const Home = () => {
     matchPattern();
   };
   /**
-   * namespaceのラジオボタンを選択する
-   * @param name　選択されたnamespace
-   * @param index　選択されたnamespaceの階層番号
+   * databaseのラジオボタンを選択する
+   * @param name 選択されたdatabase
+   * @param index 選択されたdatabaseの階層番号
    */
-  const selectNamespace = (name, index) => {
+  const selectDatabase = (name, index) => {
     setCurrentIndex(index);
-    const array = JSON.parse(JSON.stringify(selectedNamespace));
-    const newNamespaceList = JSON.parse(JSON.stringify(namespaceList));
+    const array = JSON.parse(JSON.stringify(selectedDatabase));
+    const newDatabases = JSON.parse(JSON.stringify(databases));
     if (array.length - 1 >= index) {
       array[index] = name;
       // 変更したら、それ以下のリストを削除
       if (array.length - 1 > index) {
         array.splice(index + 1, array.length - (index + 1));
       }
-      if (newNamespaceList.length - 1 > index) {
-        newNamespaceList.splice(
-          index + 1,
-          newNamespaceList.length - (index + 1)
-        );
+      if (newDatabases.length - 1 > index) {
+        newDatabases.splice(index + 1, newDatabases.length - (index + 1));
       }
     } else {
       array.push(name);
     }
-    setSelectedNamespace(array);
-    setNamespaceList(newNamespaceList);
+    setSelectedDatabase(array);
+    setDatabases(newDatabases);
   };
   /**
    * ３点リーダサブメニューの表示非表示を切り替える
@@ -267,14 +263,14 @@ const Home = () => {
    * @param index2
    */
   const toggleHasMenu = (index1, index2) => {
-    const newNamespaceList = JSON.parse(JSON.stringify(namespaceList));
-    const newNamespace = newNamespaceList[index1];
-    newNamespace[index2].hasMenu = !newNamespace[index2].hasMenu;
-    setNamespaceList(newNamespaceList);
+    const newDatabases = JSON.parse(JSON.stringify(databases));
+    const newDatabase = newDatabases[index1];
+    newDatabase[index2].hasMenu = !newDatabase[index2].hasMenu;
+    setDatabases(newDatabases);
   };
   /**
    * モーダルの表示非表示を切り替える
-   * 　モーダルを表示する際に３点リーダサブメニューを閉じる
+   * モーダルを表示する際に３点リーダサブメニューを閉じる
    * @param index1
    * @param index2
    */
@@ -282,10 +278,10 @@ const Home = () => {
     toggleHasMenu(index1, index2);
     const results = [];
     const headings = [];
-    namespaceList.forEach((v, i) => {
+    databases.forEach((v, i) => {
       if (i <= index1) {
         const data = v.filter((v2) => {
-          if (v2.name === selectedNamespace[i]) {
+          if (v2.name === selectedDatabase[i]) {
             return v2;
           }
         });
@@ -314,10 +310,10 @@ const Home = () => {
       if (i >= 2) arrList = newArrayList;
     });
     setModalData({ headings, rows: arrList });
-    setClippedText(createClippedText(arrList));
+    setClipboardText(createClipboardText(arrList));
   };
 
-  const createClippedText = (array) => {
+  const createClipboardText = (array) => {
     let text = "";
     array.forEach((v, i) => {
       if (i > 0) {
@@ -360,8 +356,8 @@ const Home = () => {
                 id="textField"
                 name="input_type"
                 className="radio__input"
-                checked={inputStatus === 0}
-                onChange={() => setInputStatus(0)}
+                checked={inputType === 0}
+                onChange={() => setInputType(0)}
               />
               <label htmlFor="textField" className="radio__label">
                 INPUT from text field
@@ -374,8 +370,8 @@ const Home = () => {
                 id="csv"
                 name="input_type"
                 className="radio__input"
-                checked={inputStatus === 1}
-                onChange={() => setInputStatus(1)}
+                checked={inputType === 1}
+                onChange={() => setInputType(1)}
               />
               <label htmlFor="csv" className="radio__label">
                 INPUT from CSV
@@ -389,8 +385,8 @@ const Home = () => {
               rows="10"
               placeholder="Enter IDs"
               className="textarea__input"
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
+              value={ids}
+              onChange={(e) => setIds(e.target.value)}
             />
             <input type="submit" value="EXECUTE" className="button_large" />
           </form>
@@ -399,37 +395,39 @@ const Home = () => {
         <div className="drawing_area">
           <div className="tab_wrapper">
             <button
-              onClick={() => setTabStatus("EXPLORE")}
+              onClick={() => setActiveTab("EXPLORE")}
               className={
-                tabStatus === "EXPLORE" ? "button_tab active" : "button_tab"
+                activeTab === "EXPLORE" ? "button_tab active" : "button_tab"
               }
             >
               EXPLORE
             </button>
             <button
-              onClick={() => setTabStatus("DATA")}
+              onClick={() => setActiveTab("DATA")}
               className={
-                tabStatus === "DATA" ? "button_tab active" : "button_tab"
+                activeTab === "DATA" ? "button_tab active" : "button_tab"
               }
             >
               DATABASE
             </button>
           </div>
-          {tabStatus === "EXPLORE" ? (
+          {activeTab === "EXPLORE" ? (
             <div className="panel">
               <div className="panel__button">
                 <div className="button_pull_down__wrapper">
                   <button
-                    onClick={() => setPullMenuStatus(!pullMenuStatus)}
+                    onClick={() =>
+                      setOperationMenuVisibility(!operationMenuVisibility)
+                    }
                     className={
-                      pullMenuStatus
+                      operationMenuVisibility
                         ? "button_pull_down active"
                         : "button_pull_down"
                     }
                   >
                     Operation
                   </button>
-                  {pullMenuStatus ? (
+                  {operationMenuVisibility ? (
                     <div className="button_pull_down__children">
                       <button className="button_pull_down__children__item">
                         <svg className="icon" viewBox="0 0 24 24">
@@ -458,21 +456,19 @@ const Home = () => {
               <div className="panel__inner">
                 <div className="explore">
                   <div className="drawing">
-                    {namespaceList && namespaceList.length > 0
-                      ? namespaceList.map((namespace, i) => (
+                    {databases && databases.length > 0
+                      ? databases.map((database, i) => (
                           <div className="item_wrapper" key={i}>
                             <ul className="result_list">
-                              {namespace.map((v, j) => (
+                              {database.map((v, j) => (
                                 <li key={j}>
                                   <div className="radio green">
                                     <input
                                       type="radio"
                                       id={`result${i}-${j}`}
                                       className="radio__input"
-                                      checked={selectedNamespace[i] === v.name}
-                                      onChange={() =>
-                                        selectNamespace(v.name, i)
-                                      }
+                                      checked={selectedDatabase[i] === v.name}
+                                      onChange={() => selectDatabase(v.name, i)}
                                     />
                                     <label
                                       htmlFor={`result${i}-${j}`}
@@ -487,8 +483,7 @@ const Home = () => {
                                         {v.name}
                                       </span>
                                     </label>
-                                    {i > 0 &&
-                                    selectedNamespace[i] === v.name ? (
+                                    {i > 0 && selectedDatabase[i] === v.name ? (
                                       <button
                                         className="radio__three_dots"
                                         onClick={() => toggleHasMenu(i, j)}
@@ -519,7 +514,7 @@ const Home = () => {
                                 </li>
                               ))}
                             </ul>
-                            {i < namespaceList.length - 1 ? (
+                            {i < databases.length - 1 ? (
                               <>
                                 <div className="point" />
                                 <select name="" id="" className="select white">
@@ -533,12 +528,14 @@ const Home = () => {
                       : null}
 
                     {/* Modal */}
-                    {modalStatus ? (
+                    {modalVisibility ? (
                       <div className="modal">
                         <div className="modal__inner">
                           <div className="modal__scroll_area">
                             <button
-                              onClick={() => setModalStatus(!modalStatus)}
+                              onClick={() =>
+                                setModalVisibility(!modalVisibility)
+                              }
                               className="modal__close"
                             >
                               <svg viewBox="0 0 24 24">
@@ -691,7 +688,7 @@ const Home = () => {
                                 </div>
                                 {copied ? <span>Copied.</span> : null}
                                 <CopyToClipboard
-                                  text={clippedText}
+                                  text={clipboardText}
                                   onCopy={() => setCopied(true)}
                                 >
                                   <button className="button_icon">
@@ -725,14 +722,16 @@ const Home = () => {
                                     </svg>
                                     <span
                                       onClick={() =>
-                                        setPullExportStatus(!pullExportStatus)
+                                        setExportMenuVisibility(
+                                          !exportMenuVisibility
+                                        )
                                       }
                                       className="button_icon__label"
                                     >
                                       エクスポート
                                     </span>
                                   </button>
-                                  {pullExportStatus ? (
+                                  {exportMenuVisibility ? (
                                     <div className="button_pull_down__children">
                                       <button className="button_pull_down__children__item">
                                         <svg
