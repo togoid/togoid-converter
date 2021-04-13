@@ -8,8 +8,13 @@
     "plugin:import/warnings",
     "plugin:jsx-a11y/recommended",
     "plugin:react-hooks/recommended",
-    "airbnb"
+    "prettier"
   ],
+  "rules": {
+    "react/prop-types": "off",
+    "prettier/prettier": "error",
+    "react/react-in-jsx-scope": "off"
+  },
   "env": {
     "browser": true,
     "commonjs": true,
@@ -28,5 +33,5 @@
       "version": "detect"
     }
   },
-  "plugins": []
+  "plugins": ["react-hooks", "react", "prettier"]
 }
