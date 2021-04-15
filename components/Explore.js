@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import ResultModal from "../components/ResultModal";
-import { q } from "../lib/util";
 
-const Explore = () => {
+const Explore = (props) => {
   const [operationMenuVisibility, setOperationMenuVisibility] = useState(false);
-  const [databases, setDatabases] = useState([]);
   const [selectedDatabase, setSelectedDatabase] = useState([]);
   const [modalVisibility, setModalVisibility] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -15,10 +13,7 @@ const Explore = () => {
    */
   useEffect(() => {
     if (selectedDatabase.length > 0) {
-      const database = databases[currentIndex].find(
-        (database) => database.name === selectedDatabase[currentIndex]
-      );
-      executeQuery(database);
+      //
     }
   }, [selectedDatabase]);
   /**
@@ -28,41 +23,6 @@ const Explore = () => {
     if (modalData.rows.length > 0) setModalVisibility(!modalVisibility);
   }, [modalData]);
   /**
-   * idsに入力されたIDまたはIDリストをidPatternsから正規表現で検索
-   */
-  const executeQuery = async (databaseInfo) => {
-    // TODO クエリ実行中にloading画面を表示させる
-    const newDatabases = JSON.parse(JSON.stringify(databases));
-    const d = await q(
-      databaseInfo.name,
-      databaseInfo.ids.map((v) => v.to)
-    );
-    if (d) {
-      const convertResults = [];
-      d.result.forEach((v) => {
-        const index = convertResults.findIndex((pref) => pref.name === v.tn);
-        if (index === -1) {
-          convertResults.push({
-            name: v.tn,
-            count: 1,
-            hasMenu: false,
-            ids: [{ from: v.f, to: v.t }],
-          });
-        } else {
-          convertResults[index].count += 1;
-          convertResults[index].ids.push({ from: v.f, to: v.t });
-        }
-      });
-      convertResults.sort((a, b) => {
-        if (a.count < b.count) return 1;
-        if (a.count > b.count) return -1;
-        return 0;
-      });
-      newDatabases.push(convertResults);
-      setDatabases(newDatabases);
-    }
-  };
-  /**
    * databaseのラジオボタンを選択する
    * @param name 選択されたdatabase
    * @param index 選択されたdatabaseの階層番号
@@ -70,21 +30,24 @@ const Explore = () => {
   const selectDatabase = (name, index) => {
     setCurrentIndex(index);
     const array = JSON.parse(JSON.stringify(selectedDatabase));
-    const newDatabases = JSON.parse(JSON.stringify(databases));
+    const newDatabaseNodes = JSON.parse(JSON.stringify(props.databaseNodes));
     if (array.length - 1 >= index) {
       array[index] = name;
       // 変更したら、それ以下のリストを削除
       if (array.length - 1 > index) {
         array.splice(index + 1, array.length - (index + 1));
       }
-      if (newDatabases.length - 1 > index) {
-        newDatabases.splice(index + 1, newDatabases.length - (index + 1));
+      if (newDatabaseNodes.length - 1 > index) {
+        newDatabaseNodes.splice(
+          index + 1,
+          newDatabaseNodes.length - (index + 1)
+        );
       }
     } else {
       array.push(name);
     }
     setSelectedDatabase(array);
-    setDatabases(newDatabases);
+    // props.setDatabaseNodes(newDatabaseNodes);
   };
   /**
    * ３点リーダサブメニューの表示非表示を切り替える
@@ -92,10 +55,10 @@ const Explore = () => {
    * @param index2
    */
   const toggleHasMenu = (index1, index2) => {
-    const newDatabases = JSON.parse(JSON.stringify(databases));
-    const newDatabase = newDatabases[index1];
+    const newDatabaseNodes = JSON.parse(JSON.stringify(props.databaseNodes));
+    const newDatabase = newDatabaseNodes[index1];
     newDatabase[index2].hasMenu = !newDatabase[index2].hasMenu;
-    setDatabases(newDatabases);
+    props.setDatabaseNodes(newDatabaseNodes);
   };
   /**
    * モーダルの表示非表示を切り替える
@@ -107,7 +70,7 @@ const Explore = () => {
     toggleHasMenu(index1, index2);
     const results = [];
     const headings = [];
-    databases.forEach((v, i) => {
+    props.databaseNodes.forEach((v, i) => {
       if (i <= index1) {
         const data = v.filter((v2) => {
           if (v2.name === selectedDatabase[i]) {
@@ -188,73 +151,73 @@ const Explore = () => {
           <div className="panel__inner">
             <div className="explore">
               <div className="drawing">
-                {databases && databases.length > 0
-                  ? databases.map((database, i) => (
-                      <div className="item_wrapper" key={i}>
-                        <ul className="result_list">
-                          {database.map((v, j) => (
-                            <li key={j}>
-                              <div className="radio green">
-                                <input
-                                  type="radio"
-                                  id={`result${i}-${j}`}
-                                  className="radio__input"
-                                  checked={selectedDatabase[i] === v.name}
-                                  onChange={() => selectDatabase(v.name, i)}
-                                />
-                                <label
-                                  htmlFor={`result${i}-${j}`}
-                                  className="radio__large_label green"
-                                >
-                                  <span className="radio__large_label__inner">
-                                    <img
-                                      src="/images/icon_rat.png"
-                                      alt="アイコン画像：ラット"
-                                      className="icon"
-                                    />
-                                    {v.name}
-                                  </span>
-                                </label>
-                                {i > 0 && selectedDatabase[i] === v.name ? (
-                                  <button
-                                    className="radio__three_dots"
-                                    onClick={() => toggleHasMenu(i, j)}
+                {props.databaseNodes &&
+                  props.databaseNodes.length > 0 &&
+                  props.databaseNodes.map((database, i) => (
+                    <div className="item_wrapper" key={i}>
+                      <ul className="result_list">
+                        {database.map((v, j) => (
+                          <li key={j}>
+                            <div className="radio green">
+                              <input
+                                type="radio"
+                                id={`result${i}-${j}`}
+                                className="radio__input"
+                                checked={selectedDatabase[i] === v.name}
+                                onChange={() => selectDatabase(v.name, i)}
+                              />
+                              <label
+                                htmlFor={`result${i}-${j}`}
+                                className="radio__large_label green"
+                              >
+                                <span className="radio__large_label__inner">
+                                  <img
+                                    src="/images/icon_rat.png"
+                                    alt="アイコン画像：ラット"
+                                    className="icon"
                                   />
-                                ) : null}
-                                {v.hasMenu ? (
-                                  <div className="button_pull_down__children">
-                                    <button
-                                      className="button_pull_down__children__item"
-                                      onClick={() => showModal(i, j)}
-                                    >
-                                      <svg className="icon" viewBox="0 0 24 24">
-                                        <path
-                                          fill="currentColor"
-                                          d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z"
-                                        />
-                                      </svg>
-                                      Resolve with this
-                                    </button>
-                                  </div>
-                                ) : (
-                                  ""
-                                )}
-                              </div>
-                            </li>
-                          ))}
-                        </ul>
-                        {i < databases.length - 1 ? (
-                          <>
-                            <div className="point" />
-                            <select name="" id="" className="select white">
-                              <option value="">rdfs:seeAlso</option>
-                            </select>
-                            <div className="point" />
-                          </>
-                        ) : null}
-                      </div>
-                    ))
-                  : null}
+                                  {v.name}
+                                </span>
+                              </label>
+                              {i > 0 && selectedDatabase[i] === v.name ? (
+                                <button
+                                  className="radio__three_dots"
+                                  onClick={() => toggleHasMenu(i, j)}
+                                />
+                              ) : null}
+                              {v.hasMenu ? (
+                                <div className="button_pull_down__children">
+                                  <button
+                                    className="button_pull_down__children__item"
+                                    onClick={() => showModal(i, j)}
+                                  >
+                                    <svg className="icon" viewBox="0 0 24 24">
+                                      <path
+                                        fill="currentColor"
+                                        d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z"
+                                      />
+                                    </svg>
+                                    Resolve with this
+                                  </button>
+                                </div>
+                              ) : (
+                                ""
+                              )}
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                      {i < database.length - 1 && (
+                        <>
+                          <div className="point" />
+                          <select name="" id="" className="select white">
+                            <option value="">rdfs:seeAlso</option>
+                          </select>
+                          <div className="point" />
+                        </>
+                      )}
+                    </div>
+                  ))}
 
                 {modalVisibility && <ResultModal modalData={modalData} />}
               </div>

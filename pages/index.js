@@ -10,7 +10,7 @@ import { idPatterns, q } from "../lib/util";
 const Home = () => {
   const [ids, setIds] = useState([]);
   const [activeTab, setActiveTab] = useState("EXPLORE");
-  const [databases, setDatabases] = useState([]);
+  const [databaseNodes, setDatabaseNodes] = useState([]);
   const [selectedDatabase, setSelectedDatabase] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -19,7 +19,7 @@ const Home = () => {
    */
   useEffect(() => {
     if (selectedDatabase.length > 0) {
-      const database = databases[currentIndex].find(
+      const database = databaseNodes[currentIndex].find(
         (database) => database.name === selectedDatabase[currentIndex]
       );
       // executeQuery(database);
@@ -62,7 +62,7 @@ const Home = () => {
         hasMenu: false,
         ids: v.ids.map((id) => ({ to: id })),
       }));
-      setDatabases([databases]);
+      setDatabaseNodes([databases]);
       setSelectedDatabase([databases[0].name]);
     }
   };
@@ -96,14 +96,14 @@ const Home = () => {
         return 0;
       });
       newDatabases.push(candidates);
-      setDatabases(newDatabases);
+      setDatabaseNodes(newDatabases);
     }
   };
   /**
    * 表示されているリストをクリアする
    */
   const clearExplore = () => {
-    setDatabases([]);
+    setDatabaseNodes([]);
     setSelectedDatabase([]);
     setCurrentIndex(0);
   };
@@ -147,7 +147,14 @@ const Home = () => {
               DATABASE
             </button>
           </div>
-          {activeTab === "EXPLORE" ? <Explore ids={ids} /> : <Databases />}
+          {activeTab === "EXPLORE" ? (
+            <Explore
+              databaseNodes={databaseNodes}
+              setDatabseNodes={setDatabaseNodes}
+            />
+          ) : (
+            <Databases />
+          )}
         </div>
       </main>
 
