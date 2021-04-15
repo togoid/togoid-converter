@@ -1,113 +1,11 @@
 import Head from "next/head";
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Explore from "../components/Explore";
 import Databases from "../components/Databases";
 import IdInput from "../components/IdInput";
-
-const idPatterns = {
-  // 'ncbigene': {
-  //   label: "NCBI Gene",
-  //   regexp: "^\\d+$",
-  // },
-  // 'RefSeq(未)': {
-  //   label: "RefSeq",
-  //   regexp: "^(((AC|AP|NC|NG|NM|NP|NR|NT|NW|XM|XP|XR|YP|ZP)_\d+)|(NZ\_[A-Z]{2,4}\d+))(\.\d+)?$"
-  // },
-  "ensembl.gene": {
-    label: "Ensembl (ENSG)",
-    regexp:
-      "^((ENSG\\d{11}(\\.\\d+)?)|(FB\\w{2}\\d{7})|(Y[A-Z]{2}\\d{3}[a-zA-Z](\\-[A-Z])?)|([A-Z_a-z0-9]+(\\.)?(t)?(\\d+)?([a-z])?))$",
-  },
-  "ensembl.transcript": {
-    label: "Ensembl (ENST)",
-    regexp:
-      "^((ENST\\d{11}(\\.\\d+)?)|(FB\\w{2}\\d{7})|(Y[A-Z]{2}\\d{3}[a-zA-Z](\\-[A-Z])?)|([A-Z_a-z0-9]+(\\.)?(t)?(\\d+)?([a-z])?))$",
-  },
-  "kegg.genes": {
-    label: "KEGG Genes",
-    regexp: "^w+:[wd.-]*$",
-  },
-  hgnc: {
-    label: "HGNC",
-    regexp: "^((HGNC|hgnc):)?\\d{1,5}$",
-  },
-  // 'Gene Ontology(未)': {
-  //   label: "Gene Ontology",
-  //   regexp: "^GO:\d{7}$"
-  // },
-  // 'TogoVar(未)': {
-  //   label: "TogoVar",
-  //   regexp: "^tgv\d+$"
-  // },
-  dbsnp: {
-    label: "dbSNP",
-    regexp: "^rsd+$",
-  },
-  // 'dbVar(未)': {
-  //   label: "dbVar",
-  //   regexp: "^nstd\d+$"
-  // },
-  // 'gnomAD(未)': {
-  //   label: "gnomAD",
-  //   regexp: "^(\d+|X|Y)-\d+-[ATGC]+-[ATGC]+$"
-  // },
-  clinvar: {
-    label: "\tClinVar Variant",
-    regexp: "^d+$",
-  },
-  uniprot: {
-    label: "UniProt Knowledgebase",
-    regexp:
-      "^([A-N,R-Z][0-9]([A-Z][A-Z, 0-9][A-Z, 0-9][0-9]){1,2})|([O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])(.d+)?$",
-  },
-  "ensembl.protein": {
-    label: "Ensembl (ENSP)",
-    regexp:
-      "^((ENSP\\d{11}(\\.\\d+)?)|(FB\\w{2}\\d{7})|(Y[A-Z]{2}\\d{3}[a-zA-Z](\\-[A-Z])?)|([A-Z_a-z0-9]+(\\.)?(t)?(\\d+)?([a-z])?))$",
-  },
-  ncbiprotein: {
-    label: "NCBI Protein",
-    regexp: "^(w+d+(.d+)?)|(NP_d+)$",
-  },
-  pdb: {
-    label: "Protein Data Bank",
-    regexp: "^[0-9][A-Za-z0-9]{3}$",
-  },
-  interpro: {
-    label: "InterPro",
-    regexp: "^IPRd{6}$",
-  },
-  pfam: {
-    label: "Pfam",
-    regexp: "^PFd{5}$",
-  },
-  intact: {
-    label: "IntAct",
-    regexp: "^EBI-[0-9]+$",
-    // },
-    // 'HINT(未)': {
-    //   label: "HINT",
-    //   regexp: "^([A-N,R-Z][0-9]([A-Z][A-Z, 0-9][A-Z, 0-9][0-9]){1,2})|([O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])(\.\d+)?\-([A-N,R-Z][0-9]([A-Z][A-Z, 0-9][A-Z, 0-9][0-9]){1,2})|([O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])(\.\d+)?$"
-    // },
-    // 'Instruct(未)': {
-    //   label: "Instruct",
-    //   regexp: "^([A-N,R-Z][0-9]([A-Z][A-Z, 0-9][A-Z, 0-9][0-9]){1,2})|([O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])(\.\d+)?\-([A-N,R-Z][0-9]([A-Z][A-Z, 0-9][A-Z, 0-9][0-9]){1,2})|([O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])(\.\d+)?$"
-  },
-};
-
-const q = async (ids, route) =>
-  axios
-    .get(
-      `${process.env.NEXT_PUBLIC_SPARQL_ENDOPOINT}/convert?ids=${ids.join(
-        ","
-      )}&routes=${route.join(",")}`
-    )
-    .then((d) => d.data)
-    .catch((e) => console.log(e));
-
+import { idPatterns, q } from "../lib/util";
 
 const Home = () => {
   const [ids, setIds] = useState([]);
@@ -124,43 +22,41 @@ const Home = () => {
       const database = databases[currentIndex].find(
         (database) => database.name === selectedDatabase[currentIndex]
       );
-      executeQuery(database);
+      // executeQuery(database);
     }
   }, [selectedDatabase]);
   /**
    * idsに入力されたIDまたはIDリストをidPatternsから正規表現で検索
    */
   const searchDatabase = () => {
-    const ids = idTexts.split(/[\s,\n]+/).map((v) => v.trim());
-    setIds(ids);
-    const convertResults = [];
+    const candidates = [];
     ids.forEach((id) => {
       for (const key in idPatterns) {
         if (id.match(idPatterns[key].regexp)) {
-          const index = convertResults.findIndex(
+          const index = candidates.findIndex(
             (databases) => databases.name === key
           );
           if (index === -1) {
-            convertResults.push({
+            candidates.push({
               name: key,
               count: 1,
               ids: [id],
               hasMenu: false,
             });
           } else {
-            convertResults[index].count += 1;
-            convertResults[index].ids.push(id);
+            candidates[index].count += 1;
+            candidates[index].ids.push(id);
           }
         }
       }
     });
-    if (convertResults && convertResults.length > 0) {
-      convertResults.sort((a, b) => {
+    if (candidates.length > 0) {
+      candidates.sort((a, b) => {
         if (a.count < b.count) return 1;
         if (a.count > b.count) return -1;
         return 0;
       });
-      const databases = convertResults.map((v) => ({
+      const databases = candidates.map((v) => ({
         name: v.name,
         count: v.count,
         hasMenu: false,
@@ -179,27 +75,27 @@ const Home = () => {
       databaseInfo.ids.map((v) => v.to)
     );
     if (d) {
-      const convertResults = [];
+      const candidates = [];
       d.result.forEach((v) => {
-        const index = convertResults.findIndex((pref) => pref.name === v.tn);
+        const index = candidates.findIndex((pref) => pref.name === v.tn);
         if (index === -1) {
-          convertResults.push({
+          candidates.push({
             name: v.tn,
             count: 1,
             hasMenu: false,
             ids: [{ from: v.f, to: v.t }],
           });
         } else {
-          convertResults[index].count += 1;
-          convertResults[index].ids.push({ from: v.f, to: v.t });
+          candidates[index].count += 1;
+          candidates[index].ids.push({ from: v.f, to: v.t });
         }
       });
-      convertResults.sort((a, b) => {
+      candidates.sort((a, b) => {
         if (a.count < b.count) return 1;
         if (a.count > b.count) return -1;
         return 0;
       });
-      newDatabases.push(convertResults);
+      newDatabases.push(candidates);
       setDatabases(newDatabases);
     }
   };
@@ -213,13 +109,12 @@ const Home = () => {
   };
   /**
    * Executeボタン押下
-   * @param event
+   * @param ids
    */
-  const handleSubmit = (event, idTexts) => {
-    event.preventDefault();
+  const handleIdTextsSubmit = (ids) => {
     clearExplore();
-    console.log(idTexts);
-    // searchDatabase(idTexts);
+    setIds(ids);
+    searchDatabase(ids);
   };
 
   return (
@@ -231,7 +126,7 @@ const Home = () => {
       <Header />
 
       <main className="main">
-        <IdInput handleSubmit={handleSubmit} />
+        <IdInput handleSubmit={handleIdTextsSubmit} />
 
         <div className="drawing_area">
           <div className="tab_wrapper">
@@ -252,7 +147,7 @@ const Home = () => {
               DATABASE
             </button>
           </div>
-          {activeTab === "EXPLORE" ? <Explore /> : <Databases />}
+          {activeTab === "EXPLORE" ? <Explore ids={ids} /> : <Databases />}
         </div>
       </main>
 
