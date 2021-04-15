@@ -1,0 +1,3 @@
+[submodule "togoid-config"]
+	path = togoid-config
+	url = git@github.com:dbcls/togoid-config.git
