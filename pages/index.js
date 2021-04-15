@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Explore from "../components/Explore";
 import Databases from "../components/Databases";
+import IdInput from "../components/IdInput";
 
 const idPatterns = {
   // 'ncbigene': {
@@ -107,59 +108,6 @@ const q = async (ids, route) =>
     .then((d) => d.data)
     .catch((e) => console.log(e));
 
-const IdInput = (props) => {
-  const [inputType, setInputType] = useState(0);
-  const [idTexts, setIdTexts] = useState("");
-
-  return (
-    <div className="input_area">
-      <div className="radio_wrapper">
-        <div className="radio">
-          <input
-            type="radio"
-            id="textField"
-            name="input_type"
-            className="radio__input"
-            checked={inputType === 0}
-            onChange={() => setInputType(0)}
-          />
-          <label htmlFor="textField" className="radio__label">
-            INPUT from text field
-          </label>
-        </div>
-
-        <div className="radio">
-          <input
-            type="radio"
-            id="csv"
-            name="input_type"
-            className="radio__input"
-            checked={inputType === 1}
-            onChange={() => setInputType(1)}
-          />
-          <label htmlFor="csv" className="radio__label">
-            INPUT from CSV
-          </label>
-        </div>
-      </div>
-
-      <form
-        onSubmit={(e) => props.handleSubmit(e, idTexts)}
-        className="textarea"
-      >
-        <textarea
-          cols="30"
-          rows="10"
-          placeholder="Enter IDs"
-          className="textarea__input"
-          value={idTexts}
-          onChange={(e) => setIdTexts(e.target.value)}
-        />
-        <input type="submit" value="EXECUTE" className="button_large" />
-      </form>
-    </div>
-  );
-};
 
 const Home = () => {
   const [ids, setIds] = useState([]);
