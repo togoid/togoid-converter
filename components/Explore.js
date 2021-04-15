@@ -3,19 +3,10 @@ import ResultModal from "../components/ResultModal";
 
 const Explore = (props) => {
   const [operationMenuVisibility, setOperationMenuVisibility] = useState(false);
-  const [selectedDatabase, setSelectedDatabase] = useState([]);
   const [modalVisibility, setModalVisibility] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [modalData, setModalData] = useState({ heading: [], rows: [] });
 
-  /**
-   * 選択されたdatabaseがstatusにセットされたら、クエリを実行する
-   */
-  useEffect(() => {
-    if (selectedDatabase.length > 0) {
-      //
-    }
-  }, [selectedDatabase]);
+  const selectedDatabase = props.route[props.databaseNodes.length - 1];
   /**
    * modalDataがstatusにセットされたら、データモーダルを表示する
    */
@@ -24,29 +15,29 @@ const Explore = (props) => {
   }, [modalData]);
   /**
    * databaseのラジオボタンを選択する
-   * @param name 選択されたdatabase
-   * @param index 選択されたdatabaseの階層番号
+   * @param database
    */
-  const selectDatabase = (name, index) => {
-    setCurrentIndex(index);
-    const array = JSON.parse(JSON.stringify(selectedDatabase));
-    const newDatabaseNodes = JSON.parse(JSON.stringify(props.databaseNodes));
-    if (array.length - 1 >= index) {
-      array[index] = name;
-      // 変更したら、それ以下のリストを削除
-      if (array.length - 1 > index) {
-        array.splice(index + 1, array.length - (index + 1));
-      }
-      if (newDatabaseNodes.length - 1 > index) {
-        newDatabaseNodes.splice(
-          index + 1,
-          newDatabaseNodes.length - (index + 1)
-        );
-      }
-    } else {
-      array.push(name);
-    }
-    setSelectedDatabase(array);
+  const selectDatabase = (database) => {
+    props.setRoute(() => {
+      return (props.route[props.databaseNodes.length - 1] = database);
+    });
+    // const array = JSON.parse(JSON.stringify(selectedDatabase));
+    // const newDatabaseNodes = JSON.parse(JSON.stringify(props.databaseNodes));
+    // if (array.length - 1 >= index) {
+    //   array[index] = name;
+    //   // 変更したら、それ以下のリストを削除
+    //   if (array.length - 1 > index) {
+    //     array.splice(index + 1, array.length - (index + 1));
+    //   }
+    //   if (newDatabaseNodes.length - 1 > index) {
+    //     newDatabaseNodes.splice(
+    //       index + 1,
+    //       newDatabaseNodes.length - (index + 1)
+    //     );
+    //   }
+    // } else {
+    //   array.push(name);
+    // }
     // props.setDatabaseNodes(newDatabaseNodes);
   };
   /**
@@ -163,8 +154,8 @@ const Explore = (props) => {
                                 type="radio"
                                 id={`result${i}-${j}`}
                                 className="radio__input"
-                                checked={selectedDatabase[i] === v.name}
-                                onChange={() => selectDatabase(v.name, i)}
+                                checked={selectedDatabase.name === v.name}
+                                onChange={() => selectDatabase(v)}
                               />
                               <label
                                 htmlFor={`result${i}-${j}`}
@@ -179,7 +170,7 @@ const Explore = (props) => {
                                   {v.name}
                                 </span>
                               </label>
-                              {i > 0 && selectedDatabase[i] === v.name ? (
+                              {i > 0 && selectedDatabase.name === v.name ? (
                                 <button
                                   className="radio__three_dots"
                                   onClick={() => toggleHasMenu(i, j)}

@@ -5,30 +5,25 @@ import Footer from "../components/Footer";
 import Explore from "../components/Explore";
 import Databases from "../components/Databases";
 import IdInput from "../components/IdInput";
-import { idPatterns, q } from "../lib/util";
+import { idPatterns } from "../lib/util";
+import axios from "axios";
 
 const Home = () => {
   const [ids, setIds] = useState([]);
   const [activeTab, setActiveTab] = useState("EXPLORE");
   const [databaseNodes, setDatabaseNodes] = useState([]);
-  const [selectedDatabase, setSelectedDatabase] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [route, setRoute] = useState([]);
 
-  /**
-   * 選択されたdatabaseがstatusにセットされたら、クエリを実行する
-   */
   useEffect(() => {
-    if (selectedDatabase.length > 0) {
-      const database = databaseNodes[currentIndex].find(
-        (database) => database.name === selectedDatabase[currentIndex]
-      );
-      // executeQuery(database);
+    if (route.length > 1) {
+      executeQuery(route);
     }
-  }, [selectedDatabase]);
+  }, [route]);
+
   /**
    * idsに入力されたIDまたはIDリストをidPatternsから正規表現で検索
    */
-  const searchDatabase = () => {
+  const searchDatabase = (ids) => {
     const candidates = [];
     ids.forEach((id) => {
       for (const key in idPatterns) {
@@ -62,18 +57,26 @@ const Home = () => {
         hasMenu: false,
         ids: v.ids.map((id) => ({ to: id })),
       }));
+      console.log(databases);
       setDatabaseNodes([databases]);
-      setSelectedDatabase([databases[0].name]);
+      setRoute([databases[0]]);
     }
   };
 
-  const executeQuery = async (databaseInfo) => {
+  const executeQuery = async () => {
     // TODO クエリ実行中にloading画面を表示させる
-    const newDatabases = JSON.parse(JSON.stringify(databases));
-    const d = await q(
-      databaseInfo.name,
-      databaseInfo.ids.map((v) => v.to)
-    );
+    const route = [route[route.length - 2].name, route[route.length - 1].name];
+    const ids = route[route.length - 2].ids.join(",");
+    const d = await axios
+      .get(
+        `${process.env.NEXT_PUBLIC_SPARQL_ENDOPOINT}/convert?ids=${ids}&routes=${route}`
+      )
+      .then((d) => d.data)
+      .catch((e) => console.log(e));
+
+    console.log(d);
+
+    const nodes = [...databaseNodes];
     if (d) {
       const candidates = [];
       d.result.forEach((v) => {
@@ -95,8 +98,8 @@ const Home = () => {
         if (a.count > b.count) return -1;
         return 0;
       });
-      newDatabases.push(candidates);
-      setDatabaseNodes(newDatabases);
+      nodes.push(candidates);
+      setDatabaseNodes(nodes);
     }
   };
   /**
@@ -104,8 +107,7 @@ const Home = () => {
    */
   const clearExplore = () => {
     setDatabaseNodes([]);
-    setSelectedDatabase([]);
-    setCurrentIndex(0);
+    setRoute([]);
   };
   /**
    * Executeボタン押下
@@ -150,7 +152,8 @@ const Home = () => {
           {activeTab === "EXPLORE" ? (
             <Explore
               databaseNodes={databaseNodes}
-              setDatabseNodes={setDatabaseNodes}
+              route={route}
+              setRoute={setRoute}
             />
           ) : (
             <Databases />
