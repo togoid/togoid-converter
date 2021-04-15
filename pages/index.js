@@ -107,11 +107,63 @@ const q = async (ids, route) =>
     .then((d) => d.data)
     .catch((e) => console.log(e));
 
-const Home = () => {
-  const [activeTab, setActiveTab] = useState("EXPLORE");
+const IdInput = (props) => {
   const [inputType, setInputType] = useState(0);
   const [idTexts, setIdTexts] = useState("");
+
+  return (
+    <div className="input_area">
+      <div className="radio_wrapper">
+        <div className="radio">
+          <input
+            type="radio"
+            id="textField"
+            name="input_type"
+            className="radio__input"
+            checked={inputType === 0}
+            onChange={() => setInputType(0)}
+          />
+          <label htmlFor="textField" className="radio__label">
+            INPUT from text field
+          </label>
+        </div>
+
+        <div className="radio">
+          <input
+            type="radio"
+            id="csv"
+            name="input_type"
+            className="radio__input"
+            checked={inputType === 1}
+            onChange={() => setInputType(1)}
+          />
+          <label htmlFor="csv" className="radio__label">
+            INPUT from CSV
+          </label>
+        </div>
+      </div>
+
+      <form
+        onSubmit={(e) => props.handleSubmit(e, idTexts)}
+        className="textarea"
+      >
+        <textarea
+          cols="30"
+          rows="10"
+          placeholder="Enter IDs"
+          className="textarea__input"
+          value={idTexts}
+          onChange={(e) => setIdTexts(e.target.value)}
+        />
+        <input type="submit" value="EXECUTE" className="button_large" />
+      </form>
+    </div>
+  );
+};
+
+const Home = () => {
   const [ids, setIds] = useState([]);
+  const [activeTab, setActiveTab] = useState("EXPLORE");
   const [databases, setDatabases] = useState([]);
   const [selectedDatabase, setSelectedDatabase] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -130,7 +182,7 @@ const Home = () => {
   /**
    * idsに入力されたIDまたはIDリストをidPatternsから正規表現で検索
    */
-  const matchPattern = () => {
+  const searchDatabase = () => {
     const ids = idTexts.split(/[\s,\n]+/).map((v) => v.trim());
     setIds(ids);
     const convertResults = [];
@@ -206,7 +258,7 @@ const Home = () => {
   /**
    * 表示されているリストをクリアする
    */
-  const clearList = () => {
+  const clearExplore = () => {
     setDatabases([]);
     setSelectedDatabase([]);
     setCurrentIndex(0);
@@ -215,10 +267,11 @@ const Home = () => {
    * Executeボタン押下
    * @param event
    */
-  const handleSubmit = (event) => {
+  const handleSubmit = (event, idTexts) => {
     event.preventDefault();
-    clearList();
-    matchPattern();
+    clearExplore();
+    console.log(idTexts);
+    // searchDatabase(idTexts);
   };
 
   return (
@@ -230,49 +283,7 @@ const Home = () => {
       <Header />
 
       <main className="main">
-        <div className="input_area">
-          <div className="radio_wrapper">
-            <div className="radio">
-              <input
-                type="radio"
-                id="textField"
-                name="input_type"
-                className="radio__input"
-                checked={inputType === 0}
-                onChange={() => setInputType(0)}
-              />
-              <label htmlFor="textField" className="radio__label">
-                INPUT from text field
-              </label>
-            </div>
-
-            <div className="radio">
-              <input
-                type="radio"
-                id="csv"
-                name="input_type"
-                className="radio__input"
-                checked={inputType === 1}
-                onChange={() => setInputType(1)}
-              />
-              <label htmlFor="csv" className="radio__label">
-                INPUT from CSV
-              </label>
-            </div>
-          </div>
-
-          <form onSubmit={handleSubmit} className="textarea">
-            <textarea
-              cols="30"
-              rows="10"
-              placeholder="Enter IDs"
-              className="textarea__input"
-              value={idTexts}
-              onChange={(e) => setIdTexts(e.target.value)}
-            />
-            <input type="submit" value="EXECUTE" className="button_large" />
-          </form>
-        </div>
+        <IdInput handleSubmit={handleSubmit} />
 
         <div className="drawing_area">
           <div className="tab_wrapper">
