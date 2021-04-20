@@ -137,9 +137,8 @@ const Explore = (props) => {
                                 id={`result${i}-${j}`}
                                 className="radio__input"
                                 checked={
-                                  props.route[props.route.length - 1] &&
-                                  props.route[props.route.length - 1].name ===
-                                    v.name
+                                  props.route[i] &&
+                                  props.route[i].name === v.name
                                 }
                                 onChange={() => selectDatabase(v, i)}
                               />
@@ -153,13 +152,13 @@ const Explore = (props) => {
                                     alt="アイコン画像：ラット"
                                     className="icon"
                                   />
-                                  {v.name}
+                                  {v.label}
                                 </span>
                               </label>
                               {i > 0 &&
-                              props.route[props.route.length - 1] &&
-                              props.route[props.route.length - 1].name ===
-                                v.name ? (
+                              props.route[i] &&
+                              props.route[i].name === v.name &&
+                              v.name ? (
                                 <button
                                   className="radio__three_dots"
                                   onClick={() => toggleHasMenu(i, j)}
