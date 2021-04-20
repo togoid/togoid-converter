@@ -5,7 +5,6 @@ import Footer from "../components/Footer";
 import Explore from "../components/Explore";
 import Databases from "../components/Databases";
 import IdInput from "../components/IdInput";
-import axios from "axios";
 import dbConfig from "../public/config.json";
 import dbCatalogue from "../public/dataset.json";
 
@@ -34,48 +33,6 @@ const Home = () => {
       nodes[route.length] = candidates;
       setDatabaseNodes(nodes);
     }
-    // if (route.length > 1) {
-    //   // TODO クエリ実行中にloading画面を表示させる
-    //   const r = [
-    //     route[route.length - 2].name.split("-").pop(),
-    //     route[route.length - 1].name.split("-").pop(),
-    //   ].join(",");
-    //   const ids = route[route.length - 2].ids.map((v) => v.to).join(",");
-    //   const d = await axios
-    //     .get(
-    //       `${process.env.NEXT_PUBLIC_SPARQL_ENDOPOINT}/convert?ids=${ids}&route=${r}`
-    //     )
-    //     .then((d) => d.data)
-    //     .catch((e) => console.log(e));
-    //
-    //   console.log(d);
-    //
-    //   const nodes = [...databaseNodes];
-    //   if (d) {
-    //     const candidates = [];
-    //     d.result.forEach((v) => {
-    //       const index = candidates.findIndex((pref) => pref.name === v.tn);
-    //       if (index === -1) {
-    //         candidates.push({
-    //           name: v.tn,
-    //           label: v.tn,
-    //           count: 1,
-    //           ids: [{ from: v.f, to: v.t }],
-    //         });
-    //       } else {
-    //         candidates[index].count += 1;
-    //         candidates[index].ids.push({ from: v.f, to: v.t });
-    //       }
-    //     });
-    //     candidates.sort((a, b) => {
-    //       if (a.count < b.count) return 1;
-    //       if (a.count > b.count) return -1;
-    //       return 0;
-    //     });
-    //     nodes.push(candidates);
-    //     setDatabaseNodes(nodes);
-    //   }
-    // }
   }, [route]);
 
   /**
@@ -118,45 +75,6 @@ const Home = () => {
     }
   };
 
-  const executeQuery = async () => {
-    // TODO クエリ実行中にloading画面を表示させる
-    const route = [route[route.length - 2].name, route[route.length - 1].name];
-    const ids = route[route.length - 2].ids.join(",");
-    const d = await axios
-      .get(
-        `${process.env.NEXT_PUBLIC_SPARQL_ENDOPOINT}/convert?ids=${ids}&routes=${route}`
-      )
-      .then((d) => d.data)
-      .catch((e) => console.log(e));
-
-    console.log(d);
-
-    const nodes = [...databaseNodes];
-    if (d) {
-      const candidates = [];
-      d.result.forEach((v) => {
-        const index = candidates.findIndex((pref) => pref.name === v.tn);
-        if (index === -1) {
-          candidates.push({
-            name: v.tn,
-            label: v.tn,
-            count: 1,
-            ids: [{ from: v.f, to: v.t }],
-          });
-        } else {
-          candidates[index].count += 1;
-          candidates[index].ids.push({ from: v.f, to: v.t });
-        }
-      });
-      candidates.sort((a, b) => {
-        if (a.count < b.count) return 1;
-        if (a.count > b.count) return -1;
-        return 0;
-      });
-      nodes.push(candidates);
-      setDatabaseNodes(nodes);
-    }
-  };
   /**
    * 表示されているリストをクリアする
    */
@@ -209,6 +127,7 @@ const Home = () => {
               databaseNodes={databaseNodes}
               route={route}
               setRoute={setRoute}
+              ids={ids}
             />
           ) : (
             <Databases />
