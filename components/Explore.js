@@ -5,6 +5,7 @@ const Explore = (props) => {
   const [operationMenuVisibility, setOperationMenuVisibility] = useState(false);
   const [modalVisibility, setModalVisibility] = useState(false);
   const [modalData, setModalData] = useState({ heading: [], rows: [] });
+  const [menuVisibility, setMenuVisibility] = useState([null, null]);
 
   /**
    * modalDataがstatusにセットされたら、データモーダルを表示する
@@ -21,26 +22,27 @@ const Explore = (props) => {
     const r = props.route.slice(0, i);
     r[i] = database;
     props.setRoute(r);
+    setMenuVisibility([null, null]);
   };
   /**
    * ３点リーダサブメニューの表示非表示を切り替える
    * @param index1
    * @param index2
    */
-  const toggleHasMenu = (index1, index2) => {
-    const newDatabaseNodes = JSON.parse(JSON.stringify(props.databaseNodes));
-    const newDatabase = newDatabaseNodes[index1];
-    newDatabase[index2].hasMenu = !newDatabase[index2].hasMenu;
-    props.setDatabaseNodes(newDatabaseNodes);
+  const toggleMenuVisibility = (index1, index2) => {
+    if (menuVisibility[0] === index1 && menuVisibility[1] === index2) {
+      setMenuVisibility([null, null]);
+    } else {
+      setMenuVisibility([index1, index2]);
+    }
   };
   /**
    * モーダルの表示非表示を切り替える
    * モーダルを表示する際に３点リーダサブメニューを閉じる
    * @param index1
-   * @param index2
    */
-  const showModal = (index1, index2) => {
-    toggleHasMenu(index1, index2);
+  const showModal = (index1) => {
+    setMenuVisibility([null, null]);
     const results = [];
     const headings = [];
     props.databaseNodes.forEach((v, i) => {
@@ -161,37 +163,38 @@ const Explore = (props) => {
                               v.name ? (
                                 <button
                                   className="radio__three_dots"
-                                  onClick={() => toggleHasMenu(i, j)}
+                                  onClick={() => toggleMenuVisibility(i, j)}
                                 />
                               ) : null}
-                              {v.hasMenu ? (
-                                <div className="button_pull_down__children">
-                                  <button
-                                    className="button_pull_down__children__item"
-                                    onClick={() => showModal(i, j)}
-                                  >
-                                    <svg className="icon" viewBox="0 0 24 24">
-                                      <path
-                                        fill="currentColor"
-                                        d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z"
-                                      />
-                                    </svg>
-                                    Resolve with this
-                                  </button>
-                                </div>
-                              ) : (
-                                ""
-                              )}
+                              {menuVisibility[0] === i &&
+                                menuVisibility[1] === j && (
+                                  <div className="button_pull_down__children">
+                                    <button
+                                      className="button_pull_down__children__item"
+                                      onClick={() => showModal(i, j)}
+                                    >
+                                      <svg className="icon" viewBox="0 0 24 24">
+                                        <path
+                                          fill="currentColor"
+                                          d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z"
+                                        />
+                                      </svg>
+                                      Resolve with this
+                                    </button>
+                                  </div>
+                                )}
                             </div>
                           </li>
                         ))}
                       </ul>
                       {i < database.length - 1 && (
                         <>
+                          {/*
                           <div className="point" />
                           <select name="" id="" className="select white">
                             <option value="">rdfs:seeAlso</option>
                           </select>
+*/}
                           <div className="point" />
                         </>
                       )}

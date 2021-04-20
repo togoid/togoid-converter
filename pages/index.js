@@ -27,7 +27,6 @@ const Home = () => {
             label: k.split("-")[1],
             count: 1,
             ids: [],
-            hasMenu: false,
           });
         }
       });
@@ -61,7 +60,6 @@ const Home = () => {
     //           name: v.tn,
     //           label: v.tn,
     //           count: 1,
-    //           hasMenu: false,
     //           ids: [{ from: v.f, to: v.t }],
     //         });
     //       } else {
@@ -97,7 +95,6 @@ const Home = () => {
               label: k,
               count: 1,
               ids: [id],
-              hasMenu: false,
             });
           } else {
             candidates[index].count += 1;
@@ -144,7 +141,6 @@ const Home = () => {
             name: v.tn,
             label: v.tn,
             count: 1,
-            hasMenu: false,
             ids: [{ from: v.f, to: v.t }],
           });
         } else {
