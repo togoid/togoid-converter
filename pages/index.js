@@ -21,9 +21,10 @@ const Home = () => {
       const r = route[route.length - 1];
       const candidates = [];
       Object.keys(dbConfig).forEach((k) => {
-        if (k.indexOf(r.name) === 0) {
+        if (k.indexOf(r.name.split("-").pop()) === 0) {
           candidates.push({
             name: k,
+            label: k.split("-")[1],
             count: 1,
             ids: [],
             hasMenu: false,
@@ -58,6 +59,7 @@ const Home = () => {
     //       if (index === -1) {
     //         candidates.push({
     //           name: v.tn,
+    //           label: v.tn,
     //           count: 1,
     //           hasMenu: false,
     //           ids: [{ from: v.f, to: v.t }],
@@ -92,6 +94,7 @@ const Home = () => {
           if (index === -1) {
             candidates.push({
               name: k,
+              label: k,
               count: 1,
               ids: [id],
               hasMenu: false,
@@ -139,6 +142,7 @@ const Home = () => {
         if (index === -1) {
           candidates.push({
             name: v.tn,
+            label: v.tn,
             count: 1,
             hasMenu: false,
             ids: [{ from: v.f, to: v.t }],
