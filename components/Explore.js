@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ResultModal from "../components/ResultModal";
+import axios from "axios";
 
 const Explore = (props) => {
   const [operationMenuVisibility, setOperationMenuVisibility] = useState(false);
@@ -13,6 +14,18 @@ const Explore = (props) => {
   useEffect(() => {
     if (modalData.rows.length > 0) setModalVisibility(!modalVisibility);
   }, [modalData]);
+
+  const executeQuery = async () => {
+    const route = props.route.map((v) => v.label).join(",");
+    const ids = props.ids.join(",");
+    return await axios
+      .get(
+        `${process.env.NEXT_PUBLIC_SPARQL_ENDOPOINT}/convert?ids=${ids}&route=${route}&type=all`
+      )
+      .then((d) => d.data)
+      .catch((e) => console.log(e));
+  };
+
   /**
    * databaseのラジオボタンを選択する
    * @param database
@@ -36,47 +49,19 @@ const Explore = (props) => {
       setMenuVisibility([index1, index2]);
     }
   };
+
   /**
    * モーダルの表示非表示を切り替える
    * モーダルを表示する際に３点リーダサブメニューを閉じる
    * @param index1
    */
-  const showModal = (index1) => {
+  const showModal = async (index1) => {
     setMenuVisibility([null, null]);
-    const results = [];
-    const headings = [];
-    props.databaseNodes.forEach((v, i) => {
-      if (i <= index1) {
-        const data = v.filter((v2) => {
-          if (v2.name === props.route[props.route.length - 1][i]) {
-            return v2;
-          }
-        });
-        results.push(data[0].ids);
-        headings.push(data[0].name);
-      }
-    });
-    let arrList = [];
-    const newArrayList = [];
-    results.forEach((rows, i) => {
-      rows.forEach((v) => {
-        if (i === 1) {
-          // 2列目はsとoで1列目と2列目のリストを追加
-          arrList.push([v.from, v.to]);
-        } else if (i > 1) {
-          // 3列目以降は列または行追加
-          arrList.forEach((row) => {
-            const colIndex = row.indexOf(v.from);
-            if (colIndex >= 0) {
-              const newRow = row.filter((v, i) => i <= colIndex);
-              newArrayList.push(newRow.concat(v.to));
-            }
-          });
-        }
-      });
-      if (i >= 2) arrList = newArrayList;
-    });
-    setModalData({ headings, rows: arrList });
+    const headings = props.route
+      .filter((v, i) => i <= index1)
+      .map((v) => v.label);
+    const d = await executeQuery();
+    setModalData({ headings, rows: d.results });
   };
 
   return (
@@ -184,20 +169,22 @@ const Explore = (props) => {
                                   </div>
                                 )}
                             </div>
-                          </li>
-                        ))}
-                      </ul>
-                      {i < database.length - 1 && (
-                        <>
-                          {/*
+                            {i < database.length - 1 &&
+                              props.route[i] &&
+                              props.route[i].name === v.name && (
+                                <>
+                                  {/*
                           <div className="point" />
                           <select name="" id="" className="select white">
                             <option value="">rdfs:seeAlso</option>
                           </select>
 */}
-                          <div className="point" />
-                        </>
-                      )}
+                                  <div className="point" />
+                                </>
+                              )}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   ))}
 
