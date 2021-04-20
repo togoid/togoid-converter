@@ -6,7 +6,6 @@ const Explore = (props) => {
   const [modalVisibility, setModalVisibility] = useState(false);
   const [modalData, setModalData] = useState({ heading: [], rows: [] });
 
-  const selectedDatabase = props.route[props.databaseNodes.length - 1];
   /**
    * modalDataがstatusにセットされたら、データモーダルを表示する
    */
@@ -16,29 +15,12 @@ const Explore = (props) => {
   /**
    * databaseのラジオボタンを選択する
    * @param database
+   * @param i
    */
-  const selectDatabase = (database) => {
-    props.setRoute(() => {
-      return (props.route[props.databaseNodes.length - 1] = database);
-    });
-    // const array = JSON.parse(JSON.stringify(selectedDatabase));
-    // const newDatabaseNodes = JSON.parse(JSON.stringify(props.databaseNodes));
-    // if (array.length - 1 >= index) {
-    //   array[index] = name;
-    //   // 変更したら、それ以下のリストを削除
-    //   if (array.length - 1 > index) {
-    //     array.splice(index + 1, array.length - (index + 1));
-    //   }
-    //   if (newDatabaseNodes.length - 1 > index) {
-    //     newDatabaseNodes.splice(
-    //       index + 1,
-    //       newDatabaseNodes.length - (index + 1)
-    //     );
-    //   }
-    // } else {
-    //   array.push(name);
-    // }
-    // props.setDatabaseNodes(newDatabaseNodes);
+  const selectDatabase = (database, i) => {
+    const r = props.route.slice(0, i);
+    r[i] = database;
+    props.setRoute(r);
   };
   /**
    * ３点リーダサブメニューの表示非表示を切り替える
@@ -64,7 +46,7 @@ const Explore = (props) => {
     props.databaseNodes.forEach((v, i) => {
       if (i <= index1) {
         const data = v.filter((v2) => {
-          if (v2.name === selectedDatabase[i]) {
+          if (v2.name === props.route[props.route.length - 1][i]) {
             return v2;
           }
         });
@@ -154,8 +136,12 @@ const Explore = (props) => {
                                 type="radio"
                                 id={`result${i}-${j}`}
                                 className="radio__input"
-                                checked={selectedDatabase.name === v.name}
-                                onChange={() => selectDatabase(v)}
+                                checked={
+                                  props.route[props.route.length - 1] &&
+                                  props.route[props.route.length - 1].name ===
+                                    v.name
+                                }
+                                onChange={() => selectDatabase(v, i)}
                               />
                               <label
                                 htmlFor={`result${i}-${j}`}
@@ -170,7 +156,10 @@ const Explore = (props) => {
                                   {v.name}
                                 </span>
                               </label>
-                              {i > 0 && selectedDatabase.name === v.name ? (
+                              {i > 0 &&
+                              props.route[props.route.length - 1] &&
+                              props.route[props.route.length - 1].name ===
+                                v.name ? (
                                 <button
                                   className="radio__three_dots"
                                   onClick={() => toggleHasMenu(i, j)}
