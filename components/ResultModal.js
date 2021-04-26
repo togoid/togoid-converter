@@ -3,7 +3,6 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 
 const Explore = (props) => {
   const [exportMenuVisibility, setExportMenuVisibility] = useState(false);
-  const [modalVisibility, setModalVisibility] = useState(false);
   const [clipboardText, setClipboardText] = useState("");
   const [copied, setCopied] = useState(false);
 
@@ -44,7 +43,7 @@ const Explore = (props) => {
       <div className="modal__inner">
         <div className="modal__scroll_area">
           <button
-            onClick={() => setModalVisibility(!modalVisibility)}
+            onClick={() => props.setModalVisibility(false)}
             className="modal__close"
           >
             <svg viewBox="0 0 24 24">
@@ -61,52 +60,19 @@ const Explore = (props) => {
             <div className="modal__path__frame">
               <div className="modal__path__frame__inner">
                 {/* Path */}
-                <div htmlFor="result" className="path_label green">
-                  <span className="path_label__inner">
-                    <img
-                      src="/images/icon_rat.png"
-                      alt="アイコン画像：ラット"
-                      className="icon"
-                    />
-                    HGNC
-                  </span>
-                </div>
-
-                <div htmlFor="result" className="path_label small white">
-                  <span className="path_label__inner">プロパティA</span>
-                </div>
-
-                <div htmlFor="result" className="path_label small green">
-                  <span className="path_label__inner">
-                    <img
-                      src="/images/icon_rat.png"
-                      alt="アイコン画像：ラット"
-                      className="icon"
-                    />
-                    HGNC
-                  </span>
-                </div>
-
-                <div htmlFor="result" className="path_label small white">
-                  <span className="path_label__inner">プロパティA</span>
-                </div>
-
-                <div htmlFor="result" className="path_label small purple">
-                  <span className="path_label__inner">
-                    <img
-                      src="/images/icon_rat.png"
-                      alt="アイコン画像：ラット"
-                      className="icon"
-                    />
-                    HGNC
-                  </span>
-                </div>
-
-                <div htmlFor="result" className="path_label small white">
-                  <span className="path_label__inner">プロパティA</span>
-                </div>
-
-                <div htmlFor="result" className="path_label small purple">
+                {props.modalData.headings.map((v, i) => (
+                  <div key={i} htmlFor="result" className="path_label green">
+                    <span className="path_label__inner">
+                      <img
+                        src="/images/icon_rat.png"
+                        alt="アイコン画像：ラット"
+                        className="icon"
+                      />
+                      {v}
+                    </span>
+                  </div>
+                ))}
+                {/*               <div htmlFor="result" className="path_label green">
                   <span className="path_label__inner">
                     <img
                       src="/images/icon_rat.png"
@@ -131,6 +97,7 @@ const Explore = (props) => {
                     HGNC
                   </span>
                 </div>
+ */}{" "}
                 {/* Path */}
               </div>
             </div>
