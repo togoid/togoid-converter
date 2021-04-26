@@ -59,46 +59,11 @@ const Explore = (props) => {
             <p className="modal__heading">PATH</p>
             <div className="modal__path__frame">
               <div className="modal__path__frame__inner">
-                {/* Path */}
                 {props.modalData.headings.map((v, i) => (
-                  <div key={i} htmlFor="result" className="path_label green">
-                    <span className="path_label__inner">
-                      <img
-                        src="/images/icon_rat.png"
-                        alt="アイコン画像：ラット"
-                        className="icon"
-                      />
-                      {v}
-                    </span>
+                  <div key={i} className="path_label green">
+                    <span className="path_label__inner">{v}</span>
                   </div>
                 ))}
-                {/*               <div htmlFor="result" className="path_label green">
-                  <span className="path_label__inner">
-                    <img
-                      src="/images/icon_rat.png"
-                      alt="アイコン画像：ラット"
-                      className="icon"
-                    />
-                    HGNC
-                  </span>
-                </div>
-
-                <div htmlFor="result" className="path_label small white">
-                  <span className="path_label__inner">プロパティA</span>
-                </div>
-
-                <div htmlFor="result" className="path_label purple">
-                  <span className="path_label__inner">
-                    <img
-                      src="/images/icon_rat.png"
-                      alt="アイコン画像：ラット"
-                      className="icon"
-                    />
-                    HGNC
-                  </span>
-                </div>
- */}{" "}
-                {/* Path */}
               </div>
             </div>
           </div>

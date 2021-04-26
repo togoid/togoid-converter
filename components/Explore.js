@@ -20,10 +20,9 @@ const Explore = (props) => {
     const ids = props.ids.join(",");
     return await axios
       .get(
-        `${process.env.NEXT_PUBLIC_SPARQL_ENDOPOINT}/convert?ids=${ids}&route=${route}&type=all`
+        `${process.env.NEXT_PUBLIC_SPARQL_ENDOPOINT}/convert?ids=${ids}&route=${route}&include=all&format=json`
       )
       .then((d) => d.data)
-      .catch((e) => console.log(e));
   };
 
   /**
@@ -61,6 +60,7 @@ const Explore = (props) => {
       .filter((v, i) => i <= index1)
       .map((v) => v.label);
     const d = await executeQuery();
+    console.log(d);
     setModalData({ headings, rows: d.results });
   };
 
@@ -123,10 +123,10 @@ const Explore = (props) => {
                                 type="radio"
                                 id={`result${i}-${j}`}
                                 className="radio__input"
-                                checked={
+                                checked={Boolean(
                                   props.route[i] &&
-                                  props.route[i].name === v.name
-                                }
+                                    props.route[i].name === v.name
+                                )}
                                 onChange={() => selectDatabase(v, i)}
                               />
                               <label
@@ -134,11 +134,6 @@ const Explore = (props) => {
                                 className="radio__large_label green"
                               >
                                 <span className="radio__large_label__inner">
-                                  <img
-                                    src="/images/icon_rat.png"
-                                    alt="アイコン画像：ラット"
-                                    className="icon"
-                                  />
                                   {v.label}
                                 </span>
                               </label>
@@ -188,7 +183,12 @@ const Explore = (props) => {
                     </div>
                   ))}
 
-                {modalVisibility && <ResultModal modalData={modalData} setModalVisibility={setModalVisibility} />}
+                {modalVisibility && (
+                  <ResultModal
+                    modalData={modalData}
+                    setModalVisibility={setModalVisibility}
+                  />
+                )}
               </div>
             </div>
           </div>
