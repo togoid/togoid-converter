@@ -22,7 +22,7 @@ const Explore = (props) => {
       .get(
         `${process.env.NEXT_PUBLIC_SPARQL_ENDOPOINT}/convert?ids=${ids}&route=${route}&include=all&format=json`
       )
-      .then((d) => d.data)
+      .then((d) => d.data);
   };
 
   /**
@@ -35,6 +35,10 @@ const Explore = (props) => {
     r[i] = database;
     props.setRoute(r);
     setMenuVisibility([null, null]);
+  };
+
+  const handleReset = () => {
+    props.restartExplore();
   };
   /**
    * ３点リーダサブメニューの表示非表示を切り替える
@@ -82,7 +86,7 @@ const Explore = (props) => {
               >
                 Operation
               </button>
-              {operationMenuVisibility ? (
+              {operationMenuVisibility && (
                 <div className="button_pull_down__children">
                   <button className="button_pull_down__children__item">
                     <svg className="icon" viewBox="0 0 24 24">
@@ -93,7 +97,10 @@ const Explore = (props) => {
                     </svg>
                     Export as CSV
                   </button>
-                  <button className="button_pull_down__children__item">
+                  <button
+                    onClick={handleReset}
+                    className="button_pull_down__children__item"
+                  >
                     <svg className="icon" viewBox="0 0 24 24">
                       <path
                         fill="currentColor"
@@ -103,8 +110,6 @@ const Explore = (props) => {
                     Reset
                   </button>
                 </div>
-              ) : (
-                ""
               )}
             </div>
           </div>
@@ -164,19 +169,6 @@ const Explore = (props) => {
                                   </div>
                                 )}
                             </div>
-                            {i < database.length - 1 &&
-                              props.route[i] &&
-                              props.route[i].name === v.name && (
-                                <>
-                                  {/*
-                          <div className="point" />
-                          <select name="" id="" className="select white">
-                            <option value="">rdfs:seeAlso</option>
-                          </select>
-*/}
-                                  <div className="point" />
-                                </>
-                              )}
                           </li>
                         ))}
                       </ul>
