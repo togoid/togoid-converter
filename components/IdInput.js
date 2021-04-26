@@ -4,11 +4,11 @@ const IdInput = (props) => {
   const [inputType, setInputType] = useState(0);
   const [idTexts, setIdTexts] = useState("");
 
-  function handleSubmit(e) {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const ids = idTexts.split(/[\s,\n]+/).map((v) => v.trim());
     props.handleSubmit(ids);
-  }
+  };
 
   return (
     <div className="input_area">
@@ -23,7 +23,7 @@ const IdInput = (props) => {
             onChange={() => setInputType(0)}
           />
           <label htmlFor="textField" className="radio__label">
-            INPUT from text field
+            Input from text field
           </label>
         </div>
 
@@ -37,7 +37,7 @@ const IdInput = (props) => {
             onChange={() => setInputType(1)}
           />
           <label htmlFor="csv" className="radio__label">
-            INPUT from CSV
+            Input from CSV
           </label>
         </div>
       </div>
