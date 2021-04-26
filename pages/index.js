@@ -76,12 +76,21 @@ const Home = () => {
   };
 
   /**
-   * 表示されているリストをクリアする
+   * 表示されているノードをクリアする
    */
   const clearExplore = () => {
     setDatabaseNodes([]);
     setRoute([]);
   };
+
+  /**
+   * 表示されているノードを一列目のみにする
+   */
+  const restartExplore = () => {
+    setDatabaseNodes(databaseNodes.slice(0, 1));
+    setRoute(route.slice(0, 1));
+  };
+
   /**
    * Executeボタン押下
    * @param ids
@@ -127,6 +136,7 @@ const Home = () => {
               databaseNodes={databaseNodes}
               route={route}
               setRoute={setRoute}
+              restartExplore={restartExplore}
               ids={ids}
             />
           ) : (
