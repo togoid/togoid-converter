@@ -188,7 +188,7 @@ const Explore = (props) => {
                     </div>
                   ))}
 
-                {modalVisibility && <ResultModal modalData={modalData} />}
+                {modalVisibility && <ResultModal modalData={modalData} setModalVisibility={setModalVisibility} />}
               </div>
             </div>
           </div>
