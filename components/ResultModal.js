@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import { saveAs } from "file-saver";
 import { exportCSV } from "../lib/util";
+import dbCatalogue from "../public/dataset.json";
 
 const Explore = (props) => {
   const [exportMenuVisibility, setExportMenuVisibility] = useState(false);
@@ -31,8 +33,31 @@ const Explore = (props) => {
   };
 
   const handleExportCSV = () => {
-    exportCSV([props.tableData.headings, ...props.tableData.rows]);
+    exportCSV([props.tableData.heading, ...props.tableData.rows]);
   };
+
+  const handleIdDownload = () => {
+    // todo APIから取得し直す
+    const texts = props.tableData.rows.map((v) => v.slice().pop()).join("\r\n");
+    const blob = new Blob([texts], {
+      type: "text/plain;charset=utf-8",
+    });
+    saveAs(blob, "ids.txt");
+  };
+
+  const handleURLDownload = () => {
+    // todo APIから取得し直す
+    const dbName = props.route.slice().pop().name;
+    const dbPrefix = dbCatalogue[dbName].prefix;
+    const texts = props.tableData.rows
+      .map((v) => dbPrefix + v.slice().pop())
+      .join("\r\n");
+    const blob = new Blob([texts], {
+      type: "text/plain;charset=utf-8",
+    });
+    saveAs(blob, "urls.txt");
+  };
+
   return (
     <div className="modal">
       <div className="modal__inner">
@@ -54,7 +79,7 @@ const Explore = (props) => {
             <p className="modal__heading">PATH</p>
             <div className="modal__path__frame">
               <div className="modal__path__frame__inner">
-                {props.tableData.headings.map((v, i) => (
+                {props.tableData.heading.map((v, i) => (
                   <div key={i} className="path_label green">
                     <span className="path_label__inner">{v}</span>
                   </div>
@@ -117,7 +142,10 @@ const Explore = (props) => {
                         {copied ? <span>Copied.</span> : null}
                       </button>
                     </CopyToClipboard>
-                    <button className="button_pull_down__children__item">
+                    <button
+                      onClick={handleIdDownload}
+                      className="button_pull_down__children__item"
+                    >
                       <svg className="icon" viewBox="0 0 24 24">
                         <path
                           fill="currentColor"
@@ -126,7 +154,10 @@ const Explore = (props) => {
                       </svg>
                       変換後IDをダウンロード
                     </button>
-                    <button className="button_pull_down__children__item">
+                    <button
+                      onClick={handleURLDownload}
+                      className="button_pull_down__children__item"
+                    >
                       <svg className="icon" viewBox="0 0 24 24">
                         <path
                           fill="currentColor"
@@ -157,8 +188,8 @@ const Explore = (props) => {
           <table className="table">
             <thead>
               <tr>
-                {props.tableData && props.tableData.headings.length > 0
-                  ? props.tableData.headings.map((v, i) => <th key={i}>{v}</th>)
+                {props.tableData && props.tableData.heading.length > 0
+                  ? props.tableData.heading.map((v, i) => <th key={i}>{v}</th>)
                   : null}
               </tr>
             </thead>
@@ -174,7 +205,7 @@ const Explore = (props) => {
               ) : (
                 <tr>
                   <td
-                    colSpan={props.tableData.headings.length}
+                    colSpan={props.tableData.heading.length}
                     className="no_results"
                   >
                     No Results
