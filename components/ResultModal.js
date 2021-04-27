@@ -11,6 +11,14 @@ const Explore = (props) => {
     setClipboardText(createClipboardText(props.tableData.rows));
   }, [props.tableData]);
 
+  useEffect(() => {
+    if (copied) {
+      setTimeout(() => {
+        setCopied(false);
+      }, 1000);
+    }
+  }, [copied]);
+
   const createClipboardText = (array) => {
     let text = "";
     array.forEach((v, i) => {
@@ -19,7 +27,6 @@ const Explore = (props) => {
       }
       text = text.concat(v[v.length - 1]);
     });
-    console.log(text);
     return text;
   };
 
@@ -57,7 +64,7 @@ const Explore = (props) => {
           </div>
 
           <div className="modal__top">
-{/*
+            {/*
             <div className="option">
               <p className="label">Option</p>
               <select name="" id="" className="select white">
@@ -76,23 +83,8 @@ const Explore = (props) => {
                 </svg>
                 <input type="search" className="input_search__input" />
               </div>
-              {copied ? <span>Copied.</span> : null}
-              <CopyToClipboard
-                text={clipboardText}
-                onCopy={() => setCopied(true)}
-              >
-                <button className="button_icon">
-                  <svg className="button_icon__icon" viewBox="0 0 24 24">
-                    <path
-                      fill="currentColor"
-                      d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"
-                    />
-                  </svg>
-                  <span className="button_icon__label">copy</span>
-                </button>
-              </CopyToClipboard>
               <div className="export_button">
-                <button className="button_icon" onClick={handleExportCSV}>
+                <button className="button_icon">
                   <svg className="button_icon__icon" viewBox="0 0 24 24">
                     <path
                       fill="currentColor"
@@ -110,14 +102,29 @@ const Explore = (props) => {
                 </button>
                 {exportMenuVisibility ? (
                   <div className="button_pull_down__children">
+                    <CopyToClipboard
+                      text={clipboardText}
+                      onCopy={() => setCopied(true)}
+                    >
+                      <button className="button_pull_down__children__item">
+                        <svg className="icon" viewBox="0 0 24 24">
+                          <path
+                            fill="currentColor"
+                            d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
+                          />
+                        </svg>
+                        変換後IDをクリップボードにコピー
+                        {copied ? <span>Copied.</span> : null}
+                      </button>
+                    </CopyToClipboard>
                     <button className="button_pull_down__children__item">
                       <svg className="icon" viewBox="0 0 24 24">
                         <path
                           fill="currentColor"
-                          d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
+                          d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z"
                         />
                       </svg>
-                      クリップボードにコピー
+                      変換後IDをダウンロード
                     </button>
                     <button className="button_pull_down__children__item">
                       <svg className="icon" viewBox="0 0 24 24">
@@ -126,25 +133,19 @@ const Explore = (props) => {
                           d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z"
                         />
                       </svg>
-                      ID一覧
+                      変換後URLをダウンロード
                     </button>
-                    <button className="button_pull_down__children__item">
+                    <button
+                      onClick={handleExportCSV}
+                      className="button_pull_down__children__item"
+                    >
                       <svg className="icon" viewBox="0 0 24 24">
                         <path
                           fill="currentColor"
                           d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z"
                         />
                       </svg>
-                      URL一覧
-                    </button>
-                    <button className="button_pull_down__children__item">
-                      <svg className="icon" viewBox="0 0 24 24">
-                        <path
-                          fill="currentColor"
-                          d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z"
-                        />
-                      </svg>
-                      CSV
+                      CSVをダウンロード
                     </button>
                   </div>
                 ) : (
@@ -162,18 +163,29 @@ const Explore = (props) => {
               </tr>
             </thead>
             <tbody>
-              {props.tableData && props.tableData.rows.length > 0
-                ? props.tableData.rows.map((data, i) => (
-                    <tr key={i}>
-                      {data.map((d, j) => {
-                        return <td key={j}>{d}</td>;
-                      })}
-                    </tr>
-                  ))
-                : null}
+              {props.tableData && props.tableData.rows.length > 0 ? (
+                props.tableData.rows.map((data, i) => (
+                  <tr key={i}>
+                    {data.map((d, j) => {
+                      return <td key={j}>{d}</td>;
+                    })}
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={props.tableData.headings.length}
+                    className="no_results"
+                  >
+                    No Results
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
-          <button className="button_more">MORE</button>
+          {props.tableData && props.tableData.rows.length > 0 && (
+            <button className="button_more">MORE</button>
+          )}
         </div>
       </div>
     </div>

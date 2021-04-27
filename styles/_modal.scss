@@ -81,8 +81,11 @@
 
     .export_button {
       position: relative;
+      .button_pull_down__children {
+        top: 42px;
+      }
       .button_pull_down__children__item {
-        width: 210px;
+        width: 250px;
       }
     }
 
@@ -119,6 +122,9 @@
           }
         }
       }
+    }
+    .no_results {
+      text-align: center;
     }
   }
 }
