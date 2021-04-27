@@ -13,7 +13,7 @@ const Explore = (props) => {
    * tableDataがstatusにセットされたら、データモーダルを表示する
    */
   useEffect(() => {
-    if (tableData.rows.length > 0) setModalVisibility(!modalVisibility);
+    if (tableData.headings.length > 0) setModalVisibility(!modalVisibility);
   }, [tableData]);
 
   const executeQuery = async () => {
@@ -73,7 +73,9 @@ const Explore = (props) => {
       .map((v) => v.name);
     const d = await executeQuery();
     console.log(d);
-    setTableData({ headings, rows: d.results });
+    const rows = d.results.map((v) => v.slice(0, index1 + 1));
+
+    setTableData({ headings, rows });
   };
 
   return (
