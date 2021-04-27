@@ -61,7 +61,7 @@
       }
 
       &__inner {
-        padding: 0 calc((100vw - 987px) /2) 107px;
+        padding: 0 calc((100vw - 987px) /2) 60px;
         margin: 0 auto;
         overflow: auto;
         .explore {
@@ -190,7 +190,7 @@
     max-width: 987px;
     color: $textColor02;
     padding: 16px 19px;
-    margin: 0 auto;
+    margin: 20px auto 0;
     border-radius: 15px;
     background: $gray03;
     .heading {

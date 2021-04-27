@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 const IdInput = (props) => {
-  const [inputType, setInputType] = useState(0);
+  // const [inputType, setInputType] = useState(0);
   const [idTexts, setIdTexts] = useState("");
 
   const handleSubmit = (e) => {
@@ -12,6 +12,7 @@ const IdInput = (props) => {
 
   return (
     <div className="input_area">
+      {/*
       <div className="radio_wrapper">
         <div className="radio">
           <input
@@ -41,12 +42,13 @@ const IdInput = (props) => {
           </label>
         </div>
       </div>
+*/}
 
       <form onSubmit={handleSubmit} className="textarea">
         <textarea
           cols="30"
           rows="10"
-          placeholder="Enter IDs"
+          placeholder="Input IDs"
           className="textarea__input"
           value={idTexts}
           onChange={(e) => setIdTexts(e.target.value)}
