@@ -13,7 +13,7 @@ const Explore = (props) => {
    * tableDataがstatusにセットされたら、データモーダルを表示する
    */
   useEffect(() => {
-    if (tableData.headings.length > 0) setModalVisibility(!modalVisibility);
+    if (tableData.heading.length > 0) setModalVisibility(!modalVisibility);
   }, [tableData]);
 
   const executeQuery = async () => {
@@ -55,9 +55,9 @@ const Explore = (props) => {
   };
 
   const handleExportCSV = async () => {
-    const headings = props.route.map((v) => v.name);
+    const heading = props.route.map((v) => v.name);
     const d = await executeQuery();
-    exportCSV([headings, ...d.results]);
+    exportCSV([heading, ...d.results]);
   };
 
   /**
@@ -68,14 +68,14 @@ const Explore = (props) => {
   const showModal = async (index1) => {
     setOperationMenuVisibility(false);
     setMenuVisibility([null, null]);
-    const headings = props.route
+    const heading = props.route
       .filter((v, i) => i <= index1)
       .map((v) => v.name);
     const d = await executeQuery();
     console.log(d);
     const rows = d.results.map((v) => v.slice(0, index1 + 1));
 
-    setTableData({ headings, rows });
+    setTableData({ heading, rows });
   };
 
   return (
@@ -190,6 +190,7 @@ const Explore = (props) => {
 
                 {modalVisibility && (
                   <ResultModal
+                    route={props.route}
                     tableData={tableData}
                     setModalVisibility={setModalVisibility}
                   />
