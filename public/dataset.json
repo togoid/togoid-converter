@@ -1,0 +1,517 @@
+{
+  "affy_probeset": {
+    "label": "Affymetrix probeset",
+    "catalog": "FIXME",
+    "category": "Probe",
+    "regex": "\\d{4,}(?:(?:_[asx])?_at)?",
+    "prefix": "http://identifiers.org/affy.probeset/"
+  },
+  "bioproject": {
+    "label": "BioProject",
+    "catalog": "nbdc00476",
+    "category": "ResearchProject",
+    "regex": "^(?<id>PRJ[DEN][A-Z]\\d+)$",
+    "prefix": "http://identifiers.org/bioproject/"
+  },
+  "biosample": {
+    "label": "BioSample",
+    "catalog": "nbdc01983",
+    "category": "Sample",
+    "regex": "^(?<id>SAM[NED]\\w?\\d+)$",
+    "prefix": "http://identifiers.org/biosample/"
+  },
+  "ccds": {
+    "label": "Consensus CDS",
+    "catalog": "nbdc00023",
+    "category": "Gene",
+    "regex": "^CCDS(?<id>\\d+)(?:\\.\\d+)?$",
+    "prefix": "http://identifiers.org/ccds/"
+  },
+  "chebi": {
+    "label": "ChEBI compound",
+    "catalog": "nbdc00027",
+    "category": "Compound",
+    "regex": "^(?:CHEBI:)?(?<id>\\d+)$",
+    "prefix": "http://identifiers.org/chebi/CHEBI:"
+  },
+  "chembl_compound": {
+    "label": "ChEMBL compound",
+    "catalog": "nbdc02559",
+    "category": "Compound",
+    "regex": "^(?<id>CHEMBL\\d+)$",
+    "prefix": "http://identifiers.org/chembl.compound/"
+  },
+  "chembl_target": {
+    "label": "ChEMBL target",
+    "catalog": "nbdc02555",
+    "category": "Protein",
+    "regex": "^(?<id>CHEMBL\\d+)$",
+    "prefix": "http://identifiers.org/chembl.target/"
+  },
+  "civic_gene": {
+    "label": "CIVIC gene",
+    "catalog": "nbdc02558",
+    "category": "Gene",
+    "regex": "^(?<id>\\d+)$",
+    "prefix": "http://civic.genome.wustl.edu/links/genes/"
+  },
+  "clinvar": {
+    "label": "ClinVar variant",
+    "catalog": "nbdc01514",
+    "category": "Variant",
+    "regex": "^(VCV0*)?(?<id>(\\d{1,9}))$",
+    "prefix": "http://identifiers.org/clinvar/"
+  },
+  "dbsnp": {
+    "label": "dbSNP",
+    "catalog": "nbdc00206",
+    "category": "Variant",
+    "regex": "^(?<id>rs\\d+)$",
+    "prefix": "http://identifiers.org/dbsnp/"
+  },
+  "dgidb": {
+    "label": "DGIdb",
+    "catalog": "nbdc02562",
+    "category": "Interaction",
+    "regex": "^[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}",
+    "prefix": "FIXME"
+  },
+  "doid": {
+    "label": "Disease ontology",
+    "catalog": "nbdc00261",
+    "category": "Disease",
+    "regex": "^DOID:(?<id>\\d+)$",
+    "prefix": "http://purl.obolibrary.org/obo/DOID_"
+  },
+  "drugbank": {
+    "label": "DrugBank",
+    "catalog": "nbdc01071",
+    "category": "Drug",
+    "regex": "^(?<id>DB\\d{5})$",
+    "prefix": "http://identifiers.org/drugbank/"
+  },
+  "ec": {
+    "label": "Enzyme nomenclature",
+    "catalog": "nbdc00019",
+    "category": "Function",
+    "regex": "^(?:EC )?(?<id>\\d+\\.(?:(?:-\\.-\\.-)|\\d+\\.(?:(?:-\\.-)|\\d+\\.(?:-|\\d+))))$",
+    "prefix": "http://identifiers.org/ec-code/"
+  },
+  "ena": {
+    "catalog": "nbdc00432",
+    "category": "Gene",
+    "label": "ENA",
+    "regex": "^(?:ena\\.embl:)?(?<id>[A-Z]+[0-9]+)(?:\\.\\d+)?$",
+    "prefix": "http://identifiers.org/ena.embl/"
+  },
+  "ensembl_gene": {
+    "label": "Ensembl gene",
+    "catalog": "nbdc00054",
+    "category": "Gene",
+    "regex": "^(?<id>ENSG\\d{11})(?:\\.\\d+)?$",
+    "prefix": "http://identifiers.org/ensembl/"
+  },
+  "ensembl_protein": {
+    "label": "Ensembl protein",
+    "catalog": "nbdc00054",
+    "category": "Protein",
+    "regex": "^(?<id>ENSP\\d{11})(?:\\.\\d+)?$",
+    "prefix": "http://identifiers.org/ensembl/"
+  },
+  "ensembl_transcript": {
+    "label": "Ensembl transcript",
+    "catalog": "nbdc00054",
+    "category": "Gene",
+    "regex": "^(?<id>ENST\\d{11})(?:\\.\\d+)?$",
+    "prefix": "http://identifiers.org/ensembl/"
+  },
+  "go": {
+    "label": "Gene ontology",
+    "catalog": "nbdc00074",
+    "category": "Function",
+    "regex": "^(?:GO[:_])?(?<id>\\d{7})$",
+    "prefix": "http://purl.obolibrary.org/obo/GO_"
+  },
+  "hgnc": {
+    "label": "HGNC",
+    "catalog": "nbdc01774",
+    "category": "Gene",
+    "regex": "^(?:(?:HGNC|hgnc):)?(?<id>\\d{1,5})$",
+    "prefix": "http://identifiers.org/hgnc/"
+  },
+  "hgnc_symbol": {
+    "label": "HGNC gene symbol",
+    "catalog": "nbdc01774",
+    "category": "Gene",
+    "regex": "^(?<id>[A-Za-z-0-9_]+)\\@?$",
+    "prefix": "http://identifiers.org/hgnc.symbol/"
+  },
+  "hmdb": {
+    "label": "HMDB",
+    "catalog": "nbdc00909",
+    "category": "Metabolite",
+    "regex": "^(?:hmdb:)?(?<id>HMDB\\d+)$",
+    "prefix": "http://identifiers.org/hmdb/HMDB"
+  },
+  "homologene": {
+    "label": "HomoloGene",
+    "catalog": "nbdc00101",
+    "category": "Ortholog",
+    "regex": "^(?<id>\\d+)$",
+    "prefix": "http://identifiers.org/homologene/"
+  },
+  "hp": {
+    "label": "Human Phenotype Ontology",
+    "catalog": "nbdc02559",
+    "category": "Phenotype",
+    "regex": "^HP:(?<id>\\d{7})$",
+    "prefix": "http://purl.obolibrary.org/obo/HP_"
+  },
+  "human_protein_atlas": {
+    "label": "Human Protein Atlas",
+    "catalog": "nbdc00905",
+    "category": "Protein",
+    "regex": "^(?<id>ENSG\\d{11})$",
+    "prefix": "http://www.proteinatlas.org/"
+  },
+  "insdc": {
+    "label": "GenBank/ENA/DDBJ",
+    "catalog": "nbdc02567",
+    "category": "Gene",
+    "regex": "^(?:insdc:)?(?<id>([A-Z]\\d{5}|[A-Z]{2}\\d{6}|[A-Z]{4}\\d{8}|[A-J][A-Z]{2}\\d{5}))(?:\\.\\d+)?$",
+    "prefix": "http://identifiers.org/insdc/"
+  },
+  "intact": {
+    "label": "IntAct",
+    "catalog": "nbdc00507",
+    "category": "Interaction",
+    "regex": "^(?<id>EBI\\-[0-9]+)$",
+    "prefix": "http://identifiers.org/intact/"
+  },
+  "interpro": {
+    "label": "InterPro",
+    "catalog": "nbdc00108",
+    "category": "Domain",
+    "regex": "^(?<id>IPR\\d{6})$",
+    "prefix": "http://identifiers.org/interpro/"
+  },
+  "kegg_compound": {
+    "label": "KEGG Compound",
+    "catalog": "nbdc00814",
+    "category": "Compound",
+    "regex": "^(?<id>C\\d+)$",
+    "prefix": "http://identifiers.org/kegg.compound/"
+  },
+  "kegg_disease": {
+    "catalog": "nbdc00813",
+    "category": "Disease",
+    "label": "KEGG Disease",
+    "regex": "^KEGG:H(?<id>\\d+)$",
+    "prefix": "http://identifiers.org/kegg.disease/"
+  },
+  "kegg_drug": {
+    "label": "KEGG Drug",
+    "catalog": "nbdc00812",
+    "category": "Drug",
+    "regex": "^(?<id>D\\d+)$",
+    "prefix": "http://identifiers.org/kegg.drug/"
+  },
+  "kegg_genes": {
+    "label": "KEGG Genes",
+    "catalog": "nbdc00532",
+    "category": "Gene, Protein",
+    "regex": "^\\w+:[\\w\\d\\.-]*$",
+    "prefix": "http://identifiers.org/kegg.genes/"
+  },
+  "kegg_orthology": {
+    "label": "KEGG Orthology",
+    "catalog": "nbdc00817",
+    "category": "Ortholog",
+    "prefix": "http://identifiers.org/kegg.orthology/"
+  },
+  "kegg_pathway": {
+    "label": "KEGG Pathway",
+    "catalog": "nbdc00118",
+    "category": "Pathway",
+    "regex": "^(?<id>\\w{2,4}\\d{5})$",
+    "prefix": "http://identifiers.org/kegg.pathway/"
+  },
+  "kegg_reaction": {
+    "label": "KEGG Reaction",
+    "catalog": "nbdc00818",
+    "category": "Interaction",
+    "regex": "^(?<id>R\\d+)$",
+    "prefix": "http://identifiers.org/kegg.reaction/"
+  },
+  "lrg": {
+    "catalog": "nbdc02566",
+    "category": "Gene",
+    "label": "Locus Reference Genomic record",
+    "regex": "^(?<id>LRG_\\d+)$",
+    "prefix": "http://identifiers.org/lrg/"
+  },
+  "mbgd_gene": {
+    "label": "MBGD gene",
+    "catalog": "nbdc00130",
+    "category": "Ortholog",
+    "regex": "^(?<id>[a-z]+:[A-Z]+_[A-Z, 0-9]+)$",
+    "prefix": "http://mbgd.genome.ad.jp/rdf/resource/gene/"
+  },
+  "mbgd_organism": {
+    "label": "MBGD organism",
+    "catalog": "nbdc00130",
+    "category": "Ortholog",
+    "prefix": "http://mbgd.genome.ad.jp/rdf/resource/organism/"
+  },
+  "meddra": {
+    "label": "MedDRA",
+    "catalog": "nbdc02564",
+    "category": "Disease",
+    "regex": "^(?:MedDRA|meddra):(?<id>\\d+)$",
+    "prefix": "http://identifiers.org/meddra/"
+  },
+  "medgen": {
+    "label": "MedGen",
+    "catalog": "nbdc02560",
+    "category": "Disease",
+    "regex": "^(?<id>CN?\\d{4,7})$",
+    "prefix": "http://identifiers.org/medgen/"
+  },
+  "mesh": {
+    "label": "MeSH",
+    "catalog": "nbdc00132",
+    "category": "Terminology",
+    "regex": "^(?<id>[CD]\\d{6,9})$",
+    "prefix": "http://identifiers.org/mesh/"
+  },
+  "mgi": {
+    "label": "MGI",
+    "catalog": "nbdc00135",
+    "category": "Gene",
+    "regex": "^(?:MGI|mgi):(?<id>\\d{5,})$",
+    "prefix": "http://identifiers.org/mgi/MGI:"
+  },
+  "mirbase": {
+    "label": "miRBase",
+    "catalog": "nbdc00136",
+    "category": "microRNA",
+    "regex": "^(?:MONDO:)?(?<id>\\d{7})$",
+    "prefix": "http://identifiers.org/mirbase/"
+  },
+  "mondo": {
+    "label": "MONDO",
+    "catalog": "nbdc02563",
+    "category": "Disease",
+    "regex": "^(?:MONDO:)?(?<id>\\d{7})$",
+    "prefix": "http://purl.obolibrary.org/obo/MONDO_"
+  },
+  "nando": {
+    "label": "NANDO",
+    "catalog": "nbdc02557",
+    "category": "Disease",
+    "regex": "^(?:NANDO:)?(?<id>\\d{7})$",
+    "prefix": "http://nanbyodata.jp/ontology/nando#"
+  },
+  "ncbigene": {
+    "label": "NCBI gene",
+    "catalog": "nbdc00073",
+    "category": "Gene",
+    "regex": "^(?<id>\\d+)$",
+    "prefix": "http://identifiers.org/ncbigene/"
+  },
+  "ncbiprotein": {
+    "label": "NCBI protein",
+    "catalog": "nbdc00584",
+    "category": "Protein",
+    "regex": "^(?:(?:\\w+\\d+(?:\\.\\d+)?)|(?:NP_\\d+))$",
+    "prefix": "http://identifiers.org/ncbiprotein/"
+  },
+  "oma_group": {
+    "label": "OMA group",
+    "catalog": "nbdc02221",
+    "category": "Ortholog",
+    "prefix": "http://identifiers.org/oma.grp/"
+  },
+  "oma_protein": {
+    "label": "OMA protein",
+    "catalog": "nbdc02221",
+    "category": "Protein",
+    "regex": "^(?<id>[A-Z]{5}[0-9]{5})$",
+    "prefix": "http://identifiers.org/oma.protein/"
+  },
+  "omim_gene": {
+    "label": "OMIM gene",
+    "catalog": "nbdc00154",
+    "category": "Gene",
+    "regex": "^(?:O?MIM:)?(?<id>\\d{6})$",
+    "prefix": "http://identifiers.org/mim/"
+  },
+  "omim_phenotype": {
+    "label": "OMIM phenotype",
+    "catalog": "nbdc00154",
+    "category": "Disease",
+    "regex": "^(?:O?MIM:)?(?<id>\\d{6})$",
+    "prefix": "http://identifiers.org/mim/"
+  },
+  "orphanet": {
+    "label": "Orphanet Rare Disease ontology",
+    "catalog": "nbdc01422",
+    "category": "Disease",
+    "regex": "^(?:ORPHA|ORDO|Orphanet):?(?<id>[A-Z0-9]+)$",
+    "prefix": "http://identifiers.org/orphanet.ordo/"
+  },
+  "pdb": {
+    "label": "PDB",
+    "catalog": "nbdc00156",
+    "category": "Structure",
+    "regex": "^(?<id>[0-9][A-Za-z0-9]{3})$",
+    "prefix": "http://rdf.wwpdb.org/pdb/"
+  },
+  "pfam": {
+    "label": "Pfam",
+    "catalog": "nbdc00163",
+    "category": "Domain",
+    "regex": "^(?<id>PF\\d{5})$",
+    "prefix": "http://identifiers.org/pfam/"
+  },
+  "pubchem_compound": {
+    "label": "PubChem compound",
+    "catalog": "nbdc00641",
+    "category": "Compound",
+    "regex": "^(?:CID)?(?<id>\\d+)$",
+    "prefix": "http://identifiers.org/pubchem.compound/"
+  },
+  "pubchem_substance": {
+    "label": "PubChem substance",
+    "catalog": "nbdc00642",
+    "category": "Compound",
+    "regex": "^(?:SID)?(?<id>\\d+)$",
+    "prefix": "http://identifiers.org/pubchem.substance/"
+  },
+  "pubmed": {
+    "label": "PubMed",
+    "catalog": "nbdc00179",
+    "category": "Literature",
+    "regex": "^(?:pmid|PMID:)?(?<id>\\d+)$",
+    "prefix": "http://identifiers.org/pubmed/"
+  },
+  "reactome_pathway": {
+    "label": "Reactome pathway",
+    "catalog": "nbdc00185",
+    "category": "Pathway",
+    "regex": "(?:^R-[A-Z]{3}-\\d+(?:-\\d+)?(?:\\.\\d+)?$)|(?:^REACT_\\d+(?:\\.\\d+)?$)",
+    "prefix": "http://identifiers.org/reactome/"
+  },
+  "reactome_reaction": {
+    "label": "Reactome reaction",
+    "catalog": "nbdc00185",
+    "category": "Interaction",
+    "regex": "^(?:(?:R-[A-Z]{3}-\\d+(?:-\\d+)?(?:\\.\\d+)?)|(?:REACT_\\d+(?:\\.\\d+)?))$",
+    "prefix": "http://identifiers.org/reactome/"
+  },
+  "refseq_genomic": {
+    "label": "RefSeq genomic",
+    "catalog": "nbdc00187",
+    "category": "Genome",
+    "regex": "NC_; AC_; NG_; NT_; NW_; NZ_",
+    "prefix": "http://identifiers.org/refseq/"
+  },
+  "refseq_protein": {
+    "label": "RefSeq protein",
+    "catalog": "nbdc00187",
+    "category": "Protein",
+    "regex": "^(?<id>((AC|AP|NC|NG|NM|NP|NR|NT|NW|XM|XP|XR|YP|ZP)_\\d+)|(NZ\\_[A-Z]{2,4}\\d+))(\\.\\d+)?$",
+    "prefix": "http://identifiers.org/refseq/"
+  },
+  "refseq_rna": {
+    "label": "RefSeq RNA",
+    "catalog": "nbdc00187",
+    "category": "Gene",
+    "regex": "^(?<id>(?:NM|NR|XM|XR)_\\d+)(?:\\.\\d+)?$",
+    "prefix": "http://identifiers.org/refseq/"
+  },
+  "rgd": {
+    "label": "RGD",
+    "catalog": "nbdc00188",
+    "category": "Gene",
+    "regex": "^(?:RGD|rgd):(?<id>\\d{4,})$",
+    "prefix": "http://identifiers.org/rgd/"
+  },
+  "rhea": {
+    "label": "Rhea",
+    "catalog": "nbdc02083",
+    "category": "Interaction",
+    "regex": "^(?<id>\\d{5})$",
+    "prefix": "http://identifiers.org/rhea/"
+  },
+  "sra_accession": {
+    "label": "SRA accession",
+    "catalog": "nbdc00687",
+    "category": "NGS",
+    "regex": "^(?<id>[SED]RA\\d+)$",
+    "prefix": "http://identifiers.org/insdc.sra/"
+  },
+  "sra_analysis": {
+    "label": "SRA analysis",
+    "catalog": "nbdc00687",
+    "category": "NGS",
+    "regex": "^(?<id>[SED]RZ\\d+)$",
+    "prefix": "http://identifiers.org/insdc.sra/"
+  },
+  "sra_experiment": {
+    "label": "SRA experiment",
+    "catalog": "nbdc00687",
+    "category": "NGS",
+    "regex": "^(?<id>[SED]RX\\d+)$",
+    "prefix": "http://identifiers.org/insdc.sra/"
+  },
+  "sra_project": {
+    "label": "SRA project",
+    "catalog": "nbdc00687",
+    "category": "NGS",
+    "regex": "^(?<id>[SED]RP\\d+)$",
+    "prefix": "http://identifiers.org/insdc.sra/"
+  },
+  "sra_run": {
+    "label": "SRA run",
+    "catalog": "nbdc00687",
+    "category": "NGS",
+    "regex": "^(?<id>[SED]RR\\d+)$",
+    "prefix": "http://identifiers.org/insdc.sra/"
+  },
+  "sra_sample": {
+    "label": "SRA sample",
+    "catalog": "nbdc00687",
+    "category": "NGS",
+    "regex": "^(?<id>[SED]RS\\d+)$",
+    "prefix": "http://identifiers.org/insdc.sra/"
+  },
+  "taxonomy": {
+    "label": "Taxonomy",
+    "catalog": "nbdc00700",
+    "category": "Taxonomy",
+    "regex": "^(?<id>\\d+)$",
+    "prefix": "http://identifiers.org/taxonomy/"
+  },
+  "togovar": {
+    "label": "TogoVar variant",
+    "catalog": "nbdc02359",
+    "category": "Variant",
+    "regex": "^(?<id>tgv\\d+)$",
+    "prefix": "http://togovar.biosciencedbc.jp/variation/"
+  },
+  "uniprot": {
+    "label": "UniProt",
+    "catalog": "nbdc00221",
+    "category": "Protein",
+    "regex": "^(?:(?<id>[A-NR-Z][0-9](?:[A-Z][A-Z0-9][A-Z0-9][0-9]){1,2})|(?<id2>[OPQ][0-9][A-Z0-9][A-Z0-9][A-Z0-9][0-9])(?:\\.\\d+)?)$",
+    "prefix": "http://purl.uniprot.org/uniprot/"
+  },
+  "wikipathways": {
+    "label": "WikiPathways",
+    "catalog": "nbdc02116",
+    "category": "Pathway",
+    "regex": "^(?<id>WP\\d{1,5})(?:\\_r\\d+)?$",
+    "prefix": "http://identifiers.org/wikipathways/"
+  }
+}
