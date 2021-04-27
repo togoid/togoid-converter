@@ -57,12 +57,14 @@ const Explore = (props) => {
           </div>
 
           <div className="modal__top">
+{/*
             <div className="option">
               <p className="label">Option</p>
               <select name="" id="" className="select white">
                 <option value="id">ID</option>
               </select>
             </div>
+*/}
 
             <div className="item_wrapper">
               <div className="input_search">
