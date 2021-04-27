@@ -6,7 +6,7 @@ const IdInput = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const ids = idTexts.split(/[\s,\n]+/).map((v) => v.trim());
+    const ids = idTexts.split(/[\s,\n,,]+/).map((v) => v.trim());
     props.handleSubmit(ids);
   };
 

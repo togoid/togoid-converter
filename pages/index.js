@@ -20,10 +20,17 @@ const Home = () => {
       const r = route[route.length - 1];
       const candidates = [];
       Object.keys(dbConfig).forEach((k) => {
-        if (k.indexOf(r.name.split("-").pop()) === 0) {
+        if (k.indexOf(r.label) === 0) {
           candidates.push({
             name: k,
             label: k.split("-")[1],
+            count: 1,
+            ids: [],
+          });
+        } else if (k.split("-").pop().indexOf(r.label) === 0) {
+          candidates.push({
+            name: k,
+            label: k.split("-")[0],
             count: 1,
             ids: [],
           });
