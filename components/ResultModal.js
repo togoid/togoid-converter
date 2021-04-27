@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import { exportCSV } from "../lib/util";
 
 const Explore = (props) => {
   const [exportMenuVisibility, setExportMenuVisibility] = useState(false);
@@ -7,8 +8,8 @@ const Explore = (props) => {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    setClipboardText(createClipboardText(props.modalData.rows));
-  }, [props.modalData]);
+    setClipboardText(createClipboardText(props.tableData.rows));
+  }, [props.tableData]);
 
   const createClipboardText = (array) => {
     let text = "";
@@ -22,22 +23,9 @@ const Explore = (props) => {
     return text;
   };
 
-  const exportCSV = () => {
-    // todo カンマが万一データに混ざっていたときのために、csv生成用のライブラリを用いる。また見出し行をprops.modalData.headingsから取得する
-    const data = props.modalData.rows
-      .map((record) => record.join(","))
-      .join("\r\n");
-    const bom = new Uint8Array([0xef, 0xbb, 0xbf]);
-    const blob = new Blob([bom, data], { type: "text/csv" });
-    const url = (window.URL || window.webkitURL).createObjectURL(blob);
-    const link = document.createElement("a");
-    link.download = "result.csv";
-    link.href = url;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleExportCSV = () => {
+    exportCSV([props.tableData.headings, ...props.tableData.rows]);
   };
-
   return (
     <div className="modal">
       <div className="modal__inner">
@@ -59,7 +47,7 @@ const Explore = (props) => {
             <p className="modal__heading">PATH</p>
             <div className="modal__path__frame">
               <div className="modal__path__frame__inner">
-                {props.modalData.headings.map((v, i) => (
+                {props.tableData.headings.map((v, i) => (
                   <div key={i} className="path_label green">
                     <span className="path_label__inner">{v}</span>
                   </div>
@@ -102,7 +90,7 @@ const Explore = (props) => {
                 </button>
               </CopyToClipboard>
               <div className="export_button">
-                <button className="button_icon" onClick={() => exportCSV()}>
+                <button className="button_icon" onClick={handleExportCSV}>
                   <svg className="button_icon__icon" viewBox="0 0 24 24">
                     <path
                       fill="currentColor"
@@ -166,14 +154,14 @@ const Explore = (props) => {
           <table className="table">
             <thead>
               <tr>
-                {props.modalData && props.modalData.headings.length > 0
-                  ? props.modalData.headings.map((v, i) => <th key={i}>{v}</th>)
+                {props.tableData && props.tableData.headings.length > 0
+                  ? props.tableData.headings.map((v, i) => <th key={i}>{v}</th>)
                   : null}
               </tr>
             </thead>
             <tbody>
-              {props.modalData && props.modalData.rows.length > 0
-                ? props.modalData.rows.map((data, i) => (
+              {props.tableData && props.tableData.rows.length > 0
+                ? props.tableData.rows.map((data, i) => (
                     <tr key={i}>
                       {data.map((d, j) => {
                         return <td key={j}>{d}</td>;

@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from "react";
 import ResultModal from "../components/ResultModal";
 import axios from "axios";
+import { exportCSV } from "../lib/util";
 
 const Explore = (props) => {
   const [operationMenuVisibility, setOperationMenuVisibility] = useState(false);
   const [modalVisibility, setModalVisibility] = useState(false);
-  const [modalData, setModalData] = useState({ heading: [], rows: [] });
+  const [tableData, setTableData] = useState({ heading: [], rows: [] });
   const [menuVisibility, setMenuVisibility] = useState([null, null]);
 
   /**
-   * modalDataがstatusにセットされたら、データモーダルを表示する
+   * tableDataがstatusにセットされたら、データモーダルを表示する
    */
   useEffect(() => {
-    if (modalData.rows.length > 0) setModalVisibility(!modalVisibility);
-  }, [modalData]);
+    if (tableData.rows.length > 0) setModalVisibility(!modalVisibility);
+  }, [tableData]);
 
   const executeQuery = async () => {
     const route = props.route.map((v) => v.label).join(",");
@@ -53,19 +54,26 @@ const Explore = (props) => {
     }
   };
 
+  const handleExportCSV = async () => {
+    const headings = props.route.map((v) => v.label);
+    const d = await executeQuery();
+    exportCSV([headings, ...d.results]);
+  };
+
   /**
    * モーダルの表示非表示を切り替える
    * モーダルを表示する際に３点リーダサブメニューを閉じる
    * @param index1
    */
   const showModal = async (index1) => {
+    setOperationMenuVisibility(false);
     setMenuVisibility([null, null]);
     const headings = props.route
       .filter((v, i) => i <= index1)
       .map((v) => v.label);
     const d = await executeQuery();
     console.log(d);
-    setModalData({ headings, rows: d.results });
+    setTableData({ headings, rows: d.results });
   };
 
   return (
@@ -88,7 +96,10 @@ const Explore = (props) => {
               </button>
               {operationMenuVisibility && (
                 <div className="button_pull_down__children">
-                  <button className="button_pull_down__children__item">
+                  <button
+                    onClick={handleExportCSV}
+                    className="button_pull_down__children__item"
+                  >
                     <svg className="icon" viewBox="0 0 24 24">
                       <path
                         fill="currentColor"
@@ -177,7 +188,7 @@ const Explore = (props) => {
 
                 {modalVisibility && (
                   <ResultModal
-                    modalData={modalData}
+                    tableData={tableData}
                     setModalVisibility={setModalVisibility}
                   />
                 )}
