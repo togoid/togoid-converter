@@ -19,15 +19,27 @@ const Home = () => {
       const nodes = databaseNodes.slice(0, route.length);
       const r = route[route.length - 1];
       const candidates = [];
+      let previousDatabaseLabel = null;
+      if (route.length > 1) {
+        previousDatabaseLabel = route[route.length - 2].label;
+      }
       Object.keys(dbConfig).forEach((k) => {
-        if (k.indexOf(r.label) === 0) {
+        if (
+          k.indexOf(r.label) === 0 &&
+          previousDatabaseLabel !== k.split("-")[1]
+        ) {
+          // 順方向の変換、ただし変換経路を逆行させない
           candidates.push({
             name: k,
             label: k.split("-")[1],
             count: 1,
             ids: [],
           });
-        } else if (k.split("-").pop().indexOf(r.label) === 0) {
+        } else if (
+          k.split("-").pop().indexOf(r.label) === 0 &&
+          previousDatabaseLabel !== k.split("-")[0]
+        ) {
+          // 逆方向の変換、ただし変換経路を逆行させない
           candidates.push({
             name: k,
             label: k.split("-")[0],
