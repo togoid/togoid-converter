@@ -19,33 +19,39 @@ const Home = () => {
       const nodes = databaseNodes.slice(0, route.length);
       const r = route[route.length - 1];
       const candidates = [];
-      let previousDatabaseLabel = null;
+      let previousDatabaseName = null;
       if (route.length > 1) {
-        previousDatabaseLabel = route[route.length - 2].label;
+        previousDatabaseName = route[route.length - 2].name;
       }
       Object.keys(dbConfig).forEach((k) => {
-        if (
-          k.indexOf(r.label) === 0 &&
-          previousDatabaseLabel !== k.split("-")[1]
-        ) {
-          // 順方向の変換、ただし変換経路を逆行させない
-          candidates.push({
-            name: k,
-            label: k.split("-")[1],
-            count: 1,
-            ids: [],
-          });
-        } else if (
-          k.split("-").pop().indexOf(r.label) === 0 &&
-          previousDatabaseLabel !== k.split("-")[0]
-        ) {
-          // 逆方向の変換、ただし変換経路を逆行させない
-          candidates.push({
-            name: k,
-            label: k.split("-")[0],
-            count: 1,
-            ids: [],
-          });
+        if (!candidates.find((v) => v.name === r.name)) {
+          if (k.split("-").shift() === r.name) {
+            const name = k.split("-")[1];
+            if (
+              previousDatabaseName !== name &&
+              !candidates.find((v) => v.name === name)
+            ) {
+              // 順方向の変換、ただし変換経路を逆行させない
+              candidates.push({
+                name,
+                count: 1,
+                ids: [],
+              });
+            }
+          } else if (k.split("-").pop() === r.name) {
+            const name = k.split("-")[0];
+            if (
+              previousDatabaseName !== name &&
+              !candidates.find((v) => v.name === name)
+            ) {
+              // 逆方向の変換、ただし変換経路を逆行させない
+              candidates.push({
+                name,
+                count: 1,
+                ids: [],
+              });
+            }
+          }
         }
       });
       // 先端の変換候補を追加
@@ -68,7 +74,6 @@ const Home = () => {
           if (index === -1) {
             candidates.push({
               name: k,
-              label: k,
               count: 1,
               ids: [id],
             });

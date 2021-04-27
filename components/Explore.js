@@ -17,7 +17,7 @@ const Explore = (props) => {
   }, [tableData]);
 
   const executeQuery = async () => {
-    const route = props.route.map((v) => v.label).join(",");
+    const route = props.route.map((v) => v.name).join(",");
     const ids = props.ids.join(",");
     return await axios
       .get(
@@ -55,7 +55,7 @@ const Explore = (props) => {
   };
 
   const handleExportCSV = async () => {
-    const headings = props.route.map((v) => v.label);
+    const headings = props.route.map((v) => v.name);
     const d = await executeQuery();
     exportCSV([headings, ...d.results]);
   };
@@ -70,7 +70,7 @@ const Explore = (props) => {
     setMenuVisibility([null, null]);
     const headings = props.route
       .filter((v, i) => i <= index1)
-      .map((v) => v.label);
+      .map((v) => v.name);
     const d = await executeQuery();
     console.log(d);
     setTableData({ headings, rows: d.results });
@@ -150,7 +150,7 @@ const Explore = (props) => {
                                 className="radio__large_label green"
                               >
                                 <span className="radio__large_label__inner">
-                                  {v.label}
+                                  {v.name}
                                 </span>
                               </label>
                               {i > 0 &&
