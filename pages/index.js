@@ -128,7 +128,7 @@ const Home = () => {
                 activeTab === "DATABASE" ? "button_tab active" : "button_tab"
               }
             >
-              DATABASE
+              DATABASES
             </button>
           </div>
           {activeTab === "EXPLORE" ? (
