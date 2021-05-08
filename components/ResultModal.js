@@ -109,21 +109,17 @@ const Explore = (props) => {
                 <input type="search" className="input_search__input" />
               </div>
               <div className="export_button">
-                <button className="button_icon">
+                <button
+                  onClick={() => setExportMenuVisibility(!exportMenuVisibility)}
+                  className="button_icon"
+                >
                   <svg className="button_icon__icon" viewBox="0 0 24 24">
                     <path
                       fill="currentColor"
                       d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"
                     />
                   </svg>
-                  <span
-                    onClick={() =>
-                      setExportMenuVisibility(!exportMenuVisibility)
-                    }
-                    className="button_icon__label"
-                  >
-                    エクスポート
-                  </span>
+                  <span className="button_icon__label">エクスポート</span>
                 </button>
                 {exportMenuVisibility ? (
                   <div className="button_pull_down__children">
