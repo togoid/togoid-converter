@@ -4,13 +4,14 @@ import { saveAs } from "file-saver";
 import { exportCSV } from "../lib/util";
 import dbCatalogue from "../public/dataset.json";
 
-const Explore = (props) => {
+const ResultModal = (props) => {
   const [exportMenuVisibility, setExportMenuVisibility] = useState(false);
   const [clipboardText, setClipboardText] = useState("");
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    setClipboardText(createClipboardText(props.tableData.rows));
+    const text = props.tableData.rows.map((v) => v[v.length - 1]).join("\n");
+    setClipboardText(text);
   }, [props.tableData]);
 
   useEffect(() => {
@@ -20,17 +21,6 @@ const Explore = (props) => {
       }, 1000);
     }
   }, [copied]);
-
-  const createClipboardText = (array) => {
-    let text = "";
-    array.forEach((v, i) => {
-      if (i > 0) {
-        text = text.concat("\n");
-      }
-      text = text.concat(v[v.length - 1]);
-    });
-    return text;
-  };
 
   const handleExportCSV = () => {
     exportCSV([props.tableData.heading, ...props.tableData.rows]);
@@ -210,4 +200,4 @@ const Explore = (props) => {
   );
 };
 
-export default Explore;
+export default ResultModal;
