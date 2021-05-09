@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import ResultModal from "../components/ResultModal";
-import axios from "axios";
 import { exportCSV, executeQuery } from "../lib/util";
 
 const Explore = (props) => {
   const [operationMenuVisibility, setOperationMenuVisibility] = useState(false);
   const [modalVisibility, setModalVisibility] = useState(false);
   const [tableData, setTableData] = useState({ heading: [], rows: [] });
+  const [total, setTotal] = useState(0);
   const [menuVisibility, setMenuVisibility] = useState([null, null]);
 
   useEffect(() => {
@@ -45,9 +45,9 @@ const Explore = (props) => {
       .filter((v, i) => i <= routeIndex)
       .map((v) => v.name);
     const d = await executeQuery(props.route, props.ids);
-    console.log(d);
-    const rows = d.results.map((v) => v.slice(0, routeIndex + 1));
+    const rows = d.results.slice(0, 100).map((v) => v.slice(0, routeIndex + 1));
 
+    setTotal(d.total);
     setTableData({ heading, rows });
   };
 
@@ -164,6 +164,7 @@ const Explore = (props) => {
                     route={props.route}
                     ids={props.ids}
                     tableData={tableData}
+                    total={total}
                     setModalVisibility={setModalVisibility}
                   />
                 )}

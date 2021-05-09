@@ -76,6 +76,7 @@ const ResultModal = (props) => {
           <div className="modal__top">
             <div className="item_wrapper">
               {props.tableData && props.tableData.rows.length > 0 && (
+                /*
                 <div className="input_search">
                   <svg className="input_search__icon" viewBox="0 0 24 24">
                     <path
@@ -85,6 +86,10 @@ const ResultModal = (props) => {
                   </svg>
                   <input type="search" className="input_search__input" />
                 </div>
+*/
+                <span>
+                  Showing {props.tableData.rows.length} of {props.total} results
+                </span>
               )}
               {props.tableData && props.tableData.rows.length > 0 && (
                 <div className="export_button">
@@ -162,18 +167,18 @@ const ResultModal = (props) => {
           <table className="table">
             <thead>
               <tr>
-                {props.tableData && props.tableData.heading.length > 0
-                  ? props.tableData.heading.map((v, i) => <th key={i}>{v}</th>)
-                  : null}
+                {props.tableData &&
+                  props.tableData.heading.length > 0 &&
+                  props.tableData.heading.map((v, i) => <th key={i}>{v}</th>)}
               </tr>
             </thead>
             <tbody>
               {props.tableData && props.tableData.rows.length > 0 ? (
                 props.tableData.rows.map((data, i) => (
                   <tr key={i}>
-                    {data.map((d, j) => {
-                      return <td key={j}>{d}</td>;
-                    })}
+                    {data.map((d, j) => (
+                      <td key={j}>{d}</td>
+                    ))}
                   </tr>
                 ))
               ) : (
@@ -188,9 +193,6 @@ const ResultModal = (props) => {
               )}
             </tbody>
           </table>
-          {props.tableData && props.tableData.rows.length > 0 && (
-            <button className="button_more">MORE</button>
-          )}
         </div>
       </div>
     </div>
