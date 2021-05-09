@@ -1,26 +1,22 @@
-import React, { useState, useEffect } from "react";
-import { CopyToClipboard } from "react-copy-to-clipboard";
+import React, { useState } from "react";
+import copy from "copy-to-clipboard";
 import { saveAs } from "file-saver";
 import { executeQuery, exportCSV } from "../lib/util";
 import dbCatalogue from "../public/dataset.json";
 
 const ResultModal = (props) => {
   const [exportMenuVisibility, setExportMenuVisibility] = useState(false);
-  const [clipboardText, setClipboardText] = useState("");
   const [copied, setCopied] = useState(false);
 
-  useEffect(() => {
+  const handleClipboardCopy = (e) => {
+    e.preventDefault();
     const text = props.tableData.rows.map((v) => v[v.length - 1]).join("\n");
-    setClipboardText(text);
-  }, [props.tableData]);
-
-  useEffect(() => {
-    if (copied) {
-      setTimeout(() => {
-        setCopied(false);
-      }, 1000);
-    }
-  }, [copied]);
+    copy(text);
+    setCopied(true);
+    setTimeout(() => {
+      setCopied(false);
+    }, 1000);
+  };
 
   const handleExportCSV = async () => {
     const d = await executeQuery(props.route, props.ids);
@@ -108,21 +104,19 @@ const ResultModal = (props) => {
                   </button>
                   {exportMenuVisibility && (
                     <div className="button_pull_down__children">
-                      <CopyToClipboard
-                        text={clipboardText}
-                        onCopy={() => setCopied(true)}
+                      <button
+                        onClick={handleClipboardCopy}
+                        className="button_pull_down__children__item"
                       >
-                        <button className="button_pull_down__children__item">
-                          <svg className="icon" viewBox="0 0 24 24">
-                            <path
-                              fill="currentColor"
-                              d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
-                            />
-                          </svg>
-                          変換後IDをクリップボードにコピー
-                          {copied ? <span>Copied.</span> : null}
-                        </button>
-                      </CopyToClipboard>
+                        <svg className="icon" viewBox="0 0 24 24">
+                          <path
+                            fill="currentColor"
+                            d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
+                          />
+                        </svg>
+                        変換後IDをクリップボードにコピー
+                        {copied && <span>Copied.</span>}
+                      </button>
                       <button
                         onClick={handleIdDownload}
                         className="button_pull_down__children__item"
