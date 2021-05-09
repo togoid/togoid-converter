@@ -9,11 +9,8 @@ const Explore = (props) => {
   const [tableData, setTableData] = useState({ heading: [], rows: [] });
   const [menuVisibility, setMenuVisibility] = useState([null, null]);
 
-  /**
-   * tableDataがstatusにセットされたら、データモーダルを表示する
-   */
   useEffect(() => {
-    if (tableData.heading.length > 0) setModalVisibility(!modalVisibility);
+    if (tableData.heading.length > 0) setModalVisibility(true);
   }, [tableData]);
 
   const executeQuery = async () => {
@@ -26,11 +23,6 @@ const Explore = (props) => {
       .then((d) => d.data);
   };
 
-  /**
-   * databaseのラジオボタンを選択する
-   * @param database
-   * @param i
-   */
   const selectDatabase = (database, i) => {
     const r = props.route.slice(0, i);
     r[i] = database;
@@ -41,11 +33,7 @@ const Explore = (props) => {
   const handleReset = () => {
     props.restartExplore();
   };
-  /**
-   * ３点リーダサブメニューの表示非表示を切り替える
-   * @param index1
-   * @param index2
-   */
+
   const toggleMenuVisibility = (index1, index2) => {
     if (menuVisibility[0] === index1 && menuVisibility[1] === index2) {
       setMenuVisibility([null, null]);
@@ -60,20 +48,15 @@ const Explore = (props) => {
     exportCSV([heading, ...d.results]);
   };
 
-  /**
-   * モーダルの表示非表示を切り替える
-   * モーダルを表示する際に３点リーダサブメニューを閉じる
-   * @param index1
-   */
-  const showModal = async (index1) => {
+  const showModal = async (routeIndex) => {
     setOperationMenuVisibility(false);
     setMenuVisibility([null, null]);
     const heading = props.route
-      .filter((v, i) => i <= index1)
+      .filter((v, i) => i <= routeIndex)
       .map((v) => v.name);
     const d = await executeQuery();
     console.log(d);
-    const rows = d.results.map((v) => v.slice(0, index1 + 1));
+    const rows = d.results.map((v) => v.slice(0, routeIndex + 1));
 
     setTableData({ heading, rows });
   };
@@ -88,11 +71,9 @@ const Explore = (props) => {
                 onClick={() =>
                   setOperationMenuVisibility(!operationMenuVisibility)
                 }
-                className={
-                  operationMenuVisibility
-                    ? "button_pull_down active"
-                    : "button_pull_down"
-                }
+                className={`button_pull_down 
+                  ${operationMenuVisibility && "active"}
+                `}
               >
                 Operation
               </button>
