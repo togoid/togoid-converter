@@ -14,7 +14,7 @@ const Home = () => {
   const [databaseNodes, setDatabaseNodes] = useState([]);
   const [route, setRoute] = useState([]);
 
-  useEffect(async () => {
+  useEffect(() => {
     if (route.length > 0) {
       const nodes = databaseNodes.slice(0, route.length);
       const r = route[route.length - 1];
@@ -58,6 +58,7 @@ const Home = () => {
       nodes[route.length] = candidates;
       setDatabaseNodes(nodes);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route]);
 
   /**
@@ -99,26 +100,16 @@ const Home = () => {
     }
   };
 
-  /**
-   * 表示されているノードをクリアする
-   */
   const clearExplore = () => {
     setDatabaseNodes([]);
     setRoute([]);
   };
 
-  /**
-   * 表示されているノードを一列目のみにする
-   */
   const restartExplore = () => {
     setDatabaseNodes(databaseNodes.slice(0, 1));
     setRoute(route.slice(0, 1));
   };
 
-  /**
-   * Executeボタン押下
-   * @param ids
-   */
   const handleIdTextsSubmit = (ids) => {
     clearExplore();
     setIds(ids);
@@ -132,10 +123,8 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-
       <main className="main">
         <IdInput handleSubmit={handleIdTextsSubmit} />
-
         <div className="drawing_area">
           <div className="tab_wrapper">
             <button
@@ -168,7 +157,6 @@ const Home = () => {
           )}
         </div>
       </main>
-
       <Footer />
     </div>
   );
