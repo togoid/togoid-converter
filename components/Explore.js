@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ResultModal from "../components/ResultModal";
 import axios from "axios";
-import { exportCSV } from "../lib/util";
+import { exportCSV, executeQuery } from "../lib/util";
 
 const Explore = (props) => {
   const [operationMenuVisibility, setOperationMenuVisibility] = useState(false);
@@ -12,16 +12,6 @@ const Explore = (props) => {
   useEffect(() => {
     if (tableData.heading.length > 0) setModalVisibility(true);
   }, [tableData]);
-
-  const executeQuery = async () => {
-    const route = props.route.map((v) => v.name).join(",");
-    const ids = props.ids.join(",");
-    return await axios
-      .get(
-        `${process.env.NEXT_PUBLIC_SPARQL_ENDOPOINT}/convert?ids=${ids}&route=${route}&include=all&format=json`
-      )
-      .then((d) => d.data);
-  };
 
   const selectDatabase = (database, i) => {
     const r = props.route.slice(0, i);
@@ -44,7 +34,7 @@ const Explore = (props) => {
 
   const handleExportCSV = async () => {
     const heading = props.route.map((v) => v.name);
-    const d = await executeQuery();
+    const d = await executeQuery(props.route, props.ids);
     exportCSV([heading, ...d.results]);
   };
 
@@ -54,7 +44,7 @@ const Explore = (props) => {
     const heading = props.route
       .filter((v, i) => i <= routeIndex)
       .map((v) => v.name);
-    const d = await executeQuery();
+    const d = await executeQuery(props.route, props.ids);
     console.log(d);
     const rows = d.results.map((v) => v.slice(0, routeIndex + 1));
 
@@ -172,6 +162,7 @@ const Explore = (props) => {
                 {modalVisibility && (
                   <ResultModal
                     route={props.route}
+                    ids={props.ids}
                     tableData={tableData}
                     setModalVisibility={setModalVisibility}
                   />

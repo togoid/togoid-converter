@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { saveAs } from "file-saver";
-import { exportCSV } from "../lib/util";
+import { executeQuery, exportCSV } from "../lib/util";
 import dbCatalogue from "../public/dataset.json";
 
 const ResultModal = (props) => {
@@ -22,26 +22,25 @@ const ResultModal = (props) => {
     }
   }, [copied]);
 
-  const handleExportCSV = () => {
-    exportCSV([props.tableData.heading, ...props.tableData.rows]);
+  const handleExportCSV = async () => {
+    const d = await executeQuery(props.route, props.ids);
+    exportCSV([props.tableData.heading, ...d.results]);
   };
 
-  const handleIdDownload = () => {
-    // todo APIから取得し直す
-    const texts = props.tableData.rows.map((v) => v.slice().pop()).join("\r\n");
+  const handleIdDownload = async () => {
+    const d = await executeQuery(props.route, props.ids, "target");
+    const texts = d.results.join("\r\n");
     const blob = new Blob([texts], {
       type: "text/plain;charset=utf-8",
     });
     saveAs(blob, "ids.txt");
   };
 
-  const handleURLDownload = () => {
-    // todo APIから取得し直す
-    const dbName = props.route.slice().pop().name;
+  const handleURLDownload = async () => {
+    const dbName = props.route[props.route.length - 1].name;
     const dbPrefix = dbCatalogue[dbName].prefix;
-    const texts = props.tableData.rows
-      .map((v) => dbPrefix + v.slice().pop())
-      .join("\r\n");
+    const d = await executeQuery(props.route, props.ids, "target");
+    const texts = d.results.map((v) => dbPrefix + v).join("\r\n");
     const blob = new Blob([texts], {
       type: "text/plain;charset=utf-8",
     });
