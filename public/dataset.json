@@ -3,21 +3,21 @@
     "label": "Affymetrix probeset",
     "catalog": "FIXME",
     "category": "Probe",
-    "regex": "\\d{4,}(?:(?:_[asx])?_at)?",
     "prefix": "http://identifiers.org/affy.probeset/"
   },
   "bioproject": {
     "label": "BioProject",
     "catalog": "nbdc00476",
     "category": "ResearchProject",
-    "regex": "^(?<id>PRJ[DEN][A-Z]\\d+)$",
-    "prefix": "http://identifiers.org/bioproject/"
+    "prefix": "http://identifiers.org/bioproject/",
+    "name": "BioProject (Formerly Genome Project)",
+    "description": "特定の組織やコンソーシアムにより立ち上げられたゲノムプロジェクトをはじめとする生命科学分野の各種プロジェクトを単位とし、そこから産生されたデータセットをまとめたデータベースです。産生された配列データに関しては完全決定配列（ドラフト、進行中を含む）、アセンブリ、アノテーション、マッピングなどの進捗状況が含まれています。",
+    "organization": "National Center for Biotechnology Information"
   },
   "biosample": {
     "label": "BioSample",
     "catalog": "nbdc01983",
     "category": "Sample",
-    "regex": "^(?<id>SAM[NED]\\w?\\d+)$",
     "prefix": "http://identifiers.org/biosample/"
   },
   "ccds": {
@@ -25,69 +25,89 @@
     "catalog": "nbdc00023",
     "category": "Gene",
     "regex": "^CCDS(?<id>\\d+)(?:\\.\\d+)?$",
-    "prefix": "http://identifiers.org/ccds/"
+    "prefix": "http://identifiers.org/ccds/",
+    "name": "CCDS",
+    "description": "高品質で確実にアノテーション付けされたヒトとマウスのタンパク質コード領域のコアセットを集約し、提供しているデータベースです。",
+    "organization": "National Center for Biotechnology Information"
   },
   "chebi": {
     "label": "ChEBI compound",
     "catalog": "nbdc00027",
     "category": "Compound",
     "regex": "^(?:CHEBI:)?(?<id>\\d+)$",
-    "prefix": "http://identifiers.org/chebi/CHEBI:"
+    "prefix": "http://identifiers.org/chebi/CHEBI:",
+    "name": "ChEBI",
+    "description": "生命プロセスに介在する小分子化合物の辞典です。ゲノムに直接コード化されている分子（例：核酸、タンパク、ペプチド）はこのデータベースの対象外です。登録されているデータは、多数の情報源のデータを組み合わせ、冗長性を除いています。主な情報源はIntEnz(EBI)、KEGG COMPOUND、PDBeChem(EBI)、ChEMBL(EBI)です。 ChEBIオントロジー（化合物オントロジー）による分類情報と階層表示が特徴です。\n全てのエントリーにはデータの信頼性を示す★印がついています； 3つ星：ChEBIチームが手作業で注釈付けを行ったもの。2つ星：ChEMBLチームまたはデータ提供者が手作業で注釈付けを行ったもの。1つ星：情報源から自動的に取得した仮エントリーで、手作業での注釈付けが行われていないもの。",
+    "organization": "European Bioinformatics Institute"
   },
   "chembl_compound": {
     "label": "ChEMBL compound",
     "catalog": "nbdc02559",
     "category": "Compound",
-    "regex": "^(?<id>CHEMBL\\d+)$",
-    "prefix": "http://identifiers.org/chembl.compound/"
+    "prefix": "http://identifiers.org/chembl.compound/",
+    "name": "HPO",
+    "description": "The Human Phenotype Ontology (HPO) はヒトの疾患に関連する形質の標準化された語彙を提供しています。医学論文、Orphanet、DECIPHER,やOMIMを基に開発されており、疾患と関連する形質の語彙や、疾患に関連する遺伝子情報が収載されています。疾患名、形質、遺伝子名で検索することができます。",
+    "organization": "The Jackson Laboratory"
   },
   "chembl_target": {
     "label": "ChEMBL target",
     "catalog": "nbdc02555",
     "category": "Protein",
-    "regex": "^(?<id>CHEMBL\\d+)$",
-    "prefix": "http://identifiers.org/chembl.target/"
+    "prefix": "http://identifiers.org/chembl.target/",
+    "name": "ChEMBL",
+    "description": "ChEMBLは創薬を目的とした生理活性をもつ化合物や小分子のデータベースです。化合物、核酸などの小分子と、そのターゲットやアッセイ情報を紐付けて収載しています。化合物や小分子の名称、分子式、分子量、標準SMILES、標準InChIなどの情報に加え、結合定数、ADMEデータなど生理活性に関する情報や、薬としての開発段階の情報などが付与されています。化合物を名称や構造で検索したり、ターゲットをタンパク質の名称で検索することができます。",
+    "organization": "EMBL-EBI"
   },
   "civic_gene": {
     "label": "CIVIC gene",
     "catalog": "nbdc02558",
     "category": "Gene",
-    "regex": "^(?<id>\\d+)$",
-    "prefix": "http://civic.genome.wustl.edu/links/genes/"
+    "prefix": "http://civic.genome.wustl.edu/links/genes/",
+    "name": "CIVIC",
+    "description": "CIViCは癌におけるバリアントの臨床的解釈のための知識ベースです。遺伝性および体細胞性の全てのタイプの癌におけるバリアント情報と、その治療、予後、診断、素因への関連性を、専門家によるクラウドソーシングの形式で収集しています。バリアント、遺伝子、疾患、薬、evidence情報が整理されています。",
+    "organization": "The McDonnell Genome Institute, Washington University School of Medicine"
   },
   "clinvar": {
     "label": "ClinVar variant",
     "catalog": "nbdc01514",
     "category": "Variant",
-    "regex": "^(VCV0*)?(?<id>(\\d{1,9}))$",
-    "prefix": "http://identifiers.org/clinvar/"
+    "prefix": "http://identifiers.org/clinvar/",
+    "name": "ClinVar",
+    "description": "ヒトゲノムの多様性と関連する疾患についての情報を収集し、自由に利用できるアーカイブとして提供しているデータベースです。多型の位置、遺伝子名、疾患との関わりなどを収録しています。遺伝子情報はNCBIのdbSNPおよびdbVarと、表現型に関してはMedGenとリンクしています。また、NIH Genetic Testing Registry (GTR)、OMIM、PubMedからも情報を収集しています。各データはhtml形式での閲覧の他、XMLやタブ区切り形式、一部データはVCFファイルでダウンロードできます。",
+    "organization": "National Center for Biotechnology Information"
   },
   "dbsnp": {
     "label": "dbSNP",
     "catalog": "nbdc00206",
     "category": "Variant",
-    "regex": "^(?<id>rs\\d+)$",
-    "prefix": "http://identifiers.org/dbsnp/"
+    "prefix": "http://identifiers.org/dbsnp/",
+    "name": "dbSNP",
+    "description": "1～数塩基の置換、挿入/欠失、反復等の多型情報からなるデータベースです。各SNPについて、集団間での多型頻度の違いを視覚的に比較することもできます。",
+    "organization": "National Center for Biotechnology Information"
   },
   "dgidb": {
     "label": "DGIdb",
     "catalog": "nbdc02562",
     "category": "Interaction",
-    "regex": "^[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}",
-    "prefix": "FIXME"
+    "prefix": "FIXME",
+    "name": "DGiDB",
+    "description": "DGIdbは薬物と遺伝子の相互作用および創薬可能なゲノム資源に関するデータベースです。 DrugBank、PharmGKB、Chembl、Drug Target Commons、TTDなど、様々な論文、データベース、その他のWebリソースから、薬物と遺伝子の相互作用および遺伝子の創薬への適用可能性情報を専門家によるキュレーションとテキストマイニングにより整理・統合して提供しています。 薬に関するレコード、遺伝子に関するレコード、相互作用に関するレコードに分かれて整理されており、相互に参照できます。すべてのデータは、無料でダウンロードするか（＊ダウンロードページに条件が記載されている場合を除く）、APIを介してアクセスできます。",
+    "organization": "McDonnell Genome Institute, Washington University School of Medicine"
   },
   "doid": {
     "label": "Disease ontology",
     "catalog": "nbdc00261",
     "category": "Disease",
     "regex": "^DOID:(?<id>\\d+)$",
-    "prefix": "http://purl.obolibrary.org/obo/DOID_"
+    "prefix": "http://purl.obolibrary.org/obo/DOID_",
+    "name": "DO",
+    "description": "ヒトの疾患に関する用語や概念について整理したDisease Ontologyを提供するサイトです。MeSH、ICD、NCI’s thesaurus、SNOMEDやOMIMへリンク付けられています。キーワードで語彙を検索することができます。",
+    "organization": "Institute of Genome Sciences, University of Maryland School of Medicine"
   },
   "drugbank": {
     "label": "DrugBank",
-    "catalog": "nbdc01071",
+    "catelog": "nbdc01071",
     "category": "Drug",
-    "regex": "^(?<id>DB\\d{5})$",
     "prefix": "http://identifiers.org/drugbank/"
   },
   "ec": {
@@ -95,236 +115,310 @@
     "catalog": "nbdc00019",
     "category": "Function",
     "regex": "^(?:EC )?(?<id>\\d+\\.(?:(?:-\\.-\\.-)|\\d+\\.(?:(?:-\\.-)|\\d+\\.(?:-|\\d+))))$",
-    "prefix": "http://identifiers.org/ec-code/"
+    "prefix": "http://identifiers.org/ec-code/",
+    "name": "The Comprehensive Enzyme Information System (BRENDA)",
+    "description": "酵素の機能と特性データを収集した総合的な酵素情報データベースです。データの大半は主要文献から手動で抽出したもので、酵素の機能、構造、生成反応、生物種、活性、実験手法、応用、変異体に関する情報を網羅しています。関連するパスウエイへのリンクや、テキストマイニングによる疾患情報も含まれています。",
+    "organization": "Technische Universitat Braunschweig"
   },
   "ena": {
     "catalog": "nbdc00432",
     "category": "Gene",
     "label": "ENA",
     "regex": "^(?:ena\\.embl:)?(?<id>[A-Z]+[0-9]+)(?:\\.\\d+)?$",
-    "prefix": "http://identifiers.org/ena.embl/"
+    "prefix": "http://identifiers.org/ena.embl/",
+    "name": "ENA",
+    "description": "次世代シーケンサーによる配列データのレポジトリサイトです。サンプル、実験情報、機器情報、データとしては配列トレース、配列、クオリティ値を含み、アセンブル、マッピング、機能アノテーションも提供しています。",
+    "organization": "European Bioinformatics Institute"
   },
   "ensembl_gene": {
     "label": "Ensembl gene",
     "catalog": "nbdc00054",
     "category": "Gene",
-    "regex": "^(?<id>ENSG\\d{11})(?:\\.\\d+)?$",
-    "prefix": "http://identifiers.org/ensembl/"
+    "prefix": "http://identifiers.org/ensembl/",
+    "name": "Ensembl",
+    "description": "ゲノム解読された脊椎生物およびその他の主要な真核生物を対象として自動アノテーションを行い、その結果をゲノムビューワやデータベースとして公開しているプロジェクトです。EMBL-EBIとSanger Centreが共同で進めています。",
+    "organization": "Wellcome Trust Sanger Institute"
   },
   "ensembl_protein": {
     "label": "Ensembl protein",
     "catalog": "nbdc00054",
     "category": "Protein",
-    "regex": "^(?<id>ENSP\\d{11})(?:\\.\\d+)?$",
-    "prefix": "http://identifiers.org/ensembl/"
+    "prefix": "http://identifiers.org/ensembl/",
+    "name": "Ensembl",
+    "description": "ゲノム解読された脊椎生物およびその他の主要な真核生物を対象として自動アノテーションを行い、その結果をゲノムビューワやデータベースとして公開しているプロジェクトです。EMBL-EBIとSanger Centreが共同で進めています。",
+    "organization": "Wellcome Trust Sanger Institute"
   },
   "ensembl_transcript": {
     "label": "Ensembl transcript",
     "catalog": "nbdc00054",
     "category": "Gene",
-    "regex": "^(?<id>ENST\\d{11})(?:\\.\\d+)?$",
-    "prefix": "http://identifiers.org/ensembl/"
+    "prefix": "http://identifiers.org/ensembl/",
+    "name": "Ensembl",
+    "description": "ゲノム解読された脊椎生物およびその他の主要な真核生物を対象として自動アノテーションを行い、その結果をゲノムビューワやデータベースとして公開しているプロジェクトです。EMBL-EBIとSanger Centreが共同で進めています。",
+    "organization": "Wellcome Trust Sanger Institute"
   },
   "go": {
     "label": "Gene ontology",
     "catalog": "nbdc00074",
     "category": "Function",
-    "regex": "^(?:GO[:_])?(?<id>\\d{7})$",
-    "prefix": "http://purl.obolibrary.org/obo/GO_"
+    "prefix": "http://purl.obolibrary.org/obo/GO_",
+    "name": "GO",
+    "description": "遺伝子オントロジー（Gene Ontology;GO）とは、生物学的概念を記述するための標準となる語彙を策定しようとするプロジェクトです。GOで定義された用語はGO Termと呼ばれ、Cellular component、Biological process、Molecular functionという3つのカテゴリーに分類されています。GOのデータは、非循環有向グラフ (Directed Acyclic Graph: DAG) と呼ばれるデータ構造を用いて計算機上で記述することができます。\r\nこのサイトでは、GO Termや関連ツールの配布を行っています。",
+    "organization": "The GO Consortium"
   },
   "hgnc": {
     "label": "HGNC",
     "catalog": "nbdc01774",
     "category": "Gene",
-    "regex": "^(?:(?:HGNC|hgnc):)?(?<id>\\d{1,5})$",
     "prefix": "http://identifiers.org/hgnc/"
   },
   "hgnc_symbol": {
     "label": "HGNC gene symbol",
     "catalog": "nbdc01774",
     "category": "Gene",
-    "regex": "^(?<id>[A-Za-z-0-9_]+)\\@?$",
     "prefix": "http://identifiers.org/hgnc.symbol/"
   },
   "hmdb": {
     "label": "HMDB",
     "catalog": "nbdc00909",
     "category": "Metabolite",
-    "regex": "^(?:hmdb:)?(?<id>HMDB\\d+)$",
-    "prefix": "http://identifiers.org/hmdb/HMDB"
+    "prefix": "http://identifiers.org/hmdb/HMDB",
+    "name": "HMDB",
+    "description": "ヒト体内における低分子代謝物の詳細情報を収集したデータベースです。メタボロミクスや臨床化学、バイオマーカー探索、教育分野で活用されることを目的に構築しており、化学データ、臨床データ、分子生物学/化学データを含んでいます。現在、7,900代謝物が登録されており、7,200のタンパク質（DNA）配列のリンク情報があります。",
+    "organization": "University of Alberta"
   },
   "homologene": {
     "label": "HomoloGene",
     "catalog": "nbdc00101",
     "category": "Ortholog",
-    "regex": "^(?<id>\\d+)$",
-    "prefix": "http://identifiers.org/homologene/"
+    "prefix": "http://identifiers.org/homologene/",
+    "name": "HomoloGene",
+    "description": "全ゲノム配列が決定された20種類の真核生物の間で自動的検出したホモログ遺伝子のセット、およびmRNAやタンパク質の配列データを提供しています。他の生物種のUniGene配列でホモログの可能性があるものも表示されます。",
+    "organization": "National Center for Biotechnology Information"
   },
   "hp": {
     "label": "Human Phenotype Ontology",
     "catalog": "nbdc02559",
     "category": "Phenotype",
     "regex": "^HP:(?<id>\\d{7})$",
-    "prefix": "http://purl.obolibrary.org/obo/HP_"
+    "prefix": "http://purl.obolibrary.org/obo/HP_",
+    "name": "HPO",
+    "description": "The Human Phenotype Ontology (HPO) はヒトの疾患に関連する形質の標準化された語彙を提供しています。医学論文、Orphanet、DECIPHER,やOMIMを基に開発されており、疾患と関連する形質の語彙や、疾患に関連する遺伝子情報が収載されています。疾患名、形質、遺伝子名で検索することができます。",
+    "organization": "The Jackson Laboratory"
   },
   "human_protein_atlas": {
     "label": "Human Protein Atlas",
     "catalog": "nbdc00905",
     "category": "Protein",
-    "regex": "^(?<id>ENSG\\d{11})$",
-    "prefix": "http://www.proteinatlas.org/"
+    "prefix": "http://www.proteinatlas.org/",
+    "name": "Human Protein Atlas",
+    "description": "様々な種類のヒトの器官、組織、細胞におけるタンパク質の発現および局在に関するデータベースです。蛍光抗体イメージング、質量分析に基づくプロテオミクス、網羅的な遺伝子発現解析によるトランスクリプトミクスおよびシステム生物学の手法により得られた情報を遺伝子ごとに記載しています。各レコードは３つのアトラスで構成されています。\r\n「組織アトラス」：ヒトの主要組織や器官におけるRNA発現量、タンパク質発現量\r\n「細胞アトラス」：RNA発現量や発現画像、GFP発現画像など細胞内での局在\r\n「疾病アトラス」：生存がん患者の組織における量的発現解析（RNA-seq）や空間的発現解析（マイクロアレイ）によるタンパク質発現レベル\r\nまた、抗体の情報、細胞内器官の説明、各組織における腫瘍の説明や生存率の情報なども収録しています。\r\n遺伝子名、抗体名、タンパク質の分類によるデータの絞り込みが可能です。",
+    "organization": "Uppsala University"
   },
   "insdc": {
     "label": "GenBank/ENA/DDBJ",
     "catalog": "nbdc02567",
     "category": "Gene",
     "regex": "^(?:insdc:)?(?<id>([A-Z]\\d{5}|[A-Z]{2}\\d{6}|[A-Z]{4}\\d{8}|[A-J][A-Z]{2}\\d{5}))(?:\\.\\d+)?$",
-    "prefix": "http://identifiers.org/insdc/"
+    "prefix": "http://identifiers.org/insdc/",
+    "name": "INSDC",
+    "description": "本サイトは、３大DNAデータベースであるDDBJ、ENA(European Nucleotide Archive)、 NCBIの協力で運営されるINSDC(International Nucleotide Sequence Database Collaboration)のポータルサイトです。INSDCは連携して塩基配列のアクセションIDの共通化やデータ形式の統一(INSD-XML)などに取り組みながら、個々の拠点におけるWebサービスの開発が行われています。INSDCが連携して構築・運営しているデータベースは国際塩基配列データベース (International Nucleotide Sequence Databases, INSD) と呼ばれます。",
+    "organization": "European Bioinformatics Institute (EMBL-EBI)"
   },
   "intact": {
     "label": "IntAct",
     "catalog": "nbdc00507",
     "category": "Interaction",
-    "regex": "^(?<id>EBI\\-[0-9]+)$",
-    "prefix": "http://identifiers.org/intact/"
+    "prefix": "http://identifiers.org/intact/",
+    "name": "IntAct",
+    "description": "IntActはオープンソースの分子間相互作用のデータベースとツールキットで構成されています。データは文献から取得したり、専門家によって蓄積されたデータから構成されています。",
+    "organization": "European Bioinformatics Institute"
   },
   "interpro": {
     "label": "InterPro",
     "catalog": "nbdc00108",
     "category": "Domain",
-    "regex": "^(?<id>IPR\\d{6})$",
-    "prefix": "http://identifiers.org/interpro/"
+    "prefix": "http://identifiers.org/interpro/",
+    "name": "InterPro",
+    "description": "EBI によるタンパク質のファミリー分類、ドメイン、機能サイトに関する記述を収集した統合データベースです。UniProtやPROSITE、PANTHER、ProDom、SMARTなどタンパク質の特性を収録している複数のデータベースを集結し、様々なレベルでのタンパク質の特徴を提供しています。InterProScanを用いて、ユーザが入力した配列から機能ドメインや構造ドメインを検索することができます。",
+    "organization": "European Bioinformatics Institute"
   },
   "kegg_compound": {
     "label": "KEGG Compound",
     "catalog": "nbdc00814",
     "category": "Compound",
-    "regex": "^(?<id>C\\d+)$",
-    "prefix": "http://identifiers.org/kegg.compound/"
+    "prefix": "http://identifiers.org/kegg.compound/",
+    "name": "KEGG COMPOUND",
+    "description": "KEGG COMPOUNDは、小分子、生体高分子、および生体関連化学物質のデータベースです。 各エントリーはC番号とよばれるアクセッション番号で識別され、化学構造や関連する生体反応、パスウエイ、他のデータベースとのリンク情報が含まれています。",
+    "organization": "京都大学　化学研究所　附属バイオインフォマティクスセンター"
   },
   "kegg_disease": {
     "catalog": "nbdc00813",
     "category": "Disease",
     "label": "KEGG Disease",
     "regex": "^KEGG:H(?<id>\\d+)$",
-    "prefix": "http://identifiers.org/kegg.disease/"
+    "prefix": "http://identifiers.org/kegg.disease/",
+    "name": "KEGG DISEASE",
+    "description": "KEGG DISEASEは、遺伝要因が既知の疾患（単一遺伝子疾患及び多因子性疾患）と病原体ゲノムが既知の感染症疾患に関する情報を、計算処理が可能な形に集約したデータベースです。各疾患エントリは H番号とよばれるアクセッション番号で識別され、関連するパスウエイ、病因遺伝子のリスト、ならびに環境要因、診断マーカー、治療薬などの分子のリストで表現されています。",
+    "organization": "京都大学　化学研究所　附属バイオインフォマティクスセンター"
   },
   "kegg_drug": {
     "label": "KEGG Drug",
     "catalog": "nbdc00812",
     "category": "Drug",
-    "regex": "^(?<id>D\\d+)$",
-    "prefix": "http://identifiers.org/kegg.drug/"
+    "prefix": "http://identifiers.org/kegg.drug/",
+    "name": "KEGG DRUG",
+    "description": "KEGG DRUG は、日本、米国、欧州の医薬品情報を、化学構造と成分の観点から一元的に集約・管理したデータベースです。とくに日本の医薬品は医療用（処方薬）だけでなく一般用（大衆薬、OTC薬）もすべて網羅し、個々の製品情報（添付文書情報）へのリンクがつけられています。また化学薬品だけでなく、生薬・漢方方剤もデータベース化されています。",
+    "organization": "京都大学　化学研究所　附属バイオインフォマティクスセンター"
   },
   "kegg_genes": {
     "label": "KEGG Genes",
     "catalog": "nbdc00532",
     "category": "Gene, Protein",
-    "regex": "^\\w+:[\\w\\d\\.-]*$",
-    "prefix": "http://identifiers.org/kegg.genes/"
+    "prefix": "http://identifiers.org/kegg.genes/",
+    "name": "KEGG GENES Database",
+    "description": "KEGG GENESは、全ゲノム配列が決定された生物種について、その遺伝子セットをRefSeq その他の公共データベースから自動生成し、KEGG 独自のアノテーション（KO アノテーション）を行っているデータベースです。\r\n以前、VGENES (http://integbio.jp/dbcatalog/record/nbdc00820) や VGENOME (http://integbio.jp/dbcatalog/record/nbdc00821) に収録されていたウィルスに関する情報も収録されています。",
+    "organization": "京都大学　化学研究所　附属バイオインフォマティクスセンター"
   },
   "kegg_orthology": {
     "label": "KEGG Orthology",
     "catalog": "nbdc00817",
     "category": "Ortholog",
-    "prefix": "http://identifiers.org/kegg.orthology/"
+    "prefix": "http://identifiers.org/kegg.orthology/",
+    "name": "KEGG ORTHOLOGY (KO) Database",
+    "description": "KEGG ORTHOLOGYは、KEGGパスウェイの各ノードまたはBRITE機能階層の最下層ノードに対応したオーソロググループを手作業で定義したものです。ゲノム中の各遺伝子にKO識別子（K番号）を付与することで、KEGGパスウェイやBRITE機能階層へのマッピング（エンリッチメント）が可能となります。KOシステムは、ゲノムの情報からパスウェイ等高次生命システム情報を解読するための架け橋となります。",
+    "organization": "京都大学　化学研究所　附属バイオインフォマティクスセンター"
   },
   "kegg_pathway": {
     "label": "KEGG Pathway",
     "catalog": "nbdc00118",
     "category": "Pathway",
-    "regex": "^(?<id>\\w{2,4}\\d{5})$",
-    "prefix": "http://identifiers.org/kegg.pathway/"
+    "prefix": "http://identifiers.org/kegg.pathway/",
+    "name": "KEGG PATHWAY Database",
+    "description": "代謝、様々な細胞プロセス、ヒト疾患などに関する分子ネットワークの知識を表現したパスウェイマップを収録しています。マップは文献等から手作業で作成しています。",
+    "organization": "京都大学　化学研究所　附属バイオインフォマティクスセンター"
   },
   "kegg_reaction": {
     "label": "KEGG Reaction",
     "catalog": "nbdc00818",
     "category": "Interaction",
-    "regex": "^(?<id>R\\d+)$",
-    "prefix": "http://identifiers.org/kegg.reaction/"
+    "prefix": "http://identifiers.org/kegg.reaction/",
+    "name": "KEGG REACTION",
+    "description": "KEGG REACTIONは、KEGG ENZYMEに格納されているすべての反応と、KEGG PATHWAYの代謝パスウエイの反応を蓄積したデータベースです。 各反応はR番号によって識別され、 反応の構造式や関連する酵素のオーソロググループが収集されており、ゲノム(酵素遺伝子)情報と化学(化合物のペア)情報の統合解析を可能としています。",
+    "organization": "京都大学　化学研究所　附属バイオインフォマティクスセンター"
   },
   "lrg": {
     "catalog": "nbdc02566",
     "category": "Gene",
     "label": "Locus Reference Genomic record",
-    "regex": "^(?<id>LRG_\\d+)$",
-    "prefix": "http://identifiers.org/lrg/"
+    "prefix": "http://identifiers.org/lrg/",
+    "name": "LRG",
+    "description": "ゲノム、転写産物、タンパク質のリファレンス配列のデータベースです。臨床に関連する変異配列を報告するためのリファレンス配列を、 NCBI（RefSeq）とEMBL-EBI（Ensembl / GENCODE）の協力により情報統合しています。 各レコードには、ゲノム、転写産物、タンパク質の配列、アノテーション、ゲノムアセンブリに関するマップなどが含まれています。LRG番号、HGNC遺伝子名、NCBIやEnsemblのID番号（遺伝子、転写産物）、遺伝子の同義語、公開非公開の別による絞り込みが可能です。また、Ensembl、NCBI、UCSCのゲノムブラウザが利用可能です。",
+    "organization": "European Bioinformatics Institute (EMBL-EBI)"
   },
   "mbgd_gene": {
     "label": "MBGD gene",
     "catalog": "nbdc00130",
     "category": "Ortholog",
-    "regex": "^(?<id>[a-z]+:[A-Z]+_[A-Z, 0-9]+)$",
-    "prefix": "http://mbgd.genome.ad.jp/rdf/resource/gene/"
+    "prefix": "http://mbgd.genome.ad.jp/rdf/resource/gene/",
+    "name": "MBGD",
+    "description": "オーソログ解析に基づいて微生物ゲノムの比較解析を行うためのデータベースです。公開されたゲノム全体を含む標準オーソログテーブルに基づいて、各オーソロググループの系統プロファイルの比較などを行えるほか、動的なオーソログ解析機能によって、利用者自身が持つゲノム配列も含めて、興味のある生物種セットに対象を絞った比較を行うこともできます。",
+    "organization": "自然科学研究機構　基礎生物学研究所"
   },
   "mbgd_organism": {
     "label": "MBGD organism",
     "catalog": "nbdc00130",
     "category": "Ortholog",
-    "prefix": "http://mbgd.genome.ad.jp/rdf/resource/organism/"
+    "prefix": "http://mbgd.genome.ad.jp/rdf/resource/organism/",
+    "name": "MBGD",
+    "description": "オーソログ解析に基づいて微生物ゲノムの比較解析を行うためのデータベースです。公開されたゲノム全体を含む標準オーソログテーブルに基づいて、各オーソロググループの系統プロファイルの比較などを行えるほか、動的なオーソログ解析機能によって、利用者自身が持つゲノム配列も含めて、興味のある生物種セットに対象を絞った比較を行うこともできます。",
+    "organization": "自然科学研究機構　基礎生物学研究所"
   },
   "meddra": {
     "label": "MedDRA",
     "catalog": "nbdc02564",
     "category": "Disease",
     "regex": "^(?:MedDRA|meddra):(?<id>\\d+)$",
-    "prefix": "http://identifiers.org/meddra/"
+    "prefix": "http://identifiers.org/meddra/",
+    "name": "MedDRA",
+    "description": "MedDRAは人間が使用する医薬品の規制情報を国際的に共有しやすくするために作成された、標準化された国際医療用語集です。英語版の他に、中国語、チェコ語、オランダ語、フランス語、ドイツ語、ハンガリー語、イタリア語、日本語、韓国語、ポルトガル語、ポルトガル語（ブラジル語）、ロシア語、スペイン語で提供されています。英国の医薬品医療製品規制庁（MHRA）に属する用語に基づいて、WHOを含むICHパートナーによって開発されました。サブスクリプションレベルにより有償・無償が異なります。",
+    "organization": "医薬品規制調和国際会議（ICH）"
   },
   "medgen": {
     "label": "MedGen",
     "catalog": "nbdc02560",
     "category": "Disease",
     "regex": "^(?<id>CN?\\d{4,7})$",
-    "prefix": "http://identifiers.org/medgen/"
+    "prefix": "http://identifiers.org/medgen/",
+    "name": "MedGen",
+    "description": "遺伝医学に関連する症状や表現型に関する情報を集約したポータルデータベースです。NIHのGTR、UMLS、HPO、Orphanet、ClinVar、その他のソースから得られた用語を概念に集約し、一意の識別子（CUI）と優先名を割り当てます。 各エントリーには、名称、他のデータベースで使用される識別子、遺伝様式、臨床的特徴、疾患に影響を与える遺伝子座の地図上の位置が含まれます。",
+    "organization": "National Center for Biotechnology Information (NCBI)"
   },
   "mesh": {
     "label": "MeSH",
     "catalog": "nbdc00132",
     "category": "Terminology",
-    "regex": "^(?<id>[CD]\\d{6,9})$",
-    "prefix": "http://identifiers.org/mesh/"
+    "prefix": "http://identifiers.org/mesh/",
+    "name": "MeSH",
+    "description": "文献や、生物学情報の内容を表すキーワードのデータベースです。このキーワードを利用することで関連する生物学情報を得ることができます。キーワードは階層構造をなしており、より詳細に情報をたどることも、より抽象的な検索をすることも可能です。",
+    "organization": "National Center for Biotechnology Information"
   },
   "mgi": {
     "label": "MGI",
     "catalog": "nbdc00135",
     "category": "Gene",
     "regex": "^(?:MGI|mgi):(?<id>\\d{5,})$",
-    "prefix": "http://identifiers.org/mgi/MGI:"
+    "prefix": "http://identifiers.org/mgi/MGI:",
+    "name": "MGI",
+    "description": "マウス研究の総合サイトです。マウス遺伝子に関する情報の他、遺伝子発現データ、多型・変異情報、パスウエイ、遺伝性癌症候群モデルラットに関するデータ、マウス各系統の表現型に関する詳細な情報等を提供しています。Mammalian Phenotype Ontology を作成管理しており、 オントロジーの検索・閲覧もできます(http://www.informatics.jax.org/vocab/mp_ontology) 。Human - Mouse: Disease Connection (HMDC) により、ヒトとマウスの遺伝子や表現型を統合して検索ができます。",
+    "organization": "The Jackson Laboratory"
   },
   "mirbase": {
     "label": "miRBase",
     "catalog": "nbdc00136",
     "category": "microRNA",
-    "regex": "^(?:MONDO:)?(?<id>\\d{7})$",
-    "prefix": "http://identifiers.org/mirbase/"
+    "regex": "^MONDO:(?<id>\\d{7})$",
+    "prefix": "http://identifiers.org/mirbase/",
+    "name": "miRBase",
+    "description": "公開されているmicroRNAの配列について、配列から予測されるmiRNA前駆体のヘアピン構造(mirで示されます)、成熟miRNAの配列(miRで示されます)、文献情報等が登録されています。様々な検索機能が用意されており、キーワード検索、ゲノム位置による検索、クラスター検索、発現実験による検索、ユーザ自身の配列による検索が行えます。全ての配列とアノテーションはダウンロード可能です。",
+    "organization": "Faculty of Life Sciences (The University of Manchester)"
   },
   "mondo": {
     "label": "MONDO",
     "catalog": "nbdc02563",
     "category": "Disease",
-    "regex": "^(?:MONDO:)?(?<id>\\d{7})$",
-    "prefix": "http://purl.obolibrary.org/obo/MONDO_"
+    "prefix": "http://purl.obolibrary.org/obo/MONDO_",
+    "name": "MONDO",
+    "description": "疾病の定義を統合して構築したオントロジーです。疾病を定義しデータモデルを収録している多くのデータベース（HPO、OMIM、SNOMED CT、ICD、PhenoDB、MedDRA、MedGen、ORDO、DO、GARDなど）から情報を収集しています。開発当初は半自動で構築されていましたが、広範囲に渡り手動でキュレーションされるようになってきています。疾病の個々の症状、特徴の説明はHPOに準拠しており、疾病は階層構造で表示できます。OWL形式を利用したmondo-with-equivalent、obo、jsonの３つのフォーマットで利用可能です。",
+    "organization": "Monarch Initiative"
   },
   "nando": {
     "label": "NANDO",
     "catalog": "nbdc02557",
     "category": "Disease",
-    "regex": "^(?:NANDO:)?(?<id>\\d{7})$",
-    "prefix": "http://nanbyodata.jp/ontology/nando#"
+    "regex": "^NANDO:(?<id>\\d{7})$",
+    "prefix": "http://nanbyodata.jp/ontology/nando#",
+    "name": "NanbyoData",
+    "description": "NanbyoDataは難病オントロジー（Nanbyo Disease Ontology, NANDO）を介して国内外の難病関連情報を集積したサイトです。日本の難病関連制度である指定難病・小児慢性特定疾病の対象疾患に関して詳細な分類までを網羅し、その概要（日英）とOMIM、Orphanet、MedGen、Monarch Initiative、KEGG Diseaseへのリンク情報を提供しています。NANDOはサイトからダウンロードして利用できる他、語彙一覧 (http://nanbyodata.jp/ontology/nando) と階層構造 (http://bioportal.bioontology.org/ontologies/NANDO/?p=classes&conceptid=root) がweb上から参照できます。",
+    "organization": "情報・システム研究機構　ライフサイエンス統合データベースセンター"
   },
   "ncbigene": {
     "label": "NCBI gene",
     "catalog": "nbdc00073",
     "category": "Gene",
-    "regex": "^(?<id>\\d+)$",
-    "prefix": "http://identifiers.org/ncbigene/"
+    "prefix": "http://identifiers.org/ncbigene/",
+    "name": "NCBI Gene",
+    "description": "生物種別の遺伝子単位でエントリーを構成しており、NCBIの様々なデータベースを統合的に利用して遺伝子情報を掲載しています。染色体上の位置、配列、発現、構造、機能、ホモロジーデータのような遺伝子をベースとした情報を提供しています。",
+    "organization": "National Center for Biotechnology Information"
   },
   "ncbiprotein": {
     "label": "NCBI protein",
     "catalog": "nbdc00584",
     "category": "Protein",
-    "regex": "^(?:(?:\\w+\\d+(?:\\.\\d+)?)|(?:NP_\\d+))$",
-    "prefix": "http://identifiers.org/ncbiprotein/"
+    "prefix": "http://identifiers.org/ncbiprotein/",
+    "name": "NCBI",
+    "description": "NCBI（米国立バイオテクノロジー情報センター）は、NIH（米国立衛生研究所）のNLM（米国立医学図書館）の一部門として1988年に設立されたバイオインフォマティクス研究組織です。1989年にBLAST、1990年に検索システムEntrezを開発しました。現在では、NCBI内の各種データベースに対する検索を統一的なインタフェースで行えるようにしています。",
+    "organization": "National Center for Biotechnology Information"
   },
   "oma_group": {
     "label": "OMA group",
@@ -336,7 +430,6 @@
     "label": "OMA protein",
     "catalog": "nbdc02221",
     "category": "Protein",
-    "regex": "^(?<id>[A-Z]{5}[0-9]{5})$",
     "prefix": "http://identifiers.org/oma.protein/"
   },
   "omim_gene": {
@@ -344,174 +437,222 @@
     "catalog": "nbdc00154",
     "category": "Gene",
     "regex": "^(?:O?MIM:)?(?<id>\\d{6})$",
-    "prefix": "http://identifiers.org/mim/"
+    "prefix": "http://identifiers.org/mim/",
+    "name": "OMIM",
+    "description": "Johns Hopkins大学のVictor A. McKusick 博士が中心となって記述、編集を行っている、ヒトの遺伝子変異と遺伝病のデータベースです。全ての既知のメンデル型遺伝病と12,000以上の遺伝子に関して、テキスト形式の情報やリファレンスが示されます。MEDLINEやEntrezのリンクも含まれます。",
+    "organization": "National Center for Biotechnology Information"
   },
   "omim_phenotype": {
     "label": "OMIM phenotype",
     "catalog": "nbdc00154",
     "category": "Disease",
     "regex": "^(?:O?MIM:)?(?<id>\\d{6})$",
-    "prefix": "http://identifiers.org/mim/"
+    "prefix": "http://identifiers.org/mim/",
+    "name": "OMIM",
+    "description": "Johns Hopkins大学のVictor A. McKusick 博士が中心となって記述、編集を行っている、ヒトの遺伝子変異と遺伝病のデータベースです。全ての既知のメンデル型遺伝病と12,000以上の遺伝子に関して、テキスト形式の情報やリファレンスが示されます。MEDLINEやEntrezのリンクも含まれます。",
+    "organization": "National Center for Biotechnology Information"
   },
   "orphanet": {
     "label": "Orphanet Rare Disease ontology",
     "catalog": "nbdc01422",
     "category": "Disease",
     "regex": "^(?:ORPHA|ORDO|Orphanet):?(?<id>[A-Z0-9]+)$",
-    "prefix": "http://identifiers.org/orphanet.ordo/"
+    "prefix": "http://identifiers.org/orphanet.ordo/",
+    "name": "Orphanet",
+    "description": "Orphanetは希少疾患患者の診断と治療の向上を図ることを目的とした、希少疾患や希少疾患用医薬品について様々な情報を参照可能にしたデータベースです。疾患や薬に関する一般的な情報をはじめとして、臨床試験情報、関連する論文や、有病率、発症歴、症状、地域情報などを検索可能です。",
+    "organization": "フランス国立保健医学研究所"
   },
   "pdb": {
     "label": "PDB",
     "catalog": "nbdc00156",
     "category": "Structure",
-    "regex": "^(?<id>[0-9][A-Za-z0-9]{3})$",
-    "prefix": "http://rdf.wwpdb.org/pdb/"
+    "prefix": "http://rdf.wwpdb.org/pdb/",
+    "name": "wwPDB",
+    "description": "タンパク質と核酸の３次元構造の構造座標（立体配座）を蓄積している国際的な公共レポジトリです。\r\n　RCSB PDB （https://integbio.jp/dbcatalog/record/nbdc01865 ）\r\n　PDBe （https://integbio.jp/dbcatalog/record/nbdc00613 ）\r\n　PDBj （https://integbio.jp/dbcatalog/record/nbdc00157 ）\r\n　BMRB （https://integbio.jp/dbcatalog/record/nbdc00380 ）\r\n上記４つデータベースの集合体として、X線結晶構造解析やNMRなどで実験的に決定されたタンパク質の立体構造データの他に、アミノ酸配列、GOといったタンパク質に関する情報やタンパク質に結合している化合物の情報を統合し提供しています。検証データ登録のためのツールや登録データのダウンロードが可能なFTPサイトを装備しています。",
+    "organization": "wwPDB consortium"
   },
   "pfam": {
     "label": "Pfam",
     "catalog": "nbdc00163",
     "category": "Domain",
-    "regex": "^(?<id>PF\\d{5})$",
-    "prefix": "http://identifiers.org/pfam/"
+    "prefix": "http://identifiers.org/pfam/",
+    "name": "Pfam",
+    "description": "現在最もよく整備されたタンパク質ドメインデータベースの一つで、膨大な数のタンパク質ファミリーのコレクションを保持しています。手作業で分類を行った高品質のPfam-Aと、機械的に分類を行ったPfam-Bから構成されています。最大の特徴は、検索システムとしてHMMERというプログラムを使用している点であり、これにより高速で精度の高いモチーフの検索を可能にしています。",
+    "organization": "EMBL-EBI"
   },
   "pubchem_compound": {
     "label": "PubChem compound",
     "catalog": "nbdc00641",
     "category": "Compound",
-    "regex": "^(?:CID)?(?<id>\\d+)$",
-    "prefix": "http://identifiers.org/pubchem.compound/"
+    "prefix": "http://identifiers.org/pubchem.compound/",
+    "name": "PubChem Compound",
+    "description": "化合物名や分子量、CompoundIDなどで化合物の情報を検索することができるサイトです。医薬品名やその効能、LogP値などの物性値も掲載されています。また、類似構造を持つ別の化合物の検索も可能です。PubChem Substanceが一つの化合物に対して異なる情報をもつ複数のエントリをもつ可能性があるのに対し、PubChem CompoundはPubChem Substanceで得られた種々の情報を一つのエントリに集約して提供しています。",
+    "organization": "National Center for Biotechnology Information"
   },
   "pubchem_substance": {
     "label": "PubChem substance",
     "catalog": "nbdc00642",
     "category": "Compound",
-    "regex": "^(?:SID)?(?<id>\\d+)$",
-    "prefix": "http://identifiers.org/pubchem.substance/"
+    "prefix": "http://identifiers.org/pubchem.substance/",
+    "name": "PubChem Substance",
+    "description": "PubChem Substanceは、出版社、研究者、化学ベンダー、製薬会社、および多くの重要なケミカルバイオロジーリソースをもつ研究者によって提供された化学物質とその生物活性に関する情報のオープンアーカイブです。特定の化学物質に関して個々の提供者からの情報が含まれており、１つの化合物に対して提供者が異なる別のレコードとして異なる情報を提供している可能性があります。",
+    "organization": "National Center for Biotechnology Information"
   },
   "pubmed": {
     "label": "PubMed",
     "catalog": "nbdc00179",
     "category": "Literature",
-    "regex": "^(?:pmid|PMID:)?(?<id>\\d+)$",
-    "prefix": "http://identifiers.org/pubmed/"
+    "prefix": "http://identifiers.org/pubmed/",
+    "name": "PubMed",
+    "description": "MEDLINEおよび生命科学分野のジャーナル文献の書誌情報（タイトル、著者名、雑誌名、抄録など）を収録したデータベースです。全文をフリーで公開している文献については、提供サイトへのリンクが張られています。",
+    "organization": "National Center for Biotechnology Information"
   },
   "reactome_pathway": {
     "label": "Reactome pathway",
     "catalog": "nbdc00185",
     "category": "Pathway",
-    "regex": "(?:^R-[A-Z]{3}-\\d+(?:-\\d+)?(?:\\.\\d+)?$)|(?:^REACT_\\d+(?:\\.\\d+)?$)",
-    "prefix": "http://identifiers.org/reactome/"
+    "prefix": "http://identifiers.org/reactome/",
+    "name": "REACTOME",
+    "description": "ヒトの生体内の主要反応経路や生化学反応を整備したデータベースです。ヒト以外の20生物種のデータも格納しており、ヒトとの比較ができます。ここに収録されている情報は、それぞれの分野の専門家が編集しているため、非常に信頼性の高いデータベースです。代謝パスウェイ、シグナル伝達や膜輸送、感染など様々なパスウェイが扱われており、SBGN (Sytem Biology Graphical Notation)形式で視覚化されています。パスウエイ解析、生物種間比較、発現解析も行えます。",
+    "organization": "Reactome Team"
   },
   "reactome_reaction": {
     "label": "Reactome reaction",
     "catalog": "nbdc00185",
     "category": "Interaction",
-    "regex": "^(?:(?:R-[A-Z]{3}-\\d+(?:-\\d+)?(?:\\.\\d+)?)|(?:REACT_\\d+(?:\\.\\d+)?))$",
-    "prefix": "http://identifiers.org/reactome/"
+    "prefix": "http://identifiers.org/reactome/",
+    "name": "REACTOME",
+    "description": "ヒトの生体内の主要反応経路や生化学反応を整備したデータベースです。ヒト以外の20生物種のデータも格納しており、ヒトとの比較ができます。ここに収録されている情報は、それぞれの分野の専門家が編集しているため、非常に信頼性の高いデータベースです。代謝パスウェイ、シグナル伝達や膜輸送、感染など様々なパスウェイが扱われており、SBGN (Sytem Biology Graphical Notation)形式で視覚化されています。パスウエイ解析、生物種間比較、発現解析も行えます。",
+    "organization": "Reactome Team"
   },
   "refseq_genomic": {
     "label": "RefSeq genomic",
     "catalog": "nbdc00187",
     "category": "Genome",
-    "regex": "NC_; AC_; NG_; NT_; NW_; NZ_",
-    "prefix": "http://identifiers.org/refseq/"
+    "prefix": "http://identifiers.org/refseq/",
+    "name": "RefSeq",
+    "description": "異なる生物種由来の冗長性を排除したDNA, RNA, タンパク配列を収録したデータベースです。プラスミド、オルガネラ、ウイルス、古細菌、真正細菌、真核生物のアノテーション付けされた配列が含まれています。生物種ごとに、標準となる配列の包括的データセットを提供することを目的としています。配列の情報源はGenBank由来ですが、それらの中から情報を統合して標準となる配列を提供しています。",
+    "organization": "National Center for Biotechnology Information"
   },
   "refseq_protein": {
     "label": "RefSeq protein",
     "catalog": "nbdc00187",
     "category": "Protein",
-    "regex": "^(?<id>((AC|AP|NC|NG|NM|NP|NR|NT|NW|XM|XP|XR|YP|ZP)_\\d+)|(NZ\\_[A-Z]{2,4}\\d+))(\\.\\d+)?$",
-    "prefix": "http://identifiers.org/refseq/"
+    "prefix": "http://identifiers.org/refseq/",
+    "name": "RefSeq",
+    "description": "異なる生物種由来の冗長性を排除したDNA, RNA, タンパク配列を収録したデータベースです。プラスミド、オルガネラ、ウイルス、古細菌、真正細菌、真核生物のアノテーション付けされた配列が含まれています。生物種ごとに、標準となる配列の包括的データセットを提供することを目的としています。配列の情報源はGenBank由来ですが、それらの中から情報を統合して標準となる配列を提供しています。",
+    "organization": "National Center for Biotechnology Information"
   },
   "refseq_rna": {
     "label": "RefSeq RNA",
     "catalog": "nbdc00187",
     "category": "Gene",
-    "regex": "^(?<id>(?:NM|NR|XM|XR)_\\d+)(?:\\.\\d+)?$",
-    "prefix": "http://identifiers.org/refseq/"
+    "prefix": "http://identifiers.org/refseq/",
+    "name": "RefSeq",
+    "description": "異なる生物種由来の冗長性を排除したDNA, RNA, タンパク配列を収録したデータベースです。プラスミド、オルガネラ、ウイルス、古細菌、真正細菌、真核生物のアノテーション付けされた配列が含まれています。生物種ごとに、標準となる配列の包括的データセットを提供することを目的としています。配列の情報源はGenBank由来ですが、それらの中から情報を統合して標準となる配列を提供しています。",
+    "organization": "National Center for Biotechnology Information"
   },
   "rgd": {
     "label": "RGD",
     "catalog": "nbdc00188",
     "category": "Gene",
     "regex": "^(?:RGD|rgd):(?<id>\\d{4,})$",
-    "prefix": "http://identifiers.org/rgd/"
+    "prefix": "http://identifiers.org/rgd/",
+    "name": "RGD",
+    "description": "ラットゲノム研究の総合サイトです。ラット遺伝子に関する情報の他に、ラットの系統に関する情報、病態モデルラットに関するデータ、文献情報等を提供しています。",
+    "organization": "Medical College of Wisconsin/Bioinformatics Research Center"
   },
   "rhea": {
     "label": "Rhea",
     "catalog": "nbdc02083",
     "category": "Interaction",
-    "regex": "^(?<id>\\d{5})$",
     "prefix": "http://identifiers.org/rhea/"
   },
   "sra_accession": {
     "label": "SRA accession",
     "catalog": "nbdc00687",
     "category": "NGS",
-    "regex": "^(?<id>[SED]RA\\d+)$",
-    "prefix": "http://identifiers.org/insdc.sra/"
+    "prefix": "http://identifiers.org/insdc.sra/",
+    "name": "SRA",
+    "description": "次世代シーケンサーによる配列データのレポジトリサイトです。現在扱っているプラットフォームは454(ロシュ)、Genome Analyzer(イルミナ)、SOLiD(アプライドバイオシステムズ)、Heliscope(ヘリコス)。研究単位でデータの登録、配布を行っています。",
+    "organization": "National Center for Biotechnology Information"
   },
   "sra_analysis": {
     "label": "SRA analysis",
     "catalog": "nbdc00687",
     "category": "NGS",
-    "regex": "^(?<id>[SED]RZ\\d+)$",
-    "prefix": "http://identifiers.org/insdc.sra/"
+    "prefix": "http://identifiers.org/insdc.sra/",
+    "name": "SRA",
+    "description": "次世代シーケンサーによる配列データのレポジトリサイトです。現在扱っているプラットフォームは454(ロシュ)、Genome Analyzer(イルミナ)、SOLiD(アプライドバイオシステムズ)、Heliscope(ヘリコス)。研究単位でデータの登録、配布を行っています。",
+    "organization": "National Center for Biotechnology Information"
   },
   "sra_experiment": {
     "label": "SRA experiment",
     "catalog": "nbdc00687",
     "category": "NGS",
-    "regex": "^(?<id>[SED]RX\\d+)$",
-    "prefix": "http://identifiers.org/insdc.sra/"
+    "prefix": "http://identifiers.org/insdc.sra/",
+    "name": "SRA",
+    "description": "次世代シーケンサーによる配列データのレポジトリサイトです。現在扱っているプラットフォームは454(ロシュ)、Genome Analyzer(イルミナ)、SOLiD(アプライドバイオシステムズ)、Heliscope(ヘリコス)。研究単位でデータの登録、配布を行っています。",
+    "organization": "National Center for Biotechnology Information"
   },
   "sra_project": {
     "label": "SRA project",
     "catalog": "nbdc00687",
     "category": "NGS",
-    "regex": "^(?<id>[SED]RP\\d+)$",
-    "prefix": "http://identifiers.org/insdc.sra/"
+    "prefix": "http://identifiers.org/insdc.sra/",
+    "name": "SRA",
+    "description": "次世代シーケンサーによる配列データのレポジトリサイトです。現在扱っているプラットフォームは454(ロシュ)、Genome Analyzer(イルミナ)、SOLiD(アプライドバイオシステムズ)、Heliscope(ヘリコス)。研究単位でデータの登録、配布を行っています。",
+    "organization": "National Center for Biotechnology Information"
   },
   "sra_run": {
     "label": "SRA run",
     "catalog": "nbdc00687",
     "category": "NGS",
-    "regex": "^(?<id>[SED]RR\\d+)$",
-    "prefix": "http://identifiers.org/insdc.sra/"
+    "prefix": "http://identifiers.org/insdc.sra/",
+    "name": "SRA",
+    "description": "次世代シーケンサーによる配列データのレポジトリサイトです。現在扱っているプラットフォームは454(ロシュ)、Genome Analyzer(イルミナ)、SOLiD(アプライドバイオシステムズ)、Heliscope(ヘリコス)。研究単位でデータの登録、配布を行っています。",
+    "organization": "National Center for Biotechnology Information"
   },
   "sra_sample": {
     "label": "SRA sample",
     "catalog": "nbdc00687",
     "category": "NGS",
-    "regex": "^(?<id>[SED]RS\\d+)$",
-    "prefix": "http://identifiers.org/insdc.sra/"
+    "prefix": "http://identifiers.org/insdc.sra/",
+    "name": "SRA",
+    "description": "次世代シーケンサーによる配列データのレポジトリサイトです。現在扱っているプラットフォームは454(ロシュ)、Genome Analyzer(イルミナ)、SOLiD(アプライドバイオシステムズ)、Heliscope(ヘリコス)。研究単位でデータの登録、配布を行っています。",
+    "organization": "National Center for Biotechnology Information"
   },
   "taxonomy": {
     "label": "Taxonomy",
     "catalog": "nbdc00700",
     "category": "Taxonomy",
-    "regex": "^(?<id>\\d+)$",
-    "prefix": "http://identifiers.org/taxonomy/"
+    "prefix": "http://identifiers.org/taxonomy/",
+    "name": "Taxonomy - NCBI",
+    "description": "NCBI Entrezデータベースに少なくとも1件以上登録されている全ての生物種と上位分類名を収集したデータベースです。160,000以上の生物種が登録されています。各エントリーには、学名、英名、階層分類、上位階層、Entrezデータベース群の収録数とリンクが含まれています。このデータベースは、種々のデータベース間で生物名の表記を統一することを目的として構築しており、分類学や系統発生学の権威となるものではありません。採用されている生物名や系統分類は、分類学的、系統発生学的に普及している内容と異なる場合があります。",
+    "organization": "National Center for Biotechnology Information"
   },
   "togovar": {
     "label": "TogoVar variant",
     "catalog": "nbdc02359",
     "category": "Variant",
-    "regex": "^(?<id>tgv\\d+)$",
-    "prefix": "http://togovar.biosciencedbc.jp/variation/"
+    "prefix": "http://togovar.biosciencedbc.jp/variation/",
+    "name": "TogoVar",
+    "description": "TogoVar（日本人ゲノム多様性統合データベース）は、日本人ゲノム配列の個人による違い（バリアント）とそれに関係する疾患情報などを収集・整理したデータベースです。TogoVarは、研究プロジェクト横断的に集約した日本人におけるバリアントの頻度情報を提供します。利用可能な２つのデータセットであるJGA-NGSとJGA-SNPはNBDCヒトデータベース/Japanese Genotype-phenotype Archive (JGA)に登録されている個人ごとのゲノムデータを集約して得られた頻度情報です。さらに、多種多様なデータベースに散在して収録されてきた遺伝子型や表現型に関連する情報を整理統合し、バリアントを解釈するための情報をワンストップでわかりやすく提供します。",
+    "organization": "国立研究開発法人科学技術振興機構　バイオサイエンスデータベースセンター"
   },
   "uniprot": {
     "label": "UniProt",
     "catalog": "nbdc00221",
     "category": "Protein",
-    "regex": "^(?:(?<id>[A-NR-Z][0-9](?:[A-Z][A-Z0-9][A-Z0-9][0-9]){1,2})|(?<id2>[OPQ][0-9][A-Z0-9][A-Z0-9][A-Z0-9][0-9])(?:\\.\\d+)?)$",
-    "prefix": "http://purl.uniprot.org/uniprot/"
+    "prefix": "http://purl.uniprot.org/uniprot/",
+    "name": "UniProt",
+    "description": "アミノ酸配列とその機能情報を掲載している代表的なデータベースです。「UniProtKB」、「UniRef」、「UniParc」の3種類のデータベースから構成されています。\r\nUniProtKB: 文献情報などを元に手作業で高品質のアノテーションを付けたSwissProtと、機械的にアノテーションを加えたTrEMBLを公開しています。\r\nUniRef: あらかじめ行われた配列相同性検索の結果を提供しています。\r\nUniParc: 配列IDごとに他のデータベースのID等の情報をまとめています。",
+    "organization": "UniProt Consortium"
   },
   "wikipathways": {
     "label": "WikiPathways",
     "catalog": "nbdc02116",
     "category": "Pathway",
-    "regex": "^(?<id>WP\\d{1,5})(?:\\_r\\d+)?$",
     "prefix": "http://identifiers.org/wikipathways/"
   }
 }
