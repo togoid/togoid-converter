@@ -1,4 +1,6 @@
 import React from "react";
+import dataset from "../public/dataset.json";
+import config from "../public/config.json";
 
 const Databases = () => (
   <div className="home">
@@ -17,145 +19,73 @@ const Databases = () => (
                 <input type="text" className="input_search__input" />
               </div>
             </div>
-
-            <article className="database__item">
-              <h3 className="title">
-                <img
-                  src="/images/icon_rat.png"
-                  alt="アイコン画像：ラット"
-                  className="icon"
-                />
-                <span className="text">ChEMBL compound</span>
-              </h3>
-              <div className="description">
-                ChEMBL is a manually curated database of bioactive molecules
-                with drug-like properties. It brings together chemical,
-                bioactivity and genomic data to aid the translation of genomic
-                information into effective new drugs.
-              </div>
-
-              <div className="path">
-                <div className="path_label small white">LINK TO</div>
-                <svg className="icon" viewBox="0 0 24 24">
-                  <path
-                    fill="currentColor"
-                    d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
+            {Object.keys(dataset).map(key => 
+              <article className="database__item">
+                <h3 className="title">
+                  <img
+                    src="/images/icon_rat.png"
+                    alt="アイコン画像：ラット"
+                    className="icon"
                   />
-                </svg>
-                <div htmlFor="result" className="path_label small green">
-                  <span className="path_label__inner">
-                    <img
-                      src="/images/icon_rat.png"
-                      alt="アイコン画像：ラット"
-                      className="icon"
-                    />
-                    HGNC
-                  </span>
+                  <span className="text">{dataset[key].label}</span>
+                </h3>
+                <div className="description">
+                  {dataset[key].description}
                 </div>
-                <div htmlFor="result" className="path_label small purple">
-                  <span className="path_label__inner">
-                    <img
-                      src="/images/icon_rat.png"
-                      alt="アイコン画像：ラット"
-                      className="icon"
-                    />
-                    HGNC
-                  </span>
-                </div>
-              </div>
 
-              <dl className="data">
-                <div className="data__wrapper">
-                  <dt>PREFIX</dt>
-                  <dd>http://identifiers.org/chembl.compound/</dd>
-                </div>
-                <div className="data__wrapper">
-                  <dt>TYPE</dt>
-                  <dd>Chemical compound</dd>
-                </div>
-                <div className="data__wrapper">
-                  <dt>DATE</dt>
-                  <dd>2021/02/17</dd>
-                </div>
-                <div className="data__wrapper">
-                  <dt>HOST</dt>
-                  <dd>hogehoge</dd>
-                </div>
-                <div className="data__wrapper">
-                  <dt>RECORD</dt>
-                  <dd>765,460 entries</dd>
-                </div>
-              </dl>
-            </article>
-            <article className="database__item">
-              <h3 className="title">
-                <img
-                  src="/images/icon_rat.png"
-                  alt="アイコン画像：ラット"
-                  className="icon"
-                />
-                <span className="text">ChEMBL compound</span>
-              </h3>
-              <div className="description">
-                ChEMBL is a manually curated database of bioactive molecules
-                with drug-like properties. It brings together chemical,
-                bioactivity and genomic data to aid the translation of genomic
-                information into effective new drugs.
-              </div>
+                {(() => {
+                  const labels = Object.keys(config).map(label => {
+                    if ( label.indexOf(key) == 0) {
+                      const str = label.replace(`${key}-`,"")
+                      return (
+                      <div htmlFor="result" className="path_label small green">
+                        <span className="path_label__inner">
+                          <img
+                            src="/images/icon_rat.png"
+                            alt="アイコン画像：ラット"
+                            className="icon"
+                          />
+                          {str}
+                        </span>
+                      </div>
+                      )
+                    }
+                  }).filter(v => v)
+                  
+                  if(labels.length){
+                    return (
+                      <div className="path">
+                        <div className="path_label small white">LINK TO</div>
+                        <svg className="icon" viewBox="0 0 24 24">
+                          <path
+                            fill="currentColor"
+                            d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
+                          />
+                        </svg>
+                        {labels}
+                      </div>
+                    )
+                  }
+                })()}
 
-              <div className="path">
-                <div className="path_label small white">LINK TO</div>
-                <svg className="icon" viewBox="0 0 24 24">
-                  <path
-                    fill="currentColor"
-                    d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
-                  />
-                </svg>
-                <div htmlFor="result" className="path_label small green">
-                  <span className="path_label__inner">
-                    <img
-                      src="/images/icon_rat.png"
-                      alt="アイコン画像：ラット"
-                      className="icon"
-                    />
-                    HGNC
-                  </span>
-                </div>
-                <div htmlFor="result" className="path_label small purple">
-                  <span className="path_label__inner">
-                    <img
-                      src="/images/icon_rat.png"
-                      alt="アイコン画像：ラット"
-                      className="icon"
-                    />
-                    HGNC
-                  </span>
-                </div>
-              </div>
-
-              <dl className="data">
-                <div className="data__wrapper">
-                  <dt>PREFIX</dt>
-                  <dd>http://identifiers.org/chembl.compound/</dd>
-                </div>
-                <div className="data__wrapper">
-                  <dt>TYPE</dt>
-                  <dd>Chemical compound</dd>
-                </div>
-                <div className="data__wrapper">
-                  <dt>DATE</dt>
-                  <dd>2021/02/17</dd>
-                </div>
-                <div className="data__wrapper">
-                  <dt>HOST</dt>
-                  <dd>hogehoge</dd>
-                </div>
-                <div className="data__wrapper">
-                  <dt>RECORD</dt>
-                  <dd>765,460 entries</dd>
-                </div>
-              </dl>
-            </article>
+                <dl className="data">
+                  <div className="data__wrapper">
+                    <dt>PREFIX</dt>
+                    <dd>{dataset[key].prefix}</dd>
+                  </div>
+                  <div className="data__wrapper">
+                    <dt>CATEGORY</dt>
+                    <dd>{dataset[key].category}</dd>
+                  </div>
+                  {dataset[key].organization &&
+                    <div className="data__wrapper">
+                      <dt>ORGANIZATION</dt>
+                      <dd>{dataset[key].organization}</dd>
+                    </div>
+                  }
+                </dl>
+              </article>
+            )}
           </div>
         </div>
       </div>
