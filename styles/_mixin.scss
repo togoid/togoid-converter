@@ -1,5 +1,11 @@
 @charset "UTF-8";
 
+@import url('https://fonts.googleapis.com/css2?family=Oswald&display=swap');
+
+@function Oswald() {
+  @return 'Oswald';
+}
+
 @mixin border_title() {
   font-size: 2.4rem;
   padding: 0 0 20px;

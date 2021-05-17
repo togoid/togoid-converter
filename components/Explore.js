@@ -56,46 +56,12 @@ const Explore = (props) => {
       <div className="drawing_area">
         <div className="panel">
           <div className="panel__button">
-            <div className="button_pull_down__wrapper">
-              <button
-                onClick={() =>
-                  setOperationMenuVisibility(!operationMenuVisibility)
-                }
-                className={`button_pull_down 
-                  ${operationMenuVisibility && "active"}
-                `}
-              >
-                Operation
-              </button>
-              {operationMenuVisibility && (
-                <div className="button_pull_down__children">
-                  <button
-                    onClick={handleExportCSV}
-                    className="button_pull_down__children__item"
-                  >
-                    <svg className="icon" viewBox="0 0 24 24">
-                      <path
-                        fill="currentColor"
-                        d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"
-                      />
-                    </svg>
-                    Export as CSV
-                  </button>
-                  <button
-                    onClick={handleReset}
-                    className="button_pull_down__children__item"
-                  >
-                    <svg className="icon" viewBox="0 0 24 24">
-                      <path
-                        fill="currentColor"
-                        d="M13.5,7A6.5,6.5 0 0,1 20,13.5A6.5,6.5 0 0,1 13.5,20H10V18H13.5C16,18 18,16 18,13.5C18,11 16,9 13.5,9H7.83L10.91,12.09L9.5,13.5L4,8L9.5,2.5L10.92,3.91L7.83,7H13.5M6,18H8V20H6V18Z"
-                      />
-                    </svg>
-                    Reset
-                  </button>
-                </div>
-              )}
-            </div>
+            <button
+              onClick={handleReset}
+              className="button_clear"
+            >
+              Clear
+            </button>
           </div>
           <div className="panel__inner">
             <div className="explore">
@@ -104,6 +70,9 @@ const Explore = (props) => {
                   props.databaseNodes.length > 0 &&
                   props.databaseNodes.map((database, i) => (
                     <div className="item_wrapper" key={i}>
+                      {i === 0 &&
+                        <p className="item_first_heading">Convert from</p>
+                      }
                       <ul className="result_list">
                         {database.map((v, j) => (
                           <li key={j}>
@@ -126,32 +95,28 @@ const Explore = (props) => {
                                   {v.name}
                                 </span>
                               </label>
-                              {i > 0 &&
-                              props.route[i] &&
-                              props.route[i].name === v.name &&
-                              v.name ? (
-                                <button
-                                  className="radio__three_dots"
-                                  onClick={() => toggleMenuVisibility(i, j)}
-                                />
-                              ) : null}
-                              {menuVisibility[0] === i &&
-                                menuVisibility[1] === j && (
-                                  <div className="button_pull_down__children">
-                                    <button
-                                      className="button_pull_down__children__item"
-                                      onClick={() => showModal(i, j)}
-                                    >
-                                      <svg className="icon" viewBox="0 0 24 24">
-                                        <path
-                                          fill="currentColor"
-                                          d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z"
-                                        />
-                                      </svg>
-                                      Resolve with this
-                                    </button>
-                                  </div>
-                                )}
+                            </div>
+                            <p className="result_count">999</p>
+                            <div className="action_icons">
+                              <button
+                                onClick={() => showModal(i, j)}
+                                className="action_icons__item">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 16">
+                                  <path d="M5,4H19a2,2,0,0,1,2,2V18a2,2,0,0,1-2,2H5a2,2,0,0,1-2-2V6A2,2,0,0,1,5,4M5,8v4h6V8H5m8,0v4h6V8H13M5,14v4h6V14H5m8,0v4h6V14Z" transform="translate(-3 -4)" fill="#fff"/>
+                                </svg>
+                              </button>
+
+                              <button className="action_icons__item">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 17">
+                                  <path d="M5,20H19V18H5M19,9H15V3H9V9H5l7,7Z" transform="translate(-5 -3)" fill="#fff"/>
+                                </svg>
+                              </button>
+
+                              <button className="action_icons__item">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6.427 16.004">
+                                  <path d="M13.5,4A1.5,1.5,0,1,0,15,5.5,1.5,1.5,0,0,0,13.5,4m-.36,4.77c-1.19.1-4.44,2.69-4.44,2.69-.2.15-.14.14.02.42s.14.29.33.16.53-.34,1.08-.68c2.12-1.36.34,1.78-.57,7.07-.36,2.62,2,1.27,2.61.87s2.21-1.5,2.37-1.61c.22-.15.06-.27-.11-.52-.12-.17-.24-.05-.24-.05-.65.43-1.84,1.33-2,.76-.19-.57,1.03-4.48,1.7-7.17C14,10.07,14.3,8.67,13.14,8.77Z" transform="translate(-8.573 -4)" fill="#fafafa"/>
+                                </svg>
+                              </button>
                             </div>
                           </li>
                         ))}
