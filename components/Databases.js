@@ -19,7 +19,7 @@ const Databases = () => (
                 <input type="text" className="input_search__input" />
               </div>
             </div>
-            {Object.keys(dataset).map(key => 
+            {Object.keys(dataset).map(key =>
               <article className="database__item">
                 <h3 className="title">
                   <img
@@ -39,19 +39,12 @@ const Databases = () => (
                       const str = label.replace(`${key}-`,"")
                       return (
                       <div htmlFor="result" className="path_label small green">
-                        <span className="path_label__inner">
-                          <img
-                            src="/images/icon_rat.png"
-                            alt="アイコン画像：ラット"
-                            className="icon"
-                          />
-                          {str}
-                        </span>
+                        {str}
                       </div>
                       )
                     }
                   }).filter(v => v)
-                  
+
                   if(labels.length){
                     return (
                       <div className="path">
@@ -62,7 +55,9 @@ const Databases = () => (
                             d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
                           />
                         </svg>
-                        {labels}
+                        <div className="path__children">
+                          {labels}
+                        </div>
                       </div>
                     )
                   }
