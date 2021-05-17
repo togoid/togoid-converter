@@ -106,7 +106,9 @@ const Explore = (props) => {
                                 </svg>
                               </button>
 
-                              <button className="action_icons__item">
+                              <button 
+                                onClick={handleExportCSV}
+                                className="action_icons__item">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 17">
                                   <path d="M5,20H19V18H5M19,9H15V3H9V9H5l7,7Z" transform="translate(-5 -3)" fill="#fff"/>
                                 </svg>
