@@ -131,6 +131,23 @@ const Explore = (props) => {
                             </div>
                           </li>
                         ))}
+                        <li>
+                          <div className="radio">
+                            <input
+                              type="radio"
+                              id="sample"
+                              className="radio__input"
+                            />
+                            <label
+                              htmlFor="sample"
+                              className="radio__label"
+                            >
+                            </label>
+                            <select name="" id="">
+                              <option value="">Others</option>
+                            </select>
+                          </div>
+                        </li>
                       </ul>
                     </div>
                   ))}
