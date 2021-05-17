@@ -96,7 +96,7 @@ const Home = () => {
         return v;
       });
       setDatabaseNodes([databases]);
-      setRoute([databases[0]]);
+      setRoute([]);
     }
   };
 
