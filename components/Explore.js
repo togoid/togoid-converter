@@ -104,6 +104,9 @@ const Explore = (props) => {
                   props.databaseNodes.length > 0 &&
                   props.databaseNodes.map((database, i) => (
                     <div className="item_wrapper" key={i}>
+                      {i === 0 &&
+                        <p className="item_first_heading">Convert from</p>
+                      }
                       <ul className="result_list">
                         {database.map((v, j) => (
                           <li key={j}>
