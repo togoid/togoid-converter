@@ -36,15 +36,31 @@ const Explore = (props) => {
     }
   };
 
-  const handleExportCSV = async () => {
-    const heading = props.route.map((v) => v.name);
+  const handleExportCSV = async (routeIndex,w) => {
+    if(props.route.length == routeIndex){
+      props.route.push(w);
+    }
+    else if(props.route.length > routeIndex){
+      props.route.splice(routeIndex,props.route.length-routeIndex);
+      props.route.push(w);
+    }
+    const heading = props.route
+      .filter((v, i) => i <= routeIndex)
+      .map((v) => v.name);
     const d = await executeQuery(props.route, props.ids);
     exportCSV([heading, ...d.results]);
   };
 
-  const showModal = async (routeIndex) => {
+  const showModal = async (routeIndex,w) => {
     setOperationMenuVisibility(false);
     setMenuVisibility([null, null]);
+    if(props.route.length == routeIndex){
+      props.route.push(w);
+    }
+    else if(props.route.length > routeIndex){
+      props.route.splice(routeIndex,props.route.length-routeIndex);
+      props.route.push(w);
+    }
     const heading = props.route
       .filter((v, i) => i <= routeIndex)
       .map((v) => v.name);
@@ -111,7 +127,7 @@ const Explore = (props) => {
                             <p className="result_count">999</p>
                             <div className="action_icons">
                               <button
-                                onClick={() => showModal(i, j)}
+                                onClick={() => showModal(i, v)}
                                 className="action_icons__item">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 16">
                                   <path d="M5,4H19a2,2,0,0,1,2,2V18a2,2,0,0,1-2,2H5a2,2,0,0,1-2-2V6A2,2,0,0,1,5,4M5,8v4h6V8H5m8,0v4h6V8H13M5,14v4h6V14H5m8,0v4h6V14Z" transform="translate(-3 -4)" fill="#fff"/>
@@ -119,7 +135,7 @@ const Explore = (props) => {
                               </button>
 
                               <button
-                                onClick={handleExportCSV}
+                                onClick={() => handleExportCSV(i,v)}
                                 className="action_icons__item">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 17">
                                   <path d="M5,20H19V18H5M19,9H15V3H9V9H5l7,7Z" transform="translate(-5 -3)" fill="#fff"/>
