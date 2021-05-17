@@ -56,46 +56,12 @@ const Explore = (props) => {
       <div className="drawing_area">
         <div className="panel">
           <div className="panel__button">
-            <div className="button_pull_down__wrapper">
-              <button
-                onClick={() =>
-                  setOperationMenuVisibility(!operationMenuVisibility)
-                }
-                className={`button_pull_down 
-                  ${operationMenuVisibility && "active"}
-                `}
-              >
-                Operation
-              </button>
-              {operationMenuVisibility && (
-                <div className="button_pull_down__children">
-                  <button
-                    onClick={handleExportCSV}
-                    className="button_pull_down__children__item"
-                  >
-                    <svg className="icon" viewBox="0 0 24 24">
-                      <path
-                        fill="currentColor"
-                        d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"
-                      />
-                    </svg>
-                    Export as CSV
-                  </button>
-                  <button
-                    onClick={handleReset}
-                    className="button_pull_down__children__item"
-                  >
-                    <svg className="icon" viewBox="0 0 24 24">
-                      <path
-                        fill="currentColor"
-                        d="M13.5,7A6.5,6.5 0 0,1 20,13.5A6.5,6.5 0 0,1 13.5,20H10V18H13.5C16,18 18,16 18,13.5C18,11 16,9 13.5,9H7.83L10.91,12.09L9.5,13.5L4,8L9.5,2.5L10.92,3.91L7.83,7H13.5M6,18H8V20H6V18Z"
-                      />
-                    </svg>
-                    Reset
-                  </button>
-                </div>
-              )}
-            </div>
+            <button
+              onClick={handleReset}
+              className="button_clear"
+            >
+              Clear
+            </button>
           </div>
           <div className="panel__inner">
             <div className="explore">
