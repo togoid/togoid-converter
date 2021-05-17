@@ -186,7 +186,10 @@
   font-size: 1.4rem;
   padding: 0 0 0 14px;
   border-radius: 5px;
-  outline: none;
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+  background: url("../public/images/icon_select.png") no-repeat calc(100% - 17px) center/ 12px;
   &.green {
     border: 1px solid $blue01;
     background: $green01;
@@ -202,6 +205,10 @@
 
   select {
     margin: 0 0 0 10px;
+  }
+
+  .select {
+    width: 200px;
   }
 
   &__large_label {

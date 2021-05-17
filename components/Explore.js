@@ -81,7 +81,7 @@ const Explore = (props) => {
                       {i === 0 &&
                         <p className="item_first_heading">Convert from</p>
                       }
-                      <ul className="result_list">
+                      <ul className={i === 0 ? "result_list first" : "result_list"}>
                         {database.map((v, j) => (
                           <li key={j}>
                             <div className="radio green">
@@ -104,7 +104,6 @@ const Explore = (props) => {
                                 </span>
                               </label>
                             </div>
-                            {console.log(v)}
                             <p className="result_count">999</p>
                             <div className="action_icons">
                               <button
