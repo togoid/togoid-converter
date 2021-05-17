@@ -122,6 +122,37 @@
             margin: 0 0 15px;
           }
         }
+
+        .result_count {
+          font-family: Oswald;
+          font-size: 1.2rem;
+          color: $gray07;
+          padding: 0 14px;
+          margin: 0 0 0 7px;
+          line-height: 14px;
+          border-radius: 8px;
+          text-align: center;
+          border: 1px solid $gray01;
+          background: $white;
+        }
+
+        .action_icons {
+          display: flex;
+          align-items: center;
+          &__item {
+            width: 36px;
+            height: 36px;
+            margin: 0 0 0 5px;
+            border-radius: 50%;
+            border: none;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+            background: $blue01;
+            svg {
+              max-width: 18px;
+              max-height: 17px;
+            }
+          }
+        }
       }
     }
   }
