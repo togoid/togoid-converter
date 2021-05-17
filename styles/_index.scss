@@ -17,10 +17,26 @@
 
     .textarea {
       display: flex;
+      .textarea_wrapper {
+        position: relative;
+        margin: 0 15px 0 0;
+        .textarea_clear {
+          position: absolute;
+          top: 10px;
+          right: 8px;
+          z-index: 100;
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          border: none;
+          background: url("../public/images/icon_close.png") no-repeat center center/ 9px 9px, $gray01;
+        }
+      }
       &__input {
+        position: relative;
+        z-index: 1;
         width: 330px;
         height: 100px;
-        margin: 0 15px 0 0;
       }
     }
   }
@@ -105,8 +121,11 @@
         .item_wrapper {
           display: flex;
           flex-direction: column;
-          ul {
-            margin-left: 20px;
+          .result_list {
+            margin: 55px 0 0 20px;
+            &.first {
+              margin: 0 0 0 20px;
+            }
           }
           li {
             display: flex;
@@ -202,27 +221,38 @@
         margin: 0 0 31px;
         .icon {
           width: 24px;
+          margin: 0 8px 10px;
           path {
             fill: $blue01;
           }
         }
         .path_label {
-          margin: 0 10px 0 0;
+          margin: 0 0 10px;
+        }
+        &__children {
+          display: flex;
+          flex-wrap: wrap;
+          max-width: calc(100% - 110px);
+          .path_label {
+            margin: 0 10px 10px 0;
+          }
         }
       }
       .data {
         &__wrapper {
           display: flex;
           justify-content: space-between;
-          font-size: 1rem;
           margin: 0 0 8px;
           dt {
-            width: 40px;
+            width: 80px;
+            font-size: 1rem;
             color: $gray01;
+            margin: 0 13px 0 0;
             text-align: right;
           }
           dd {
             width: calc(100% - 53px);
+            font-size: 1.2rem;
           }
         }
       }

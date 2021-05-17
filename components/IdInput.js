@@ -45,15 +45,19 @@ const IdInput = (props) => {
 */}
 
       <form onSubmit={handleSubmit} className="textarea">
-        <textarea
-          cols="30"
-          rows="10"
-          placeholder="Input IDs"
-          className="textarea__input"
-          value={idTexts}
-          onChange={(e) => setIdTexts(e.target.value)}
-        />
-        <button onClick={() => setIdTexts("")}>×</button>
+        <div className="textarea_wrapper">
+          <textarea
+            cols="30"
+            rows="10"
+            placeholder="Input IDs"
+            className="textarea__input"
+            value={idTexts}
+            onChange={(e) => setIdTexts(e.target.value)}
+          />
+          <button
+            onClick={() => setIdTexts("")}
+            className="textarea_clear"/>
+        </div>
         <input type="submit" value="EXECUTE" className="button_large" />
       </form>
     </div>

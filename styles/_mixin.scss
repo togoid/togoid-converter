@@ -6,7 +6,16 @@
   @return 'Oswald';
 }
 
+@function ls_cal($space){
+  @return $space / 1000 + em;
+}
+
+@function lh_cal($lh, $fs) {
+  @return $lh / $fs;
+}
+
 @mixin border_title() {
+  font-family: Oswald;
   font-size: 2.4rem;
   padding: 0 0 20px;
   text-align: center;
