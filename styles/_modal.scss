@@ -7,6 +7,98 @@
   height: 100vh;
   overflow: hidden;
   background: $gray09;
+
+  &--through {
+    background: rgba(60, 60, 60, 0.5);
+    &__close {
+      position: relative;
+      display: block;
+      width: 14px;
+      height: 14px;
+      margin: 0 0 0 auto;
+      transform: rotate(45deg);
+      border: none;
+      background: none;
+      &:before,
+      &:after {
+        position: absolute;
+        content: '';
+        display: block;
+        background: $gray08;
+      }
+      &:before {
+        top: 0;
+        left: 50%;
+        width: 2px;
+        height: 100%;
+        transform: translateX(-50%);
+      }
+      &:after {
+        top: 50%;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        transform: translateY(-50%);
+      }
+    }
+
+    &__title {
+      font-family: Oswald;
+      font-size: 1.8rem;
+      margin: 0 0 18px;
+    }
+
+    &__buttons {
+      display: flex;
+      align-items: center;
+      margin: 0 0 29px;
+      .path_label {
+        margin: 0 0 10px;
+      }
+      .arrow {
+        width: 16px;
+        margin: 0 8px 10px;
+        path {
+          fill: $blue01;
+        }
+      }
+      .path_children {
+        display: flex;
+        flex-wrap: wrap;
+        max-width: calc(100% - 102px);
+        .path_label {
+          margin: 0 10px 10px 0;
+        }
+      }
+    }
+
+    &__description {
+      font-family: Oswald;
+      font-size: 1.4rem;
+      margin: 0 0 32px;
+      line-height: lh_cal(21, 14);
+    }
+
+    &__data_list {
+      &__item {
+        display: flex;
+        font-family: Oswald;
+        margin: 0 0 7px;
+        dt {
+          width: 50px;
+          font-size: 1rem;
+          color: $gray01;
+          margin: 0 13px 0 0;
+          text-align: right;
+        }
+        dd {
+          width: calc(100% - 63px);
+          font-size: 1.2rem;
+        }
+      }
+    }
+  }
+
   &__inner {
     position: relative;
     width: 76%;
@@ -15,6 +107,14 @@
     margin: 10vh auto;
     border-radius: 10px;
     background: $white;
+
+    &--through {
+      width: 50%;
+      padding: 18px 20px 36px 40px;
+      margin: 50vh auto 0;
+      transform: translateY(-50%);
+      border-radius: 5px;
+    }
   }
   &__scroll_area {
     height: 100%;
