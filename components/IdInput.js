@@ -53,6 +53,7 @@ const IdInput = (props) => {
           value={idTexts}
           onChange={(e) => setIdTexts(e.target.value)}
         />
+        <button onClick={() => setIdTexts("")}>×</button>
         <input type="submit" value="EXECUTE" className="button_large" />
       </form>
     </div>
