@@ -54,7 +54,9 @@ const IdInput = (props) => {
             value={idTexts}
             onChange={(e) => setIdTexts(e.target.value)}
           />
-          <button onClick={() => setIdTexts("")} className="textarea_clear" />
+          {idTexts && (
+            <button onClick={() => setIdTexts("")} className="textarea_clear" />
+          )}
         </div>
         <input type="submit" value="EXECUTE" className="button_large" />
       </form>
