@@ -7,6 +7,7 @@ import Databases from "../components/Databases";
 import IdInput from "../components/IdInput";
 import dbConfig from "../public/config.json";
 import dbCatalogue from "../public/dataset.json";
+import { executeQuery } from "../lib/util";
 
 const Home = () => {
   const [ids, setIds] = useState([]);
@@ -16,6 +17,7 @@ const Home = () => {
 
   useEffect(() => {
     if (route.length > 0) {
+      const abortController = new AbortController();
       const nodes = databaseNodes.slice(0, route.length);
       const r = route[route.length - 1];
       const candidates = [];
@@ -54,9 +56,31 @@ const Home = () => {
           }
         }
       });
-      // 先端の変換候補を追加
-      nodes[route.length] = candidates;
-      setDatabaseNodes(nodes);
+
+      const promises = candidates.map((v) => {
+        const r = route.slice();
+        r.push(v);
+        return new Promise(function (resolve) {
+          // エラーになった変換でもnullを返してresolve
+          return executeQuery(r, ids, "target")
+            .then((v) => resolve(v))
+            .catch(() => resolve(null));
+        });
+      });
+
+      Promise.all(promises).then((values) => {
+        // 先端の変換候補を追加
+        nodes[route.length] = candidates.map((v, i) => {
+          const _v = Object.assign({}, v);
+          _v.total = values[i] && values[i].total ? values[i].total : 0;
+          return _v;
+        });
+        setDatabaseNodes(nodes);
+      });
+
+      return () => {
+        abortController.abort();
+      };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route]);
