@@ -702,7 +702,7 @@
     "label": "UniProt",
     "catalog": "nbdc00221",
     "category": "Protein",
-    "regex": "^(?:(?<id>[A-NR-Z][0-9](?:[A-Z][A-Z0-9][A-Z0-9][0-9]){1,2})|(?<id>[OPQ][0-9][A-Z0-9][A-Z0-9][A-Z0-9][0-9])(?:\\.\\d+)?)$",
+    "regex": "^(?:(?<id>[A-NR-Z][0-9](?:[A-Z][A-Z0-9][A-Z0-9][0-9]){1,2})|(?<id2>[OPQ][0-9][A-Z0-9][A-Z0-9][A-Z0-9][0-9])(?:\\.\\d+)?)$",
     "prefix": "http://purl.uniprot.org/uniprot/",
     "name": "UniProt",
     "description": "アミノ酸配列とその機能情報を掲載している代表的なデータベースです。「UniProtKB」、「UniRef」、「UniParc」の3種類のデータベースから構成されています。\r\nUniProtKB: 文献情報などを元に手作業で高品質のアノテーションを付けたSwissProtと、機械的にアノテーションを加えたTrEMBLを公開しています。\r\nUniRef: あらかじめ行われた配列相同性検索の結果を提供しています。\r\nUniParc: 配列IDごとに他のデータベースのID等の情報をまとめています。",
