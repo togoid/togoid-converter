@@ -19,7 +19,7 @@ const Databases = () => (
                 <input type="text" className="input_search__input" />
               </div>
             </div>
-            {Object.keys(dataset).map(key =>
+            {Object.keys(dataset).map((key) => (
               <article className="database__item">
                 <h3 className="title">
                   <img
@@ -29,23 +29,26 @@ const Databases = () => (
                   />
                   <span className="text">{dataset[key].label}</span>
                 </h3>
-                <div className="description">
-                  {dataset[key].description}
-                </div>
+                <div className="description">{dataset[key].description}</div>
 
                 {(() => {
-                  const labels = Object.keys(config).map(label => {
-                    if ( label.indexOf(key) == 0) {
-                      const str = label.replace(`${key}-`,"")
-                      return (
-                      <div htmlFor="result" className="path_label small green">
-                        {str}
-                      </div>
-                      )
-                    }
-                  }).filter(v => v)
+                  const labels = Object.keys(config)
+                    .map((label) => {
+                      if (label.indexOf(key) == 0) {
+                        const str = label.replace(`${key}-`, "");
+                        return (
+                          <div
+                            htmlFor="result"
+                            className="path_label small green"
+                          >
+                            {str}
+                          </div>
+                        );
+                      }
+                    })
+                    .filter((v) => v);
 
-                  if(labels.length){
+                  if (labels.length) {
                     return (
                       <div className="path">
                         <div className="path_label small white">LINK TO</div>
@@ -55,11 +58,9 @@ const Databases = () => (
                             d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
                           />
                         </svg>
-                        <div className="path__children">
-                          {labels}
-                        </div>
+                        <div className="path__children">{labels}</div>
                       </div>
-                    )
+                    );
                   }
                 })()}
 
@@ -72,15 +73,15 @@ const Databases = () => (
                     <dt>CATEGORY</dt>
                     <dd>{dataset[key].category}</dd>
                   </div>
-                  {dataset[key].organization &&
+                  {dataset[key].organization && (
                     <div className="data__wrapper">
                       <dt>ORGANIZATION</dt>
                       <dd>{dataset[key].organization}</dd>
                     </div>
-                  }
+                  )}
                 </dl>
               </article>
-            )}
+            ))}
           </div>
         </div>
       </div>
