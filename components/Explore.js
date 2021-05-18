@@ -83,7 +83,11 @@ const Explore = (props) => {
                       >
                         {database.map((v, j) => (
                           <li key={j}>
-                            <div className="radio green">
+                            <div
+                              className={`radio green ${
+                                i === 0 || v.total > 0 ? null : "not_found"
+                              }`}
+                            >
                               <input
                                 type="radio"
                                 id={`result${i}-${j}`}
@@ -93,6 +97,7 @@ const Explore = (props) => {
                                     props.route[i].name === v.name
                                 )}
                                 onChange={() => selectDatabase(v, i)}
+                                disabled={i > 0 && !v.total}
                               />
                               <label
                                 htmlFor={`result${i}-${j}`}
@@ -103,7 +108,7 @@ const Explore = (props) => {
                                 </span>
                               </label>
                             </div>
-                            {i > 0 && <p className="result_count">999</p>}
+                            {i > 0 && <p className="result_count">{v.total}</p>}
                             {props.route[i] && props.route[i].name === v.name && (
                               <div className="action_icons">
                                 {i > 0 && (
