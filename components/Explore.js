@@ -104,7 +104,7 @@ const Explore = (props) => {
                                 className="radio__large_label green"
                               >
                                 <span className="radio__large_label__inner">
-                                  {v.name}
+                                  {dbCatalogue[v.name].label}
                                 </span>
                               </label>
                             </div>
