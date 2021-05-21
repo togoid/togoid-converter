@@ -16,6 +16,7 @@
     "node-fetch": "^2.6.1",
     "papaparse": "^5.3.0",
     "react": "17.0.1",
+    "react-arrow-master": "^0.3.2",
     "react-dom": "17.0.1",
     "sass": "^1.32.1"
   },
