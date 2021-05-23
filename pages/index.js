@@ -38,7 +38,7 @@ const Home = () => {
               // 順方向の変換、ただし変換経路を逆行させない
               candidates.push({
                 name,
-                count: 1,
+                total: 1,
                 ids: [],
               });
             }
@@ -51,7 +51,7 @@ const Home = () => {
               // 逆方向の変換、ただし変換経路を逆行させない
               candidates.push({
                 name,
-                count: 1,
+                total: 1,
                 ids: [],
               });
             }
@@ -148,11 +148,11 @@ const Home = () => {
           if (index === -1) {
             candidates.push({
               name: k,
-              count: 1,
+              total: 1,
               ids: [id],
             });
           } else {
-            candidates[index].count += 1;
+            candidates[index].total += 1;
             candidates[index].ids.push(id);
           }
         }
@@ -160,8 +160,8 @@ const Home = () => {
     });
     if (candidates.length > 0) {
       candidates.sort((a, b) => {
-        if (a.count < b.count) return 1;
-        if (a.count > b.count) return -1;
+        if (a.total < b.total) return 1;
+        if (a.total > b.total) return -1;
         return 0;
       });
       const databases = candidates.map((v) => {
@@ -180,7 +180,7 @@ const Home = () => {
 
   const restartExplore = () => {
     setDatabaseNodesList(databaseNodesList.slice(0, 1));
-    setRoute(route.slice(0, 1));
+    setRoute([]);
   };
 
   const handleIdTextsSubmit = (ids) => {
