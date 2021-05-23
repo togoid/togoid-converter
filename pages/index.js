@@ -12,13 +12,15 @@ import { executeQuery } from "../lib/util";
 const Home = () => {
   const [ids, setIds] = useState([]);
   const [activeTab, setActiveTab] = useState("EXPLORE");
-  const [databaseNodes, setDatabaseNodes] = useState([]);
+  const [databaseNodesList, setDatabaseNodesList] = useState([]);
   const [route, setRoute] = useState([]);
+  const [routePaths, setRoutePaths] = useState([]);
+  const [candidatePaths, setCandidatePaths] = useState([]);
 
   useEffect(() => {
     if (route.length > 0) {
       const abortController = new AbortController();
-      const nodes = databaseNodes.slice(0, route.length);
+      const nodesList = databaseNodesList.slice(0, route.length);
       const r = route[route.length - 1];
       const candidates = [];
       let previousDatabaseName = null;
@@ -70,12 +72,59 @@ const Home = () => {
 
       Promise.all(promises).then((values) => {
         // 先端の変換候補を追加
-        nodes[route.length] = candidates.map((v, i) => {
+        nodesList[route.length] = candidates.map((v, i) => {
           const _v = Object.assign({}, v);
           _v.total = values[i] && values[i].total ? values[i].total : 0;
           return _v;
         });
-        setDatabaseNodes(nodes);
+        setDatabaseNodesList(nodesList);
+
+        const candidatePaths = [];
+        nodesList.forEach((nodes, i) => {
+          if (i === 0) return;
+          nodes.forEach((v) => {
+            if (route[i] && route[i].name === v.name) return;
+            candidatePaths.push({
+              from: {
+                id: `result_count${i - 1}-${route[i - 1].name}`,
+                posX: "right",
+                posY: "middle",
+              },
+              to: {
+                id: `result_div${i}-${v.name}`,
+                posX: "left",
+                posY: "middle",
+              },
+              style: { color: "#cccccc", head: "none", arrow: "smooth" },
+            });
+          });
+        });
+        setCandidatePaths(candidatePaths);
+
+        const routePaths = [];
+        route.forEach((v, i) => {
+          if (route[i + 1]) {
+            routePaths.push({
+              from: {
+                id: `result_count${i}-${v.name}`,
+                posX: "right",
+                posY: "middle",
+              },
+              to: {
+                id: `result_div${i + 1}-${route[i + 1].name}`,
+                posX: "left",
+                posY: "middle",
+              },
+              style: {
+                color: "#1A8091",
+                head: "none",
+                arrow: "smooth",
+                width: 2,
+              },
+            });
+          }
+        });
+        setRoutePaths(routePaths);
       });
 
       return () => {
@@ -119,18 +168,18 @@ const Home = () => {
         v.ids = v.ids.map((id) => ({ to: id }));
         return v;
       });
-      setDatabaseNodes([databases]);
+      setDatabaseNodesList([databases]);
       setRoute([]);
     }
   };
 
   const clearExplore = () => {
-    setDatabaseNodes([]);
+    setDatabaseNodesList([]);
     setRoute([]);
   };
 
   const restartExplore = () => {
-    setDatabaseNodes(databaseNodes.slice(0, 1));
+    setDatabaseNodesList(databaseNodesList.slice(0, 1));
     setRoute(route.slice(0, 1));
   };
 
@@ -170,7 +219,9 @@ const Home = () => {
           </div>
           {activeTab === "EXPLORE" ? (
             <Explore
-              databaseNodes={databaseNodes}
+              databaseNodesList={databaseNodesList}
+              routePaths={routePaths}
+              candidatePaths={candidatePaths}
               route={route}
               setRoute={setRoute}
               restartExplore={restartExplore}
