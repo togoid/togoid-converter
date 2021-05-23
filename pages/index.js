@@ -86,12 +86,12 @@ const Home = () => {
             if (route[i] && route[i].name === v.name) return;
             candidatePaths.push({
               from: {
-                id: `result_count${i - 1}-${route[i - 1].name}`,
+                id: `total${i - 1}-${route[i - 1].name}`,
                 posX: "right",
                 posY: "middle",
               },
               to: {
-                id: `result_div${i}-${v.name}`,
+                id: `node${i}-${v.name}`,
                 posX: "left",
                 posY: "middle",
               },
@@ -106,12 +106,12 @@ const Home = () => {
           if (route[i + 1]) {
             routePaths.push({
               from: {
-                id: `result_count${i}-${v.name}`,
+                id: `total${i}-${v.name}`,
                 posX: "right",
                 posY: "middle",
               },
               to: {
-                id: `result_div${i + 1}-${route[i + 1].name}`,
+                id: `node${i + 1}-${route[i + 1].name}`,
                 posX: "left",
                 posY: "middle",
               },

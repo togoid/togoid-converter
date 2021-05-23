@@ -87,7 +87,7 @@ const Explore = (props) => {
                             {nodes.map((v, j) => (
                               <li key={j}>
                                 <div
-                                  id={`result_div${i}-${v.name}`}
+                                  id={`node${i}-${v.name}`}
                                   className={`radio green ${
                                     i === 0 || v.total > 0 ? null : "not_found"
                                   }`}
@@ -114,8 +114,8 @@ const Explore = (props) => {
                                   </label>
                                 </div>
                                 <p
-                                  id={`result_count${i}-${v.name}`}
-                                  className="result_count"
+                                  id={`total${i}-${v.name}`}
+                                  className="total"
                                 >
                                   {v.total}
                                 </p>
