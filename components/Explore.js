@@ -11,54 +11,15 @@ const Explore = (props) => {
   const [total, setTotal] = useState(0);
   const [informationModal, setInformationModal] = useState(false);
   const [database, setDatabase] = useState(null);
-  const [arrows, setArrows] = useState([]);
-  const [arrowAll, setArrowsAll] = useState([]);
-  const [parentIndex, setParentIndex] = useState([]);
 
   useEffect(() => {
     if (tableData.heading.length > 0) setModalVisibility(true);
   }, [tableData]);
 
-  const selectDatabase = async (database, i, j) => {
-    setArrowsAll([]);
+  const selectDatabase = async (database, i) => {
     const r = props.route.slice(0, i);
     r[i] = database;
     props.setRoute(r);
-
-    const pI = parentIndex.slice(0, i);
-    pI.push(j);
-    setParentIndex(pI);
-
-    if (i > 0) {
-      const ar = arrows.slice(0, i - 1);
-      ar.push({
-        from: {
-          id: `result_count${i - 1}-${parentIndex[i - 1]}`,
-          posX: "right",
-          posY: "middle",
-        },
-        to: { id: `result_div${i}-${j}`, posX: "left", posY: "middle" },
-        style: { color: "#1A8091", head: "none", arrow: "smooth" },
-      });
-      setArrows(ar);
-    } else if (i === 0) {
-      setArrows([]);
-    }
-  };
-
-  const makeAllArrow = (i, j) => {
-    const arAll = arrowAll;
-    if (j !== parentIndex[i]) {
-      arAll.push({
-        from: {
-          id: `result_count${i - 1}-${parentIndex[i - 1]}`,
-          posX: "right",
-          posY: "middle",
-        },
-        to: { id: `result_div${i}-${j}`, posX: "left", posY: "middle" },
-        style: { color: "#C4C4C4", head: "none", arrow: "smooth" },
-      });
-    }
   };
 
   const handleReset = () => {
@@ -108,12 +69,12 @@ const Explore = (props) => {
           </div>
           <div className="panel__inner">
             <div className="explore">
-              <ArrowArea arrows={arrows}>
-                <ArrowArea arrows={arrowAll}>
+              <ArrowArea arrows={props.routePaths}>
+                <ArrowArea arrows={props.candidatePaths}>
                   <div className="drawing">
-                    {props.databaseNodes &&
-                      props.databaseNodes.length > 0 &&
-                      props.databaseNodes.map((database, i) => (
+                    {props.databaseNodesList &&
+                      props.databaseNodesList.length > 0 &&
+                      props.databaseNodesList.map((nodes, i) => (
                         <div className="item_wrapper" key={i}>
                           {i === 0 && (
                             <p className="item_first_heading">Convert from</p>
@@ -123,10 +84,10 @@ const Explore = (props) => {
                               i === 0 ? "result_list first" : "result_list"
                             }
                           >
-                            {database.map((v, j) => (
+                            {nodes.map((v, j) => (
                               <li key={j}>
                                 <div
-                                  id={`result_div${i}-${j}`}
+                                  id={`result_div${i}-${v.name}`}
                                   className={`radio green ${
                                     i === 0 || v.total > 0 ? null : "not_found"
                                   }`}
@@ -149,16 +110,11 @@ const Explore = (props) => {
                                   >
                                     <span className="radio__large_label__inner">
                                       {dbCatalogue[v.name].label}
-                                      {i > 0 &&
-                                        props.route.length >= i &&
-                                        (() => {
-                                          makeAllArrow(i, j);
-                                        })()}
                                     </span>
                                   </label>
                                 </div>
                                 <p
-                                  id={`result_count${i}-${j}`}
+                                  id={`result_count${i}-${v.name}`}
                                   className="result_count"
                                 >
                                   {v.total}
@@ -221,24 +177,6 @@ const Explore = (props) => {
                                   )}
                               </li>
                             ))}
-                            {i > 0 && (
-                              <li>
-                                <div className="radio">
-                                  <input
-                                    type="radio"
-                                    id="sample"
-                                    className="radio__input"
-                                  />
-                                  <label
-                                    htmlFor="sample"
-                                    className="radio__label"
-                                  />
-                                  <select name="" id="">
-                                    <option value="">Others</option>
-                                  </select>
-                                </div>
-                              </li>
-                            )}
                           </ul>
                         </div>
                       ))}
@@ -277,7 +215,7 @@ const Explore = (props) => {
                                   <div className="path_label small white">
                                     LINK TO
                                   </div>
-                                  <svg className="arrow" viewBox="0 0 24 24">
+                                  <svg className="path" viewBox="0 0 24 24">
                                     <path
                                       fill="currentColor"
                                       d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
