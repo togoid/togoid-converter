@@ -180,12 +180,10 @@
     margin: 0 0 15px;
 
     .export_button {
-      position: relative;
-      .button_pull_down__children {
-        top: 42px;
-      }
-      .button_pull_down__children__item {
-        width: 250px;
+      display: flex;
+      flex-wrap: wrap;
+      .button_icon {
+        margin: 8px 8px 0 0;
       }
     }
 
@@ -196,12 +194,6 @@
         color: $gray07;
         margin: 0 0 15px;
       }
-    }
-
-    .item_wrapper {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
     }
   }
 
