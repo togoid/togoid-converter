@@ -41,80 +41,78 @@ const Databases = () => {
                   <input type="text" className="input_search__input" />
                 </div>
               </div>
-              {Object.keys(dataset).map((key) => (
-                <article className="database__item" key={key}>
-                  <h3 className="title">
-                    <span className="text">{dataset[key].label}</span>
-                  </h3>
-                  {language === "en" && (
-                    <div className="description">
-                      {dataset[key].description_en}
-                    </div>
-                  )}
-                  {language === "ja" && (
-                    <div className="description">
-                      {dataset[key].description_ja}
-                    </div>
-                  )}
-                  {(() => {
-                    const labels = Object.keys(config)
-                      .map((label, i) => {
-                        const name = label.split("-");
-                        if (name.indexOf(key) === 0) {
-                          return (
-                            <div className="path_label small green" key={i}>
-                              {name[1]}
-                            </div>
-                          );
-                        } else if (name.indexOf(key) === 1) {
-                          return (
-                            <div className="path_label small green" key={i}>
-                              {name[0]}
-                            </div>
-                          );
-                        }
-                      })
-                      .filter((v) => v);
-
-                    if (labels.length) {
+              {Object.keys(dataset).map((key) => {
+                const labels = Object.keys(config)
+                  .map((label, i) => {
+                    const name = label.split("-");
+                    if (name.indexOf(key) === 0) {
                       return (
-                        <div className="path">
-                          <div className="path_label small white">LINK TO</div>
-                          <svg className="icon" viewBox="0 0 24 24">
-                            <path
-                              fill="currentColor"
-                              d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
-                            />
-                          </svg>
-                          <div className="path__children">{labels}</div>
+                        <div className="path_label small green" key={i}>
+                          {name[1]}
+                        </div>
+                      );
+                    } else if (name.indexOf(key) === 1) {
+                      return (
+                        <div className="path_label small green" key={i}>
+                          {name[0]}
                         </div>
                       );
                     }
-                  })()}
-                  <dl className="data">
-                    <div className="data__wrapper">
-                      <dt>PREFIX</dt>
-                      <dd>{dataset[key].prefix}</dd>
-                    </div>
-                    <div className="data__wrapper">
-                      <dt>CATEGORY</dt>
-                      <dd>{dataset[key].category}</dd>
-                    </div>
-                    {dataset[key].organization_en && language === "en" && (
-                      <div className="data__wrapper">
-                        <dt>ORGANIZATION</dt>
-                        <dd>{dataset[key].organization_en}</dd>
+                  })
+                  .filter((v) => v);
+
+                if (labels.length) {
+                  return (
+                    <article className="database__item" key={key}>
+                      <h3 className="title">
+                        <span className="text">{dataset[key].label}</span>
+                      </h3>
+                      {language === "en" && (
+                        <div className="description">
+                          {dataset[key].description_en}
+                        </div>
+                      )}
+                      {language === "ja" && (
+                        <div className="description">
+                          {dataset[key].description_ja}
+                        </div>
+                      )}
+                      <div className="path">
+                        <div className="path_label small white">LINK TO</div>
+                        <svg className="icon" viewBox="0 0 24 24">
+                          <path
+                            fill="currentColor"
+                            d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
+                          />
+                        </svg>
+                        <div className="path__children">{labels}</div>
                       </div>
-                    )}
-                    {dataset[key].organization_ja && language === "ja" && (
-                      <div className="data__wrapper">
-                        <dt>ORGANIZATION</dt>
-                        <dd>{dataset[key].organization_ja}</dd>
-                      </div>
-                    )}
-                  </dl>
-                </article>
-              ))}
+                      <dl className="data">
+                        <div className="data__wrapper">
+                          <dt>PREFIX</dt>
+                          <dd>{dataset[key].prefix}</dd>
+                        </div>
+                        <div className="data__wrapper">
+                          <dt>CATEGORY</dt>
+                          <dd>{dataset[key].category}</dd>
+                        </div>
+                        {dataset[key].organization_en && language === "en" && (
+                          <div className="data__wrapper">
+                            <dt>ORGANIZATION</dt>
+                            <dd>{dataset[key].organization_en}</dd>
+                          </div>
+                        )}
+                        {dataset[key].organization_ja && language === "ja" && (
+                          <div className="data__wrapper">
+                            <dt>ORGANIZATION</dt>
+                            <dd>{dataset[key].organization_ja}</dd>
+                          </div>
+                        )}
+                      </dl>
+                    </article>
+                  );
+                }
+              })}
             </div>
           </div>
         </div>
