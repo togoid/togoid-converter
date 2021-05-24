@@ -6,7 +6,12 @@ const IdInput = (props) => {
 
   const handleSubmit = (e) => {
     if (e) e.preventDefault();
-    const ids = idTexts.split(/[\s,\n,,]+/).map((v) => v.trim());
+    const ids = idTexts
+      .replace(/[Ａ-Ｚａ-ｚ０-９]/g, (s) =>
+        String.fromCharCode(s.charCodeAt(0) - 0xfee0)
+      )
+      .split(/[\s,\n,,]+/)
+      .map((v) => v.trim());
     props.handleSubmit(ids);
   };
 

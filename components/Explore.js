@@ -43,10 +43,7 @@ const Explore = (props) => {
     const r = selectDatabase(database, routeIndex).slice(0, routeIndex + 1);
     const heading = r
       .filter((v, i) => i <= routeIndex)
-      .map((v) => ({
-        label: dbCatalogue[v.name].label,
-        category: dbCatalogue[v.name].category,
-      }));
+      .map((v) => dbCatalogue[v.name]);
     const d = await executeQuery(r, props.ids);
     const rows = d.results.slice(0, 100).map((v) => v.slice(0, routeIndex + 1));
 
