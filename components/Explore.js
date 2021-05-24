@@ -12,6 +12,10 @@ const Explore = (props) => {
   const [total, setTotal] = useState(0);
   const [informationModal, setInformationModal] = useState(false);
   const [database, setDatabase] = useState(null);
+  const [visibleActionButtonIndex, setVisibleActionButtonIndex] = useState([
+    null,
+    null,
+  ]);
 
   useEffect(() => {
     if (tableData.heading.length > 0) setModalVisibility(true);
@@ -59,6 +63,9 @@ const Explore = (props) => {
     setInformationModal(false);
   };
 
+  const handleActionButtonVisibility = (i, j) => {
+    setVisibleActionButtonIndex([i, j]);
+  };
   return (
     <div className="explore">
       <div className="drawing_area">
@@ -89,7 +96,12 @@ const Explore = (props) => {
                             }
                           >
                             {nodes.map((v, j) => (
-                              <li key={j}>
+                              <li
+                                key={j}
+                                onMouseOver={() =>
+                                  handleActionButtonVisibility(i, j)
+                                }
+                              >
                                 <div
                                   id={`node${i}-${v.name}`}
                                   className={`radio green ${
@@ -105,7 +117,7 @@ const Explore = (props) => {
                                       props.route[i] &&
                                         props.route[i].name === v.name
                                     )}
-                                    onChange={() => selectDatabase(v, i, j)}
+                                    onChange={() => selectDatabase(v, i)}
                                     disabled={i > 0 && !v.total}
                                   />
                                   <label
@@ -121,66 +133,68 @@ const Explore = (props) => {
                                       {dbCatalogue[v.name].label}
                                     </span>
                                   </label>
+                                  {visibleActionButtonIndex[0] === i &&
+                                    visibleActionButtonIndex[1] === j && (
+                                      <div className="action_icons">
+                                        {i > 0 && (
+                                          <button
+                                            onClick={() => showModal(i)}
+                                            className="action_icons__item"
+                                          >
+                                            <svg
+                                              xmlns="http://www.w3.org/2000/svg"
+                                              viewBox="0 0 18 16"
+                                            >
+                                              <path
+                                                d="M5,4H19a2,2,0,0,1,2,2V18a2,2,0,0,1-2,2H5a2,2,0,0,1-2-2V6A2,2,0,0,1,5,4M5,8v4h6V8H5m8,0v4h6V8H13M5,14v4h6V14H5m8,0v4h6V14Z"
+                                                transform="translate(-3 -4)"
+                                                fill="#fff"
+                                              />
+                                            </svg>
+                                          </button>
+                                        )}
+
+                                        {i > 0 && (
+                                          <button
+                                            onClick={() => handleExportCSV(i)}
+                                            className="action_icons__item"
+                                          >
+                                            <svg
+                                              xmlns="http://www.w3.org/2000/svg"
+                                              viewBox="0 0 14 17"
+                                            >
+                                              <path
+                                                d="M5,20H19V18H5M19,9H15V3H9V9H5l7,7Z"
+                                                transform="translate(-5 -3)"
+                                                fill="#fff"
+                                              />
+                                            </svg>
+                                          </button>
+                                        )}
+
+                                        <button
+                                          onClick={() =>
+                                            showInformationModal(v)
+                                          }
+                                          className="action_icons__item"
+                                        >
+                                          <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 6.427 16.004"
+                                          >
+                                            <path
+                                              d="M13.5,4A1.5,1.5,0,1,0,15,5.5,1.5,1.5,0,0,0,13.5,4m-.36,4.77c-1.19.1-4.44,2.69-4.44,2.69-.2.15-.14.14.02.42s.14.29.33.16.53-.34,1.08-.68c2.12-1.36.34,1.78-.57,7.07-.36,2.62,2,1.27,2.61.87s2.21-1.5,2.37-1.61c.22-.15.06-.27-.11-.52-.12-.17-.24-.05-.24-.05-.65.43-1.84,1.33-2,.76-.19-.57,1.03-4.48,1.7-7.17C14,10.07,14.3,8.67,13.14,8.77Z"
+                                              transform="translate(-8.573 -4)"
+                                              fill="#fafafa"
+                                            />
+                                          </svg>
+                                        </button>
+                                      </div>
+                                    )}
                                 </div>
                                 <p id={`total${i}-${v.name}`} className="total">
                                   {v.total}
                                 </p>
-                                {props.route[i] &&
-                                  props.route[i].name === v.name && (
-                                    <div className="action_icons">
-                                      {i > 0 && (
-                                        <button
-                                          onClick={() => showModal(i)}
-                                          className="action_icons__item"
-                                        >
-                                          <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 18 16"
-                                          >
-                                            <path
-                                              d="M5,4H19a2,2,0,0,1,2,2V18a2,2,0,0,1-2,2H5a2,2,0,0,1-2-2V6A2,2,0,0,1,5,4M5,8v4h6V8H5m8,0v4h6V8H13M5,14v4h6V14H5m8,0v4h6V14Z"
-                                              transform="translate(-3 -4)"
-                                              fill="#fff"
-                                            />
-                                          </svg>
-                                        </button>
-                                      )}
-
-                                      {i > 0 && (
-                                        <button
-                                          onClick={() => handleExportCSV(i)}
-                                          className="action_icons__item"
-                                        >
-                                          <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 14 17"
-                                          >
-                                            <path
-                                              d="M5,20H19V18H5M19,9H15V3H9V9H5l7,7Z"
-                                              transform="translate(-5 -3)"
-                                              fill="#fff"
-                                            />
-                                          </svg>
-                                        </button>
-                                      )}
-
-                                      <button
-                                        onClick={() => showInformationModal(v)}
-                                        className="action_icons__item"
-                                      >
-                                        <svg
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          viewBox="0 0 6.427 16.004"
-                                        >
-                                          <path
-                                            d="M13.5,4A1.5,1.5,0,1,0,15,5.5,1.5,1.5,0,0,0,13.5,4m-.36,4.77c-1.19.1-4.44,2.69-4.44,2.69-.2.15-.14.14.02.42s.14.29.33.16.53-.34,1.08-.68c2.12-1.36.34,1.78-.57,7.07-.36,2.62,2,1.27,2.61.87s2.21-1.5,2.37-1.61c.22-.15.06-.27-.11-.52-.12-.17-.24-.05-.24-.05-.65.43-1.84,1.33-2,.76-.19-.57,1.03-4.48,1.7-7.17C14,10.07,14.3,8.67,13.14,8.77Z"
-                                            transform="translate(-8.573 -4)"
-                                            fill="#fafafa"
-                                          />
-                                        </svg>
-                                      </button>
-                                    </div>
-                                  )}
                               </li>
                             ))}
                           </ul>
