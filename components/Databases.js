@@ -20,13 +20,8 @@ const Databases = () => (
               </div>
             </div>
             {Object.keys(dataset).map((key) => (
-              <article className="database__item">
+              <article className="database__item" key={key}>
                 <h3 className="title">
-                  <img
-                    src="/images/icon_rat.png"
-                    alt="アイコン画像：ラット"
-                    className="icon"
-                  />
                   <span className="text">{dataset[key].label}</span>
                 </h3>
                 <div className="description">{dataset[key].description}</div>
@@ -34,7 +29,7 @@ const Databases = () => (
                 {(() => {
                   const labels = Object.keys(config)
                     .map((label) => {
-                      if (label.indexOf(key) == 0) {
+                      if (label.indexOf(key) === 0) {
                         const str = label.replace(`${key}-`, "");
                         return (
                           <div

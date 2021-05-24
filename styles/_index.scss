@@ -1,7 +1,7 @@
 @charset "UTF-8";
 .home {
   .main {
-    padding: 0 0 54px;
+    padding: 0 0 0;
   }
 
   .input_area {
@@ -40,7 +40,7 @@
   }
 
   .drawing_area {
-    margin: 0 auto 36px;
+    margin: 0 auto 0;
     .point {
       width: 8px;
       height: 8px;
@@ -55,6 +55,7 @@
     }
 
     .panel {
+      min-height: 600px;
       padding: 25px 0 0;
       border: {
         top: 1px solid $gray02;
@@ -134,7 +135,7 @@
           display: flex;
           flex-direction: column;
           .result_list {
-            margin: 55px 0 0 20px;
+            margin: 55px 0 0 40px;
             &.first {
               margin: 0 0 0 20px;
             }

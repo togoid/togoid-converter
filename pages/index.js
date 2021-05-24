@@ -97,7 +97,7 @@ const Home = () => {
                 posX: "left",
                 posY: "middle",
               },
-              style: { color: "#cccccc", head: "none", arrow: "smooth" },
+              style: { color: "#dddddd", head: "none", arrow: "smooth" },
             });
           });
         });
@@ -162,11 +162,6 @@ const Home = () => {
       });
     });
     if (candidates.length > 0) {
-      candidates.sort((a, b) => {
-        if (a.total < b.total) return 1;
-        if (a.total > b.total) return -1;
-        return 0;
-      });
       const databases = candidates.map((v) => {
         v.ids = v.ids.map((id) => ({ to: id }));
         return v;

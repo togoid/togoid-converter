@@ -136,7 +136,7 @@ const Explore = (props) => {
                                   {visibleActionButtonIndex[0] === i &&
                                     visibleActionButtonIndex[1] === j && (
                                       <div className="action_icons">
-                                        {i > 0 && (
+                                        {i > 0 && v.total > 0 && (
                                           <button
                                             onClick={() => showModal(i)}
                                             className="action_icons__item"
@@ -154,7 +154,7 @@ const Explore = (props) => {
                                           </button>
                                         )}
 
-                                        {i > 0 && (
+                                        {i > 0 && v.total > 0 && (
                                           <button
                                             onClick={() => handleExportCSV(i)}
                                             className="action_icons__item"
@@ -284,6 +284,7 @@ const Explore = (props) => {
             </div>
           </div>
         </div>
+        {/*
         <div className="notice_area">
           <p className="heading">NOTICE</p>
           <p className="text">
@@ -294,6 +295,7 @@ const Explore = (props) => {
             LINE 999 “xxx-xxx-xxxx“ is not match the pattern.
           </p>
         </div>
+*/}
       </div>
     </div>
   );
