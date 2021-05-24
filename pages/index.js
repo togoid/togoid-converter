@@ -38,7 +38,7 @@ const Home = () => {
               // 順方向の変換、ただし変換経路を逆行させない
               candidates.push({
                 name,
-                category: dbConfig[k].category,
+                category: dbCatalogue[name].category,
                 total: 1,
                 ids: [],
               });
@@ -52,7 +52,7 @@ const Home = () => {
               // 逆方向の変換、ただし変換経路を逆行させない
               candidates.push({
                 name,
-                category: dbConfig[k].category,
+                category: dbCatalogue[name].category,
                 total: 1,
                 ids: [],
               });
