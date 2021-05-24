@@ -24,7 +24,6 @@
           position: absolute;
           top: 10px;
           right: 8px;
-          z-index: 100;
           width: 18px;
           height: 18px;
           border-radius: 50%;
@@ -34,7 +33,6 @@
       }
       &__input {
         position: relative;
-        z-index: 1;
         width: 330px;
         height: 100px;
       }
@@ -116,6 +114,20 @@
           text-align: center;
           line-height: 24px;
           border-radius: 5px;
+          border: 1px solid $gray01;
+        }
+        .item_first_count_heading {
+          position: absolute  ;
+          top: 2px;
+          left: 208px;
+          width: 30px;
+          font-family: Oswald;
+          color: $gray04;
+          background-color: #ffffff;
+          margin: 0 0 29px 60px;
+          text-align: center;
+          line-height: 20px;
+          border-radius: 13px;
           border: 1px solid $gray01;
         }
         .item_wrapper {
