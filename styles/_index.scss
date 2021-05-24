@@ -66,7 +66,7 @@
       &__button {
         display: flex;
         justify-content: flex-end;
-        max-width: 987px;
+        max-width: 1200px;
         margin: 0 auto;
         padding: 0 0 30px;
         text-align: right;
@@ -76,7 +76,7 @@
       }
 
       &__inner {
-        padding: 0 calc((100vw - 987px) /2) 60px;
+        padding: 0 calc((100vw - 1200px) /2) 60px;
         margin: 0 auto;
         overflow: auto;
         .explore {
@@ -275,7 +275,7 @@
   }
 
   .notice_area {
-    max-width: 987px;
+    max-width: 1200px;
     color: $textColor02;
     padding: 16px 19px;
     margin: 20px auto 0;

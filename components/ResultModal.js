@@ -3,14 +3,15 @@ import copy from "copy-to-clipboard";
 import { saveAs } from "file-saver";
 import { executeQuery, exportCSV } from "../lib/util";
 import dbCatalogue from "../public/dataset.json";
+import { categories } from "../lib/setting";
 
 const ResultModal = (props) => {
-  const [exportMenuVisibility, setExportMenuVisibility] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const handleClipboardCopy = (e) => {
+  const handleClipboardCopy = async (e) => {
     e.preventDefault();
-    const text = props.tableData.rows.map((v) => v[v.length - 1]).join("\n");
+    const d = await executeQuery(props.route, props.ids, "target");
+    const text = d.results.join("\r\n");
     copy(text);
     setCopied(true);
     setTimeout(() => {
@@ -25,8 +26,8 @@ const ResultModal = (props) => {
 
   const handleIdDownload = async () => {
     const d = await executeQuery(props.route, props.ids, "target");
-    const texts = d.results.join("\r\n");
-    const blob = new Blob([texts], {
+    const text = d.results.join("\r\n");
+    const blob = new Blob([text], {
       type: "text/plain;charset=utf-8",
     });
     saveAs(blob, "ids.txt");
@@ -65,8 +66,16 @@ const ResultModal = (props) => {
             <div className="modal__path__frame">
               <div className="modal__path__frame__inner">
                 {props.tableData.heading.map((v, i) => (
-                  <div key={i} className="path_label green">
-                    <span className="path_label__inner">{v}</span>
+                  <div
+                    key={i}
+                    className="path_label green"
+                    style={{
+                      backgroundColor: categories[v.category]
+                        ? categories[v.category].color
+                        : null,
+                    }}
+                  >
+                    <span className="path_label__inner">{v.label}</span>
                   </div>
                 ))}
               </div>
@@ -93,54 +102,42 @@ const ResultModal = (props) => {
               )}
               {props.tableData && props.tableData.rows.length > 0 && (
                 <div className="export_button">
-                  <button
-                    onClick={handleClipboardCopy}
-                    className="button_icon"
-                  >
+                  <button onClick={handleClipboardCopy} className="button_icon">
                     <svg className="button_icon__icon" viewBox="0 0 24 24">
                       <path
                         fill="currentColor"
                         d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
                       />
                     </svg>
-                    変換後IDをクリップボードにコピー
+                    Copy IDs
                     {copied && <span>Copied.</span>}
                   </button>
-                  <button
-                    onClick={handleIdDownload}
-                    className="button_icon"
-                  >
+                  <button onClick={handleIdDownload} className="button_icon">
                     <svg className="button_icon__icon" viewBox="0 0 24 24">
                       <path
                         fill="currentColor"
                         d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"
                       />
                     </svg>
-                    変換後ID
+                    Download IDs
                   </button>
-                  <button
-                    onClick={handleURLDownload}
-                    className="button_icon"
-                  >
+                  <button onClick={handleURLDownload} className="button_icon">
                     <svg className="button_icon__icon" viewBox="0 0 24 24">
                       <path
                         fill="currentColor"
                         d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"
                       />
                     </svg>
-                    変換後URL
+                    Download URLs
                   </button>
-                  <button
-                    onClick={handleExportCSV}
-                    className="button_icon"
-                  >
+                  <button onClick={handleExportCSV} className="button_icon">
                     <svg className="button_icon__icon" viewBox="0 0 24 24">
                       <path
                         fill="currentColor"
                         d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"
                       />
                     </svg>
-                    CSV
+                    Download CSV
                   </button>
                 </div>
               )}
@@ -151,7 +148,9 @@ const ResultModal = (props) => {
               <tr>
                 {props.tableData &&
                   props.tableData.heading.length > 0 &&
-                  props.tableData.heading.map((v, i) => <th key={i}>{v}</th>)}
+                  props.tableData.heading.map((v, i) => (
+                    <th key={i}>{v.label}</th>
+                  ))}
               </tr>
             </thead>
             <tbody>
@@ -159,7 +158,15 @@ const ResultModal = (props) => {
                 props.tableData.rows.map((data, i) => (
                   <tr key={i}>
                     {data.map((d, j) => (
-                      <td key={j}>{d}</td>
+                      <td key={j}>
+                        <a
+                          href={props.tableData.heading[j].prefix + d}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {d}
+                        </a>
+                      </td>
                     ))}
                   </tr>
                 ))

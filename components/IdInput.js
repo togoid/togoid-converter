@@ -5,9 +5,20 @@ const IdInput = (props) => {
   const [idTexts, setIdTexts] = useState("");
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    const ids = idTexts.split(/[\s,\n,,]+/).map((v) => v.trim());
+    if (e) e.preventDefault();
+    const ids = idTexts
+      .replace(/[Ａ-Ｚａ-ｚ０-９]/g, (s) =>
+        String.fromCharCode(s.charCodeAt(0) - 0xfee0)
+      )
+      .split(/[\s,\n,,]+/)
+      .map((v) => v.trim());
     props.handleSubmit(ids);
+  };
+
+  const handleKeyDown = (e) => {
+    if ((e.ctrlKey || e.shiftKey) && e.keyCode === 13) {
+      handleSubmit();
+    }
   };
 
   return (
@@ -53,6 +64,7 @@ const IdInput = (props) => {
             className="textarea__input"
             value={idTexts}
             onChange={(e) => setIdTexts(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
           {idTexts && (
             <button onClick={() => setIdTexts("")} className="textarea_clear" />
