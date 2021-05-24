@@ -1,5 +1,6 @@
 import Head from "next/head";
 import React, { useState, useEffect } from "react";
+import NProgress from "nprogress";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Explore from "../components/Explore";
@@ -61,18 +62,23 @@ const Home = () => {
         }
       });
 
+      NProgress.start();
       const promises = candidates.map((v) => {
         const r = route.slice();
         r.push(v);
         return new Promise(function (resolve) {
           // エラーになった変換でもnullを返してresolve
           return executeQuery(r, ids, "target")
-            .then((v) => resolve(v))
+            .then((v) => {
+              NProgress.inc(1 / candidates.length);
+              resolve(v);
+            })
             .catch(() => resolve(null));
         });
       });
 
       Promise.all(promises).then((values) => {
+        NProgress.done();
         // 先端の変換候補を追加
         nodesList[route.length] = candidates.map((v, i) => {
           const _v = Object.assign({}, v);
