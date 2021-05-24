@@ -58,15 +58,18 @@ const Databases = () => {
                   )}
                   {(() => {
                     const labels = Object.keys(config)
-                      .map((label) => {
-                        if (label.indexOf(key) === 0) {
-                          const str = label.replace(`${key}-`, "");
+                      .map((label, i) => {
+                        const name = label.split("-");
+                        if (name.indexOf(key) === 0) {
                           return (
-                            <div
-                              htmlFor="result"
-                              className="path_label small green"
-                            >
-                              {str}
+                            <div className="path_label small green" key={i}>
+                              {name[1]}
+                            </div>
+                          );
+                        } else if (name.indexOf(key) === 1) {
+                          return (
+                            <div className="path_label small green" key={i}>
+                              {name[0]}
                             </div>
                           );
                         }

@@ -57,7 +57,7 @@ const Explore = (props) => {
       (dataset) => dataset === v.name
     );
     setInformationModal(true);
-    setDatabase(dbName);
+    setDatabase(dbName[0]);
   };
   const hideInformationModal = async () => {
     setInformationModal(false);
@@ -240,19 +240,30 @@ const Explore = (props) => {
                               dbCatalogue[database].description_ja}
                           </p>
                           {(() => {
-                            const labels = Object.keys(dbConfig)
-                              .filter((label) => label.indexOf(database) === 0)
-                              .map((label, i) => {
-                                const str = label.replace(`${database}-`, "");
-                                return (
-                                  <div
-                                    className="path_label small green"
-                                    key={i}
-                                  >
-                                    {str}
-                                  </div>
-                                );
-                              });
+                            const labels = Object.keys(dbConfig).map(
+                              (label, i) => {
+                                const name = label.split("-");
+                                if (name.indexOf(database) === 0) {
+                                  return (
+                                    <div
+                                      className="path_label small green"
+                                      key={i}
+                                    >
+                                      {name[1]}
+                                    </div>
+                                  );
+                                } else if (name.indexOf(database) === 1) {
+                                  return (
+                                    <div
+                                      className="path_label small green"
+                                      key={i}
+                                    >
+                                      {name[0]}
+                                    </div>
+                                  );
+                                }
+                              }
+                            );
 
                             if (labels.length) {
                               return (
