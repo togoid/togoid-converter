@@ -7,6 +7,10 @@
     color: $gray07;
     padding: 0 26px;
     border-bottom: 1px solid $gray06;
+    a {
+      color: $gray07;
+      text-decoration: underline;
+    }
   }
   thead {
     th {

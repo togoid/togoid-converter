@@ -157,7 +157,15 @@ const ResultModal = (props) => {
                 props.tableData.rows.map((data, i) => (
                   <tr key={i}>
                     {data.map((d, j) => (
-                      <td key={j}>{d}</td>
+                      <td key={j}>
+                        <a
+                          href={props.tableData.heading[j].prefix + d}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {d}
+                        </a>
+                      </td>
                     ))}
                   </tr>
                 ))
