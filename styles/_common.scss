@@ -3,7 +3,7 @@
   display: inline-block;
   width: 150px;
   font-size: 1.2rem;
-  color: $textColor02;
+  color: #ffffff;
   line-height: 38px;
   text-align: center;
   border-radius: 5px;
@@ -20,6 +20,7 @@
   &.white {
     border-color: $gray06;
     background: $white;
+    color: $textColor02;
   }
 
   &__inner {
