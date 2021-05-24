@@ -4,6 +4,7 @@ import { exportCSV, executeQuery } from "../lib/util";
 import dbConfig from "../public/config.json";
 import dbCatalogue from "../public/dataset.json";
 import { ArrowArea } from "react-arrow-master";
+import { categories } from "../lib/setting";
 
 const Explore = (props) => {
   const [modalVisibility, setModalVisibility] = useState(false);
@@ -39,7 +40,7 @@ const Explore = (props) => {
     const r = props.route.slice(0, routeIndex + 1);
     const heading = props.route
       .filter((v, i) => i <= routeIndex)
-      .map((v) => v.name);
+      .map((v) => dbCatalogue[v.name].label);
     const d = await executeQuery(r, props.ids);
     const rows = d.results.slice(0, 100).map((v) => v.slice(0, routeIndex + 1));
 
@@ -77,7 +78,10 @@ const Explore = (props) => {
                       props.databaseNodesList.map((nodes, i) => (
                         <div className="item_wrapper" key={i}>
                           {i === 0 && (
-                            <p className="item_first_heading">Convert from</p>
+                            <React.Fragment>
+                              <p className="item_first_heading">Convert from</p>
+                              <p className="item_first_count_heading">Ids</p>
+                            </React.Fragment>
                           )}
                           <ul
                             className={
@@ -107,16 +111,18 @@ const Explore = (props) => {
                                   <label
                                     htmlFor={`result${i}-${j}`}
                                     className="radio__large_label green"
+                                    style={{
+                                      backgroundColor: categories[v.category]
+                                        ? categories[v.category].color
+                                        : null,
+                                    }}
                                   >
                                     <span className="radio__large_label__inner">
                                       {dbCatalogue[v.name].label}
                                     </span>
                                   </label>
                                 </div>
-                                <p
-                                  id={`total${i}-${v.name}`}
-                                  className="total"
-                                >
+                                <p id={`total${i}-${v.name}`} className="total">
                                   {v.total}
                                 </p>
                                 {props.route[i] &&

@@ -8,19 +8,19 @@
   text-align: center;
   border-radius: 5px;
   border: 1px solid transparent;
-  &.green {
-    background: $green01;
-  }
-  &.purple {
-    background: $purple01;
-  }
-  &.orange {
-    background: $orange01;
-  }
-  &.white {
-    border-color: $gray06;
-    background: $white;
-  }
+  background: $green01;
+  //&.green {
+  //}
+  //&.purple {
+  //  background: $purple01;
+  //}
+  //&.orange {
+  //  background: $orange01;
+  //}
+  //&.white {
+  //  border-color: $gray06;
+  //  background: $white;
+  //}
 
   &__inner {
     position: relative;
