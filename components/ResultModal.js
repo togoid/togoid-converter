@@ -94,9 +94,20 @@ const ResultModal = (props) => {
               {props.tableData && props.tableData.rows.length > 0 && (
                 <div className="export_button">
                   <button
-                    onClick={() =>
-                      setExportMenuVisibility(!exportMenuVisibility)
-                    }
+                    onClick={handleClipboardCopy}
+                    className="button_icon"
+                  >
+                    <svg className="button_icon__icon" viewBox="0 0 24 24">
+                      <path
+                        fill="currentColor"
+                        d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
+                      />
+                    </svg>
+                    変換後IDをクリップボードにコピー
+                    {copied && <span>Copied.</span>}
+                  </button>
+                  <button
+                    onClick={handleIdDownload}
                     className="button_icon"
                   >
                     <svg className="button_icon__icon" viewBox="0 0 24 24">
@@ -105,61 +116,32 @@ const ResultModal = (props) => {
                         d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"
                       />
                     </svg>
-                    <span className="button_icon__label">エクスポート</span>
+                    変換後ID
                   </button>
-                  {exportMenuVisibility && (
-                    <div className="button_pull_down__children">
-                      <button
-                        onClick={handleClipboardCopy}
-                        className="button_pull_down__children__item"
-                      >
-                        <svg className="icon" viewBox="0 0 24 24">
-                          <path
-                            fill="currentColor"
-                            d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
-                          />
-                        </svg>
-                        変換後IDをクリップボードにコピー
-                        {copied && <span>Copied.</span>}
-                      </button>
-                      <button
-                        onClick={handleIdDownload}
-                        className="button_pull_down__children__item"
-                      >
-                        <svg className="icon" viewBox="0 0 24 24">
-                          <path
-                            fill="currentColor"
-                            d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z"
-                          />
-                        </svg>
-                        変換後IDをダウンロード
-                      </button>
-                      <button
-                        onClick={handleURLDownload}
-                        className="button_pull_down__children__item"
-                      >
-                        <svg className="icon" viewBox="0 0 24 24">
-                          <path
-                            fill="currentColor"
-                            d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z"
-                          />
-                        </svg>
-                        変換後URLをダウンロード
-                      </button>
-                      <button
-                        onClick={handleExportCSV}
-                        className="button_pull_down__children__item"
-                      >
-                        <svg className="icon" viewBox="0 0 24 24">
-                          <path
-                            fill="currentColor"
-                            d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z"
-                          />
-                        </svg>
-                        CSVをダウンロード
-                      </button>
-                    </div>
-                  )}
+                  <button
+                    onClick={handleURLDownload}
+                    className="button_icon"
+                  >
+                    <svg className="button_icon__icon" viewBox="0 0 24 24">
+                      <path
+                        fill="currentColor"
+                        d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"
+                      />
+                    </svg>
+                    変換後URL
+                  </button>
+                  <button
+                    onClick={handleExportCSV}
+                    className="button_icon"
+                  >
+                    <svg className="button_icon__icon" viewBox="0 0 24 24">
+                      <path
+                        fill="currentColor"
+                        d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"
+                      />
+                    </svg>
+                    CSV
+                  </button>
                 </div>
               )}
             </div>

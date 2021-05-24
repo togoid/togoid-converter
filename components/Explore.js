@@ -235,7 +235,7 @@ const Explore = (props) => {
                                   <div className="path_label small white">
                                     LINK TO
                                   </div>
-                                  <svg className="path" viewBox="0 0 24 24">
+                                  <svg className="arrow" viewBox="0 0 24 24">
                                     <path
                                       fill="currentColor"
                                       d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
