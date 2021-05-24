@@ -168,8 +168,10 @@
         }
 
         .action_icons {
-          display: flex;
           align-items: center;
+          position: absolute;
+          right: 5px;
+          top: 2px;
           &__item {
             width: 36px;
             height: 36px;
