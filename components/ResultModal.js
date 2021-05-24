@@ -3,9 +3,9 @@ import copy from "copy-to-clipboard";
 import { saveAs } from "file-saver";
 import { executeQuery, exportCSV } from "../lib/util";
 import dbCatalogue from "../public/dataset.json";
+import { categories } from "../lib/setting";
 
 const ResultModal = (props) => {
-  const [exportMenuVisibility, setExportMenuVisibility] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const handleClipboardCopy = (e) => {
@@ -65,8 +65,16 @@ const ResultModal = (props) => {
             <div className="modal__path__frame">
               <div className="modal__path__frame__inner">
                 {props.tableData.heading.map((v, i) => (
-                  <div key={i} className="path_label green">
-                    <span className="path_label__inner">{v}</span>
+                  <div
+                    key={i}
+                    className="path_label green"
+                    style={{
+                      backgroundColor: categories[v.category]
+                        ? categories[v.category].color
+                        : null,
+                    }}
+                  >
+                    <span className="path_label__inner">{v.label}</span>
                   </div>
                 ))}
               </div>
@@ -93,10 +101,7 @@ const ResultModal = (props) => {
               )}
               {props.tableData && props.tableData.rows.length > 0 && (
                 <div className="export_button">
-                  <button
-                    onClick={handleClipboardCopy}
-                    className="button_icon"
-                  >
+                  <button onClick={handleClipboardCopy} className="button_icon">
                     <svg className="button_icon__icon" viewBox="0 0 24 24">
                       <path
                         fill="currentColor"
@@ -106,10 +111,7 @@ const ResultModal = (props) => {
                     変換後IDをクリップボードにコピー
                     {copied && <span>Copied.</span>}
                   </button>
-                  <button
-                    onClick={handleIdDownload}
-                    className="button_icon"
-                  >
+                  <button onClick={handleIdDownload} className="button_icon">
                     <svg className="button_icon__icon" viewBox="0 0 24 24">
                       <path
                         fill="currentColor"
@@ -118,10 +120,7 @@ const ResultModal = (props) => {
                     </svg>
                     変換後ID
                   </button>
-                  <button
-                    onClick={handleURLDownload}
-                    className="button_icon"
-                  >
+                  <button onClick={handleURLDownload} className="button_icon">
                     <svg className="button_icon__icon" viewBox="0 0 24 24">
                       <path
                         fill="currentColor"
@@ -130,10 +129,7 @@ const ResultModal = (props) => {
                     </svg>
                     変換後URL
                   </button>
-                  <button
-                    onClick={handleExportCSV}
-                    className="button_icon"
-                  >
+                  <button onClick={handleExportCSV} className="button_icon">
                     <svg className="button_icon__icon" viewBox="0 0 24 24">
                       <path
                         fill="currentColor"
@@ -151,7 +147,9 @@ const ResultModal = (props) => {
               <tr>
                 {props.tableData &&
                   props.tableData.heading.length > 0 &&
-                  props.tableData.heading.map((v, i) => <th key={i}>{v}</th>)}
+                  props.tableData.heading.map((v, i) => (
+                    <th key={i}>{v.label}</th>
+                  ))}
               </tr>
             </thead>
             <tbody>

@@ -21,30 +21,32 @@ const Explore = (props) => {
     if (tableData.heading.length > 0) setModalVisibility(true);
   }, [tableData]);
 
-  const selectDatabase = async (database, i) => {
+  const selectDatabase = (database, i) => {
     const r = props.route.slice(0, i);
     r[i] = database;
     props.setRoute(r);
+    return r;
   };
 
   const handleReset = () => {
     props.restartExplore();
   };
 
-  const handleExportCSV = async (routeIndex) => {
-    const r = props.route.slice(0, routeIndex + 1);
-    const heading = props.route
-      .filter((v, i) => i <= routeIndex)
-      .map((v) => v.name);
+  const handleExportCSV = async (database, routeIndex) => {
+    const r = selectDatabase(database, routeIndex).slice(0, routeIndex + 1);
+    const heading = r.filter((v, i) => i <= routeIndex).map((v) => v.name);
     const d = await executeQuery(r, props.ids);
     exportCSV([heading, ...d.results]);
   };
 
-  const showModal = async (routeIndex) => {
-    const r = props.route.slice(0, routeIndex + 1);
-    const heading = props.route
+  const showModal = async (database, routeIndex) => {
+    const r = selectDatabase(database, routeIndex).slice(0, routeIndex + 1);
+    const heading = r
       .filter((v, i) => i <= routeIndex)
-      .map((v) => dbCatalogue[v.name].label);
+      .map((v) => ({
+        label: dbCatalogue[v.name].label,
+        category: dbCatalogue[v.name].category,
+      }));
     const d = await executeQuery(r, props.ids);
     const rows = d.results.slice(0, 100).map((v) => v.slice(0, routeIndex + 1));
 
@@ -138,7 +140,7 @@ const Explore = (props) => {
                                       <div className="action_icons">
                                         {i > 0 && v.total > 0 && (
                                           <button
-                                            onClick={() => showModal(i)}
+                                            onClick={() => showModal(v, i)}
                                             className="action_icons__item"
                                           >
                                             <svg
@@ -156,7 +158,9 @@ const Explore = (props) => {
 
                                         {i > 0 && v.total > 0 && (
                                           <button
-                                            onClick={() => handleExportCSV(i)}
+                                            onClick={() =>
+                                              handleExportCSV(v, i)
+                                            }
                                             className="action_icons__item"
                                           >
                                             <svg
