@@ -23,17 +23,23 @@ const walk = function (p, fileCallback, errCallback) {
               accept: "application/sparql-results+json",
               "content-type": "application/x-www-form-urlencoded",
             },
-            body: `query=PREFIX%20dcterms%3A%20%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F%3E%0APREFIX%20db%3A%20%3Chttp%3A%2F%2Fpurl.jp%2Fbio%2F03%2Fdbcatalog%2F%3E%0Aprefix%20rdfs%3A%20%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0Aprefix%20dcat%3A%20%3Chttp%3A%2F%2Fwww.w3.org%2Fns%2Fdcat%23%3E%0ASELECT%20%3Fid%20%20%3Fdb_name_ja%20%20%3Fdescription_ja%20%3Forganization_label_ja%0AFROM%20%3Chttp%3A%2F%2Frdf.integbio.jp%2Fdataset%2Fdbcatalog%2Fmain%3E%0AWHERE%0A%7B%0A%20values%20%3Fdb%20%7Bdb%3A${jsonObject[key]["catalog"]}%7D%0A%20%20%20%3Fdb%20a%20dcat%3ADataset%20%3B%0A%20%20%20dcterms%3Aidentifier%20%3Fid%20%3B%0A%20%20%20dcterms%3Atitle%20%3Fdb_name_ja%20%3B%0A%20%20%20%20%20%20dcterms%3Adescription%20%3Fdescription_ja%20%3B%0A%20%20%20%20%20%20dcterms%3Apublisher%20%2F%20rdfs%3Alabel%20%3Forganization_label_ja%20.%0A%20FILTER%20(lang(%3Fdb_name_ja)%20%3D%20%22ja%22%20)%0A%20FILTER%20(lang(%3Fdescription_ja)%20%3D%20%22ja%22%20)%0A%20FILTER%20(lang(%3Forganization_label_ja)%20%3D%20%22ja%22%20)%0A%7D`,
+            body: `query=PREFIX+dcterms%3A+%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F%3E%0D%0APREFIX+db%3A+%3Chttp%3A%2F%2Fpurl.jp%2Fbio%2F03%2Fdbcatalog%2F%3E%0D%0Aprefix+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0Aprefix+dcat%3A+%3Chttp%3A%2F%2Fwww.w3.org%2Fns%2Fdcat%23%3E%0D%0ASELECT+%3Fid++%3Fdb_name_ja++%3Fdescription_ja+%3Forganization_label_ja+%3Fdescription_en+%3Forganization_label_en%0D%0AFROM+%3Chttp%3A%2F%2Frdf.integbio.jp%2Fdataset%2Fdbcatalog%2Fmain%3E%0D%0AWHERE%0D%0A%7B%0D%0A+values+%3Fdb+%7Bdb%3A${jsonObject[key]["catalog"]}%7D%0D%0A+++%3Fdb+a+dcat%3ADataset+%3B%0D%0A+++dcterms%3Aidentifier+%3Fid+%3B%0D%0A+++dcterms%3Atitle+%3Fdb_name_ja+%3B%0D%0A++++++dcterms%3Adescription+%3Fdescription_ja+%3B%0D%0A++++++dcterms%3Apublisher+%2F+rdfs%3Alabel+%3Forganization_label_ja+%3B%0D%0A++++++dcterms%3Adescription+%3Fdescription_en+%3B%0D%0A++++++dcterms%3Apublisher+%2F+rdfs%3Alabel+%3Forganization_label_en+.%0D%0A+FILTER+%28lang%28%3Fdb_name_ja%29+%3D+%22ja%22+%29%0D%0A+FILTER+%28lang%28%3Fdescription_ja%29+%3D+%22ja%22+%29%0D%0A+FILTER+%28lang%28%3Forganization_label_ja%29+%3D+%22ja%22+%29%0D%0A+FILTER+%28lang%28%3Fdescription_en%29+%3D+%22en%22+%29%0D%0A+FILTER+%28lang%28%3Forganization_label_en%29+%3D+%22en%22+%29%0D%0A%7D`,
             method: "POST",
           })
             .then((response) => response.json())
             .then((data) => {
               jsonObject[key]["name"] =
                 data["results"]["bindings"][0]["db_name_ja"]["value"];
-              jsonObject[key]["description"] =
+              jsonObject[key]["description_ja"] =
                 data["results"]["bindings"][0]["description_ja"]["value"];
-              jsonObject[key]["organization"] =
+              jsonObject[key]["description_en"] =
+                data["results"]["bindings"][0]["description_en"]["value"];
+              jsonObject[key]["organization_ja"] =
                 data["results"]["bindings"][0]["organization_label_ja"][
+                  "value"
+                ];
+              jsonObject[key]["organization_en"] =
+                data["results"]["bindings"][0]["organization_label_en"][
                   "value"
                 ];
             });

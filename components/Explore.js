@@ -16,6 +16,7 @@ const Explore = (props) => {
     null,
     null,
   ]);
+  const [language, setLanguage] = useState("en");
 
   useEffect(() => {
     if (tableData.heading.length > 0) setModalVisibility(true);
@@ -211,8 +212,31 @@ const Explore = (props) => {
                           <h2 className="modal--through__title">
                             {dbCatalogue[database].label}
                           </h2>
+                          <div>
+                            <input
+                              type="radio"
+                              name="en"
+                              value="en"
+                              style={{ width: "20px", height: "20px" }}
+                              onChange={() => setLanguage("en")}
+                              checked={language === "en"}
+                            />
+                            <label>en</label>
+                            <input
+                              type="radio"
+                              name="ja"
+                              value="ja"
+                              style={{ width: "20px", height: "20px" }}
+                              onChange={() => setLanguage("ja")}
+                              checked={language === "ja"}
+                            />
+                            <label>ja</label>
+                          </div>
                           <p className="modal--through__description">
-                            {dbCatalogue[database].description}
+                            {language === "en" &&
+                              dbCatalogue[database].description_en}
+                            {language === "ja" &&
+                              dbCatalogue[database].description_ja}
                           </p>
                           {(() => {
                             const labels = Object.keys(dbConfig)
@@ -252,18 +276,28 @@ const Explore = (props) => {
                               <dt>PREFIX</dt>
                               <dd>{dbCatalogue[database].prefix}</dd>
                             </div>
-
                             <div className="modal--through__data_list__item">
                               <dt>CATEGORY</dt>
                               <dd>{dbCatalogue[database].category}</dd>
                             </div>
-
-                            {dbCatalogue[database].organization && (
-                              <div className="modal--through__data_list__item">
-                                <dt>ORGANIZATION</dt>
-                                <dd>{dbCatalogue[database].organization}</dd>
-                              </div>
-                            )}
+                            {dbCatalogue[database].organization_en &&
+                              language === "en" && (
+                                <div className="modal--through__data_list__item">
+                                  <dt>ORGANIZATION</dt>
+                                  <dd>
+                                    {dbCatalogue[database].organization_en}
+                                  </dd>
+                                </div>
+                              )}{" "}
+                            {dbCatalogue[database].organization_ja &&
+                              language === "ja" && (
+                                <div className="modal--through__data_list__item">
+                                  <dt>ORGANIZATION</dt>
+                                  <dd>
+                                    {dbCatalogue[database].organization_ja}
+                                  </dd>
+                                </div>
+                              )}
                           </dl>
                         </div>
                       </div>
