@@ -56,7 +56,7 @@
         margin: 0 0 10px;
       }
       .arrow {
-        width: 16px;
+        width: 24px;
         margin: 0 8px 10px;
         path {
           fill: $blue01;
@@ -65,7 +65,7 @@
       .path_children {
         display: flex;
         flex-wrap: wrap;
-        max-width: calc(100% - 102px);
+        max-width: calc(100% - 110px);
         .path_label {
           margin: 0 10px 10px 0;
         }

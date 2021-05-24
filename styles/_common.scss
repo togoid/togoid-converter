@@ -17,10 +17,10 @@
   //&.orange {
   //  background: $orange01;
   //}
-  //&.white {
-  //  border-color: $gray06;
-  //  background: $white;
-  //}
+  &.white {
+    border-color: $gray06;
+    background: $white;
+  }
 
   &__inner {
     position: relative;
