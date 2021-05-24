@@ -8,9 +8,10 @@ import { categories } from "../lib/setting";
 const ResultModal = (props) => {
   const [copied, setCopied] = useState(false);
 
-  const handleClipboardCopy = (e) => {
+  const handleClipboardCopy = async (e) => {
     e.preventDefault();
-    const text = props.tableData.rows.map((v) => v[v.length - 1]).join("\n");
+    const d = await executeQuery(props.route, props.ids, "target");
+    const text = d.results.join("\r\n");
     copy(text);
     setCopied(true);
     setTimeout(() => {
@@ -25,8 +26,8 @@ const ResultModal = (props) => {
 
   const handleIdDownload = async () => {
     const d = await executeQuery(props.route, props.ids, "target");
-    const texts = d.results.join("\r\n");
-    const blob = new Blob([texts], {
+    const text = d.results.join("\r\n");
+    const blob = new Blob([text], {
       type: "text/plain;charset=utf-8",
     });
     saveAs(blob, "ids.txt");
