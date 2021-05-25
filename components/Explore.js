@@ -213,25 +213,33 @@ const Explore = (props) => {
                           <h2 className="modal--through__title">
                             {dbCatalogue[database].label}
                           </h2>
-                          <div>
-                            <input
-                              type="radio"
-                              name="en"
-                              value="en"
-                              style={{ width: "20px", height: "20px" }}
-                              onChange={() => setLanguage("en")}
-                              checked={language === "en"}
-                            />
-                            <label>en</label>
-                            <input
-                              type="radio"
-                              name="ja"
-                              value="ja"
-                              style={{ width: "20px", height: "20px" }}
-                              onChange={() => setLanguage("ja")}
-                              checked={language === "ja"}
-                            />
-                            <label>ja</label>
+                          <div className="select_lang">
+                            <div className="radio">
+                              <input
+                                type="radio"
+                                id="en"
+                                name="en"
+                                value="en"
+                                className="radio__input"
+                                style={{ width: "20px", height: "20px" }}
+                                onChange={() => setLanguage("en")}
+                                checked={language === "en"}
+                              />
+                              <label htmlFor="en" className="radio__label">en</label>
+                            </div>
+                            <div className="radio">
+                              <input
+                                type="radio"
+                                id="ja"
+                                name="ja"
+                                value="ja"
+                                className="radio__input"
+                                style={{ width: "20px", height: "20px" }}
+                                onChange={() => setLanguage("ja")}
+                                checked={language === "ja"}
+                              />
+                              <label htmlFor="ja" className="radio__label">ja</label>
+                            </div>
                           </div>
                           <p className="modal--through__description">
                             {language === "en" &&

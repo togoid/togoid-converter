@@ -55,3 +55,14 @@
     }
   }
 }
+
+.select_lang {
+  display: flex;
+  margin: 0 0 40px;
+  .radio {
+    margin: 0 24px 0 0;
+    &__label {
+      cursor: pointer;
+    }
+  }
+}
