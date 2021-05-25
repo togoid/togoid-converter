@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 const IdInput = (props) => {
-  // const [inputType, setInputType] = useState(0);
+  const [inputType, setInputType] = useState(0);
   const [idTexts, setIdTexts] = useState("");
 
   const handleSubmit = (e) => {
@@ -23,7 +23,6 @@ const IdInput = (props) => {
 
   return (
     <div className="input_area">
-      {/*
       <div className="radio_wrapper">
         <div className="radio">
           <input
@@ -49,11 +48,10 @@ const IdInput = (props) => {
             onChange={() => setInputType(1)}
           />
           <label htmlFor="csv" className="radio__label">
-            Input from CSV
+            Input from text file
           </label>
         </div>
       </div>
-*/}
 
       <form onSubmit={handleSubmit} className="textarea">
         <div className="textarea_wrapper">
