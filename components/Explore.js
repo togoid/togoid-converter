@@ -240,30 +240,35 @@ const Explore = (props) => {
                               dbCatalogue[database].description_ja}
                           </p>
                           {(() => {
-                            const labels = Object.keys(dbConfig).map(
-                              (label, i) => {
-                                const name = label.split("-");
-                                if (name.indexOf(database) === 0) {
-                                  return (
-                                    <div
-                                      className="path_label small green"
-                                      key={i}
-                                    >
-                                      {name[1]}
-                                    </div>
-                                  );
-                                } else if (name.indexOf(database) === 1) {
-                                  return (
-                                    <div
-                                      className="path_label small green"
-                                      key={i}
-                                    >
-                                      {name[0]}
-                                    </div>
-                                  );
-                                }
+                            const labels = Object.keys(dbConfig).map((k, i) => {
+                              const names = k.split("-");
+                              if (
+                                names.indexOf(database) === 0 ||
+                                names.indexOf(database) === 1
+                              ) {
+                                const name =
+                                  names.indexOf(database) === 0
+                                    ? names[1]
+                                    : names[0];
+                                const label = dbCatalogue[name].label;
+                                return (
+                                  <div
+                                    className="path_label small green"
+                                    style={{
+                                      backgroundColor: categories[
+                                        dbCatalogue[name].category
+                                      ]
+                                        ? categories[dbCatalogue[name].category]
+                                            .color
+                                        : null,
+                                    }}
+                                    key={i}
+                                  >
+                                    {label}
+                                  </div>
+                                );
                               }
-                            );
+                            });
 
                             if (labels.length) {
                               return (
