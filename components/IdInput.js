@@ -21,6 +21,28 @@ const IdInput = (props) => {
     }
   };
 
+  const selectTextFile = () => {
+    setInputType(1);
+    inputRef.current.click();
+  };
+  const inputRef = React.useRef();
+
+  const readTextFile = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.readAsText(file);
+
+    reader.onload = () => {
+      setIdTexts(reader.result);
+    };
+    reader.onerror = () => {
+      console.log(reader.error);
+    };
+
+    setInputType(0);
+    e.target.value = "";
+  };
+
   return (
     <div className="input_area">
       <div className="radio_wrapper">
@@ -45,11 +67,17 @@ const IdInput = (props) => {
             name="input_type"
             className="radio__input"
             checked={inputType === 1}
-            onChange={() => setInputType(1)}
+            onChange={selectTextFile}
           />
           <label htmlFor="csv" className="radio__label">
             Input from text file
           </label>
+          <input
+            type="file"
+            ref={inputRef}
+            style={{ display: "none" }}
+            onChange={readTextFile}
+          />
         </div>
       </div>
 
