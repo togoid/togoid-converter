@@ -149,7 +149,13 @@ const Home = () => {
     const candidates = [];
     ids.forEach((id) => {
       Object.keys(dbCatalogue).forEach((k) => {
-        if (dbCatalogue[k].regex && id.match(dbCatalogue[k].regex)) {
+        if (
+          dbCatalogue[k].regex &&
+          id.match(dbCatalogue[k].regex) &&
+          Object.keys(dbConfig).find((d) => {
+            return d.split("-").shift() === k || d.split("-").pop() === k;
+          })
+        ) {
           const index = candidates.findIndex(
             (databases) => databases.name === k
           );
