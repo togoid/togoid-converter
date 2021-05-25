@@ -6,7 +6,7 @@
 
   .input_area {
     width: 445px;
-    margin: 0 auto 56px;
+    margin: 0 auto 46px;
     .radio_wrapper {
       display: flex;
       margin: 0 0 17px;
@@ -68,7 +68,7 @@
         justify-content: flex-end;
         max-width: 1200px;
         margin: 0 auto;
-        padding: 0 0 30px;
+        padding: 0 0 20px;
         text-align: right;
         .button_pull_down__wrapper {
           margin: 0 0 0 auto;
@@ -224,11 +224,11 @@
       .description,
       .path,
       .data {
-        padding: 0 0 0 26px;
+        padding: 0;
       }
       .description {
         font-size: 1.4rem;
-        margin: 0 0 7px;
+        margin: 0 0 30px;
       }
       .path {
         display: flex;
