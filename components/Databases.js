@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import dataset from "../public/dataset.json";
-import config from "../public/config.json";
+import dbConfig from "../public/config.json";
+import dbCatalogue from "../public/dataset.json";
+import { categories } from "../lib/setting";
 
 const Databases = () => {
   const [language, setLanguage] = useState("en");
@@ -42,19 +44,26 @@ const Databases = () => {
                 </div>
               </div>
               {Object.keys(dataset).map((key) => {
-                const labels = Object.keys(config)
-                  .map((label, i) => {
-                    const name = label.split("-");
-                    if (name.indexOf(key) === 0) {
+                const labels = Object.keys(dbConfig)
+                  .map((k, i) => {
+                    const names = k.split("-");
+                    if (names.indexOf(key) === 0 || names.indexOf(key) === 1) {
+                      const name =
+                        names.indexOf(key) === 0 ? names[1] : names[0];
+                      const label = dbCatalogue[name].label;
                       return (
-                        <div className="path_label small green" key={i}>
-                          {name[1]}
-                        </div>
-                      );
-                    } else if (name.indexOf(key) === 1) {
-                      return (
-                        <div className="path_label small green" key={i}>
-                          {name[0]}
+                        <div
+                          className="path_label small green"
+                          style={{
+                            backgroundColor: categories[
+                              dbCatalogue[name].category
+                            ]
+                              ? categories[dbCatalogue[name].category].color
+                              : null,
+                          }}
+                          key={i}
+                        >
+                          {label}
                         </div>
                       );
                     }
