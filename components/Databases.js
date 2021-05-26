@@ -24,7 +24,9 @@ const Databases = () => {
                     onChange={() => setLanguage("en")}
                     checked={language === "en"}
                   />
-                  <label htmlFor="en" className="radio__label">en</label>
+                  <label htmlFor="en" className="radio__label">
+                    en
+                  </label>
                 </div>
                 <div className="radio">
                   <input
@@ -37,7 +39,9 @@ const Databases = () => {
                     onChange={() => setLanguage("ja")}
                     checked={language === "ja"}
                   />
-                  <label htmlFor="ja" className="radio__label">ja</label>
+                  <label htmlFor="ja" className="radio__label">
+                    ja
+                  </label>
                 </div>
               </div>
 
@@ -115,6 +119,12 @@ const Databases = () => {
                             <dd>{dataset[key].organization_ja}</dd>
                           </div>
                         )}
+                        <div className="data__wrapper">
+                          <dt>EXAMPLES</dt>
+                          <dd>
+                            <a href="">{dataset[key].examples}</a>
+                          </dd>
+                        </div>
                       </dl>
                     </article>
                   );

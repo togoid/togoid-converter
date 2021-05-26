@@ -351,7 +351,6 @@ const Explore = (props) => {
             </div>
           </div>
         </div>
-        {/*
         <div className="notice_area">
           <p className="heading">NOTICE</p>
           <p className="text">
@@ -362,7 +361,6 @@ const Explore = (props) => {
             LINE 999 “xxx-xxx-xxxx“ is not match the pattern.
           </p>
         </div>
-*/}
       </div>
     </div>
   );
