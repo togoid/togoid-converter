@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { saveAs } from "file-saver";
 import ResultModal from "../components/ResultModal";
-import { exportCSV, executeQuery } from "../lib/util";
+import { executeQuery } from "../lib/util";
 import dbConfig from "../public/config.json";
 import dbCatalogue from "../public/dataset.json";
 import { ArrowArea } from "react-arrow-master";
@@ -33,11 +34,14 @@ const Explore = (props) => {
     props.restartExplore();
   };
 
-  const handleExportCSV = async (database, routeIndex) => {
+  const handleIdDownload = async (database, routeIndex) => {
     const r = selectDatabase(database, routeIndex).slice(0, routeIndex + 1);
-    const heading = r.filter((v, i) => i <= routeIndex).map((v) => v.name);
-    const d = await executeQuery(r, props.ids);
-    exportCSV([heading, ...d.results]);
+    const d = await executeQuery(r, props.ids, "target");
+    const text = d.results.join("\r\n");
+    const blob = new Blob([text], {
+      type: "text/plain;charset=utf-8",
+    });
+    saveAs(blob, "ids.txt");
   };
 
   const showModal = async (database, routeIndex) => {
@@ -157,7 +161,7 @@ const Explore = (props) => {
                                         {i > 0 && v.total > 0 && (
                                           <button
                                             onClick={() =>
-                                              handleExportCSV(v, i)
+                                              handleIdDownload(v, i)
                                             }
                                             className="action_icons__item"
                                           >
@@ -225,7 +229,9 @@ const Explore = (props) => {
                                 onChange={() => setLanguage("en")}
                                 checked={language === "en"}
                               />
-                              <label htmlFor="en" className="radio__label">en</label>
+                              <label htmlFor="en" className="radio__label">
+                                en
+                              </label>
                             </div>
                             <div className="radio">
                               <input
@@ -238,7 +244,9 @@ const Explore = (props) => {
                                 onChange={() => setLanguage("ja")}
                                 checked={language === "ja"}
                               />
-                              <label htmlFor="ja" className="radio__label">ja</label>
+                              <label htmlFor="ja" className="radio__label">
+                                ja
+                              </label>
                             </div>
                           </div>
                           <p className="modal--through__description">
