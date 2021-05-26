@@ -21,7 +21,8 @@ const ResultModal = (props) => {
 
   const handleExportCSV = async () => {
     const d = await executeQuery(props.route, props.ids);
-    exportCSV([props.tableData.heading, ...d.results]);
+    const h = props.tableData.heading.map((v) => v.label);
+    exportCSV([h, ...d.results]);
   };
 
   const handleIdDownload = async () => {
