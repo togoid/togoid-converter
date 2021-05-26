@@ -2,17 +2,10 @@ import React, { useState } from "react";
 
 const IdInput = (props) => {
   const [inputType, setInputType] = useState(0);
-  const [idTexts, setIdTexts] = useState("");
 
   const handleSubmit = (e) => {
     if (e) e.preventDefault();
-    const ids = idTexts
-      .replace(/[Ａ-Ｚａ-ｚ０-９]/g, (s) =>
-        String.fromCharCode(s.charCodeAt(0) - 0xfee0)
-      )
-      .split(/[\s,\n,,]+/)
-      .map((v) => v.trim());
-    props.handleSubmit(ids);
+    props.handleSubmit(props.idTexts);
   };
 
   const handleKeyDown = (e) => {
@@ -33,7 +26,7 @@ const IdInput = (props) => {
     reader.readAsText(file);
 
     reader.onload = () => {
-      setIdTexts(reader.result);
+      props.setIdTexts(reader.result);
     };
     reader.onerror = () => {
       console.log(reader.error);
@@ -88,12 +81,15 @@ const IdInput = (props) => {
             rows="10"
             placeholder="Input IDs"
             className="textarea__input"
-            value={idTexts}
-            onChange={(e) => setIdTexts(e.target.value)}
+            value={props.idTexts}
+            onChange={(e) => props.setIdTexts(e.target.value)}
             onKeyDown={handleKeyDown}
           />
-          {idTexts && (
-            <button onClick={() => setIdTexts("")} className="textarea_clear" />
+          {props.idTexts && (
+            <button
+              onClick={() => props.setIdTexts("")}
+              className="textarea_clear"
+            />
           )}
         </div>
         <input type="submit" value="EXECUTE" className="button_large" />
