@@ -204,6 +204,19 @@ const Home = () => {
       <Head>
         <title>Togo ID</title>
         <link rel="icon" href="/favicon.ico" />
+        <script
+          type="text/javascript"
+          src="https://dbcls.rois.ac.jp/DBCLS-common-header-footer/v2/script/common-header-and-footer.js"
+          id="common-header-and-footer__script"
+          data-header-menu-type="deployed"
+          data-show-footer="true"
+          data-show-footer-license="true"
+          data-show-footer-links="true"
+          data-width="auto"
+          data-color="mono"
+          data-license-type="none"
+          data-year="2019"
+        ></script>
       </Head>
       <Header />
       <main className="main">
@@ -242,7 +255,6 @@ const Home = () => {
           )}
         </div>
       </main>
-      <Footer />
     </div>
   );
 };
