@@ -4,8 +4,7 @@
     "catalog": "FIXME",
     "category": "Probe",
     "regex": "^(?<id>\\d{3,}(?:(?:_[a-z])?_at)?)$",
-    "prefix": "http://identifiers.org/affy.probeset/",
-    "examples": "XM_011522804,XM_017022848,XM_017022849,NM_001220488,NM_001220489,NM_001220490,NM_001220491,NM_001220492,NM_001257"
+    "prefix": "http://identifiers.org/affy.probeset/"
   },
   "bioproject": {
     "label": "BioProject",
