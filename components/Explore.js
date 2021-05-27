@@ -74,11 +74,13 @@ const Explore = (props) => {
     <div className="explore">
       <div className="drawing_area">
         <div className="panel">
-          <div className="panel__button">
-            <button onClick={handleReset} className="button_clear">
-              Clear
-            </button>
-          </div>
+          {props.databaseNodesList && props.databaseNodesList.length && (
+            <div className="panel__button">
+              <button onClick={handleReset} className="button_clear">
+                Clear
+              </button>
+            </div>
+          )}
           <div className="panel__inner">
             <div className="explore">
               <ArrowArea arrows={props.routePaths}>
