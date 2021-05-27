@@ -208,7 +208,6 @@ const Home = () => {
           type="text/javascript"
           src="https://dbcls.rois.ac.jp/DBCLS-common-header-footer/v2/script/common-header-and-footer.js"
           id="common-header-and-footer__script"
-          data-header-menu-type="deployed"
           data-show-footer="true"
           data-show-footer-license="true"
           data-show-footer-links="true"
