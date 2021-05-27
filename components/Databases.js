@@ -130,9 +130,10 @@ const Databases = (props) => {
                             <dd>
                               <a
                                 href="#"
-                                onClick={() =>
-                                  clickExamples(dataset[key].examples)
-                                }
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  clickExamples(dataset[key].examples);
+                                }}
                               >
                                 {dataset[key].examples}
                               </a>
