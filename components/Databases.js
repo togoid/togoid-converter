@@ -4,8 +4,13 @@ import dbConfig from "../public/config.json";
 import dbCatalogue from "../public/dataset.json";
 import { categories } from "../lib/setting";
 
-const Databases = () => {
+const Databases = (props) => {
   const [language, setLanguage] = useState("en");
+
+  const clickExamples = (examples) => {
+    props.exploreExamplesExecute(examples);
+  };
+
   return (
     <div className="home">
       <main className="main">
@@ -119,12 +124,21 @@ const Databases = () => {
                             <dd>{dataset[key].organization_ja}</dd>
                           </div>
                         )}
-                        <div className="data__wrapper">
-                          <dt>EXAMPLES</dt>
-                          <dd>
-                            <a href="">{dataset[key].examples}</a>
-                          </dd>
-                        </div>
+                        {dataset[key].examples && (
+                          <div className="data__wrapper">
+                            <dt>EXAMPLES</dt>
+                            <dd>
+                              <a
+                                href="#"
+                                onClick={() =>
+                                  clickExamples(dataset[key].examples)
+                                }
+                              >
+                                {dataset[key].examples}
+                              </a>
+                            </dd>
+                          </div>
+                        )}
                       </dl>
                     </article>
                   );

@@ -17,6 +17,7 @@ const Home = () => {
   const [route, setRoute] = useState([]);
   const [routePaths, setRoutePaths] = useState([]);
   const [candidatePaths, setCandidatePaths] = useState([]);
+  const [idTexts, setIdTexts] = useState("");
 
   useEffect(() => {
     if (route.length > 0) {
@@ -193,10 +194,22 @@ const Home = () => {
     setRoute([]);
   };
 
-  const handleIdTextsSubmit = (ids) => {
+  const handleIdTextsSubmit = (t) => {
+    const ids = t
+      .replace(/[Ａ-Ｚａ-ｚ０-９]/g, (s) =>
+        String.fromCharCode(s.charCodeAt(0) - 0xfee0)
+      )
+      .split(/[\s,\n,,]+/)
+      .map((v) => v.trim());
     clearExplore();
     setIds(ids);
     searchDatabase(ids);
+  };
+
+  const exploreExamplesExecute = (examples) => {
+    setActiveTab("EXPLORE");
+    setIdTexts(examples);
+    handleIdTextsSubmit(examples);
   };
 
   return (
@@ -219,7 +232,11 @@ const Home = () => {
       </Head>
       <Header />
       <main className="main">
-        <IdInput handleSubmit={handleIdTextsSubmit} />
+        <IdInput
+          handleSubmit={handleIdTextsSubmit}
+          setIdTexts={setIdTexts}
+          idTexts={idTexts}
+        />
         <div className="drawing_area">
           <div className="tab_wrapper">
             <button
@@ -250,7 +267,7 @@ const Home = () => {
               ids={ids}
             />
           ) : (
-            <Databases />
+            <Databases exploreExamplesExecute={exploreExamplesExecute} />
           )}
         </div>
       </main>

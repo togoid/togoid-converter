@@ -85,6 +85,20 @@ const ResultModal = (props) => {
 
           <div className="modal__top">
             <div className="item_wrapper">
+              {(() => {
+                const uniqueId = Array.from(
+                  new Set(props.tableData.rows.map((item) => item[0]))
+                );
+                const noForwardedId = props.ids
+                  .filter((i) => uniqueId.indexOf(i) === -1)
+                  .join('", "');
+                if (noForwardedId) {
+                  return (
+                    <span>{`Your "${noForwardedId}" aren't forwarded.`}</span>
+                  );
+                }
+              })()}
+
               {props.tableData && props.tableData.rows.length > 0 && (
                 /*
                 <div className="input_search">
