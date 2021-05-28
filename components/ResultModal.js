@@ -124,8 +124,11 @@ const ResultModal = (props) => {
                         d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
                       />
                     </svg>
-                    Copy IDs
-                    {copied && <span>Copied.</span>}
+                    {copied ? (
+                      <span>Copied.</span>
+                    ) : (
+                      <span>Copy target IDs.</span>
+                    )}
                   </button>
                   <button onClick={handleIdDownload} className="button_icon">
                     <svg className="button_icon__icon" viewBox="0 0 24 24">
@@ -134,7 +137,7 @@ const ResultModal = (props) => {
                         d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"
                       />
                     </svg>
-                    Download IDs
+                    Download target IDs
                   </button>
                   <button onClick={handleURLDownload} className="button_icon">
                     <svg className="button_icon__icon" viewBox="0 0 24 24">
@@ -143,7 +146,7 @@ const ResultModal = (props) => {
                         d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"
                       />
                     </svg>
-                    Download URLs
+                    Download target URLs
                   </button>
                   <button onClick={handleExportCSV} className="button_icon">
                     <svg className="button_icon__icon" viewBox="0 0 24 24">
@@ -152,7 +155,7 @@ const ResultModal = (props) => {
                         d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"
                       />
                     </svg>
-                    Download CSV
+                    Download table as CSV
                   </button>
                 </div>
               )}
