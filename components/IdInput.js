@@ -1,8 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 
 const IdInput = (props) => {
-  const [inputType, setInputType] = useState(0);
-
   const handleSubmit = (e) => {
     if (e) e.preventDefault();
     props.handleSubmit(props.idTexts);
@@ -15,7 +13,6 @@ const IdInput = (props) => {
   };
 
   const selectTextFile = () => {
-    setInputType(1);
     inputRef.current.click();
   };
   const inputRef = React.useRef();
@@ -32,46 +29,25 @@ const IdInput = (props) => {
       console.log(reader.error);
     };
 
-    setInputType(0);
     e.target.value = "";
   };
 
   return (
     <div className="input_area">
       <div className="radio_wrapper">
-        <div className="radio">
-          <input
-            type="radio"
-            id="textField"
-            name="input_type"
-            className="radio__input"
-            checked={inputType === 0}
-            onChange={() => setInputType(0)}
-          />
-          <label htmlFor="textField" className="radio__label">
-            Input from text field
-          </label>
-        </div>
-
-        <div className="radio">
-          <input
-            type="radio"
-            id="csv"
-            name="input_type"
-            className="radio__input"
-            checked={inputType === 1}
-            onChange={selectTextFile}
-          />
-          <label htmlFor="csv" className="radio__label">
-            Input from text file
-          </label>
-          <input
-            type="file"
-            ref={inputRef}
-            style={{ display: "none" }}
-            onChange={readTextFile}
-          />
-        </div>
+        <input
+          type="button"
+          value="Input from text file"
+          id="csv"
+          name="input_type"
+          onClick={selectTextFile}
+        />
+        <input
+          type="file"
+          ref={inputRef}
+          style={{ display: "none" }}
+          onChange={readTextFile}
+        />
       </div>
 
       <form onSubmit={handleSubmit} className="textarea">
