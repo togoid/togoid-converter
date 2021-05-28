@@ -12,7 +12,13 @@ const ResultModal = (props) => {
   const handleClipboardCopy = async (e) => {
     e.preventDefault();
     const d = await executeQuery(props.route, props.ids, "target");
-    const text = d.results.join("\r\n");
+    const prefix = props.tableData.heading[
+      props.tableData.heading.length - 1
+    ].prefix
+      .split("/")
+      .slice(-1);
+
+    const text = d.results.map((result) => prefix + result).join("\r\n");
     copy(text);
     setCopied(true);
     setTimeout(() => {
@@ -23,12 +29,23 @@ const ResultModal = (props) => {
   const handleExportCSV = async () => {
     const d = await executeQuery(props.route, props.ids);
     const h = props.tableData.heading.map((v) => v.label);
-    exportCSV([h, ...d.results]);
+    const result = d.results.map((data) =>
+      data.map((d, j) =>
+        j != 0 ? props.tableData.heading[j].prefix.split("/").slice(-1) + d : d
+      )
+    );
+    exportCSV([h, ...result]);
   };
 
   const handleIdDownload = async () => {
     const d = await executeQuery(props.route, props.ids, "target");
-    const text = d.results.join("\r\n");
+    const prefix = props.tableData.heading[
+      props.tableData.heading.length - 1
+    ].prefix
+      .split("/")
+      .slice(-1);
+
+    const text = d.results.map((result) => prefix + result).join("\r\n");
     const blob = new Blob([text], {
       type: "text/plain;charset=utf-8",
     });
@@ -196,6 +213,10 @@ const ResultModal = (props) => {
                           target="_blank"
                           rel="noreferrer"
                         >
+                          {j != 0 &&
+                            props.tableData.heading[j].prefix
+                              .split("/")
+                              .slice(-1)}
                           {d}
                         </a>
                       </td>
