@@ -7,6 +7,7 @@ import { categories } from "../lib/setting";
 
 const ResultModal = (props) => {
   const [copied, setCopied] = useState(false);
+  const [showAllFailed, setShowAllFailed] = useState(false);
 
   const handleClipboardCopy = async (e) => {
     e.preventDefault();
@@ -89,12 +90,25 @@ const ResultModal = (props) => {
                 const uniqueId = Array.from(
                   new Set(props.tableData.rows.map((item) => item[0]))
                 );
-                const noForwardedId = props.ids
-                  .filter((i) => uniqueId.indexOf(i) === -1)
-                  .join('", "');
-                if (noForwardedId) {
+                const noForwardedId = props.ids.filter(
+                  (i) => uniqueId.indexOf(i) === -1
+                );
+                console.log(noForwardedId.length);
+                if (noForwardedId.length > 3 && !showAllFailed) {
                   return (
-                    <span>{`Your "${noForwardedId}" aren't forwarded.`}</span>
+                    <span>
+                      {`Failed IDs: '${noForwardedId[0]}', '${noForwardedId[1]}', '${noForwardedId[2]}' `}
+                      <a
+                        href="javascript:void(0)"
+                        onClick={() => setShowAllFailed(true)}
+                      >
+                        ...more
+                      </a>
+                    </span>
+                  );
+                } else if (noForwardedId.length) {
+                  return (
+                    <span>{`Failed IDs: '${noForwardedId.join("', '")}'`}</span>
                   );
                 }
               })()}
