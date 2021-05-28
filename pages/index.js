@@ -199,7 +199,7 @@ const Home = () => {
       .replace(/[Ａ-Ｚａ-ｚ０-９]/g, (s) =>
         String.fromCharCode(s.charCodeAt(0) - 0xfee0)
       )
-      .split(/[\s,\n,,]+/)
+      .split(/[\s,\n,、,,]+/)
       .map((v) => v.trim());
     clearExplore();
     setIds(ids);
