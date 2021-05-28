@@ -68,7 +68,7 @@ const IdInput = (props) => {
             />
           )}
         </div>
-        <input type="submit" value="EXECUTE" className="button_large" />
+        <input type="submit" value="SUBMIT" className="button_large" />
       </form>
     </div>
   );
