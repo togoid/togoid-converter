@@ -1232,7 +1232,7 @@
       "method": "sparql_csv2tsv.sh query.rq https://integbio.jp/rdf/bioportal/sparql"
     }
   },
-  "mondo-mesh": {
+  "mondo-omim_phenotype": {
     "link": {
       "forward": {
         "label": "seeAlso",
@@ -1253,7 +1253,7 @@
       "method": "sparql_csv2tsv.sh query.rq https://integbio.jp/rdf/bioportal/sparql"
     }
   },
-  "mondo-omim_phenotype": {
+  "mondo-mesh": {
     "link": {
       "forward": {
         "label": "seeAlso",
@@ -1316,27 +1316,6 @@
       "method": "sparql_csv2tsv.sh query.rq https://integbio.jp/rdf/sparql"
     }
   },
-  "ncbigene-ensembl_gene": {
-    "link": {
-      "forward": {
-        "namespace": "rdfs",
-        "label": "seeAlso",
-        "prefix": "http://www.w3.org/2000/01/rdf-schema#",
-        "predicate": "seeAlso"
-      },
-      "reverse": {
-        "namespace": "rdfs",
-        "label": "seeAlso",
-        "prefix": "http://www.w3.org/2000/01/rdf-schema#",
-        "predicate": "seeAlso"
-      },
-      "file": "sample.tsv"
-    },
-    "update": {
-      "frequency": "Weekly",
-      "method": "awk -F '\\t' -v col=3 'FNR!=1&&$col!=\"-\"&&!a[$2 $col]++{print $2 \"\\t\" $col}' $TOGOID_ROOT/input/ncbigene/gene2ensembl"
-    }
-  },
   "ncbigene-ensembl_protein": {
     "link": {
       "forward": {
@@ -1377,6 +1356,27 @@
     "update": {
       "frequency": "Weekly",
       "method": "awk -F '\\t' -v col=5 'FNR!=1&&$col!=\"-\"&&!a[$2 gensub(/\\.[0-9]+$/,\"\",\"g\",$col)]++{print $2 \"\\t\" gensub(/\\.[0-9]+$/,\"\",\"g\",$col)}' $TOGOID_ROOT/input/ncbigene/gene2ensembl"
+    }
+  },
+  "ncbigene-ensembl_gene": {
+    "link": {
+      "forward": {
+        "namespace": "rdfs",
+        "label": "seeAlso",
+        "prefix": "http://www.w3.org/2000/01/rdf-schema#",
+        "predicate": "seeAlso"
+      },
+      "reverse": {
+        "namespace": "rdfs",
+        "label": "seeAlso",
+        "prefix": "http://www.w3.org/2000/01/rdf-schema#",
+        "predicate": "seeAlso"
+      },
+      "file": "sample.tsv"
+    },
+    "update": {
+      "frequency": "Weekly",
+      "method": "awk -F '\\t' -v col=3 'FNR!=1&&$col!=\"-\"&&!a[$2 $col]++{print $2 \"\\t\" $col}' $TOGOID_ROOT/input/ncbigene/gene2ensembl"
     }
   },
   "ncbigene-go": {
@@ -2168,7 +2168,7 @@
     },
     "update": {
       "frequency": "Daily",
-      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RP/ { print $2, $19 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | grep -v '-' | sort -u"
+      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RP/ { print $2, $19 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | awk -F'\t' '$1 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/ && $2 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/' | sort -u"
     }
   },
   "sra_accession-biosample": {
@@ -2189,7 +2189,7 @@
     },
     "update": {
       "frequency": "Daily",
-      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RS/ { print $2, $18 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | grep -v '-' | sort -u"
+      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RS/ { print $2, $18 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | awk -F'\t' '$1 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/ && $2 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/' | sort -u"
     }
   },
   "sra_accession-sra_analysis": {
@@ -2210,7 +2210,7 @@
     },
     "update": {
       "frequency": "Daily",
-      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RZ/ { print $2, $1 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | grep -v '-' | sort -u"
+      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RZ/ { print $2, $1 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | awk -F'\t' '$1 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/ && $2 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/' | sort -u"
     }
   },
   "sra_accession-sra_experiment": {
@@ -2231,7 +2231,7 @@
     },
     "update": {
       "frequency": "Daily",
-      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RX/ { print $2, $1 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | grep -v '-' | sort -u"
+      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RX/ { print $2, $1 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | awk -F'\t' '$1 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/ && $2 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/' | sort -u"
     }
   },
   "sra_accession-sra_project": {
@@ -2252,7 +2252,7 @@
     },
     "update": {
       "frequency": "Daily",
-      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RP/ { print $2, $1 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | grep -v '-' | sort -u"
+      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RP/ { print $2, $1 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | awk -F'\t' '$1 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/ && $2 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/' | sort -u"
     }
   },
   "sra_accession-sra_run": {
@@ -2273,7 +2273,7 @@
     },
     "update": {
       "frequency": "Daily",
-      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RR/ { print $2, $1 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | grep -v '-' | sort -u"
+      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RR/ { print $2, $1 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | awk -F'\t' '$1 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/ && $2 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/' | sort -u"
     }
   },
   "sra_accession-sra_sample": {
@@ -2294,7 +2294,7 @@
     },
     "update": {
       "frequency": "Daily",
-      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RS/ { print $2, $1 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | grep -v '-' | sort -u"
+      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RS/ { print $2, $1 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | awk -F'\t' '$1 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/ && $2 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/' | sort -u"
     }
   },
   "sra_experiment-bioproject": {
@@ -2315,7 +2315,7 @@
     },
     "update": {
       "frequency": "Daily",
-      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RX/ { print $1, $19 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | grep -v '-'"
+      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RX/ { print $1, $19 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | awk -F'\t' '$1 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/ && $2 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/'"
     }
   },
   "sra_experiment-biosample": {
@@ -2336,7 +2336,7 @@
     },
     "update": {
       "frequency": "Daily",
-      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RX/ { print $1, $18 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | grep -v '-'"
+      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RX/ { print $1, $18 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | awk -F'\t' '$1 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/ && $2 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/'"
     }
   },
   "sra_experiment-sra_project": {
@@ -2357,7 +2357,7 @@
     },
     "update": {
       "frequency": "Daily",
-      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RX/ { print $1, $13 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | grep -v '-'"
+      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RX/ { print $1, $13 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | awk -F'\t' '$1 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/ && $2 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/'"
     }
   },
   "sra_experiment-sra_sample": {
@@ -2378,7 +2378,7 @@
     },
     "update": {
       "frequency": "Daily",
-      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RX/ { print $1, $12 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | grep -v '-'"
+      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RX/ { print $1, $12 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | awk -F'\t' '$1 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/ && $2 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/'"
     }
   },
   "sra_project-bioproject": {
@@ -2399,7 +2399,7 @@
     },
     "update": {
       "frequency": "Daily",
-      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RP/ { print $1, $19 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | grep -v '-'"
+      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RP/ { print $1, $19 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | awk -F'\t' '$1 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/ && $2 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/'"
     }
   },
   "sra_run-bioproject": {
@@ -2420,7 +2420,7 @@
     },
     "update": {
       "frequency": "Daily",
-      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RR/ { print $1, $19 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | grep -v '-'"
+      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RR/ { print $1, $19 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | awk -F'\t' '$1 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/ && $2 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/'"
     }
   },
   "sra_run-biosample": {
@@ -2441,7 +2441,7 @@
     },
     "update": {
       "frequency": "Daily",
-      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RR/ { print $1, $18 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | grep -v '-'"
+      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RR/ { print $1, $18 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | awk -F'\t' '$1 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/ && $2 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/'"
     }
   },
   "sra_run-sra_experiment": {
@@ -2462,7 +2462,7 @@
     },
     "update": {
       "frequency": "Daily",
-      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RR/ { print $1, $11 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | grep -v '-'"
+      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RR/ { print $1, $11 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | awk -F'\t' '$1 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/ && $2 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/'"
     }
   },
   "sra_run-sra_project": {
@@ -2483,7 +2483,7 @@
     },
     "update": {
       "frequency": "Daily",
-      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RR/ { print $1, $13 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | grep -v '-'"
+      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RR/ { print $1, $13 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | awk -F'\t' '$1 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/ && $2 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/'"
     }
   },
   "sra_run-sra_sample": {
@@ -2504,7 +2504,7 @@
     },
     "update": {
       "frequency": "Daily",
-      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RR/ { print $1, $12 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | grep -v '-'"
+      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RR/ { print $1, $12 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | awk -F'\t' '$1 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/ && $2 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/'"
     }
   },
   "sra_sample-biosample": {
@@ -2525,7 +2525,7 @@
     },
     "update": {
       "frequency": "Daily",
-      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RS/ { print $1, $18 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | grep -v '-'"
+      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RS/ { print $1, $18 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | awk -F'\t' '$1 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/ && $2 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/'"
     }
   },
   "togovar-clinvar": {
@@ -3095,27 +3095,6 @@
       "method": "uniprot_idmapping2tsv.rb ${TOGOID_ROOT}/input/uniprot/idmapping.dat.gz Reactome"
     }
   },
-  "uniprot-refseq_protein": {
-    "link": {
-      "forward": {
-        "namespace": "rdfs",
-        "label": "seeAlso",
-        "prefix": "http://www.w3.org/2000/01/rdf-schema#",
-        "predicate": "seeAlso"
-      },
-      "reverse": {
-        "namespace": "rdfs",
-        "label": "seeAlso",
-        "prefix": "http://www.w3.org/2000/01/rdf-schema#",
-        "predicate": "seeAlso"
-      },
-      "file": "sample.tsv"
-    },
-    "update": {
-      "frequency": "Monthly",
-      "method": "uniprot_idmapping2tsv.rb ${TOGOID_ROOT}/input/uniprot/idmapping.dat.gz RefSeq | perl -pe 's/\\.\\d+$//'"
-    }
-  },
   "uniprot-uniprot_mnemonic": {
     "link": {
       "forward": {
@@ -3135,6 +3114,27 @@
     "update": {
       "frequency": "Monthly",
       "method": "uniprot_idmapping2tsv.rb ${TOGOID_ROOT}/input/uniprot/idmapping.dat.gz UniProtKB-ID"
+    }
+  },
+  "uniprot-refseq_protein": {
+    "link": {
+      "forward": {
+        "namespace": "rdfs",
+        "label": "seeAlso",
+        "prefix": "http://www.w3.org/2000/01/rdf-schema#",
+        "predicate": "seeAlso"
+      },
+      "reverse": {
+        "namespace": "rdfs",
+        "label": "seeAlso",
+        "prefix": "http://www.w3.org/2000/01/rdf-schema#",
+        "predicate": "seeAlso"
+      },
+      "file": "sample.tsv"
+    },
+    "update": {
+      "frequency": "Monthly",
+      "method": "uniprot_idmapping2tsv.rb ${TOGOID_ROOT}/input/uniprot/idmapping.dat.gz RefSeq | perl -pe 's/\\.\\d+$//'"
     }
   },
   "wikipathways-chebi": {
