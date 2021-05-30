@@ -1,7 +1,9 @@
 const Header = () => (
   <header className="header">
     <h1 className="header__title">
-      <img src="/images/logo.png" alt="ロゴ画像：TOGO ID" />
+      <a href="/">
+        <img src="/images/logo.png" alt="ロゴ画像：TOGO ID" />
+      </a>
     </h1>
   </header>
 );
