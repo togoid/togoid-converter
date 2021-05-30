@@ -24,6 +24,7 @@ const IdInput = (props) => {
 
     reader.onload = () => {
       props.setIdTexts(reader.result);
+      props.handleSubmit(reader.result);
     };
     reader.onerror = () => {
       console.log(reader.error);
@@ -34,22 +35,6 @@ const IdInput = (props) => {
 
   return (
     <div className="input_area">
-      <div className="radio_wrapper">
-        <input
-          type="button"
-          value="Input from text file"
-          id="csv"
-          name="input_type"
-          onClick={selectTextFile}
-        />
-        <input
-          type="file"
-          ref={inputRef}
-          style={{ display: "none" }}
-          onChange={readTextFile}
-        />
-      </div>
-
       <form onSubmit={handleSubmit} className="textarea">
         <div className="textarea_wrapper">
           <textarea
@@ -68,7 +53,23 @@ const IdInput = (props) => {
             />
           )}
         </div>
-        <input type="submit" value="SUBMIT" className="button_large" />
+        <div className="input">
+          <input type="submit" value="SUBMIT" className="button_large" />
+          <input
+            className="button_small"
+            type="button"
+            value="Input from text file"
+            id="csv"
+            name="input_type"
+            onClick={selectTextFile}
+          />
+          <input
+            type="file"
+            ref={inputRef}
+            style={{ display: "none" }}
+            onChange={readTextFile}
+          />
+        </div>
       </form>
     </div>
   );

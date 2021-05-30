@@ -74,7 +74,7 @@ const Explore = (props) => {
     <div className="explore">
       <div className="drawing_area">
         <div className="panel">
-          {props.databaseNodesList && props.databaseNodesList.length && (
+          {props.databaseNodesList && props.databaseNodesList.length > 0 && (
             <div className="panel__button">
               <button onClick={handleReset} className="button_clear">
                 Clear

@@ -50,8 +50,9 @@
 }
 
 .button_large {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 70px;
+  cursor: pointer;
   font-size: 1.2rem;
   color: $white;
   border-radius: 15px;
@@ -60,11 +61,16 @@
 }
 
 .button_small {
-  height: 20px;
+  width: 120px;
+  height: 30px;
+  cursor: pointer;
+  margin-top: 10px;
   font-size: 1.2rem;
-  color: $gray07;
-  border-radius: 5px;
-  border: 1px solid transparent;
+  color: $white;
+  border-radius: 10px;
+  padding: 7px 10px;
+  border: 2px solid $blue02;
+  background: transparent linear-gradient(180deg, $blue03 0%, $blue01 100%) 0 0 no-repeat padding-box;
   &.white {
     border-color: $gray06;
     background: $white;
