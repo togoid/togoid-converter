@@ -212,8 +212,16 @@ const Explore = (props) => {
                       ))}
 
                     {informationModal && (
-                      <div className="modal modal--through">
-                        <div className="modal__inner modal__inner--through">
+                      <div
+                        className="modal modal--through"
+                        onClick={() => hideInformationModal()}
+                      >
+                        <div
+                          className="modal__inner modal__inner--through"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                        >
                           <button
                             onClick={() => hideInformationModal()}
                             className="modal--through__close"
