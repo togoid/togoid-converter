@@ -114,9 +114,9 @@ const ResultModal = (props) => {
                   const limit = showAllFailed ? 10000 : 3;
                   return (
                     <span className="non_forwarded">
-                      {`Non forwarded IDs: '${noForwardedId
+                      {`Non forwarded IDs: ${noForwardedId
                         .filter((v, i) => i < limit)
-                        .join("', '")}' `}
+                        .join(", ")} `}
                       {!showAllFailed && (
                         <a
                           href="#"
