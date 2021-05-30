@@ -110,42 +110,29 @@ const ResultModal = (props) => {
                 const noForwardedId = props.ids.filter(
                   (i) => uniqueId.indexOf(i) === -1
                 );
-                console.log(noForwardedId.length);
-                if (noForwardedId.length > 3 && !showAllFailed) {
+                if (noForwardedId.length > 0) {
+                  const limit = showAllFailed ? 10000 : 3;
                   return (
-                    <span>
-                      {`Failed IDs: '${noForwardedId[0]}', '${noForwardedId[1]}', '${noForwardedId[2]}' `}
-                      <a
-                        href="javascript:void(0)"
-                        onClick={() => setShowAllFailed(true)}
-                      >
-                        ...more
-                      </a>
+                    <span className="non_forwarded">
+                      {`Non forwarded IDs: '${noForwardedId
+                        .filter((v, i) => i < limit)
+                        .join("', '")}' `}
+                      {!showAllFailed && (
+                        <a
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setShowAllFailed(true);
+                          }}
+                        >
+                          ...more
+                        </a>
+                      )}
                     </span>
-                  );
-                } else if (noForwardedId.length) {
-                  return (
-                    <span>{`Failed IDs: '${noForwardedId.join("', '")}'`}</span>
                   );
                 }
               })()}
 
-              {props.tableData && props.tableData.rows.length > 0 && (
-                /*
-                <div className="input_search">
-                  <svg className="input_search__icon" viewBox="0 0 24 24">
-                    <path
-                      fill="currentColor"
-                      d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"
-                    />
-                  </svg>
-                  <input type="search" className="input_search__input" />
-                </div>
-*/
-                <span>
-                  Showing {props.tableData.rows.length} of {props.total} results
-                </span>
-              )}
               {props.tableData && props.tableData.rows.length > 0 && (
                 <div className="export_button">
                   <button onClick={handleClipboardCopy} className="button_icon">
@@ -191,6 +178,11 @@ const ResultModal = (props) => {
                 </div>
               )}
             </div>
+            {props.tableData && props.tableData.rows.length > 0 && (
+              <p className="showing">
+                Showing {props.tableData.rows.length} of {props.total} results
+              </p>
+            )}
           </div>
           <table className="table">
             <thead>
@@ -213,7 +205,7 @@ const ResultModal = (props) => {
                           target="_blank"
                           rel="noreferrer"
                         >
-                          {j != 0 &&
+                          {j !== 0 &&
                             props.tableData.heading[j].prefix
                               .split("/")
                               .slice(-1)}
