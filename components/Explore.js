@@ -37,7 +37,9 @@ const Explore = (props) => {
   const handleIdDownload = async (database, routeIndex) => {
     const r = selectDatabase(database, routeIndex).slice(0, routeIndex + 1);
     const d = await executeQuery(r, props.ids, "target");
-    const text = d.results.join("\r\n");
+    const prefix = dbCatalogue[database.name].prefix.split("/").slice(-1);
+
+    const text = d.results.map((result) => prefix + result).join("\r\n");
     const blob = new Blob([text], {
       type: "text/plain;charset=utf-8",
     });
