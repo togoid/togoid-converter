@@ -165,18 +165,18 @@
           align-items: center;
           position: absolute;
           right: 5px;
-          top: 2px;
+          top: 3px;
           &__item {
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             margin: 0 0 0 5px;
             border-radius: 50%;
             border: none;
             box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
             background: $blue01;
             svg {
-              max-width: 18px;
-              max-height: 17px;
+              max-width: 14px;
+              max-height: 14px;
             }
           }
         }
