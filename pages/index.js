@@ -143,6 +143,12 @@ const Home = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route]);
 
+  useEffect(() => {
+    if (idTexts === "") {
+      clearExplore();
+    }
+  }, [idTexts]);
+
   /**
    * idsに入力されたIDまたはIDリストをidPatternsから正規表現で検索
    */
