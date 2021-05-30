@@ -31,7 +31,7 @@ const ResultModal = (props) => {
     const h = props.tableData.heading.map((v) => v.label);
     const result = d.results.map((data) =>
       data.map((d, j) =>
-        j != 0 ? props.tableData.heading[j].prefix.split("/").slice(-1) + d : d
+        j !== 0 ? props.tableData.heading[j].prefix.split("/").slice(-1) + d : d
       )
     );
     exportCSV([h, ...result]);
@@ -64,8 +64,13 @@ const ResultModal = (props) => {
   };
 
   return (
-    <div className="modal">
-      <div className="modal__inner">
+    <div className="modal" onClick={() => props.setModalVisibility(false)}>
+      <div
+        className="modal__inner"
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
         <div className="modal__scroll_area">
           <button
             onClick={() => props.setModalVisibility(false)}
