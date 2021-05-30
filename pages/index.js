@@ -2,7 +2,6 @@ import Head from "next/head";
 import React, { useState, useEffect } from "react";
 import NProgress from "nprogress";
 import Header from "../components/Header";
-import Footer from "../components/Footer";
 import Explore from "../components/Explore";
 import Databases from "../components/Databases";
 import IdInput from "../components/IdInput";
