@@ -7,14 +7,6 @@
   .input_area {
     width: 445px;
     margin: 0 auto 46px;
-    .radio_wrapper {
-      display: flex;
-      margin: 0 0 17px;
-      .radio {
-        margin: 0 34px 0 0;
-      }
-    }
-
     .textarea {
       display: flex;
       .textarea_wrapper {
@@ -34,7 +26,7 @@
       &__input {
         position: relative;
         width: 330px;
-        height: 100px;
+        height: 110px;
       }
     }
   }
