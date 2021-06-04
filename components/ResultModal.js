@@ -109,8 +109,16 @@ const ResultModal = (props) => {
           <div className="modal__top">
             <div className="item_wrapper">
               {(() => {
+                const prefix = props.tableData.heading[0].prefix
+                  .split("/")
+                  .slice(-1);
+
                 const uniqueId = Array.from(
-                  new Set(props.tableData.rows.map((item) => item[0]))
+                  new Set(
+                    props.tableData.rows
+                      .map((item) => [item[0], prefix + item[0]])
+                      .flat()
+                  )
                 );
                 const noForwardedId = props.ids.filter(
                   (i) => uniqueId.indexOf(i) === -1
