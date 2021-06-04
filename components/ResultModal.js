@@ -30,8 +30,8 @@ const ResultModal = (props) => {
     const d = await executeQuery(props.route, props.ids);
     const h = props.tableData.heading.map((v) => v.label);
     const result = d.results.map((data) =>
-      data.map((d, j) =>
-        j !== 0 ? props.tableData.heading[j].prefix.split("/").slice(-1) + d : d
+      data.map(
+        (d, j) => props.tableData.heading[j].prefix.split("/").slice(-1) + d
       )
     );
     exportCSV([h, ...result]);
@@ -210,11 +210,9 @@ const ResultModal = (props) => {
                           target="_blank"
                           rel="noreferrer"
                         >
-                          {j !== 0 &&
-                            props.tableData.heading[j].prefix
-                              .split("/")
-                              .slice(-1)}
-                          {d}
+                          {props.tableData.heading[j].prefix
+                            .split("/")
+                            .slice(-1) + d}
                         </a>
                       </td>
                     ))}
