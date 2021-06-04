@@ -24,18 +24,11 @@ const Home = () => {
       const nodesList = databaseNodesList.slice(0, route.length);
       const r = route[route.length - 1];
       const candidates = [];
-      let previousDatabaseName = null;
-      if (route.length > 1) {
-        previousDatabaseName = route[route.length - 2].name;
-      }
       Object.keys(dbConfig).forEach((k) => {
         if (!candidates.find((v) => v.name === r.name)) {
           if (k.split("-").shift() === r.name) {
             const name = k.split("-")[1];
-            if (
-              previousDatabaseName !== name &&
-              !candidates.find((v) => v.name === name)
-            ) {
+            if (!candidates.find((v) => v.name === name)) {
               // 順方向の変換、ただし変換経路を逆行させない
               candidates.push({
                 name,
@@ -46,10 +39,7 @@ const Home = () => {
             }
           } else if (k.split("-").pop() === r.name) {
             const name = k.split("-")[0];
-            if (
-              previousDatabaseName !== name &&
-              !candidates.find((v) => v.name === name)
-            ) {
+            if (!candidates.find((v) => v.name === name)) {
               // 逆方向の変換、ただし変換経路を逆行させない
               candidates.push({
                 name,
@@ -61,20 +51,23 @@ const Home = () => {
           }
         }
       });
-
       NProgress.start();
       const promises = candidates.map((v) => {
         const r = route.slice();
         r.push(v);
-        return new Promise(function (resolve) {
-          // エラーになった変換でもnullを返してresolve
-          return executeQuery(r, ids, "target")
-            .then((v) => {
-              NProgress.inc(1 / candidates.length);
-              resolve(v);
-            })
-            .catch(() => resolve(null));
-        });
+        if (!route.find((w) => w.name === v.name)) {
+          return new Promise(function (resolve) {
+            // エラーになった変換でもnullを返してresolve
+            return executeQuery(r, ids, "target")
+              .then((v) => {
+                NProgress.inc(1 / candidates.length);
+                resolve(v);
+              })
+              .catch(() => resolve(null));
+          });
+        } else {
+          return -1;
+        }
       });
 
       Promise.all(promises).then((values) => {
@@ -82,8 +75,13 @@ const Home = () => {
         // 先端の変換候補を追加
         nodesList[route.length] = candidates.map((v, i) => {
           const _v = Object.assign({}, v);
-          _v.total = values[i] && values[i].total ? values[i].total : 0;
-          return _v;
+          if (values[i] !== -1) {
+            _v.total = values[i] && values[i].total ? values[i].total : 0;
+            return _v;
+          } else {
+            _v.total = "-";
+            return _v;
+          }
         });
         setDatabaseNodesList(nodesList);
 
