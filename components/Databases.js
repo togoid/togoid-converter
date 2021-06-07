@@ -128,10 +128,10 @@ const Databases = (props) => {
                           <div className="data__wrapper">
                             <dt>EXAMPLES</dt>
                             <dd>
-                              {dataset[key].examples.map((example) => {
+                              {dataset[key].examples.map((example, i) => {
                                 const exampleStr = example.join(", ");
                                 return (
-                                  <li>
+                                  <li key={i}>
                                     <a
                                       href="#"
                                       onClick={(e) => {
