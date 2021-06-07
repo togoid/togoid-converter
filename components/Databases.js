@@ -7,8 +7,8 @@ import { categories } from "../lib/setting";
 const Databases = (props) => {
   const [language, setLanguage] = useState("en");
 
-  const clickExamples = (examples) => {
-    props.exploreExamplesExecute(examples);
+  const clickExamples = (examples, key) => {
+    props.exploreExamplesExecute(examples, key);
   };
 
   return (
@@ -136,7 +136,7 @@ const Databases = (props) => {
                                       href="#"
                                       onClick={(e) => {
                                         e.preventDefault();
-                                        clickExamples(exampleStr);
+                                        clickExamples(exampleStr, key);
                                       }}
                                     >
                                       {exampleStr}
