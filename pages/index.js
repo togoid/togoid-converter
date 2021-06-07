@@ -184,6 +184,7 @@ const Home = () => {
       });
       setDatabaseNodesList([databases]);
       setRoute([]);
+      return databases;
     }
   };
 
@@ -206,13 +207,16 @@ const Home = () => {
       .map((v) => v.trim());
     clearExplore();
     setIds(ids);
-    searchDatabase(ids);
+    return searchDatabase(ids);
   };
 
-  const exploreExamplesExecute = (examples) => {
+  const exploreExamplesExecute = (examples, key) => {
     setActiveTab("EXPLORE");
     setIdTexts(examples);
-    handleIdTextsSubmit(examples);
+    const startRoute = handleIdTextsSubmit(examples).find(
+      (ele) => ele.name === key
+    );
+    setRoute([startRoute]);
   };
 
   return (
