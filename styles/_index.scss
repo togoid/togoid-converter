@@ -262,6 +262,11 @@
           dd {
             width: calc(100% - 53px);
             font-size: 1.2rem;
+            a {
+              color: $gray04;
+              font-weight: bold;
+              text-decoration: underline;
+            }
           }
         }
       }
