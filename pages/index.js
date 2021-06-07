@@ -24,18 +24,11 @@ const Home = () => {
       const nodesList = databaseNodesList.slice(0, route.length);
       const r = route[route.length - 1];
       const candidates = [];
-      let previousDatabaseName = null;
-      if (route.length > 1) {
-        previousDatabaseName = route[route.length - 2].name;
-      }
       Object.keys(dbConfig).forEach((k) => {
         if (!candidates.find((v) => v.name === r.name)) {
           if (k.split("-").shift() === r.name) {
             const name = k.split("-")[1];
-            if (
-              previousDatabaseName !== name &&
-              !candidates.find((v) => v.name === name)
-            ) {
+            if (!candidates.find((v) => v.name === name)) {
               // 順方向の変換、ただし変換経路を逆行させない
               candidates.push({
                 name,
@@ -46,10 +39,7 @@ const Home = () => {
             }
           } else if (k.split("-").pop() === r.name) {
             const name = k.split("-")[0];
-            if (
-              previousDatabaseName !== name &&
-              !candidates.find((v) => v.name === name)
-            ) {
+            if (!candidates.find((v) => v.name === name)) {
               // 逆方向の変換、ただし変換経路を逆行させない
               candidates.push({
                 name,
@@ -61,20 +51,23 @@ const Home = () => {
           }
         }
       });
-
       NProgress.start();
       const promises = candidates.map((v) => {
         const r = route.slice();
         r.push(v);
-        return new Promise(function (resolve) {
-          // エラーになった変換でもnullを返してresolve
-          return executeQuery(r, ids, "target")
-            .then((v) => {
-              NProgress.inc(1 / candidates.length);
-              resolve(v);
-            })
-            .catch(() => resolve(null));
-        });
+        if (!route.find((w) => w.name === v.name)) {
+          return new Promise(function (resolve) {
+            // エラーになった変換でもnullを返してresolve
+            return executeQuery(r, ids, "target")
+              .then((v) => {
+                NProgress.inc(1 / candidates.length);
+                resolve(v);
+              })
+              .catch(() => resolve(null));
+          });
+        } else {
+          return -1;
+        }
       });
 
       Promise.all(promises).then((values) => {
@@ -82,8 +75,13 @@ const Home = () => {
         // 先端の変換候補を追加
         nodesList[route.length] = candidates.map((v, i) => {
           const _v = Object.assign({}, v);
-          _v.total = values[i] && values[i].total ? values[i].total : 0;
-          return _v;
+          if (values[i] !== -1) {
+            _v.total = values[i] && values[i].total ? values[i].total : 0;
+            return _v;
+          } else {
+            _v.total = "-";
+            return _v;
+          }
         });
         setDatabaseNodesList(nodesList);
 
@@ -222,6 +220,83 @@ const Home = () => {
       <Head>
         <title>Togo ID</title>
         <link rel="icon" href="/favicon.ico" />
+        <meta
+          property="og:image"
+          content="https://togoid.dbcls.jp/images/ogp.png"
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="57x57"
+          href="/apple-icon-57x57.png"
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="60x60"
+          href="/apple-icon-60x60.png"
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="72x72"
+          href="/apple-icon-72x72.png"
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="76x76"
+          href="/apple-icon-76x76.png"
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="114x114"
+          href="/apple-icon-114x114.png"
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="120x120"
+          href="/apple-icon-120x120.png"
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="144x144"
+          href="/apple-icon-144x144.png"
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="152x152"
+          href="/apple-icon-152x152.png"
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/apple-icon-180x180.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="192x192"
+          href="/android-icon-192x192.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/favicon-32x32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="96x96"
+          href="/favicon-96x96.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="/favicon-16x16.png"
+        />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="msapplication-TileColor" content="#ffffff" />
+        <meta name="msapplication-TileImage" content="/ms-icon-144x144.png" />
+        <meta name="theme-color" content="#ffffff" />
         <script
           type="text/javascript"
           src="https://dbcls.rois.ac.jp/DBCLS-common-header-footer/v2/script/common-header-and-footer.js"

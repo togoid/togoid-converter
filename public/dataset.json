@@ -3,8 +3,22 @@
     "label": "Affymetrix probeset",
     "catalog": "FIXME",
     "category": "Probe",
-    "regex": "^(?<id>\\d{3,}(?:(?:_[a-z])?_at)?)$",
-    "prefix": "http://identifiers.org/affy.probeset/"
+    "regex": "^(?<id>\\d{3,}(?:_[a-z])?_at)$",
+    "prefix": "http://identifiers.org/affy.probeset/",
+    "examples": [
+      [
+        "1553582_a_at",
+        "211531_x_at",
+        "202573_at",
+        "201640_x_at",
+        "205117_at",
+        "201017_at",
+        "205099_s_at",
+        "200614_at",
+        "201895_at",
+        "202666_s_at"
+      ]
+    ]
   },
   "bioproject": {
     "label": "BioProject",
@@ -12,6 +26,20 @@
     "category": "Project",
     "regex": "^(?<id>PRJ[DEN][A-Z]\\d+)$",
     "prefix": "http://identifiers.org/bioproject/",
+    "examples": [
+      [
+        "PRJDB575",
+        "PRJDB1880",
+        "PRJDB478",
+        "PRJDA45949",
+        "PRJDB2031",
+        "PRJDB2738",
+        "PRJDB2416",
+        "PRJDB2807",
+        "PRJDA62255",
+        "PRJDB639"
+      ]
+    ],
     "name": "BioProject (Formerly Genome Project)",
     "description_ja": "特定の組織やコンソーシアムにより立ち上げられたゲノムプロジェクトをはじめとする生命科学分野の各種プロジェクトを単位とし、そこから産生されたデータセットをまとめたデータベースです。産生された配列データに関しては完全決定配列（ドラフト、進行中を含む）、アセンブリ、アノテーション、マッピングなどの進捗状況が含まれています。",
     "description_en": "BioProject is a database which collects the results of research projects under the umbrella of the project or initiative. The database consists of tables of projects, which users can search or browse to find all data outputs related to that project. Users can submit projects or download data via FTP.",
@@ -23,14 +51,42 @@
     "catalog": "nbdc01983",
     "category": "Sample",
     "regex": "^(?<id>SAM[NED]\\w?\\d+)$",
-    "prefix": "http://identifiers.org/biosample/"
+    "prefix": "http://identifiers.org/biosample/",
+    "examples": [
+      [
+        "SAMD00003683",
+        "SAMD00006315",
+        "SAMD00003741",
+        "SAMD00011226",
+        "SAMD00013645",
+        "SAMD00015693",
+        "SAMD00009338",
+        "SAMD00012319",
+        "SAMD00015765",
+        "SAMD00015894"
+      ]
+    ]
   },
   "ccds": {
     "label": "Consensus CDS",
     "catalog": "nbdc00023",
     "category": "Gene",
-    "regex": "^(?:CCDS)?(?<id>\\d+)(?:\\.\\d+)?$",
-    "prefix": "http://identifiers.org/ccds/CCDS",
+    "regex": "^(?<id>CCDS\\d+)(?:\\.\\d+)?$",
+    "prefix": "http://identifiers.org/ccds/",
+    "examples": [
+      [
+        "CCDS1471",
+        "CCDS10913",
+        "CCDS14790",
+        "CCDS35175",
+        "CCDS2395",
+        "CCDS58412",
+        "CCDS55555",
+        "CCDS34401",
+        "CCDS41889",
+        "CCDS9052"
+      ]
+    ],
     "name": "CCDS",
     "description_ja": "高品質で確実にアノテーション付けされたヒトとマウスのタンパク質コード領域のコアセットを集約し、提供しているデータベースです。",
     "description_en": "This database seeks to identify a core set of human and mouse protein coding regions of high quality that are consistently annotated.",
@@ -41,8 +97,22 @@
     "label": "ChEBI compound",
     "catalog": "nbdc00027",
     "category": "Compound",
-    "regex": "^(?:CHEBI:)?(?<id>\\d+)$",
+    "regex": "^(?:CHEBI[:_])?(?<id>\\d+)$",
     "prefix": "http://identifiers.org/chebi/CHEBI:",
+    "examples": [
+      [
+        "84824",
+        "40167",
+        "32807",
+        "87666",
+        "57524",
+        "64860",
+        "94440",
+        "18005",
+        "4806",
+        "50158"
+      ]
+    ],
     "name": "ChEBI",
     "description_ja": "生命プロセスに介在する小分子化合物の辞典です。ゲノムに直接コード化されている分子（例：核酸、タンパク、ペプチド）はこのデータベースの対象外です。登録されているデータは、多数の情報源のデータを組み合わせ、冗長性を除いています。主な情報源はIntEnz(EBI)、KEGG COMPOUND、PDBeChem(EBI)、ChEMBL(EBI)です。 ChEBIオントロジー（化合物オントロジー）による分類情報と階層表示が特徴です。\n全てのエントリーにはデータの信頼性を示す★印がついています； 3つ星：ChEBIチームが手作業で注釈付けを行ったもの。2つ星：ChEMBLチームまたはデータ提供者が手作業で注釈付けを行ったもの。1つ星：情報源から自動的に取得した仮エントリーで、手作業での注釈付けが行われていないもの。",
     "description_en": "ChEBI is a collection of data on entities of biological interest.\nThis database concentrates on assembling data on smaller chemical compounds, such as atoms, molecules, ions, radicals etc. These should be produced in nature or be synthetic molecules affecting biological processes in living organisms.\nChEBI does not generally include molecules directly encoded by the genome.\nThe database contains 31,651 entries with annotations.\nA keyword search option is available.\nIn addition to this an advanced search option, which includes a structure drawing tool, is provided.\nThe ChEBI database can be searched individually or in combination with other databases.",
@@ -55,6 +125,20 @@
     "category": "Compound",
     "regex": "^(?<id>CHEMBL\\d+)$",
     "prefix": "http://identifiers.org/chembl.compound/",
+    "examples": [
+      [
+        "CHEMBL121649",
+        "CHEMBL190334",
+        "CHEMBL3103282",
+        "CHEMBL69329",
+        "CHEMBL2105131",
+        "CHEMBL2177390",
+        "CHEMBL3091820",
+        "CHEMBL1200335",
+        "CHEMBL3094412",
+        "CHEMBL67367"
+      ]
+    ],
     "name": "HPO",
     "description_ja": "The Human Phenotype Ontology (HPO) はヒトの疾患に関連する形質の標準化された語彙を提供しています。医学論文、Orphanet、DECIPHER,やOMIMを基に開発されており、疾患と関連する形質の語彙や、疾患に関連する遺伝子情報が収載されています。疾患名、形質、遺伝子名で検索することができます。",
     "description_en": "The Human Phenotype Ontology (HPO) provides a standardized vocabulary of phenotype specialized in human disease. The medical literatures, Orphanet, DECIPHER, and OMIM are used for developing the HPO.",
@@ -67,6 +151,20 @@
     "category": "Protein",
     "regex": "^(?<id>CHEMBL\\d+)$",
     "prefix": "http://identifiers.org/chembl.target/",
+    "examples": [
+      [
+        "CHEMBL2788",
+        "CHEMBL3091264",
+        "CHEMBL3831324",
+        "CHEMBL5524",
+        "CHEMBL5597",
+        "CHEMBL3983",
+        "CHEMBL4187",
+        "CHEMBL3391681",
+        "CHEMBL5135",
+        "CHEMBL1255130"
+      ]
+    ],
     "name": "ChEMBL",
     "description_ja": "ChEMBLは創薬を目的とした生理活性をもつ化合物や小分子のデータベースです。化合物、核酸などの小分子と、そのターゲットやアッセイ情報を紐付けて収載しています。化合物や小分子の名称、分子式、分子量、標準SMILES、標準InChIなどの情報に加え、結合定数、ADMEデータなど生理活性に関する情報や、薬としての開発段階の情報などが付与されています。化合物を名称や構造で検索したり、ターゲットをタンパク質の名称で検索することができます。",
     "description_en": "ChEMBL is a database for bioactive molecules. It collects information of small molecules, such as calculated properties (e.g. logP, Molecular Weight, Lipinski Parameters, etc.) and abstracted bioactivities (e.g. binding constants, pharmacology and ADMET data), and the target information. Metadata of assays for small molecule activities or assays for binding activities between small molecules and its targets are also provided.",
@@ -91,6 +189,20 @@
     "category": "Variant",
     "regex": "^(VCV0*)?(?<id>(\\d{1,9}))$",
     "prefix": "http://identifiers.org/clinvar/",
+    "examples": [
+      [
+        "658761",
+        "619209",
+        "745342",
+        "11955",
+        "731668",
+        "724289",
+        "725734",
+        "743127",
+        "789913",
+        "5302"
+      ]
+    ],
     "name": "ClinVar",
     "description_ja": "ヒトゲノムの多様性と関連する疾患についての情報を収集し、自由に利用できるアーカイブとして提供しているデータベースです。多型の位置、遺伝子名、疾患との関わりなどを収録しています。遺伝子情報はNCBIのdbSNPおよびdbVarと、表現型に関してはMedGenとリンクしています。また、NIH Genetic Testing Registry (GTR)、OMIM、PubMedからも情報を収集しています。各データはhtml形式での閲覧の他、XMLやタブ区切り形式、一部データはVCFファイルでダウンロードできます。",
     "description_en": "ClinVar is a freely available archive describing relationships between medically important variants and phenotypes. Submissions report human variation, interpretations of the relationship of that variation to human health, and the evidence supporting each interpretation. ClinVar is tightly coupled with dbSNP and dbVar, which maintain information about locations of variations on human assemblies, and also based on the phenotypic descriptions maintained in MedGen (http://www.ncbi.nlm.nih.gov/medgen). Each record contains the submitter, the variation and the phenotype. Furthermore, to facilitate evaluation of the medical importance of each variant, ClinVar aggregates submissions with the same variation/phenotype combination, adds value from other NCBI databases, and reports if there are conflicting clinical interpretations. Data in ClinVar are available in multiple formats, including html, download as XML, VCF or tab-delimited subsets.",
@@ -103,6 +215,20 @@
     "category": "Variant",
     "regex": "^(?<id>rs\\d+)$",
     "prefix": "http://identifiers.org/dbsnp/",
+    "examples": [
+      [
+        "rs746303788",
+        "rs1407020249",
+        "rs374003162",
+        "rs4647297",
+        "rs549539526",
+        "rs1387864740",
+        "rs1177577242",
+        "rs769848663",
+        "rs16961655",
+        "rs79135400"
+      ]
+    ],
     "name": "dbSNP",
     "description_ja": "1～数塩基の置換、挿入/欠失、反復等の多型情報からなるデータベースです。各SNPについて、集団間での多型頻度の違いを視覚的に比較することもできます。",
     "description_en": "dbSNP collects information on polymorphisms based on single and small-scale multi-base substitutions, including insertions and deletions, microsatelites, and non-polymorphic variants. Differences in the frequency of polymorphisms in a population can be visually compared for each SNP.",
@@ -125,8 +251,22 @@
     "label": "Disease ontology",
     "catalog": "nbdc00261",
     "category": "Disease",
-    "regex": "^(?:DOID:)?(?<id>\\d+)$",
+    "regex": "^DO(?:ID)?[:_](?<id>\\d+)$",
     "prefix": "http://purl.obolibrary.org/obo/DOID_",
+    "examples": [
+      [
+        "9036",
+        "3159",
+        "10964",
+        "12698",
+        "0060459",
+        "11840",
+        "11339",
+        "914",
+        "9945",
+        "1407"
+      ]
+    ],
     "name": "DO",
     "description_ja": "ヒトの疾患に関する用語や概念について整理したDisease Ontologyを提供するサイトです。MeSH、ICD、NCI’s thesaurus、SNOMEDやOMIMへリンク付けられています。キーワードで語彙を検索することができます。",
     "description_en": "This site provides a Disease Ontology, which is a standardized ontology organized by human disease terms and related medical concepts. The DO terms are associated with MeSH, ICD, NCI's thesaurus, SNOMED and OMIM to integrate disease and medical vocabularies.",
@@ -139,6 +279,20 @@
     "category": "Drug",
     "regex": "^(?<id>DB\\d{5})$",
     "prefix": "http://identifiers.org/drugbank/",
+    "examples": [
+      [
+        "DB15589",
+        "DB13471",
+        "DB05830",
+        "DB07423",
+        "DB07074",
+        "DB08912",
+        "DB02908",
+        "DB05088",
+        "DB05229",
+        "DB08910"
+      ]
+    ],
     "name": "DrugBank",
     "description_ja": "薬剤の化学的、薬理的、薬事的データとそのターゲット（配列、構造、パスウエイ）の詳細情報を収集、統合したバイオインフォマティクスおよびケモインフォマティクスのリソースです。薬剤エントリー約4,800件のうち、FDA承認小分子薬剤が1,350以上、FDA承認バイオテク（タンパク/ペプチド）薬剤123件、栄養補助食品71件、実験的薬剤が3,243件以上が含まれています。2,500以上の非冗長タンパク配列がFDA承認薬剤エントリーにリンクしています。各エントリーにつき100以上のデータ項目が存在します。",
     "description_en": "DrugBank is a database of detailed informatics resources on approved and experimental drugs. The database contains informaiton on drug targets as well as the results of experiments resulting in extensive bioinformatics and chemoinformatics data. Users can browse or search by drug or target. Data is available for download.",
@@ -151,6 +305,20 @@
     "category": "Function",
     "regex": "^(?:EC )?(?<id>\\d+\\.(?:(?:-\\.-\\.-)|\\d+\\.(?:(?:-\\.-)|\\d+\\.(?:-|n?\\d+))))$",
     "prefix": "http://identifiers.org/ec-code/",
+    "examples": [
+      [
+        "1.6.3.1",
+        "2.4.1.353",
+        "1.1.1.288",
+        "1.5.1.2",
+        "3.1.1.71",
+        "1.3.1.31",
+        "3.5.1.29",
+        "1.16.1.1",
+        "3.1.3.48",
+        "2.3.1.138"
+      ]
+    ],
     "name": "The Comprehensive Enzyme Information System (BRENDA)",
     "description_ja": "酵素の機能と特性データを収集した総合的な酵素情報データベースです。データの大半は主要文献から手動で抽出したもので、酵素の機能、構造、生成反応、生物種、活性、実験手法、応用、変異体に関する情報を網羅しています。関連するパスウエイへのリンクや、テキストマイニングによる疾患情報も含まれています。",
     "description_en": "BRENDA is an extensive database of enzymes, which came online in January 2013.\nAs many as 5858 various enzymes are listed and a comprehensive amount of information about each of these is available, for example enzyme structure, reaction and specificity, disease-related information, stability and functional parameters.\nThe search option EC Explorer gives entry to a page where the enzymes are grouped under oxidoreductases (of 6,523 organisms), transferases (of 4,594 organisms), hydrolases (of 7,847 organisms), lyases (of 3,498 organisms), isomerases (of 1,329 organisms) and ligases (of 1,100 organisms).\nA Quick search option (enter name or ID number) is offered, as well as a Full Text and an Advanced search option, where a combination of criteria can be entered to narrow down the search results.",
@@ -175,6 +343,20 @@
     "category": "Gene",
     "regex": "^(?:(?:(?<id1>Y[A-Z]{2}\\d{3}[a-zA-Z](?:\\-[A-Z])?)(?:\\.\\d+)?)|(?:(?<id2>[A-Z_a-z0-9-]+\\.?t?\\d*[a-z]?)(?:\\.\\d+)?)|(?<id3>[a-zA-Z0-9_]+\\.\\d+[a-z]*\\.\\d+))$",
     "prefix": "http://identifiers.org/ensembl/",
+    "examples": [
+      [
+        "ENSG00000186283",
+        "ENSAMEG00000018238",
+        "ENSG00000167916",
+        "ENSG00000213417",
+        "ENSG00000133328",
+        "ENSG00000274404",
+        "ENSG00000184363",
+        "FBgn0021742",
+        "FBgn0030057",
+        "FBgn0265139"
+      ]
+    ],
     "name": "Ensembl",
     "description_ja": "ゲノム解読された脊椎生物およびその他の主要な真核生物を対象として自動アノテーションを行い、その結果をゲノムビューワやデータベースとして公開しているプロジェクトです。EMBL-EBIとSanger Centreが共同で進めています。",
     "description_en": "ENSEMBL is a collection of automatically annotated genome databases for vertebrates and a number of eukaryotes, integrated with all other relevant biological data available.\r\nThe repository covers data on gene annotation, microarray probeset mapping and comparative genomics among many other topics.\r\nInformation may be downloaded by a variety of means: \r\nFor small amounts of data, an export option is suggested.\r\nFor larger amounts of data, an FTP site is provided from where a complete database may be downloaded in one of various formats, from flat files to MySQL dumps.",
@@ -187,6 +369,20 @@
     "category": "Protein",
     "regex": "^(?:(?:(?<id1>Y[A-Z]{2}\\d{3}[a-zA-Z](?:\\-[A-Z])?)(?:\\.\\d+)?)|(?:(?<id2>[A-Z_a-z0-9-]+\\.?t?\\d*[a-z]?)(?:\\.\\d+)?)|(?<id3>[a-zA-Z0-9_]+\\.\\d+[a-z]*\\.\\d+))$",
     "prefix": "http://identifiers.org/ensembl/",
+    "examples": [
+      [
+        "ENSP00000365411",
+        "ENSP00000420674",
+        "ENSAZOP00000020796",
+        "FBpp0070277",
+        "FBpp0070535",
+        "ENSAZOP00000019433",
+        "ENSP00000372042",
+        "ENSAZOP00000017910",
+        "ENSP00000370977",
+        "ENSP00000481894"
+      ]
+    ],
     "name": "Ensembl",
     "description_ja": "ゲノム解読された脊椎生物およびその他の主要な真核生物を対象として自動アノテーションを行い、その結果をゲノムビューワやデータベースとして公開しているプロジェクトです。EMBL-EBIとSanger Centreが共同で進めています。",
     "description_en": "ENSEMBL is a collection of automatically annotated genome databases for vertebrates and a number of eukaryotes, integrated with all other relevant biological data available.\r\nThe repository covers data on gene annotation, microarray probeset mapping and comparative genomics among many other topics.\r\nInformation may be downloaded by a variety of means: \r\nFor small amounts of data, an export option is suggested.\r\nFor larger amounts of data, an FTP site is provided from where a complete database may be downloaded in one of various formats, from flat files to MySQL dumps.",
@@ -199,6 +395,20 @@
     "category": "Gene",
     "regex": "^(?:(?:(?<id1>Y[A-Z]{2}\\d{3}[a-zA-Z](?:\\-[A-Z])?)(?:\\.\\d+)?)|(?:(?<id2>[A-Z_a-z0-9-]+\\.?t?\\d*[a-z]?)(?:\\.\\d+)?)|(?<id3>[a-zA-Z0-9_]+\\.\\d+[a-z]*\\.\\d+))$",
     "prefix": "http://identifiers.org/ensembl/",
+    "examples": [
+      [
+        "ENST00000638000",
+        "ENST00000307864",
+        "ENSTRUT00000006732",
+        "ENSAMET00000021072",
+        "ENSAZOT00000021040",
+        "ENST00000622541",
+        "ENST00000462612",
+        "ENSBTAT00000072441",
+        "ENSAZOT00000005048",
+        "ENST00000475822"
+      ]
+    ],
     "name": "Ensembl",
     "description_ja": "ゲノム解読された脊椎生物およびその他の主要な真核生物を対象として自動アノテーションを行い、その結果をゲノムビューワやデータベースとして公開しているプロジェクトです。EMBL-EBIとSanger Centreが共同で進めています。",
     "description_en": "ENSEMBL is a collection of automatically annotated genome databases for vertebrates and a number of eukaryotes, integrated with all other relevant biological data available.\r\nThe repository covers data on gene annotation, microarray probeset mapping and comparative genomics among many other topics.\r\nInformation may be downloaded by a variety of means: \r\nFor small amounts of data, an export option is suggested.\r\nFor larger amounts of data, an FTP site is provided from where a complete database may be downloaded in one of various formats, from flat files to MySQL dumps.",
@@ -209,8 +419,22 @@
     "label": "Gene ontology",
     "catalog": "nbdc00074",
     "category": "Function",
-    "regex": "^(?:GO[:_])?(?<id>\\d{7})$",
+    "regex": "^GO[:_](?<id>\\d{7})$",
     "prefix": "http://purl.obolibrary.org/obo/GO_",
+    "examples": [
+      [
+        "0005643",
+        "0097110",
+        "0097225",
+        "0052855",
+        "2000012",
+        "0042921",
+        "0019774",
+        "0085018",
+        "0009508",
+        "0046470"
+      ]
+    ],
     "name": "GO",
     "description_ja": "遺伝子オントロジー（Gene Ontology;GO）とは、生物学的概念を記述するための標準となる語彙を策定しようとするプロジェクトです。GOで定義された用語はGO Termと呼ばれ、Cellular component、Biological process、Molecular functionという3つのカテゴリーに分類されています。GOのデータは、非循環有向グラフ (Directed Acyclic Graph: DAG) と呼ばれるデータ構造を用いて計算機上で記述することができます。\r\nこのサイトでは、GO Termや関連ツールの配布を行っています。",
     "description_en": "GO is a database which provides a controlled vocabulary of terms for describing gene product characteristics and gene product annotation data. It contains data of terms, definitions and ontology structure. The most recent version of the ontology and the annotation files contributed by members of the GO Consortium are available for download. The GO provides the AmiGO browser and search engine which are web browser-based access to the GO database.",
@@ -222,7 +446,21 @@
     "catalog": "nbdc01774",
     "category": "Gene",
     "regex": "^(?:(?:HGNC|hgnc):)?(?<id>\\d{1,5})$",
-    "prefix": "http://identifiers.org/hgnc/"
+    "prefix": "http://identifiers.org/hgnc/",
+    "examples": [
+      [
+        "26199",
+        "38937",
+        "14027",
+        "21498",
+        "18185",
+        "1314",
+        "25960",
+        "2206",
+        "22224",
+        "19741"
+      ]
+    ]
   },
   "hgnc_symbol": {
     "label": "HGNC gene symbol",
@@ -237,6 +475,20 @@
     "category": "Metabolite",
     "regex": "^(?:hmdb:)?(?<id>HMDB\\d+)$",
     "prefix": "http://identifiers.org/hmdb/HMDB",
+    "examples": [
+      [
+        "HMDB0029433",
+        "HMDB0015609",
+        "HMDB0000042",
+        "HMDB0002360",
+        "HMDB0003345",
+        "HMDB0003550",
+        "HMDB0036769",
+        "HMDB0000935",
+        "HMDB0002755",
+        "HMDB0004369"
+      ]
+    ],
     "name": "HMDB",
     "description_ja": "ヒト体内における低分子代謝物の詳細情報を収集したデータベースです。メタボロミクスや臨床化学、バイオマーカー探索、教育分野で活用されることを目的に構築しており、化学データ、臨床データ、分子生物学/化学データを含んでいます。現在、7,900代謝物が登録されており、7,200のタンパク質（DNA）配列のリンク情報があります。",
     "description_en": "HUMDB is a database of human metabolites. The database contains information on thousands of metabolites produced by and found in the human body as a result of metabolic processes. genes and proteins related to the metabolites are also affiliated with records, where appropriate. Data on metabolites and the associated genes and proteins are available for download.",
@@ -249,6 +501,20 @@
     "category": "Ortholog",
     "regex": "^(?<id>\\d+)$",
     "prefix": "http://identifiers.org/homologene/",
+    "examples": [
+      [
+        "117",
+        "17",
+        "6",
+        "142",
+        "55",
+        "132",
+        "61",
+        "109",
+        "137",
+        "134"
+      ]
+    ],
     "name": "HomoloGene",
     "description_ja": "全ゲノム配列が決定された20種類の真核生物の間で自動的検出したホモログ遺伝子のセット、およびmRNAやタンパク質の配列データを提供しています。他の生物種のUniGene配列でホモログの可能性があるものも表示されます。",
     "description_en": "In Homologenes, users can find automatically constructed homologous gene sets from the full-length genome sequences of a wide range of eukaryotic species, as well as mRNA and protein sequences.",
@@ -259,8 +525,22 @@
     "label": "Human Phenotype Ontology",
     "catalog": "nbdc02559",
     "category": "Phenotype",
-    "regex": "^(?:HP:)?(?<id>\\d{7})$",
+    "regex": "^HP[:_](?<id>\\d{7})$",
     "prefix": "http://purl.obolibrary.org/obo/HP_",
+    "examples": [
+      [
+        "0001947",
+        "0031592",
+        "0012085",
+        "0000956",
+        "0025238",
+        "0002861",
+        "0001680",
+        "0004417",
+        "0001701",
+        "0025084"
+      ]
+    ],
     "name": "HPO",
     "description_ja": "The Human Phenotype Ontology (HPO) はヒトの疾患に関連する形質の標準化された語彙を提供しています。医学論文、Orphanet、DECIPHER,やOMIMを基に開発されており、疾患と関連する形質の語彙や、疾患に関連する遺伝子情報が収載されています。疾患名、形質、遺伝子名で検索することができます。",
     "description_en": "The Human Phenotype Ontology (HPO) provides a standardized vocabulary of phenotype specialized in human disease. The medical literatures, Orphanet, DECIPHER, and OMIM are used for developing the HPO.",
@@ -285,6 +565,20 @@
     "category": "Gene",
     "regex": "^(?:insdc:)?(?<id>[A-Z]\\d{5}|[A-Z]{2}\\d{6}|[A-Z]{4}\\d{8}|[A-J][A-Z]{2}\\d{5}|[A-Z]{4,}\\d{9})(?:\\.\\d+)?$",
     "prefix": "http://identifiers.org/insdc/",
+    "examples": [
+      [
+        "U10991",
+        "AF116914",
+        "AK056978",
+        "DQ440258",
+        "U91725",
+        "AY301270",
+        "U32907",
+        "AY261360",
+        "AK001332",
+        "U13261"
+      ]
+    ],
     "name": "INSDC",
     "description_ja": "本サイトは、３大DNAデータベースであるDDBJ、ENA(European Nucleotide Archive)、 NCBIの協力で運営されるINSDC(International Nucleotide Sequence Database Collaboration)のポータルサイトです。INSDCは連携して塩基配列のアクセションIDの共通化やデータ形式の統一(INSD-XML)などに取り組みながら、個々の拠点におけるWebサービスの開発が行われています。INSDCが連携して構築・運営しているデータベースは国際塩基配列データベース (International Nucleotide Sequence Databases, INSD) と呼ばれます。",
     "description_en": "It is a portal site for the INSDC(International Nucleotide Sequence Database Collaboration), which is an initiative operated between DDBJ, EMBL-EBI and NCBI.  Each organization operates DNA databases in close coordination and cooperation with each other to achieve common accession numbers, and standardize data format (INSD-XML). The databases are called the International Nucleotide Sequence Databases (INSD).",
@@ -297,6 +591,20 @@
     "category": "Interaction",
     "regex": "^(?<id>EBI\\-[0-9]+)$",
     "prefix": "http://identifiers.org/intact/",
+    "examples": [
+      [
+        "EBI-7947422",
+        "EBI-15714708",
+        "EBI-16225271",
+        "EBI-4406290",
+        "EBI-9026465",
+        "EBI-6403471",
+        "EBI-1113651",
+        "EBI-562824",
+        "EBI-9014072",
+        "EBI-1784742"
+      ]
+    ],
     "name": "IntAct",
     "description_ja": "IntActはオープンソースの分子間相互作用のデータベースとツールキットで構成されています。データは文献から取得したり、専門家によって蓄積されたデータから構成されています。",
     "description_en": "IntAct is a database of molecular interactions. The database contains information on more than 400,000 interactions gathered from primary literature. Users can search by gene, protein, or publication, among others, and the database includes manually annotated data from several other interaction databases. Software and bulk data, updoated weekly, are also available for download.",
@@ -309,6 +617,20 @@
     "category": "Domain",
     "regex": "^(?<id>IPR\\d{6})$",
     "prefix": "http://identifiers.org/interpro/",
+    "examples": [
+      [
+        "IPR038152",
+        "IPR040448",
+        "IPR036748",
+        "IPR034266",
+        "IPR005479",
+        "IPR036365",
+        "IPR000174",
+        "IPR001334",
+        "IPR000731",
+        "IPR001767"
+      ]
+    ],
     "name": "InterPro",
     "description_ja": "EBI によるタンパク質のファミリー分類、ドメイン、機能サイトに関する記述を収集した統合データベースです。UniProtやPROSITE、PANTHER、ProDom、SMARTなどタンパク質の特性を収録している複数のデータベースを集結し、様々なレベルでのタンパク質の特徴を提供しています。InterProScanを用いて、ユーザが入力した配列から機能ドメインや構造ドメインを検索することができます。",
     "description_en": "InterPro is a database that analyses proteins functionally and classifies them into families as well as predicts their domain and sites in the genome.\nThis repository harvests its content from a large number of related databases and consolidates its findings into a single searchable resource avoiding the occurrence of redundant entries.\nInterPro aims to update their content every 8 weeks.\nA keyword search is available and an option is provided where a protein sequence can be entered for analysis.",
@@ -402,9 +724,23 @@
   "lrg": {
     "catalog": "nbdc02566",
     "category": "Gene",
-    "label": "Locus Reference Genomic record",
+    "label": "LRG",
     "regex": "^(?<id>LRG_\\d+)$",
     "prefix": "http://identifiers.org/lrg/",
+    "examples": [
+      [
+        "LRG_41",
+        "LRG_356",
+        "LRG_147",
+        "LRG_660",
+        "LRG_498",
+        "LRG_364",
+        "LRG_203",
+        "LRG_162",
+        "LRG_1271",
+        "LRG_884"
+      ]
+    ],
     "name": "LRG",
     "description_ja": "ゲノム、転写産物、タンパク質のリファレンス配列のデータベースです。臨床に関連する変異配列を報告するためのリファレンス配列を、 NCBI（RefSeq）とEMBL-EBI（Ensembl / GENCODE）の協力により情報統合しています。 各レコードには、ゲノム、転写産物、タンパク質の配列、アノテーション、ゲノムアセンブリに関するマップなどが含まれています。LRG番号、HGNC遺伝子名、NCBIやEnsemblのID番号（遺伝子、転写産物）、遺伝子の同義語、公開非公開の別による絞り込みが可能です。また、Ensembl、NCBI、UCSCのゲノムブラウザが利用可能です。",
     "description_en": "LRG is a database of stable genomic, transcript and protein reference sequences for reporting clinically relevant sequence variants. NCBI (RefSeq) and EMBL-EBI (Ensembl/GENCODE) are working together to rationalise differences in their gene sets. Records contain information about genomic, transcript and protein sequences, annotations, maps about the genome assembly, etc. This database allows users to search using LRG identifier, HGNC gene name, NCBI and Ensembl accession numbers (gene or transcript), gene synonym or LRG status (public or pending). Genome browsers on Ensembl, NCBI and UCSC are available.",
@@ -417,6 +753,20 @@
     "category": "Ortholog",
     "regex": "^(?<id>[a-z0-9]+:[A-Z0-9_\\.-]+)$",
     "prefix": "http://mbgd.genome.ad.jp/rdf/resource/gene/",
+    "examples": [
+      [
+        "ash:AL1_RS04670",
+        "ash:AL1_RS08245",
+        "ash:AL1_RS02870",
+        "ash:AL1_RS06610",
+        "ash:AL1_RS06290",
+        "ash:AL1_RS07260",
+        "ash:AL1_RS08410",
+        "ash:AL1_RS01705",
+        "ash:AL1_RS02510",
+        "ash:AL1_RS07245"
+      ]
+    ],
     "name": "MBGD",
     "description_ja": "オーソログ解析に基づいて微生物ゲノムの比較解析を行うためのデータベースです。公開されたゲノム全体を含む標準オーソログテーブルに基づいて、各オーソロググループの系統プロファイルの比較などを行えるほか、動的なオーソログ解析機能によって、利用者自身が持つゲノム配列も含めて、興味のある生物種セットに対象を絞った比較を行うこともできます。",
     "description_en": "MBGD is a database with a workbench system for comparative analysis of completely sequenced microbial genomes, mainly for creating orthologous or homologous gene cluster tables. MBGD classifies genomes by the hierarchical clustering method known as UPGMA, using precomputed similarity relationships identified by all-against-all BLAST search. Users can change the set of organisms or cutoff parameters to create their own orthologous groupings. Thus comparative genomics is facilitated from various points of view such as ortholog identification, paralog clustering, motif analysis and gene order comparison.",
@@ -429,6 +779,20 @@
     "category": "Ortholog",
     "regex": "^(?<id>[a-z0-9]+)$",
     "prefix": "http://mbgd.genome.ad.jp/rdf/resource/organism/",
+    "examples": [
+      [
+        "lac",
+        "pfl",
+        "cou",
+        "bvn",
+        "btd",
+        "ctjt",
+        "sha",
+        "lmoj",
+        "dpi",
+        "arp"
+      ]
+    ],
     "name": "MBGD",
     "description_ja": "オーソログ解析に基づいて微生物ゲノムの比較解析を行うためのデータベースです。公開されたゲノム全体を含む標準オーソログテーブルに基づいて、各オーソロググループの系統プロファイルの比較などを行えるほか、動的なオーソログ解析機能によって、利用者自身が持つゲノム配列も含めて、興味のある生物種セットに対象を絞った比較を行うこともできます。",
     "description_en": "MBGD is a database with a workbench system for comparative analysis of completely sequenced microbial genomes, mainly for creating orthologous or homologous gene cluster tables. MBGD classifies genomes by the hierarchical clustering method known as UPGMA, using precomputed similarity relationships identified by all-against-all BLAST search. Users can change the set of organisms or cutoff parameters to create their own orthologous groupings. Thus comparative genomics is facilitated from various points of view such as ortholog identification, paralog clustering, motif analysis and gene order comparison.",
@@ -441,6 +805,20 @@
     "category": "Disease",
     "regex": "^(?:(?:MedDRA|meddra):)?(?<id>\\d+)$",
     "prefix": "http://identifiers.org/meddra/",
+    "examples": [
+      [
+        "10008033",
+        "10027710",
+        "10062506",
+        "10040493",
+        "10013611",
+        "10065857",
+        "10063143",
+        "10022599",
+        "10042342",
+        "10047883"
+      ]
+    ],
     "name": "MedDRA",
     "description_ja": "MedDRAは人間が使用する医薬品の規制情報を国際的に共有しやすくするために作成された、標準化された国際医療用語集です。英語版の他に、中国語、チェコ語、オランダ語、フランス語、ドイツ語、ハンガリー語、イタリア語、日本語、韓国語、ポルトガル語、ポルトガル語（ブラジル語）、ロシア語、スペイン語で提供されています。英国の医薬品医療製品規制庁（MHRA）に属する用語に基づいて、WHOを含むICHパートナーによって開発されました。サブスクリプションレベルにより有償・無償が異なります。",
     "description_en": "MedDRA is a standardized medical terminology for regulatory information of medical products. It is available for use in the registration, documentation and safety monitoring of medical products. It is provided in many languages, which are Chinese, Czech, Dutch, French, German, Hungarian, Italian, Japanese, Korean, Portuguese, Portuguese - Brazilian, Russian, and Spanish in addition to English Master.",
@@ -453,6 +831,20 @@
     "category": "Disease",
     "regex": "^(?<id>CN?\\d{4,7})$",
     "prefix": "http://identifiers.org/medgen/",
+    "examples": [
+      [
+        "C0264897",
+        "C0028860",
+        "C0018818",
+        "C1848392",
+        "C0006389",
+        "C0020517",
+        "C0000364",
+        "C0003123",
+        "C0009460",
+        "C0001648"
+      ]
+    ],
     "name": "MedGen",
     "description_ja": "遺伝医学に関連する症状や表現型に関する情報を集約したポータルデータベースです。NIHのGTR、UMLS、HPO、Orphanet、ClinVar、その他のソースから得られた用語を概念に集約し、一意の識別子（CUI）と優先名を割り当てます。 各エントリーには、名称、他のデータベースで使用される識別子、遺伝様式、臨床的特徴、疾患に影響を与える遺伝子座の地図上の位置が含まれます。",
     "description_en": "MedGen is a portal database about conditions and phenotypes related to Medical Genetics. It aggregates terms from the NIH Genetic Testing Registry (GTR), UMLS, HPO, Orphanet, ClinVar and other sources into concepts, and assigns a unique identifier and a preferred name and symbol. Each entry includes names, identifiers used by other databases, mode of inheritance, clinical features, and map location of the loci affecting the disorder. This database provides links to such resources as:\r\nGenetic tests registered in the NIH Genetic Testing Registry (GTR), GeneReviews, ClinVar, OMIM, Related genes, Disorders with similar clinical features, Medical and research literature, Practice guidelines, Consumer resources, Ontologies such as HPO and ORDO.",
@@ -465,6 +857,20 @@
     "category": "Terminology",
     "regex": "^(?<id>[CD]\\d{6,9})$",
     "prefix": "http://identifiers.org/mesh/",
+    "examples": [
+      [
+        "D002065",
+        "C562829",
+        "C566582",
+        "D010623",
+        "D003327",
+        "D001715",
+        "D000453",
+        "D010260",
+        "C537322",
+        "C563418"
+      ]
+    ],
     "name": "MeSH",
     "description_ja": "文献や、生物学情報の内容を表すキーワードのデータベースです。このキーワードを利用することで関連する生物学情報を得ることができます。キーワードは階層構造をなしており、より詳細に情報をたどることも、より抽象的な検索をすることも可能です。",
     "description_en": "This is a database of keywords representing the content of articles and biological information. The keywords are structured in layers to allow users to find more detailed information or perform abstract searches.",
@@ -475,8 +881,22 @@
     "label": "MGI",
     "catalog": "nbdc00135",
     "category": "Gene",
-    "regex": "^(?:(?:MGI|mgi):)?(?<id>\\d{5,})$",
+    "regex": "^(?:MGI|mgi):(?<id>\\d{5,})$",
     "prefix": "http://identifiers.org/mgi/MGI:",
+    "examples": [
+      [
+        "2387184",
+        "1920977",
+        "2442415",
+        "1098644",
+        "1196250",
+        "1914934",
+        "1914238",
+        "1919300",
+        "1914807",
+        "2145261"
+      ]
+    ],
     "name": "MGI",
     "description_ja": "マウス研究の総合サイトです。マウス遺伝子に関する情報の他、遺伝子発現データ、多型・変異情報、パスウエイ、遺伝性癌症候群モデルラットに関するデータ、マウス各系統の表現型に関する詳細な情報等を提供しています。Mammalian Phenotype Ontology を作成管理しており、 オントロジーの検索・閲覧もできます(http://www.informatics.jax.org/vocab/mp_ontology) 。Human - Mouse: Disease Connection (HMDC) により、ヒトとマウスの遺伝子や表現型を統合して検索ができます。",
     "description_en": "This is a comprehensive site for mouse research. The site contains detailed information on mouse genes, gene expression data, polymorphisms and mutations, pathways, data on model rats for hereditary cancers, and phenotypes of each mouse model system. They have developed and provided The Human - Mouse: Disease Connection (HMDC) and Mammalian Phenotype Ontology.",
@@ -489,6 +909,20 @@
     "category": "microRNA",
     "regex": "^(?<id>MI\\d{7})$",
     "prefix": "http://identifiers.org/mirbase/",
+    "examples": [
+      [
+        "MI0003587",
+        "MI0000252",
+        "MI0000811",
+        "MI0014201",
+        "MI0003578",
+        "MI0000293",
+        "MI0006384",
+        "MI0006361",
+        "MI0000480",
+        "MI0006419"
+      ]
+    ],
     "name": "miRBase",
     "description_ja": "公開されているmicroRNAの配列について、配列から予測されるmiRNA前駆体のヘアピン構造(mirで示されます)、成熟miRNAの配列(miRで示されます)、文献情報等が登録されています。様々な検索機能が用意されており、キーワード検索、ゲノム位置による検索、クラスター検索、発現実験による検索、ユーザ自身の配列による検索が行えます。全ての配列とアノテーションはダウンロード可能です。",
     "description_en": "miRBase is a database for published microRNA sequences and annotations, which include mature miRNA sequences (indicated by miR), and hairpin structures predicted by sequences that are precursors for miRNA (indicated by mir). A variety of search methods can be used, including by keyword, genomic position, cluster, expression data, and user-provided sequences. Furthermore, these sequences and annotations can be downloaded.",
@@ -499,8 +933,22 @@
     "label": "MONDO",
     "catalog": "nbdc02563",
     "category": "Disease",
-    "regex": "^(?:MONDO:)?(?<id>\\d{7})$",
+    "regex": "^MONDO[:_](?<id>\\d{7})$",
     "prefix": "http://purl.obolibrary.org/obo/MONDO_",
+    "examples": [
+      [
+        "0000115",
+        "0002345",
+        "0011571",
+        "0020035",
+        "0020920",
+        "0004627",
+        "0005480",
+        "0010852",
+        "0002053",
+        "0015758"
+      ]
+    ],
     "name": "MONDO",
     "description_ja": "疾病の定義を統合して構築したオントロジーです。疾病を定義しデータモデルを収録している多くのデータベース（HPO、OMIM、SNOMED CT、ICD、PhenoDB、MedDRA、MedGen、ORDO、DO、GARDなど）から情報を収集しています。開発当初は半自動で構築されていましたが、広範囲に渡り手動でキュレーションされるようになってきています。疾病の個々の症状、特徴の説明はHPOに準拠しており、疾病は階層構造で表示できます。OWL形式を利用したmondo-with-equivalent、obo、jsonの３つのフォーマットで利用可能です。",
     "description_en": "Mondo is an ontology for integrating disease definitions. It collects disease definitions and data models from numerous sources, which include HPO, OMIM, SNOMED CT, ICD, PhenoDB, MedDRA, MedGen, ORDO, DO, GARD, etc. It provides a hierarchical structure which can be used for classification or \"rolling up\" diseases to higher level groupings.",
@@ -511,8 +959,22 @@
     "label": "NANDO",
     "catalog": "nbdc02557",
     "category": "Disease",
-    "regex": "^(?:NANDO:)?(?<id>\\d{7})$",
-    "prefix": "http://nanbyodata.jp/ontology/nando#"
+    "regex": "^NANDO[:_](?<id>\\d{7})$",
+    "prefix": "http://nanbyodata.jp/ontology/nando#",
+    "examples": [
+      [
+        "1200461",
+        "1200466",
+        "1200851",
+        "1200061",
+        "1200315",
+        "1200365",
+        "1200922",
+        "1200705",
+        "2200074",
+        "1200030"
+      ]
+    ]
   },
   "ncbigene": {
     "label": "NCBI gene",
@@ -520,6 +982,20 @@
     "category": "Gene",
     "regex": "^(?<id>\\d+)$",
     "prefix": "http://identifiers.org/ncbigene/",
+    "examples": [
+      [
+        "63962027",
+        "1046",
+        "63961921",
+        "102606930",
+        "100472895",
+        "407025",
+        "84148",
+        "88",
+        "31157",
+        "100463227"
+      ]
+    ],
     "name": "NCBI Gene",
     "description_ja": "生物種別の遺伝子単位でエントリーを構成しており、NCBIの様々なデータベースを統合的に利用して遺伝子情報を掲載しています。染色体上の位置、配列、発現、構造、機能、ホモロジーデータのような遺伝子をベースとした情報を提供しています。",
     "description_en": "The gene database provides information on gene sequence, structure, location, and function for annotated genes from the NCBI database. Users can search by accession ID or keyword, compare and identify sequences using BLAST, or submit references into function (RIFs) based on experimental results. Bulk download and an update mailing list are available.",
@@ -543,14 +1019,42 @@
     "catalog": "nbdc02221",
     "category": "Ortholog",
     "regex": "^(?<id>[A-Z]+)$",
-    "prefix": "http://identifiers.org/oma.grp/"
+    "prefix": "http://identifiers.org/oma.grp/",
+    "examples": [
+      [
+        "RVAAYKY",
+        "LFVHAIL",
+        "EMSPITC",
+        "NQSHFFA",
+        "AYTHYSY",
+        "PRPKYDP",
+        "WSRIHIV",
+        "DFGGWKI",
+        "FHVAHGE",
+        "PYVYVTH"
+      ]
+    ]
   },
   "oma_protein": {
     "label": "OMA protein",
     "catalog": "nbdc02221",
     "category": "Protein",
     "regex": "^(?<id>[A-Z]{3}[A-Z0-9]{2}[0-9]{5,6})$",
-    "prefix": "http://identifiers.org/oma.protein/"
+    "prefix": "http://identifiers.org/oma.protein/",
+    "examples": [
+      [
+        "ACIB400217",
+        "ACIB400465",
+        "HUMAN00333",
+        "HUMAN01170",
+        "HUMAN00470",
+        "HUMAN03367",
+        "ACIB400486",
+        "HUMAN01061",
+        "HUMAN02190",
+        "HUMAN02112"
+      ]
+    ]
   },
   "omim_gene": {
     "label": "OMIM gene",
@@ -558,6 +1062,20 @@
     "category": "Gene",
     "regex": "^(?:O?MIM:)?(?<id>\\d{6})$",
     "prefix": "http://identifiers.org/mim/",
+    "examples": [
+      [
+        "604810",
+        "115460",
+        "608706",
+        "300181",
+        "102575",
+        "601280",
+        "602832",
+        "601604",
+        "177075",
+        "608977"
+      ]
+    ],
     "name": "OMIM",
     "description_ja": "Johns Hopkins大学のVictor A. McKusick 博士が中心となって記述、編集を行っている、ヒトの遺伝子変異と遺伝病のデータベースです。全ての既知のメンデル型遺伝病と12,000以上の遺伝子に関して、テキスト形式の情報やリファレンスが示されます。MEDLINEやEntrezのリンクも含まれます。",
     "description_en": "OMIM is a database of human disease and genetic information and the online representation of Mendelian Inheritance in Man, a project initiated in the 1960s. The database summarizes heritable traits and provides information on both the trait and experimentally determined genetic causes. The database is manually curated by experts and can be searched by OMIM ID, gene, disease, or phenotype.",
@@ -570,6 +1088,20 @@
     "category": "Disease",
     "regex": "^(?:O?MIM:)?(?<id>\\d{6})$",
     "prefix": "http://identifiers.org/mim/",
+    "examples": [
+      [
+        "207780",
+        "236100",
+        "237500",
+        "300716",
+        "125310",
+        "165199",
+        "617175",
+        "137600",
+        "600089",
+        "601317"
+      ]
+    ],
     "name": "OMIM",
     "description_ja": "Johns Hopkins大学のVictor A. McKusick 博士が中心となって記述、編集を行っている、ヒトの遺伝子変異と遺伝病のデータベースです。全ての既知のメンデル型遺伝病と12,000以上の遺伝子に関して、テキスト形式の情報やリファレンスが示されます。MEDLINEやEntrezのリンクも含まれます。",
     "description_en": "OMIM is a database of human disease and genetic information and the online representation of Mendelian Inheritance in Man, a project initiated in the 1960s. The database summarizes heritable traits and provides information on both the trait and experimentally determined genetic causes. The database is manually curated by experts and can be searched by OMIM ID, gene, disease, or phenotype.",
@@ -577,11 +1109,25 @@
     "organization_en": "National Center for Biotechnology Information"
   },
   "orphanet": {
-    "label": "Orphanet Rare Disease ontology",
+    "label": "Orphanet",
     "catalog": "nbdc01422",
     "category": "Disease",
-    "regex": "^(?:(?:ORPHA|ORDO|Orphanet):?)?(?<id>[A-Z0-9]+)$",
+    "regex": "^(?:ORPHA|ORDO|Orphanet)[:_](?<id>[A-Z0-9]+)$",
     "prefix": "http://identifiers.org/orphanet.ordo/Orphanet_",
+    "examples": [
+      [
+        "101078",
+        "596",
+        "1934",
+        "1047",
+        "60025",
+        "166090",
+        "275745",
+        "1171",
+        "93277",
+        "247598"
+      ]
+    ],
     "name": "Orphanet",
     "description_ja": "Orphanetは希少疾患患者の診断と治療の向上を図ることを目的とした、希少疾患や希少疾患用医薬品について様々な情報を参照可能にしたデータベースです。疾患や薬に関する一般的な情報をはじめとして、臨床試験情報、関連する論文や、有病率、発症歴、症状、地域情報などを検索可能です。",
     "description_en": "Orphanet is a portal site for rare diseases and orphan drugs. It provides inventory of rare diseases and classification, inventory of orphan drugs, clinical trials, etc.",
@@ -594,6 +1140,20 @@
     "category": "Structure",
     "regex": "^(?<id>[0-9][A-Za-z0-9]{3})$",
     "prefix": "http://rdf.wwpdb.org/pdb/",
+    "examples": [
+      [
+        "3PFQ",
+        "2OUY",
+        "6EBX",
+        "5GHP",
+        "6ETH",
+        "1Y28",
+        "6FB2",
+        "5JO3",
+        "2JQZ",
+        "5L5P"
+      ]
+    ],
     "name": "wwPDB",
     "description_ja": "タンパク質と核酸の３次元構造の構造座標（立体配座）を蓄積している国際的な公共レポジトリです。\r\n　RCSB PDB （https://integbio.jp/dbcatalog/record/nbdc01865 ）\r\n　PDBe （https://integbio.jp/dbcatalog/record/nbdc00613 ）\r\n　PDBj （https://integbio.jp/dbcatalog/record/nbdc00157 ）\r\n　BMRB （https://integbio.jp/dbcatalog/record/nbdc00380 ）\r\n上記４つデータベースの集合体として、X線結晶構造解析やNMRなどで実験的に決定されたタンパク質の立体構造データの他に、アミノ酸配列、GOといったタンパク質に関する情報やタンパク質に結合している化合物の情報を統合し提供しています。検証データ登録のためのツールや登録データのダウンロードが可能なFTPサイトを装備しています。",
     "description_en": "This is an international public repository for three-dimensional structures and structure coordinates (conformations) of proteins and nucleic acids, and the central database for biological structural data. Data obtained through X-ray crystallography and NMR experiments are stored in PDB. In addition to three-dimensional information of proteins, users can find amino acid sequences, protein-related information on GO, and other compounds bound to the protein.",
@@ -606,6 +1166,20 @@
     "category": "Domain",
     "regex": "^(?<id>PF\\d{5})$",
     "prefix": "http://identifiers.org/pfam/",
+    "examples": [
+      [
+        "PF03719",
+        "PF03726",
+        "PF02809",
+        "PF00105",
+        "PF00250",
+        "PF00412",
+        "PF01412",
+        "PF00459",
+        "PF02532",
+        "PF01226"
+      ]
+    ],
     "name": "Pfam",
     "description_ja": "現在最もよく整備されたタンパク質ドメインデータベースの一つで、膨大な数のタンパク質ファミリーのコレクションを保持しています。手作業で分類を行った高品質のPfam-Aと、機械的に分類を行ったPfam-Bから構成されています。最大の特徴は、検索システムとしてHMMERというプログラムを使用している点であり、これにより高速で精度の高いモチーフの検索を可能にしています。",
     "description_en": "Pfam Version 26.0 is a comprehensive database of protein families containing multiple sequence alignments and HMMs.\nThis repository provides data on 13,672 protein families.\nThe site can be searched with a known protein sequence for matching families. \nOptions to search for a Pfam family, clan, sequence or structure are available.\nA keyword search option is also provided.",
@@ -618,6 +1192,20 @@
     "category": "Compound",
     "regex": "^(?:CID)?(?<id>\\d+)$",
     "prefix": "http://identifiers.org/pubchem.compound/",
+    "examples": [
+      [
+        "9548669",
+        "160419",
+        "9869929",
+        "76333303",
+        "9868491",
+        "27854",
+        "76329169",
+        "3448",
+        "296",
+        "10371227"
+      ]
+    ],
     "name": "PubChem Compound",
     "description_ja": "化合物名や分子量、CompoundIDなどで化合物の情報を検索することができるサイトです。医薬品名やその効能、LogP値などの物性値も掲載されています。また、類似構造を持つ別の化合物の検索も可能です。PubChem Substanceが一つの化合物に対して異なる情報をもつ複数のエントリをもつ可能性があるのに対し、PubChem CompoundはPubChem Substanceで得られた種々の情報を一つのエントリに集約して提供しています。",
     "description_en": "PubChem Compound is a database of chemical structrues of validated small molecules. The dataase contains entries for PubChem entities which are grouped by structural identity and similarity. Users can submit compounds and download via FTP.",
@@ -630,6 +1218,20 @@
     "category": "Compound",
     "regex": "^(?:SID)?(?<id>\\d+)$",
     "prefix": "http://identifiers.org/pubchem.substance/",
+    "examples": [
+      [
+        "15229855",
+        "15277848",
+        "15782795",
+        "16076657",
+        "16035895",
+        "12012900",
+        "15378994",
+        "14850434",
+        "14847540",
+        "15271473"
+      ]
+    ],
     "name": "PubChem Substance",
     "description_ja": "PubChem Substanceは、出版社、研究者、化学ベンダー、製薬会社、および多くの重要なケミカルバイオロジーリソースをもつ研究者によって提供された化学物質とその生物活性に関する情報のオープンアーカイブです。特定の化学物質に関して個々の提供者からの情報が含まれており、１つの化合物に対して提供者が異なる別のレコードとして異なる情報を提供している可能性があります。",
     "description_en": "PubChem Substance is a database of samples of chemical entities which links to the biological activity of those samples in PubChem BioAssay. The database contains structural information on substances with links to further information in cases where the substance has been more fully characterized. It consists of records of chemical entities deposited by various contributors, so a chemical entity may be described different records with different data in this database.",
@@ -642,6 +1244,20 @@
     "category": "Literature",
     "regex": "^(?:pmid|PMID:)?(?<id>\\d+)$",
     "prefix": "http://identifiers.org/pubmed/",
+    "examples": [
+      [
+        "19281226",
+        "19879151",
+        "20858243",
+        "10773016",
+        "16527252",
+        "28499733",
+        "10397770",
+        "15149666",
+        "23861362",
+        "10577920"
+      ]
+    ],
     "name": "PubMed",
     "description_ja": "MEDLINEおよび生命科学分野のジャーナル文献の書誌情報（タイトル、著者名、雑誌名、抄録など）を収録したデータベースです。全文をフリーで公開している文献については、提供サイトへのリンクが張られています。",
     "description_en": "This database contains bibliographic information from journal articles in the field of life science as well as MEDLINE (title, authors, journal name, abstracts). Links are provided for articles with free access to the full article.",
@@ -652,8 +1268,22 @@
     "label": "Reactome pathway",
     "catalog": "nbdc00185",
     "category": "Pathway",
-    "regex": "^(?:(?<id1>R-[A-Z]{3}-\\d+(?:-\\d+)?(?:\\.\\d+)?)|(?<id2>REACT_\\d+(?:\\.\\d+)?))$",
+    "regex": "^(?<id>R-[A-Z]{3}-\\d+)(?:\\.\\d+)?$",
     "prefix": "http://identifiers.org/reactome/",
+    "examples": [
+      [
+        "R-HSA-165159",
+        "R-DRE-1630316",
+        "R-SCE-9634635",
+        "R-DRE-140834",
+        "R-HSA-2142753",
+        "R-BTA-383280",
+        "R-MMU-5218900",
+        "R-RNO-5654219",
+        "R-MMU-8875791",
+        "R-MMU-9648025"
+      ]
+    ],
     "name": "REACTOME",
     "description_ja": "ヒトの生体内の主要反応経路や生化学反応を整備したデータベースです。ヒト以外の20生物種のデータも格納しており、ヒトとの比較ができます。ここに収録されている情報は、それぞれの分野の専門家が編集しているため、非常に信頼性の高いデータベースです。代謝パスウェイ、シグナル伝達や膜輸送、感染など様々なパスウェイが扱われており、SBGN (Sytem Biology Graphical Notation)形式で視覚化されています。パスウエイ解析、生物種間比較、発現解析も行えます。",
     "description_en": "REACTOME is a database of human pathways for basic research, genome analysis, pathway modeling, systems biology and education. It contains manually curated and peer-reviewed pathway data which are annotated by expert biologists, in collaboration with Reactome editorial staff and cross-referenced to many bioinformatics databases. This database provides an intuitive website to navigate pathway knowledge and a suite of data analysis tools to support the pathway-based analysis of complex experimental and computational data sets. The curated  human pathway data are available to infer orthologous events in 20 non-human species including mouse, rat, chicken, worm, fly, yeast, plant and bacteria. Using species comparison tool, users are able to compare predicted pathways with those of human to find reactions and pathways common to a selected species and human.",
@@ -664,8 +1294,22 @@
     "label": "Reactome reaction",
     "catalog": "nbdc00185",
     "category": "Interaction",
-    "regex": "^(?:(?<id1>R-[A-Z]{3}-\\d+(?:-\\d+)?(?:\\.\\d+)?)|(?<id2>REACT_\\d+(?:\\.\\d+)?))$",
+    "regex": "^(?<id>R-[A-Z]{3}-\\d+)(?:\\.\\d+)?$",
     "prefix": "http://identifiers.org/reactome/",
+    "examples": [
+      [
+        "R-DRE-1482961",
+        "R-DRE-6814409",
+        "R-HSA-2395869",
+        "R-HSA-1222722",
+        "R-HSA-893583",
+        "R-MMU-158484",
+        "R-HSA-8875071",
+        "R-HSA-372519",
+        "R-HSA-6797627",
+        "R-DRE-975814"
+      ]
+    ],
     "name": "REACTOME",
     "description_ja": "ヒトの生体内の主要反応経路や生化学反応を整備したデータベースです。ヒト以外の20生物種のデータも格納しており、ヒトとの比較ができます。ここに収録されている情報は、それぞれの分野の専門家が編集しているため、非常に信頼性の高いデータベースです。代謝パスウェイ、シグナル伝達や膜輸送、感染など様々なパスウェイが扱われており、SBGN (Sytem Biology Graphical Notation)形式で視覚化されています。パスウエイ解析、生物種間比較、発現解析も行えます。",
     "description_en": "REACTOME is a database of human pathways for basic research, genome analysis, pathway modeling, systems biology and education. It contains manually curated and peer-reviewed pathway data which are annotated by expert biologists, in collaboration with Reactome editorial staff and cross-referenced to many bioinformatics databases. This database provides an intuitive website to navigate pathway knowledge and a suite of data analysis tools to support the pathway-based analysis of complex experimental and computational data sets. The curated  human pathway data are available to infer orthologous events in 20 non-human species including mouse, rat, chicken, worm, fly, yeast, plant and bacteria. Using species comparison tool, users are able to compare predicted pathways with those of human to find reactions and pathways common to a selected species and human.",
@@ -678,6 +1322,20 @@
     "category": "Genome",
     "regex": "^(?<id>(?:AC_|N[CGTW]_|NZ_[A-Z]+)\\d+)(?:\\.\\d+)?$",
     "prefix": "http://identifiers.org/refseq/",
+    "examples": [
+      [
+        "NG_031030",
+        "NG_031166",
+        "NG_031424",
+        "NG_016634",
+        "NG_030933",
+        "NG_073714",
+        "NG_031092",
+        "NG_023144",
+        "NG_065813",
+        "NG_064363"
+      ]
+    ],
     "name": "RefSeq",
     "description_ja": "異なる生物種由来の冗長性を排除したDNA, RNA, タンパク配列を収録したデータベースです。プラスミド、オルガネラ、ウイルス、古細菌、真正細菌、真核生物のアノテーション付けされた配列が含まれています。生物種ごとに、標準となる配列の包括的データセットを提供することを目的としています。配列の情報源はGenBank由来ですが、それらの中から情報を統合して標準となる配列を提供しています。",
     "description_en": "RefSeq is a database of standard reference genomic, transcript, and protein sequences. The database contains consensus sequence data for over 20,000 organisms and over 27 million proteins and is designed to provide a common basis for experimental studies that can be searched using accession ID, keyword, or BLAST. Bulk data is available for FTP download.",
@@ -690,6 +1348,20 @@
     "category": "Protein",
     "regex": "^(?<id>[ANXYWZ]P_\\d+)(?:\\.\\d+)?$",
     "prefix": "http://identifiers.org/refseq/",
+    "examples": [
+      [
+        "WP_010809318",
+        "WP_012670041",
+        "WP_047102230",
+        "WP_012670510",
+        "WP_047101562",
+        "XP_005703001",
+        "NP_199982",
+        "XP_005703194",
+        "WP_012670302",
+        "AP_004898"
+      ]
+    ],
     "name": "RefSeq",
     "description_ja": "異なる生物種由来の冗長性を排除したDNA, RNA, タンパク配列を収録したデータベースです。プラスミド、オルガネラ、ウイルス、古細菌、真正細菌、真核生物のアノテーション付けされた配列が含まれています。生物種ごとに、標準となる配列の包括的データセットを提供することを目的としています。配列の情報源はGenBank由来ですが、それらの中から情報を統合して標準となる配列を提供しています。",
     "description_en": "RefSeq is a database of standard reference genomic, transcript, and protein sequences. The database contains consensus sequence data for over 20,000 organisms and over 27 million proteins and is designed to provide a common basis for experimental studies that can be searched using accession ID, keyword, or BLAST. Bulk data is available for FTP download.",
@@ -702,6 +1374,20 @@
     "category": "Gene",
     "regex": "^(?<id>(?:NM|NR|XM|XR)_\\d+)(?:\\.\\d+)?$",
     "prefix": "http://identifiers.org/refseq/",
+    "examples": [
+      [
+        "XM_005702730",
+        "XM_006466408",
+        "XM_005709902",
+        "XM_005702513",
+        "NR_103750",
+        "XM_005703053",
+        "NM_014672",
+        "XM_005702591",
+        "XM_025096767",
+        "XM_002919304"
+      ]
+    ],
     "name": "RefSeq",
     "description_ja": "異なる生物種由来の冗長性を排除したDNA, RNA, タンパク配列を収録したデータベースです。プラスミド、オルガネラ、ウイルス、古細菌、真正細菌、真核生物のアノテーション付けされた配列が含まれています。生物種ごとに、標準となる配列の包括的データセットを提供することを目的としています。配列の情報源はGenBank由来ですが、それらの中から情報を統合して標準となる配列を提供しています。",
     "description_en": "RefSeq is a database of standard reference genomic, transcript, and protein sequences. The database contains consensus sequence data for over 20,000 organisms and over 27 million proteins and is designed to provide a common basis for experimental studies that can be searched using accession ID, keyword, or BLAST. Bulk data is available for FTP download.",
@@ -714,6 +1400,20 @@
     "category": "Gene",
     "regex": "^(?:(?:RGD|rgd):)?(?<id>\\d{4,})$",
     "prefix": "http://identifiers.org/rgd/",
+    "examples": [
+      [
+        "1308312",
+        "1311120",
+        "1309724",
+        "1565514",
+        "7683241",
+        "1307957",
+        "71036",
+        "1307876",
+        "1308965",
+        "1305482"
+      ]
+    ],
     "name": "RGD",
     "description_ja": "ラットゲノム研究の総合サイトです。ラット遺伝子に関する情報の他に、ラットの系統に関する情報、病態モデルラットに関するデータ、文献情報等を提供しています。",
     "description_en": "This is a comprehensive site for rat genome researches. In addition to information on rat genes, the site contains information on rat strains, data on rat models for disease, and publications.",
@@ -725,7 +1425,21 @@
     "catalog": "nbdc02083",
     "category": "Interaction",
     "regex": "^(?<id>\\d{5})$",
-    "prefix": "http://identifiers.org/rhea/"
+    "prefix": "http://identifiers.org/rhea/",
+    "examples": [
+      [
+        "10253",
+        "10818",
+        "13517",
+        "11136",
+        "13729",
+        "10240",
+        "11728",
+        "16870",
+        "10732",
+        "11278"
+      ]
+    ]
   },
   "sra_accession": {
     "label": "SRA accession",
@@ -733,6 +1447,20 @@
     "category": "NGS",
     "regex": "^(?<id>[SED]RA\\d+)$",
     "prefix": "http://identifiers.org/insdc.sra/",
+    "examples": [
+      [
+        "DRA000741",
+        "DRA000768",
+        "DRA001014",
+        "DRA000833",
+        "DRA001001",
+        "DRA001047",
+        "DRA000684",
+        "DRA000824",
+        "DRA000194",
+        "DRA000401"
+      ]
+    ],
     "name": "SRA",
     "description_ja": "次世代シーケンサーによる配列データのレポジトリサイトです。現在扱っているプラットフォームは454(ロシュ)、Genome Analyzer(イルミナ)、SOLiD(アプライドバイオシステムズ)、Heliscope(ヘリコス)。研究単位でデータの登録、配布を行っています。",
     "description_en": "SRA is a database of raw sequence reads from next-generation sequencing systems. The database contains millions of unannotated raw reads generated from a variety of projects. Data can be submitted to the archive or downloaded via FTP.",
@@ -745,6 +1473,20 @@
     "category": "NGS",
     "regex": "^(?<id>[SED]RZ\\d+)$",
     "prefix": "http://identifiers.org/insdc.sra/",
+    "examples": [
+      [
+        "DRZ000249",
+        "DRZ000087",
+        "DRZ003045",
+        "DRZ000829",
+        "DRZ000005",
+        "DRZ000291",
+        "DRZ000465",
+        "DRZ000591",
+        "DRZ000148",
+        "DRZ000854"
+      ]
+    ],
     "name": "SRA",
     "description_ja": "次世代シーケンサーによる配列データのレポジトリサイトです。現在扱っているプラットフォームは454(ロシュ)、Genome Analyzer(イルミナ)、SOLiD(アプライドバイオシステムズ)、Heliscope(ヘリコス)。研究単位でデータの登録、配布を行っています。",
     "description_en": "SRA is a database of raw sequence reads from next-generation sequencing systems. The database contains millions of unannotated raw reads generated from a variety of projects. Data can be submitted to the archive or downloaded via FTP.",
@@ -757,6 +1499,20 @@
     "category": "NGS",
     "regex": "^(?<id>[SED]RX\\d+)$",
     "prefix": "http://identifiers.org/insdc.sra/",
+    "examples": [
+      [
+        "DRX000585",
+        "DRX000114",
+        "DRX000613",
+        "DRX000681",
+        "DRX000838",
+        "DRX000085",
+        "DRX000123",
+        "DRX000787",
+        "DRX000887",
+        "DRX000345"
+      ]
+    ],
     "name": "SRA",
     "description_ja": "次世代シーケンサーによる配列データのレポジトリサイトです。現在扱っているプラットフォームは454(ロシュ)、Genome Analyzer(イルミナ)、SOLiD(アプライドバイオシステムズ)、Heliscope(ヘリコス)。研究単位でデータの登録、配布を行っています。",
     "description_en": "SRA is a database of raw sequence reads from next-generation sequencing systems. The database contains millions of unannotated raw reads generated from a variety of projects. Data can be submitted to the archive or downloaded via FTP.",
@@ -769,6 +1525,20 @@
     "category": "NGS",
     "regex": "^(?<id>[SED]RP\\d+)$",
     "prefix": "http://identifiers.org/insdc.sra/",
+    "examples": [
+      [
+        "DRP000994",
+        "DRP000877",
+        "DRP000649",
+        "DRP000147",
+        "DRP000137",
+        "DRP000739",
+        "DRP000735",
+        "DRP000407",
+        "DRP000567",
+        "DRP000467"
+      ]
+    ],
     "name": "SRA",
     "description_ja": "次世代シーケンサーによる配列データのレポジトリサイトです。現在扱っているプラットフォームは454(ロシュ)、Genome Analyzer(イルミナ)、SOLiD(アプライドバイオシステムズ)、Heliscope(ヘリコス)。研究単位でデータの登録、配布を行っています。",
     "description_en": "SRA is a database of raw sequence reads from next-generation sequencing systems. The database contains millions of unannotated raw reads generated from a variety of projects. Data can be submitted to the archive or downloaded via FTP.",
@@ -781,6 +1551,20 @@
     "category": "NGS",
     "regex": "^(?<id>[SED]RR\\d+)$",
     "prefix": "http://identifiers.org/insdc.sra/",
+    "examples": [
+      [
+        "DRR000834",
+        "DRR000683",
+        "DRR000264",
+        "DRR000453",
+        "DRR001043",
+        "DRR000854",
+        "DRR000702",
+        "DRR000980",
+        "DRR000165",
+        "DRR000978"
+      ]
+    ],
     "name": "SRA",
     "description_ja": "次世代シーケンサーによる配列データのレポジトリサイトです。現在扱っているプラットフォームは454(ロシュ)、Genome Analyzer(イルミナ)、SOLiD(アプライドバイオシステムズ)、Heliscope(ヘリコス)。研究単位でデータの登録、配布を行っています。",
     "description_en": "SRA is a database of raw sequence reads from next-generation sequencing systems. The database contains millions of unannotated raw reads generated from a variety of projects. Data can be submitted to the archive or downloaded via FTP.",
@@ -793,6 +1577,20 @@
     "category": "NGS",
     "regex": "^(?<id>[SED]RS\\d+)$",
     "prefix": "http://identifiers.org/insdc.sra/",
+    "examples": [
+      [
+        "DRS001431",
+        "DRS001371",
+        "DRS000894",
+        "DRS000386",
+        "DRS000488",
+        "DRS000215",
+        "DRS000427",
+        "DRS001029",
+        "DRS000677",
+        "DRS000930"
+      ]
+    ],
     "name": "SRA",
     "description_ja": "次世代シーケンサーによる配列データのレポジトリサイトです。現在扱っているプラットフォームは454(ロシュ)、Genome Analyzer(イルミナ)、SOLiD(アプライドバイオシステムズ)、Heliscope(ヘリコス)。研究単位でデータの登録、配布を行っています。",
     "description_en": "SRA is a database of raw sequence reads from next-generation sequencing systems. The database contains millions of unannotated raw reads generated from a variety of projects. Data can be submitted to the archive or downloaded via FTP.",
@@ -805,6 +1603,20 @@
     "category": "Taxonomy",
     "regex": "^(?<id>\\d+)$",
     "prefix": "http://identifiers.org/taxonomy/",
+    "examples": [
+      [
+        "1171376",
+        "484906",
+        "1214242",
+        "1124991",
+        "1037911",
+        "1266844",
+        "243277",
+        "696747",
+        "263820",
+        "713604"
+      ]
+    ],
     "name": "Taxonomy - NCBI",
     "description_ja": "NCBI Entrezデータベースに少なくとも1件以上登録されている全ての生物種と上位分類名を収集したデータベースです。160,000以上の生物種が登録されています。各エントリーには、学名、英名、階層分類、上位階層、Entrezデータベース群の収録数とリンクが含まれています。このデータベースは、種々のデータベース間で生物名の表記を統一することを目的として構築しており、分類学や系統発生学の権威となるものではありません。採用されている生物名や系統分類は、分類学的、系統発生学的に普及している内容と異なる場合があります。",
     "description_en": "Taxonomy is a database of systematic classifications of organisms repesented in public sequencing databases. The database contains phylogenetic relatonships and nomenclature for an estimated 10% of all living species. Tools include a browser, genetic codes, and a common evolutionary tree. Taxonomic classificatinos can be downloaded via FTP.",
@@ -817,6 +1629,20 @@
     "category": "Variant",
     "regex": "^(?<id>tgv\\d+)$",
     "prefix": "http://togovar.biosciencedbc.jp/variation/",
+    "examples": [
+      [
+        "tgv100005930",
+        "tgv100000890",
+        "tgv16331",
+        "tgv10000341",
+        "tgv21330879",
+        "tgv15847",
+        "tgv1354996",
+        "tgv100002132",
+        "tgv16568524",
+        "tgv62035164"
+      ]
+    ],
     "name": "TogoVar",
     "description_ja": "TogoVar（日本人ゲノム多様性統合データベース）は、日本人ゲノム配列の個人による違い（バリアント）とそれに関係する疾患情報などを収集・整理したデータベースです。TogoVarは、研究プロジェクト横断的に集約した日本人におけるバリアントの頻度情報を提供します。利用可能な２つのデータセットであるJGA-NGSとJGA-SNPはNBDCヒトデータベース/Japanese Genotype-phenotype Archive (JGA)に登録されている個人ごとのゲノムデータを集約して得られた頻度情報です。さらに、多種多様なデータベースに散在して収録されてきた遺伝子型や表現型に関連する情報を整理統合し、バリアントを解釈するための情報をワンストップでわかりやすく提供します。",
     "description_en": "TogoVar (NBDC's integrated database of Japanese genomic variation) is a database that has collected and organized genome sequence differences between individuals (variants) in the Japanese population and disease information associated with them. TogoVar provides variant frequencies in the Japanese population that have been aggregated across research projects. Two available datasets, JGA-NGS and JGA-SNP, are obtained by aggregating individual genomic data that have been registered in the NBDC Human Database / Japanese Genotype-phenotype Archive (JGA). In addition, TogoVar integrates information related to genotypes or phenotypes that has been compiled independently in a variety of different databases and provides information for interpreting variants in a one-stop, easy-to-understand manner.\r\nUsers can learn how to use it by a movie: https://togotv.dbcls.jp/en/20181012.html",
@@ -829,6 +1655,20 @@
     "category": "Protein",
     "regex": "^(?:(?<id1>[A-NR-Z][0-9](?:[A-Z][A-Z0-9][A-Z0-9][0-9]){1,2}(?:-\\d+)?)|(?<id2>[OPQ][0-9][A-Z0-9][A-Z0-9][A-Z0-9][0-9](?:-\\d+)?)(?:\\.\\d+)?)$",
     "prefix": "http://purl.uniprot.org/uniprot/",
+    "examples": [
+      [
+        "A0A174V9D2",
+        "A0A1V4U2Y9",
+        "Q7NXD4",
+        "P0AAM3",
+        "O43423",
+        "D4IJI4",
+        "Q66SS1",
+        "B5IDU9",
+        "D3TBR4",
+        "D4ILS5"
+      ]
+    ],
     "name": "UniProt",
     "description_ja": "アミノ酸配列とその機能情報を掲載している代表的なデータベースです。「UniProtKB」、「UniRef」、「UniParc」の3種類のデータベースから構成されています。\r\nUniProtKB: 文献情報などを元に手作業で高品質のアノテーションを付けたSwissProtと、機械的にアノテーションを加えたTrEMBLを公開しています。\r\nUniRef: あらかじめ行われた配列相同性検索の結果を提供しています。\r\nUniParc: 配列IDごとに他のデータベースのID等の情報をまとめています。",
     "description_en": "This database contains information on amino acid sequences and their functions. It is composed of four core databases, UniProtKB, UniRef, UniParc, and Proteomes. UniProtKB contains two types of data, which are manually curated high quality SwissProt annotations based on literature information, and automatically annotated TrEMBL. \r\nUniRef provides results of sequence similarity searches. \r\nUniParc integrates information such as ID for other databases per sequence ID.\r\nProteomes provides proteome data of each organism with completely sequenced genomes.",
@@ -841,6 +1681,20 @@
     "category": "Protein",
     "regex": "^(?<id>[A-Z0-9]+_[A-Z0-9]{0,5})$",
     "prefix": "http://purl.uniprot.org/uniprot/",
+    "examples": [
+      [
+        "2ABA_ORYSJ",
+        "33K_ADES1",
+        "1003L_ASFK5",
+        "1A1D_VARPS",
+        "1B02_GORGO",
+        "1003L_ASFP4",
+        "1433B_MACFA",
+        "1107L_ASFWA",
+        "3BHS1_MOUSE",
+        "14331_SCHMA"
+      ]
+    ],
     "name": "UniProt",
     "description_ja": "アミノ酸配列とその機能情報を掲載している代表的なデータベースです。「UniProtKB」、「UniRef」、「UniParc」の3種類のデータベースから構成されています。\r\nUniProtKB: 文献情報などを元に手作業で高品質のアノテーションを付けたSwissProtと、機械的にアノテーションを加えたTrEMBLを公開しています。\r\nUniRef: あらかじめ行われた配列相同性検索の結果を提供しています。\r\nUniParc: 配列IDごとに他のデータベースのID等の情報をまとめています。",
     "description_en": "This database contains information on amino acid sequences and their functions. It is composed of four core databases, UniProtKB, UniRef, UniParc, and Proteomes. UniProtKB contains two types of data, which are manually curated high quality SwissProt annotations based on literature information, and automatically annotated TrEMBL. \r\nUniRef provides results of sequence similarity searches. \r\nUniParc integrates information such as ID for other databases per sequence ID.\r\nProteomes provides proteome data of each organism with completely sequenced genomes.",
@@ -852,6 +1706,20 @@
     "catalog": "nbdc02116",
     "category": "Pathway",
     "regex": "^(?<id>WP\\d{1,5})(?:\\_r\\d+)?$",
-    "prefix": "http://identifiers.org/wikipathways/"
+    "prefix": "http://identifiers.org/wikipathways/",
+    "examples": [
+      [
+        "WP3882",
+        "WP2249",
+        "WP1925",
+        "WP4989",
+        "WP2708",
+        "WP3578",
+        "WP3811",
+        "WP376",
+        "WP4523",
+        "WP269"
+      ]
+    ]
   }
 }
