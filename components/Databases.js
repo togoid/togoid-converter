@@ -128,15 +128,22 @@ const Databases = (props) => {
                           <div className="data__wrapper">
                             <dt>EXAMPLES</dt>
                             <dd>
-                              <a
-                                href="#"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  clickExamples(dataset[key].examples);
-                                }}
-                              >
-                                {dataset[key].examples}
-                              </a>
+                              {dataset[key].examples.map((example) => {
+                                const exampleStr = example.join(", ");
+                                return (
+                                  <li>
+                                    <a
+                                      href="#"
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        clickExamples(exampleStr);
+                                      }}
+                                    >
+                                      {exampleStr}
+                                    </a>
+                                  </li>
+                                );
+                              })}
                             </dd>
                           </div>
                         )}
