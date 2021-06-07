@@ -1,30 +1,212 @@
-openapi: "3.0.0"
+swagger: '2.0'
 info:
-  version: "0.0.1"
-  title: "Swagger UI Webpack Setup"
-  description: "Demonstrates Swagger UI with Webpack including CSS and OAuth"
-servers:
-  - url: "https://demo.identityserver.io/api"
-    description: "Identity Server test API"
-components:
-  securitySchemes:
-    # See https://demo.identityserver.io/ for configuration details.
-    identity_server_auth:
-      type: oauth2
-      flows:
-        implicit:
-          authorizationUrl: "https://demo.identityserver.io/connect/authorize"
-          scopes:
-            api: "api"
-security:
-  - identity_server_auth:
-    - api
+  title: togoid API
+  version: 1.0.0
+host: api.togoid.dbcls.jp.il3c.com
+schemes:
+  - https
+produces:
+  - application/json
+tags:
+- name: "convert"
+- name: "config"
 paths:
-  /test:
+  /convert:
     get:
-      summary: "Runs a test request against the Identity Server demo API"
+      tags: 
+        - "convert"
+      description: |-
+        convert id
+      operationId: convertId
+      x-google-backend:
+        address: https://api.togoid.dbcls.jp.il3c.com/convert
+      parameters:
+        - name: ids
+          in: query
+          type: string
+          description: ID文字列をカンマ区切りで列挙
+          required: true
+        - name: routes
+          in: query
+          type: string
+          description: https://github.com/dbcls/togoid-config/blob/main/config/dataset.yaml のkeyをカンマ区切りで列挙
+          required: true
+        - name: limit
+          in: query
+          type: integer
+          default: 10000
+          maximum: 10000
+          description: SQLのLIMIT句に相当。 1-10000の整数で指定可能    
+        - name: offset
+          in: query
+          type: integer
+          default: 0
+          description: SQLのOFFSET句に相当。 0以上の任意の整数で指定可能
+        - name: include
+          in: query
+          type: string
+          enum:
+          - all
+          - pair
+          - target
+          default: target
+          description: 出力するIDの出し方。 - "all" routeの全ID (例:uniprot_id, xxx_id, yyy_id, mondo_id)  - "pair" sourceとtargetのID (例:uniprot_id, mondo_id)  - "target"（デフォルト） targetのIDだけ (例:mondo_id)
+        - name: format
+          in: query
+          type: string
+          enum:
+          - csv
+          - tsv
+          - json
+          default: tsv
+          description: ファイルの出力形式
+        - name: total
+          in: query
+          type: string
+          default: true
+          description: トータルを含めるかどうか total={trueに評価できる値}でtrue    
       responses:
-        401:
-          description: "Unauthorized"
         200:
-          description: "OK"
+          description: "成功時のレスポンス"
+          schema:
+            type: "object"
+            properties:
+              ids:
+                type: "string"
+                example: 
+                  - "P31946"
+                  - "P62258"
+              route:
+                type: "string"
+                example: 
+                  - "uniprot"
+                  - "interpro"
+                  - "pubmed"
+              total:
+                type: "integer"
+                example: 6
+              result:
+                  type: "string"
+                  example: 
+                  - "1671102"
+                  - "11911880"
+                  - "29915393"
+                  - "7603573"
+                  - "7939645"
+                  - "7709434"                  
+
+        400:
+          description: Bad request
+          
+  /config/dataset:
+    get:
+      tags: 
+        - "config"
+      description: |-
+        get dataset
+      operationId: getDataset
+      x-google-backend:
+        address: https://api.togoid.dbcls.jp.il3c.com/config/dataset
+      parameters:
+        - name: name
+          in: query
+          type: string
+          description: https://github.com/dbcls/togoid-config/blob/main/config/dataset.yaml のkey
+          required: true
+      responses:
+        200:
+          description: "成功時のレスポンス"
+          schema:
+            type: "object"
+            properties:
+              label:
+                type: "string"
+                example: "UniProt"
+              catalog:
+                type: "string"
+                example: "nbdc00221"
+              category:
+                type: "string"
+                example: "Protein"
+              regex:
+                type: "string"
+                example: "^(?:(?<id>[A-NR-Z][0-9](?:[A-Z][A-Z0-9][A-Z0-9][0-9]){1,2})|(?<id2>[OPQ][0-9][A-Z0-9][A-Z0-9][A-Z0-9][0-9])(?:\\.\\d+)?)$"  
+              prefix:
+                  type: "string"
+                  example: "http://purl.uniprot.org/uniprot/"
+
+        400:
+          description: Bad request
+          
+  /config/database:
+    get:
+      tags: 
+        - "config"
+      description: |-
+        get database
+      operationId: getDatabase
+      x-google-backend:
+        address: https://api.togoid.dbcls.jp.il3c.com/config/database
+      parameters:
+        - name: src
+          in: query
+          type: string
+          description: https://github.com/dbcls/togoid-config/blob/main/config/dataset.yaml のkey
+        - name: dst
+          in: query
+          type: string
+          description: https://github.com/dbcls/togoid-config/blob/main/config/dataset.yaml のkey          
+      responses:
+        200:
+          description: "成功時のレスポンス"
+          schema:
+            type: "object"
+            properties:
+              link:
+                type: "object"
+                properties: 
+                  file: 
+                    type: "string"
+                    example: "pair.tsv"
+                  forward: 
+                    type: "object"
+                    properties:
+                      namespace:
+                        type: "string"
+                        example: "rdfs"
+                      label:
+                        type: "string"
+                        example: "seeAlso"
+                      prefix:
+                        type: "string"
+                        example: "http://www.w3.org/2000/01/rdf-schema#"
+                      predicate:
+                        type: "string"
+                        example: "seeAlso"
+                  reverse: 
+                    type: "object"
+                    properties:
+                      namespace:
+                        type: "string"
+                        example: "rdfs"
+                      label:
+                        type: "string"
+                        example: "seeAlso"
+                      prefix:
+                        type: "string"
+                        example: "http://www.w3.org/2000/01/rdf-schema#"
+                      predicate:
+                        type: "string"
+                        example: "seeAlso"  
+              update:
+                type: "object"
+                properties: 
+                  frequency: 
+                    type: "string"
+                    example: "Monthly"
+                  method: 
+                    type: "string"
+                    example: "sparql_thread.pl -t 10"
+
+        400:
+          description: Bad request
