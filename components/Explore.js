@@ -95,7 +95,9 @@ const Explore = (props) => {
                           {i === 0 && (
                             <React.Fragment>
                               <p className="item_first_heading">Convert from</p>
-                              <p className="item_first_count_heading">Ids</p>
+                              <p className="item_first_count_heading">
+                                Matched
+                              </p>
                             </React.Fragment>
                           )}
                           <ul
@@ -363,18 +365,6 @@ const Explore = (props) => {
             </div>
           </div>
         </div>
-        {/*
-        <div className="notice_area">
-          <p className="heading">NOTICE</p>
-          <p className="text">
-            - Your IDs match with “NCBI Gene”
-            <br />
-            - Relation(s) found: “HGNC”, “xxx”, “yyy”, “zzz”
-            <br />- LINE 999 “xxx-xxx-xxxx“ is not match the pattern. <br />-
-            LINE 999 “xxx-xxx-xxxx“ is not match the pattern.
-          </p>
-        </div>
-*/}
       </div>
     </div>
   );

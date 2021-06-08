@@ -101,7 +101,12 @@ const Home = () => {
                 posX: "left",
                 posY: "middle",
               },
-              style: { color: "#dddddd", head: "none", arrow: "smooth" },
+              style: {
+                color: "#dddddd",
+                head: "none",
+                arrow: "smooth",
+                width: 1.5,
+              },
             });
           });
         });
