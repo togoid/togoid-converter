@@ -100,11 +100,11 @@
         align-items: flex-start;
         margin: 0 13px 0 0;
         .item_first_heading {
-          width: 200px;
+          width: 196px;
           font-family: Oswald;
           font-weight: 700;
           color: $gray04;
-          margin: 0 0 29px 60px;
+          margin: 0 0 29px 56px;
           text-align: center;
           line-height: 24px;
           border-radius: 5px;
@@ -113,8 +113,8 @@
         .item_first_count_heading {
           position: absolute  ;
           top: 2px;
-          left: 208px;
-          width: 30px;
+          left: 195px;
+          width: 55px;
           font-family: Oswald;
           color: $gray04;
           background-color: #ffffff;
@@ -128,15 +128,19 @@
           display: flex;
           flex-direction: column;
           .result_list {
-            margin: 55px 0 0 40px;
+            margin: 55px 0 0 70px;
             &.first {
               margin: 0 0 0 20px;
             }
-          }
-          li {
-            display: flex;
-            align-items: center;
-            margin: 0 0 15px;
+            &__item {
+              position: relative;
+              display: flex;
+              align-items: center;
+              margin: 0 0 15px;
+              &.hover {
+                background: rgba(0, 0, 0, 0.8);
+              }
+            }
           }
         }
         .result_wrapper {
@@ -166,14 +170,13 @@
           position: absolute;
           right: 5px;
           top: 3px;
+          z-index: 10;
           &__item {
-            width: 32px;
-            height: 32px;
-            margin: 0 0 0 5px;
-            border-radius: 50%;
+            width: 28px;
+            height: 20px;
+            margin: 8px 23px 0 6px;
             border: none;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
-            background: $blue01;
+            background: none;
             svg {
               max-width: 14px;
               max-height: 14px;
