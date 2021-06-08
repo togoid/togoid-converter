@@ -132,11 +132,25 @@
             &.first {
               margin: 0 0 0 20px;
             }
-          }
-          li {
-            display: flex;
-            align-items: center;
-            margin: 0 0 15px;
+            &__item {
+              position: relative;
+              display: flex;
+              align-items: center;
+              margin: 0 0 15px;
+              &:hover {
+                &:after {
+                  content: '';
+                  position: absolute;
+                  top: 0;
+                  left: 35px;
+                  display: block;
+                  width: 200px;
+                  height: 100%;
+                  border-radius: 5px;
+                  background: rgba(0, 0, 0, 0.8);
+                }
+              }
+            }
           }
         }
         .result_wrapper {
@@ -166,14 +180,13 @@
           position: absolute;
           right: 5px;
           top: 3px;
+          z-index: 10;
           &__item {
             width: 32px;
             height: 32px;
             margin: 0 0 0 5px;
-            border-radius: 50%;
             border: none;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
-            background: $blue01;
+            background: none;
             svg {
               max-width: 14px;
               max-height: 14px;
