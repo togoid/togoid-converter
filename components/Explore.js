@@ -95,7 +95,9 @@ const Explore = (props) => {
                           {i === 0 && (
                             <React.Fragment>
                               <p className="item_first_heading">Convert from</p>
-                              <p className="item_first_count_heading">Ids</p>
+                              <p className="item_first_count_heading">
+                                Matched
+                              </p>
                             </React.Fragment>
                           )}
                           <ul
@@ -109,6 +111,7 @@ const Explore = (props) => {
                                 onMouseOver={() =>
                                   handleActionButtonVisibility(i, j)
                                 }
+                                className="result_list__item"
                               >
                                 <div
                                   id={`node${i}-${v.name}`}
@@ -132,12 +135,30 @@ const Explore = (props) => {
                                     htmlFor={`result${i}-${j}`}
                                     className="radio__large_label green"
                                     style={{
-                                      backgroundColor: categories[v.category]
-                                        ? categories[v.category].color
-                                        : null,
+                                      opacity:
+                                        visibleActionButtonIndex[0] === i &&
+                                        visibleActionButtonIndex[1] === j
+                                          ? 0.7
+                                          : 1,
+                                      backgroundColor:
+                                        visibleActionButtonIndex[0] === i &&
+                                        visibleActionButtonIndex[1] === j
+                                          ? "#000000"
+                                          : categories[v.category]
+                                          ? categories[v.category].color
+                                          : null,
                                     }}
                                   >
-                                    <span className="radio__large_label__inner">
+                                    <span
+                                      className="radio__large_label__inner"
+                                      style={{
+                                        color:
+                                          visibleActionButtonIndex[0] === i &&
+                                          visibleActionButtonIndex[1] === j
+                                            ? "#333333"
+                                            : "#ffffff",
+                                      }}
+                                    >
                                       {dbCatalogue[v.name].label}
                                     </span>
                                   </label>
@@ -363,18 +384,6 @@ const Explore = (props) => {
             </div>
           </div>
         </div>
-        {/*
-        <div className="notice_area">
-          <p className="heading">NOTICE</p>
-          <p className="text">
-            - Your IDs match with “NCBI Gene”
-            <br />
-            - Relation(s) found: “HGNC”, “xxx”, “yyy”, “zzz”
-            <br />- LINE 999 “xxx-xxx-xxxx“ is not match the pattern. <br />-
-            LINE 999 “xxx-xxx-xxxx“ is not match the pattern.
-          </p>
-        </div>
-*/}
       </div>
     </div>
   );
