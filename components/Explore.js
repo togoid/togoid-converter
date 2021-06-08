@@ -111,6 +111,12 @@ const Explore = (props) => {
                                 onMouseOver={() =>
                                   handleActionButtonVisibility(i, j)
                                 }
+                                className={
+                                  visibleActionButtonIndex[0] === i &&
+                                  visibleActionButtonIndex[1] === j
+                                    ? "result_list__item hover"
+                                    : "result_list__item"
+                                }
                               >
                                 <div
                                   id={`node${i}-${v.name}`}
