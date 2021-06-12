@@ -3011,27 +3011,6 @@
       "method": "sparql_thread.pl -t 10"
     }
   },
-  "uniprot-omim_phenotype": {
-    "link": {
-      "forward": {
-        "namespace": "ro",
-        "label": "has phenotype",
-        "prefix": "http://purl.obolibrary.org/obo/",
-        "predicate": "RO_0002200"
-      },
-      "reverse": {
-        "namespace": "ro",
-        "label": "phenotype of",
-        "prefix": "http://purl.obolibrary.org/obo/",
-        "predicate": "RO_0002201"
-      },
-      "file": "sample.tsv"
-    },
-    "update": {
-      "frequency": "Monthly",
-      "method": "sparql_thread.pl -t 10"
-    }
-  },
   "uniprot-orphanet": {
     "link": {
       "forward": {
@@ -3072,6 +3051,27 @@
     "update": {
       "frequency": "Monthly",
       "method": "uniprot_idmapping2tsv.rb ${TOGOID_ROOT}/input/uniprot/idmapping.dat.gz PDB"
+    }
+  },
+  "uniprot-omim_phenotype": {
+    "link": {
+      "forward": {
+        "namespace": "ro",
+        "label": "has phenotype",
+        "prefix": "http://purl.obolibrary.org/obo/",
+        "predicate": "RO_0002200"
+      },
+      "reverse": {
+        "namespace": "ro",
+        "label": "phenotype of",
+        "prefix": "http://purl.obolibrary.org/obo/",
+        "predicate": "RO_0002201"
+      },
+      "file": "sample.tsv"
+    },
+    "update": {
+      "frequency": "Monthly",
+      "method": "sparql_thread.pl -t 10"
     }
   },
   "uniprot-pfam": {
