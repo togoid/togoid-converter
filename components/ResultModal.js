@@ -20,7 +20,7 @@ const ResultModal = (props) => {
 
     const text = d.results.map((result) => prefix + result).join("\r\n");
     copy(text, {
-      format: 'text/plain'
+      format: "text/plain",
     });
     setCopied(true);
     setTimeout(() => {
