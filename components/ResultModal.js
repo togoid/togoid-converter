@@ -19,7 +19,9 @@ const ResultModal = (props) => {
       .slice(-1);
 
     const text = d.results.map((result) => prefix + result).join("\r\n");
-    copy(text);
+    copy(text, {
+      format: "text/plain",
+    });
     setCopied(true);
     setTimeout(() => {
       setCopied(false);
@@ -127,7 +129,7 @@ const ResultModal = (props) => {
                   const limit = showAllFailed ? 10000 : 3;
                   return (
                     <span className="non_forwarded">
-                      {`Non forwarded IDs: ${noForwardedId
+                      {`Not forwarded IDs: ${noForwardedId
                         .filter((v, i) => i < limit)
                         .join(", ")} `}
                       {!showAllFailed && (
