@@ -1,0 +1,213 @@
+swagger: '2.0'
+info:
+  title: Togo ID API
+  version: 1.0.0
+host: api.togoid.dbcls.jp
+schemes:
+  - https
+produces:
+  - application/json
+tags:
+- name: "convert"
+- name: "config"
+paths:
+  /convert:
+    get:
+      tags: 
+        - "convert"
+      summary: Convert IDs
+      operationId: convertId
+      parameters:
+        - name: ids
+          in: query
+          type: string
+          description: List IDs separated by commas
+          required: true
+        - name: route
+          in: query
+          type: string
+          description: List keys separated by commas from https://github.com/dbcls/togoid-config/blob/main/config/dataset.yaml
+          required: true
+        - name: limit
+          in: query
+          type: integer
+          default: 10000
+          maximum: 10000
+          description: Number of results returned
+        - name: offset
+          in: query
+          type: integer
+          default: 0
+          description: Number of starts to return results
+        - name: include
+          in: query
+          type: string
+          enum:
+            - all
+            - pair
+            - target
+          default: target
+          description: "Whether to include the conversion path in the result. 'all': All IDs of route (ex: uniprot_id, xxx_id, yyy_id, mondo_id), 'pair': Source and target IDs (ex: uniprot_id, mondo_id), 'target': Target IDs only (ex: mondo_id)"
+        - name: format
+          in: query
+          type: string
+          enum:
+          - csv
+          - tsv
+          - json
+          default: tsv
+          description: Output format of results
+        - name: total
+          in: query
+          type: string
+          default: true
+          description: Whether to include total
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            properties:
+              ids:
+                type: "string"
+                example: 
+                  - "26199"
+                  - "38937"
+                  - "14027"
+                  - "21498"
+                  - "18185"
+                  - "1314"
+                  - "25960"
+                  - "2206"
+                  - "22224"
+                  - "19741"
+              route:
+                type: "string"
+                example: 
+                  - "hgnc"
+                  - "ensembl_gene"
+              total:
+                type: "integer"
+                example: 10
+              result:
+                type: "string"
+                example:
+                  - "ENSG00000100364"
+                  - "ENSG00000154719"
+                  - "ENSG00000116285"
+                  - "ENSG00000179454"
+                  - "ENSG00000085978"
+                  - "ENSG00000081052"
+                  - "ENSG00000006459"
+                  - "ENSG00000198088"
+                  - "ENSG00000134152"
+                  - "ENSG00000284140"
+        400:
+          description: Bad request
+          
+  /config/dataset:
+    get:
+      tags: 
+        - "config"
+      summary: Get dataset config
+      operationId: getDataset
+      parameters:
+        - name: name
+          in: query
+          type: string
+          description: A key from https://github.com/dbcls/togoid-config/blob/main/config/dataset.yaml
+          required: false
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            properties:
+              label:
+                type: "string"
+                example: "UniProt"
+              catalog:
+                type: "string"
+                example: "nbdc00221"
+              category:
+                type: "string"
+                example: "Protein"
+              regex:
+                type: "string"
+                example: "^(?:(?<id>[A-NR-Z][0-9](?:[A-Z][A-Z0-9][A-Z0-9][0-9]){1,2})|(?<id2>[OPQ][0-9][A-Z0-9][A-Z0-9][A-Z0-9][0-9])(?:\\.\\d+)?)$"  
+              prefix:
+                  type: "string"
+                  example: "http://purl.uniprot.org/uniprot/"
+
+        400:
+          description: Bad request
+          
+  /config/database:
+    get:
+      tags: 
+        - "config"
+      summary: Get database config
+      operationId: getDatabase
+      parameters:
+        - name: src
+          in: query
+          type: string
+          description: A key from https://github.com/dbcls/togoid-config/blob/main/config/dataset.yaml
+        - name: dst
+          in: query
+          type: string
+          description: A key from https://github.com/dbcls/togoid-config/blob/main/config/dataset.yaml
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            properties:
+              link:
+                type: "object"
+                properties: 
+                  file: 
+                    type: "string"
+                    example: "pair.tsv"
+                  forward: 
+                    type: "object"
+                    properties:
+                      namespace:
+                        type: "string"
+                        example: "rdfs"
+                      label:
+                        type: "string"
+                        example: "seeAlso"
+                      prefix:
+                        type: "string"
+                        example: "http://www.w3.org/2000/01/rdf-schema#"
+                      predicate:
+                        type: "string"
+                        example: "seeAlso"
+                  reverse: 
+                    type: "object"
+                    properties:
+                      namespace:
+                        type: "string"
+                        example: "rdfs"
+                      label:
+                        type: "string"
+                        example: "seeAlso"
+                      prefix:
+                        type: "string"
+                        example: "http://www.w3.org/2000/01/rdf-schema#"
+                      predicate:
+                        type: "string"
+                        example: "seeAlso"  
+              update:
+                type: "object"
+                properties: 
+                  frequency: 
+                    type: "string"
+                    example: "Monthly"
+                  method: 
+                    type: "string"
+                    example: "sparql_thread.pl -t 10"
+
+        400:
+          description: Bad request
