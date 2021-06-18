@@ -7,8 +7,8 @@ import { categories } from "../lib/setting";
 const Databases = (props) => {
   const [language, setLanguage] = useState("en");
 
-  const clickExamples = (examples) => {
-    props.exploreExamplesExecute(examples);
+  const clickExamples = (examples, key) => {
+    props.exploreExamplesExecute(examples, key);
   };
 
   return (
@@ -51,31 +51,19 @@ const Databases = (props) => {
               </div>
 
               {Object.keys(dataset).map((key) => {
-                const labels = Object.keys(dbConfig)
-                  .map((k, i) => {
-                    const names = k.split("-");
-                    if (names.indexOf(key) === 0 || names.indexOf(key) === 1) {
-                      const name =
-                        names.indexOf(key) === 0 ? names[1] : names[0];
-                      const label = dbCatalogue[name].label;
-                      return (
-                        <div
-                          className="path_label small green"
-                          style={{
-                            backgroundColor: categories[
-                              dbCatalogue[name].category
-                            ]
-                              ? categories[dbCatalogue[name].category].color
-                              : null,
-                          }}
-                          key={i}
-                        >
-                          {label}
-                        </div>
-                      );
-                    }
-                  })
-                  .filter((v) => v);
+                const labels = Array.from(
+                  new Set(
+                    Object.keys(dbConfig).map((k) => {
+                      const names = k.split("-");
+                      if (
+                        names.indexOf(key) === 0 ||
+                        names.indexOf(key) === 1
+                      ) {
+                        return names.indexOf(key) === 0 ? names[1] : names[0];
+                      }
+                    })
+                  )
+                ).filter((v) => v);
 
                 if (labels.length) {
                   return (
@@ -101,7 +89,23 @@ const Databases = (props) => {
                             d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
                           />
                         </svg>
-                        <div className="path__children">{labels}</div>
+                        <div className="path__children">
+                          {labels.map((l, i) => (
+                            <div
+                              className="path_label small green"
+                              style={{
+                                backgroundColor: categories[
+                                  dbCatalogue[l].category
+                                ]
+                                  ? categories[dbCatalogue[l].category].color
+                                  : null,
+                              }}
+                              key={i}
+                            >
+                              {dbCatalogue[l].label}
+                            </div>
+                          ))}
+                        </div>
                       </div>
                       <dl className="data">
                         <div className="data__wrapper">
@@ -128,15 +132,22 @@ const Databases = (props) => {
                           <div className="data__wrapper">
                             <dt>EXAMPLES</dt>
                             <dd>
-                              <a
-                                href="#"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  clickExamples(dataset[key].examples);
-                                }}
-                              >
-                                {dataset[key].examples}
-                              </a>
+                              {dataset[key].examples.map((example, i) => {
+                                const exampleStr = example.join(", ");
+                                return (
+                                  <li key={i}>
+                                    <a
+                                      href="#"
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        clickExamples(exampleStr, key);
+                                      }}
+                                    >
+                                      {exampleStr}
+                                    </a>
+                                  </li>
+                                );
+                              })}
                             </dd>
                           </div>
                         )}
