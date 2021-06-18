@@ -28,8 +28,11 @@ const Home = () => {
         if (!candidates.find((v) => v.name === r.name)) {
           if (k.split("-").shift() === r.name) {
             const name = k.split("-")[1];
-            if (!candidates.find((v) => v.name === name)) {
-              // 順方向の変換、ただし変換経路を逆行させない
+            if (
+              !candidates.find((v) => v.name === name) &&
+              !route.find((w) => w.name === name)
+            ) {
+              // 順方向の変換
               candidates.push({
                 name,
                 category: dbCatalogue[name].category,
@@ -39,8 +42,11 @@ const Home = () => {
             }
           } else if (k.split("-").pop() === r.name) {
             const name = k.split("-")[0];
-            if (!candidates.find((v) => v.name === name)) {
-              // 逆方向の変換、ただし変換経路を逆行させない
+            if (
+              !candidates.find((v) => v.name === name) &&
+              !route.find((w) => w.name === name)
+            ) {
+              // 逆方向の変換
               candidates.push({
                 name,
                 category: dbCatalogue[name].category,
@@ -55,19 +61,15 @@ const Home = () => {
       const promises = candidates.map((v) => {
         const r = route.slice();
         r.push(v);
-        if (!route.find((w) => w.name === v.name)) {
-          return new Promise(function (resolve) {
-            // エラーになった変換でもnullを返してresolve
-            return executeQuery(r, ids, "target")
-              .then((v) => {
-                NProgress.inc(1 / candidates.length);
-                resolve(v);
-              })
-              .catch(() => resolve(null));
-          });
-        } else {
-          return -1;
-        }
+        return new Promise(function (resolve) {
+          // エラーになった変換でもnullを返してresolve
+          return executeQuery(r, ids, "target")
+            .then((v) => {
+              NProgress.inc(1 / candidates.length);
+              resolve(v);
+            })
+            .catch(() => resolve(null));
+        });
       });
 
       Promise.all(promises).then((values) => {
@@ -75,13 +77,8 @@ const Home = () => {
         // 先端の変換候補を追加
         nodesList[route.length] = candidates.map((v, i) => {
           const _v = Object.assign({}, v);
-          if (values[i] !== -1) {
-            _v.total = values[i] && values[i].total ? values[i].total : 0;
-            return _v;
-          } else {
-            _v.total = "-";
-            return _v;
-          }
+          _v.total = values[i] && values[i].total ? values[i].total : 0;
+          return _v;
         });
         setDatabaseNodesList(nodesList);
 
