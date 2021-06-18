@@ -19,7 +19,9 @@ const ResultModal = (props) => {
       .slice(-1);
 
     const text = d.results.map((result) => prefix + result).join("\r\n");
-    copy(text);
+    copy(text, {
+      format: "text/plain",
+    });
     setCopied(true);
     setTimeout(() => {
       setCopied(false);
@@ -30,8 +32,8 @@ const ResultModal = (props) => {
     const d = await executeQuery(props.route, props.ids);
     const h = props.tableData.heading.map((v) => v.label);
     const result = d.results.map((data) =>
-      data.map((d, j) =>
-        j !== 0 ? props.tableData.heading[j].prefix.split("/").slice(-1) + d : d
+      data.map(
+        (d, j) => props.tableData.heading[j].prefix.split("/").slice(-1) + d
       )
     );
     exportCSV([h, ...result]);
@@ -109,8 +111,16 @@ const ResultModal = (props) => {
           <div className="modal__top">
             <div className="item_wrapper">
               {(() => {
+                const prefix = props.tableData.heading[0].prefix
+                  .split("/")
+                  .slice(-1);
+
                 const uniqueId = Array.from(
-                  new Set(props.tableData.rows.map((item) => item[0]))
+                  new Set(
+                    props.tableData.rows
+                      .map((item) => [item[0], prefix + item[0]])
+                      .flat()
+                  )
                 );
                 const noForwardedId = props.ids.filter(
                   (i) => uniqueId.indexOf(i) === -1
@@ -119,7 +129,7 @@ const ResultModal = (props) => {
                   const limit = showAllFailed ? 10000 : 3;
                   return (
                     <span className="non_forwarded">
-                      {`Non forwarded IDs: ${noForwardedId
+                      {`Not forwarded IDs: ${noForwardedId
                         .filter((v, i) => i < limit)
                         .join(", ")} `}
                       {!showAllFailed && (
@@ -210,11 +220,9 @@ const ResultModal = (props) => {
                           target="_blank"
                           rel="noreferrer"
                         >
-                          {j !== 0 &&
-                            props.tableData.heading[j].prefix
-                              .split("/")
-                              .slice(-1)}
-                          {d}
+                          {props.tableData.heading[j].prefix
+                            .split("/")
+                            .slice(-1) + d}
                         </a>
                       </td>
                     ))}
