@@ -85,10 +85,10 @@ const ResultModal = (props) => {
               />
             </svg>
           </button>
-          <h2 className="title">ID forwarding</h2>
+          <h2 className="title">Results</h2>
 
           <div className="modal__path">
-            <p className="modal__heading">PATH</p>
+            <p className="modal__heading">Route</p>
             <div className="modal__path__frame">
               <div className="modal__path__frame__inner">
                 {props.tableData.heading.map((v, i) => (
@@ -129,7 +129,7 @@ const ResultModal = (props) => {
                   const limit = showAllFailed ? 10000 : 3;
                   return (
                     <span className="non_forwarded">
-                      {`Not forwarded IDs: ${noForwardedId
+                      {`IDs that were not converted: ${noForwardedId
                         .filter((v, i) => i < limit)
                         .join(", ")} `}
                       {!showAllFailed && (
