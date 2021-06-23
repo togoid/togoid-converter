@@ -348,8 +348,16 @@ const Home = () => {
             >
               DATABASES
             </button>
+            <button
+              onClick={() => setActiveTab("DOCUMENTS")}
+              className={
+                activeTab === "DOCUMENTS" ? "button_tab active" : "button_tab"
+              }
+            >
+              DOCUMENTS
+            </button>
           </div>
-          {activeTab === "EXPLORE" ? (
+          {activeTab === "EXPLORE" && (
             <Explore
               databaseNodesList={databaseNodesList}
               routePaths={routePaths}
@@ -359,8 +367,13 @@ const Home = () => {
               restartExplore={restartExplore}
               ids={ids}
             />
-          ) : (
+          )}
+          {activeTab === "DATABASE" && (
             <Databases exploreExamplesExecute={exploreExamplesExecute} />
+          )}
+          {activeTab === "DOCUMENTS" && (
+            // 仮
+            <a href="https://togoid.dbcls.jp/apidoc/">apidoc</a>
           )}
         </div>
       </main>
