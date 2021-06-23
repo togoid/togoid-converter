@@ -40,7 +40,7 @@ const IdInput = (props) => {
           <textarea
             cols="30"
             rows="10"
-            placeholder="Input IDs"
+            placeholder="Input your ID (set), separated by comma, space, or newline (e.g. 5460, 6657, 9314, 4609 for NCBI gene)."
             className="textarea__input"
             value={props.idTexts}
             onChange={(e) => props.setIdTexts(e.target.value)}
