@@ -77,7 +77,14 @@ const Home = () => {
         // 先端の変換候補を追加
         nodesList[route.length] = candidates.map((v, i) => {
           const _v = Object.assign({}, v);
-          _v.total = values[i] && values[i].total ? values[i].total : 0;
+          if (!values[i]) {
+            _v.total = -1;
+          } else if (values[i].total) {
+            _v.total = values[i].total;
+          } else {
+            _v.total = 0;
+          }
+
           return _v;
         });
         setDatabaseNodesList(nodesList);
