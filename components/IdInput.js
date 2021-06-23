@@ -33,6 +33,22 @@ const IdInput = (props) => {
     e.target.value = "";
   };
 
+  const clickIdSetExample = (dataKey) => {
+    if (dataKey === "refseq_rna") {
+      const examples =
+        "NM_001354870,NM_002467,NM_001173531,NM_001285986,NM_001285987,NM_002701,NM_203289,NM_003106,NM_001314052,NM_004235";
+      props.exploreExamplesExecute(examples, dataKey);
+    } else if (dataKey === "ensembl_gene") {
+      const examples =
+        "ENSG00000136997,ENSG00000204531,ENSG00000181449,ENSG00000136826";
+      props.exploreExamplesExecute(examples, dataKey);
+    } else if (dataKey === "uniprot") {
+      const examples =
+        "P01106,Q01860,M1S623,D2IYK3,F2Z381,P48431,A0A0U3FYV6,O43474";
+      props.exploreExamplesExecute(examples, dataKey);
+    }
+  };
+
   return (
     <div className="input_area">
       <form onSubmit={handleSubmit} className="textarea">
@@ -71,6 +87,39 @@ const IdInput = (props) => {
           />
         </div>
       </form>
+      <div>
+        <td>
+          Try ID set examples (Yamanaka Factors (OCT3/4, SOX2, KLF4, C-MYC)).
+        </td>
+
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            clickIdSetExample("refseq_rna");
+          }}
+        >
+          `Refseq RNA`
+        </a>
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            clickIdSetExample("ensembl_gene");
+          }}
+        >
+          `Ensembl gene`
+        </a>
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            clickIdSetExample("uniprot");
+          }}
+        >
+          `Uniprot`
+        </a>
+      </div>
     </div>
   );
 };

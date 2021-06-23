@@ -329,6 +329,7 @@ const Home = () => {
           handleSubmit={handleIdTextsSubmit}
           setIdTexts={setIdTexts}
           idTexts={idTexts}
+          exploreExamplesExecute={exploreExamplesExecute}
         />
         <div className="drawing_area">
           <div className="tab_wrapper">
