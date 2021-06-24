@@ -50,6 +50,27 @@ const Databases = (props) => {
                 </div>
               </div>
 
+              {(() => {
+                const labelIndex = [];
+                const links = Object.keys(dbCatalogue).map((key) => {
+                  const keyInitial = dbCatalogue[key].label
+                    .slice(0, 1)
+                    .toUpperCase();
+                  if (
+                    Object.keys(dbConfig).find(
+                      (k) =>
+                        (k.split("-").indexOf(key) === 0 ||
+                          k.split("-").indexOf(key) === 1) &&
+                        !labelIndex.includes(keyInitial)
+                    )
+                  ) {
+                    labelIndex.push(keyInitial);
+                    return <a href={"/#" + keyInitial}>{keyInitial + ", "}</a>;
+                  }
+                });
+                return links;
+              })()}
+
               {Object.keys(dataset).map((key) => {
                 const labels = Array.from(
                   new Set(
@@ -67,7 +88,11 @@ const Databases = (props) => {
 
                 if (labels.length) {
                   return (
-                    <article className="database__item" key={key}>
+                    <article
+                      className="database__item"
+                      key={key}
+                      id={dataset[key].label.slice(0, 1).toUpperCase()}
+                    >
                       <h3 className="title">
                         <span className="text">{dataset[key].label}</span>
                       </h3>
