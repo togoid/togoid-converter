@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import Explore from "../components/Explore";
 import Databases from "../components/Databases";
 import IdInput from "../components/IdInput";
+import Documents from "../components/Documents";
 import dbConfig from "../public/config.json";
 import dbCatalogue from "../public/dataset.json";
 import { executeQuery } from "../lib/util";
@@ -372,10 +373,7 @@ const Home = () => {
           {activeTab === "DATABASE" && (
             <Databases exploreExamplesExecute={exploreExamplesExecute} />
           )}
-          {activeTab === "DOCUMENTS" && (
-            // 仮
-            <a href="https://togoid.dbcls.jp/apidoc/">apidoc</a>
-          )}
+          {activeTab === "DOCUMENTS" && <Documents />}
         </div>
       </main>
     </div>
