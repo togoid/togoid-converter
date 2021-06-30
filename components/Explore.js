@@ -224,7 +224,7 @@ const Explore = (props) => {
                                     )}
                                 </div>
                                 <p id={`total${i}-${v.name}`} className="total">
-                                  {v.total}
+                                  {v.total >= 0 ? v.total : "too many"}
                                 </p>
                               </li>
                             ))}
