@@ -87,38 +87,45 @@ const IdInput = (props) => {
           />
         </div>
       </form>
-      <div>
-        <td>
+      <div className="input_area__bottom">
+        <p className="input_area__bottom__text">
           Try ID set examples (Yamanaka Factors (OCT3/4, SOX2, KLF4, C-MYC)).
-        </td>
+        </p>
 
-        <a
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            clickIdSetExample("refseq_rna");
-          }}
-        >
-          `Refseq RNA`
-        </a>
-        <a
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            clickIdSetExample("ensembl_gene");
-          }}
-        >
-          `Ensembl gene`
-        </a>
-        <a
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            clickIdSetExample("uniprot");
-          }}
-        >
-          `Uniprot`
-        </a>
+        <p className="input_area__bottom__square">Try ID set Examples</p>
+
+        <div className="input_area__bottom__links">
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              clickIdSetExample("refseq_rna");
+            }}
+            className="input_area__bottom__link"
+          >
+            `Refseq RNA`
+          </a>
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              clickIdSetExample("ensembl_gene");
+            }}
+            className="input_area__bottom__link"
+          >
+            `Ensembl gene`
+          </a>
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              clickIdSetExample("uniprot");
+            }}
+            className="input_area__bottom__link"
+          >
+            `Uniprot`
+          </a>
+        </div>
       </div>
     </div>
   );
