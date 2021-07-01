@@ -181,10 +181,27 @@
     margin: 0 0 15px;
 
     .export_button {
+      position: relative;
       display: flex;
-      flex-wrap: wrap;
-      .button_icon {
-        margin: 8px 8px 0 0;
+      justify-content: flex-end;
+      .child_menu {
+        position: absolute;
+        top: calc(100% + 9px);
+        right: 0;
+        border-radius: 5px;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+        background: $blue05;
+        &__item {
+          display: block;
+          width: 100%;
+          font-size: 1.4rem;
+          color: $gray07;
+          padding: 10px 14px;
+          text-align: left;
+          border: none;
+          border-bottom: 1px solid $blue06;
+          background: none;
+        }
       }
     }
 
