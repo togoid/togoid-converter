@@ -29,6 +29,35 @@
         height: 110px;
       }
     }
+    &__bottom {
+      font-family: Oswald;
+      margin: 12px 0 0;
+      &__text {
+        font-size: 1.4rem;
+        color: $gray04;
+        margin: 0 0 23px;
+      }
+      &__square {
+        display: inline-block;
+        font-size: 1.4rem;
+        color: $gray04;
+        padding: 0 26px;
+        margin: 0 0 14px;
+        line-height: 26px;
+        border-radius: 5px;
+        border: 1px solid $gray01;
+      }
+      &__link {
+        display: inline-block;
+        font-size: 1.4rem;
+        color: $blue02;
+        padding: 0 16px;
+        margin: 0 5px 0 0;
+        line-height: 26px;
+        border-radius: 13px;
+        background: $blue05;
+      }
+    }
   }
 
   .drawing_area {
