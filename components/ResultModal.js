@@ -8,6 +8,15 @@ import { categories } from "../lib/setting";
 const ResultModal = (props) => {
   const [copied, setCopied] = useState(false);
   const [showAllFailed, setShowAllFailed] = useState(false);
+  const [showLinks, setShowLinks] = useState(false);
+
+  const handleMenu = async () => {
+    if (showLinks) {
+      setShowLinks(false);
+    } else {
+      setShowLinks(true);
+    }
+  };
 
   const handleClipboardCopy = async (e) => {
     e.preventDefault();
@@ -150,46 +159,49 @@ const ResultModal = (props) => {
 
               {props.tableData && props.tableData.rows.length > 0 && (
                 <div className="export_button">
-                  <button onClick={handleClipboardCopy} className="button_icon">
-                    <svg className="button_icon__icon" viewBox="0 0 24 24">
-                      <path
-                        fill="currentColor"
-                        d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
-                      />
-                    </svg>
-                    {copied ? (
-                      <span>Copied.</span>
-                    ) : (
-                      <span>Copy target IDs.</span>
-                    )}
-                  </button>
-                  <button onClick={handleIdDownload} className="button_icon">
+                  <button onClick={handleMenu} className="button_icon">
                     <svg className="button_icon__icon" viewBox="0 0 24 24">
                       <path
                         fill="currentColor"
                         d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"
                       />
                     </svg>
-                    Download target IDs
+                    Export
                   </button>
-                  <button onClick={handleURLDownload} className="button_icon">
-                    <svg className="button_icon__icon" viewBox="0 0 24 24">
-                      <path
-                        fill="currentColor"
-                        d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"
-                      />
-                    </svg>
-                    Download target URLs
-                  </button>
-                  <button onClick={handleExportCSV} className="button_icon">
-                    <svg className="button_icon__icon" viewBox="0 0 24 24">
-                      <path
-                        fill="currentColor"
-                        d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"
-                      />
-                    </svg>
-                    Download table as CSV
-                  </button>
+                  {showLinks ? (
+                    <div className="child_menu">
+                      <button
+                        onClick={handleClipboardCopy}
+                        className="child_menu__item"
+                      >
+                        {copied ? (
+                          <span>Copied.</span>
+                        ) : (
+                          <span>Copy target IDs.</span>
+                        )}
+                      </button>
+                      <button
+                        onClick={handleIdDownload}
+                        className="child_menu__item"
+                      >
+                        Download target IDs
+                      </button>
+                      <button
+                        onClick={handleURLDownload}
+                        className="child_menu__item"
+                      >
+                        Download target URLs
+                      </button>
+                      <button
+                        onClick={handleExportCSV}
+                        className="child_menu__item"
+                      >
+                        Download table as CSV
+                      </button>
+                    </div>
+                  ) : (
+                    ""
+                  )}
                 </div>
               )}
             </div>
