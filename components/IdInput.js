@@ -89,7 +89,7 @@ const IdInput = (props) => {
       </form>
       <div className="input_area__bottom">
         <p className="input_area__bottom__text">
-          Try ID set examples (Yamanaka Factors (OCT3/4, SOX2, KLF4, C-MYC)).
+          Ex. Yamanaka Factors (OCT3/4, SOX2, KLF4, C-MYC)
         </p>
 
         <p className="input_area__bottom__square">Try ID set Examples</p>
