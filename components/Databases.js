@@ -8,7 +8,7 @@ const Databases = (props) => {
   const [language, setLanguage] = useState("en");
 
   const clickExamples = (examples, key) => {
-    props.exploreExamplesExecute(examples, key);
+    props.executeExamples(examples.join("\n"), key);
   };
 
   return (
@@ -50,26 +50,32 @@ const Databases = (props) => {
                 </div>
               </div>
 
-              {(() => {
-                const labelIndex = [];
-                const links = Object.keys(dbCatalogue).map((key) => {
-                  const keyInitial = dbCatalogue[key].label
-                    .slice(0, 1)
-                    .toUpperCase();
-                  if (
-                    Object.keys(dbConfig).find(
-                      (k) =>
-                        (k.split("-").indexOf(key) === 0 ||
-                          k.split("-").indexOf(key) === 1) &&
-                        !labelIndex.includes(keyInitial)
-                    )
-                  ) {
-                    labelIndex.push(keyInitial);
-                    return <a href={"/#" + keyInitial}>{keyInitial + ", "}</a>;
-                  }
-                });
-                return links;
-              })()}
+              <div className="database__index">
+                <h3>DB Name Index</h3>
+                {(() => {
+                  const labelIndex = [];
+                  return Object.keys(dbCatalogue).map((key, i) => {
+                    const keyInitial = dbCatalogue[key].label
+                      .slice(0, 1)
+                      .toUpperCase();
+                    if (
+                      Object.keys(dbConfig).find(
+                        (k) =>
+                          (k.split("-").indexOf(key) === 0 ||
+                            k.split("-").indexOf(key) === 1) &&
+                          !labelIndex.includes(keyInitial)
+                      )
+                    ) {
+                      labelIndex.push(keyInitial);
+                      return (
+                        <a href={"/#" + keyInitial} key={i}>
+                          {keyInitial + " "}
+                        </a>
+                      );
+                    }
+                  });
+                })()}
+              </div>
 
               {Object.keys(dataset).map((key) => {
                 const labels = Array.from(
@@ -158,17 +164,16 @@ const Databases = (props) => {
                             <dt>EXAMPLES</dt>
                             <dd>
                               {dataset[key].examples.map((example, i) => {
-                                const exampleStr = example.join(", ");
                                 return (
                                   <li key={i}>
                                     <a
                                       href="#"
                                       onClick={(e) => {
                                         e.preventDefault();
-                                        clickExamples(exampleStr, key);
+                                        clickExamples(example, key);
                                       }}
                                     >
-                                      {exampleStr}
+                                      {example.join(", ")}
                                     </a>
                                   </li>
                                 );
