@@ -88,11 +88,7 @@ const IdInput = (props) => {
         </div>
       </form>
       <div className="input_area__bottom">
-        <p className="input_area__bottom__text">
-          Ex. Yamanaka Factors (OCT3/4, SOX2, KLF4, C-MYC)
-        </p>
-
-        <p className="input_area__bottom__square">Try ID set Examples</p>
+        <p className="input_area__bottom__square">Examples</p>
 
         <div className="input_area__bottom__links">
           <a
@@ -103,7 +99,7 @@ const IdInput = (props) => {
             }}
             className="input_area__bottom__link"
           >
-            `Refseq RNA`
+            Refseq RNA
           </a>
           <a
             href="#"
@@ -113,7 +109,7 @@ const IdInput = (props) => {
             }}
             className="input_area__bottom__link"
           >
-            `Ensembl gene`
+            Ensembl gene
           </a>
           <a
             href="#"
@@ -123,7 +119,7 @@ const IdInput = (props) => {
             }}
             className="input_area__bottom__link"
           >
-            `Uniprot`
+            Uniprot
           </a>
         </div>
       </div>
