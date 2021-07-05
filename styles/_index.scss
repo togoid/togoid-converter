@@ -231,6 +231,20 @@
       width: 900px;
       margin: 0 auto;
     }
+    &__index {
+      padding-bottom: 20px;
+      border-bottom: 1px solid $gray06;
+      h3 {
+        font-size: 1.6rem;
+        margin-bottom: 5px;
+      }
+      a {
+        color: $gray04;
+        text-decoration: underline;
+        font-weight: bold;
+        margin-right: 10px;
+      }
+    }
     &__item {
       color: $gray04;
       padding: 19px 0 38px;
@@ -305,19 +319,13 @@
     }
   }
 
-  .notice_area {
-    max-width: 1200px;
-    color: $textColor02;
-    padding: 16px 19px;
-    margin: 20px auto 0;
-    border-radius: 15px;
+  .documents{
     background: $gray03;
-    .heading {
-      font-size: 1.4rem;
-      margin: 0 0 15px;
-    }
-    .text {
-      font-size: 1.2rem;
+    .select_lang{
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 20px;
     }
   }
+
 }
