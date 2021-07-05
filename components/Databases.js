@@ -102,14 +102,16 @@ const Databases = (props) => {
                       <h3 className="title">
                         <span className="text">{dataset[key].label}</span>
                       </h3>
-                      {language === "en" && (
+                      {dataset[key][`description_${language}`] && (
                         <div className="description">
-                          {dataset[key].description_en}
-                        </div>
-                      )}
-                      {language === "ja" && (
-                        <div className="description">
-                          {dataset[key].description_ja}
+                          {dataset[key][`description_${language}`]} Cited from {" "}
+                          <a
+                            href={`https://integbio.jp/dbcatalog/record/${dataset[key].catalog}`}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            Integbio Database Catalog
+                          </a>
                         </div>
                       )}
                       <div className="path">
