@@ -319,19 +319,13 @@
     }
   }
 
-  .notice_area {
-    max-width: 1200px;
-    color: $textColor02;
-    padding: 16px 19px;
-    margin: 20px auto 0;
-    border-radius: 15px;
+  .documents{
     background: $gray03;
-    .heading {
-      font-size: 1.4rem;
-      margin: 0 0 15px;
-    }
-    .text {
-      font-size: 1.2rem;
+    .select_lang{
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 20px;
     }
   }
+
 }
