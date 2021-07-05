@@ -8,7 +8,7 @@ const Databases = (props) => {
   const [language, setLanguage] = useState("en");
 
   const clickExamples = (examples, key) => {
-    props.exploreExamplesExecute(examples, key);
+    props.executeExamples(examples.join("\n"), key);
   };
 
   return (
@@ -158,17 +158,16 @@ const Databases = (props) => {
                             <dt>EXAMPLES</dt>
                             <dd>
                               {dataset[key].examples.map((example, i) => {
-                                const exampleStr = example.join(", ");
                                 return (
                                   <li key={i}>
                                     <a
                                       href="#"
                                       onClick={(e) => {
                                         e.preventDefault();
-                                        clickExamples(exampleStr, key);
+                                        clickExamples(example, key);
                                       }}
                                     >
-                                      {exampleStr}
+                                      {example.join(", ")}
                                     </a>
                                   </li>
                                 );
