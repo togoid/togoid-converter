@@ -111,6 +111,9 @@ const Explore = (props) => {
                                 onMouseOver={() =>
                                   handleActionButtonVisibility(i, j)
                                 }
+                                onMouseLeave={() =>
+                                  handleActionButtonVisibility(null, null)
+                                }
                                 className="result_list__item"
                               >
                                 <div
