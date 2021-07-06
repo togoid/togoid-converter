@@ -72,9 +72,9 @@ const IdInput = (props) => {
         </div>
       </form>
       <div className="input_area__bottom">
-        <p className="input_area__bottom__square">Examples</p>
 
         <div className="input_area__bottom__links">
+          <p className="input_area__bottom__square">Examples:</p>
           <a
             href="#"
             onClick={(e) => {
