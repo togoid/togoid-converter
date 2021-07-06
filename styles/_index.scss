@@ -5,8 +5,8 @@
   }
 
   .input_area {
-    width: 445px;
-    margin: 0 auto 46px;
+    width: 468px;
+    margin: 0 auto 25px;
     .textarea {
       display: flex;
       .textarea_wrapper {
@@ -41,11 +41,9 @@
         display: inline-block;
         font-size: 1.4rem;
         color: $gray04;
-        padding: 0 26px;
+        padding: 0 10px 0 0;
         margin: 0 0 14px;
         line-height: 26px;
-        border-radius: 5px;
-        border: 1px solid $gray01;
       }
       &__link {
         display: inline-block;
