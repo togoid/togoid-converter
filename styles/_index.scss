@@ -269,6 +269,10 @@
       .description {
         font-size: 1.4rem;
         margin: 0 0 30px;
+        a {
+          color: $gray04;
+          text-decoration: underline;
+        }
       }
       .path {
         display: flex;
