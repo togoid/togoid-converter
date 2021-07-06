@@ -265,7 +265,7 @@ const Home = () => {
   return (
     <div className="home">
       <Head>
-        <title>Togo ID</title>
+        <title>TogoID</title>
         <link rel="icon" href="/favicon.ico" />
         <meta
           property="og:image"
