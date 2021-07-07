@@ -148,12 +148,7 @@
         "CHEBI_4806",
         "CHEBI_50158"
       ]
-    ],
-    "name": "ChEBI",
-    "description_ja": "生命プロセスに介在する小分子化合物の辞典です。ゲノムに直接コード化されている分子（例：核酸、タンパク、ペプチド）はこのデータベースの対象外です。登録されているデータは、多数の情報源のデータを組み合わせ、冗長性を除いています。主な情報源はIntEnz(EBI)、KEGG COMPOUND、PDBeChem(EBI)、ChEMBL(EBI)です。 ChEBIオントロジー（化合物オントロジー）による分類情報と階層表示が特徴です。\n全てのエントリーにはデータの信頼性を示す★印がついています； 3つ星：ChEBIチームが手作業で注釈付けを行ったもの。2つ星：ChEMBLチームまたはデータ提供者が手作業で注釈付けを行ったもの。1つ星：情報源から自動的に取得した仮エントリーで、手作業での注釈付けが行われていないもの。",
-    "description_en": "ChEBI is a collection of data on entities of biological interest.\nThis database concentrates on assembling data on smaller chemical compounds, such as atoms, molecules, ions, radicals etc. These should be produced in nature or be synthetic molecules affecting biological processes in living organisms.\nChEBI does not generally include molecules directly encoded by the genome.\nThe database contains 31,651 entries with annotations.\nA keyword search option is available.\nIn addition to this an advanced search option, which includes a structure drawing tool, is provided.\nThe ChEBI database can be searched individually or in combination with other databases.",
-    "organization_ja": "European Bioinformatics Institute",
-    "organization_en": "European Bioinformatics Institute"
+    ]
   },
   "chembl_compound": {
     "label": "ChEMBL compound",
@@ -276,12 +271,7 @@
         "rs16961655",
         "rs79135400"
       ]
-    ],
-    "name": "dbSNP",
-    "description_ja": "1～数塩基の置換、挿入/欠失、反復等の多型情報からなるデータベースです。各SNPについて、集団間での多型頻度の違いを視覚的に比較することもできます。",
-    "description_en": "dbSNP collects information on polymorphisms based on single and small-scale multi-base substitutions, including insertions and deletions, microsatelites, and non-polymorphic variants. Differences in the frequency of polymorphisms in a population can be visually compared for each SNP.",
-    "organization_ja": "National Center for Biotechnology Information",
-    "organization_en": "National Center for Biotechnology Information"
+    ]
   },
   "dgidb": {
     "label": "DGIdb",
@@ -1071,12 +1061,7 @@
         "mgi:1914807",
         "mgi:2145261"
       ]
-    ],
-    "name": "MGI",
-    "description_ja": "マウス研究の総合サイトです。マウス遺伝子に関する情報の他、遺伝子発現データ、多型・変異情報、パスウエイ、遺伝性癌症候群モデルラットに関するデータ、マウス各系統の表現型に関する詳細な情報等を提供しています。Mammalian Phenotype Ontology を作成管理しており、 オントロジーの検索・閲覧もできます(http://www.informatics.jax.org/vocab/mp_ontology) 。Human - Mouse: Disease Connection (HMDC) により、ヒトとマウスの遺伝子や表現型を統合して検索ができます。",
-    "description_en": "This is a comprehensive site for mouse research. The site contains detailed information on mouse genes, gene expression data, polymorphisms and mutations, pathways, data on model rats for hereditary cancers, and phenotypes of each mouse model system. They have developed and provided The Human - Mouse: Disease Connection (HMDC) and Mammalian Phenotype Ontology.",
-    "organization_ja": "The Jackson Laboratory",
-    "organization_en": "The Jackson Laboratory"
+    ]
   },
   "mirbase": {
     "label": "miRBase",
@@ -1512,7 +1497,12 @@
         "CID296",
         "CID10371227"
       ]
-    ]
+    ],
+    "name": "PubChem Compound",
+    "description_ja": "化合物名や分子量、CompoundIDなどで化合物の情報を検索することができるサイトです。医薬品名やその効能、LogP値などの物性値も掲載されています。また、類似構造を持つ別の化合物の検索も可能です。PubChem Substanceが一つの化合物に対して異なる情報をもつ複数のエントリをもつ可能性があるのに対し、PubChem CompoundはPubChem Substanceで得られた種々の情報を一つのエントリに集約して提供しています。",
+    "description_en": "PubChem Compound is a database of chemical structrues of validated small molecules. The dataase contains entries for PubChem entities which are grouped by structural identity and similarity. Users can submit compounds and download via FTP.",
+    "organization_ja": "National Center for Biotechnology Information",
+    "organization_en": "National Center for Biotechnology Information"
   },
   "pubchem_substance": {
     "label": "PubChem substance",
@@ -1813,12 +1803,7 @@
         "rgd:1308965",
         "rgd:1305482"
       ]
-    ],
-    "name": "RGD",
-    "description_ja": "ラットゲノム研究の総合サイトです。ラット遺伝子に関する情報の他に、ラットの系統に関する情報、病態モデルラットに関するデータ、文献情報等を提供しています。",
-    "description_en": "This is a comprehensive site for rat genome researches. In addition to information on rat genes, the site contains information on rat strains, data on rat models for disease, and publications.",
-    "organization_ja": "Medical College of Wisconsin/Bioinformatics Research Center",
-    "organization_en": "Medical College of Wisconsin/Bioinformatics Research Center"
+    ]
   },
   "rhea": {
     "label": "Rhea",
@@ -2094,12 +2079,7 @@
         "3BHS1_MOUSE",
         "14331_SCHMA"
       ]
-    ],
-    "name": "UniProt",
-    "description_ja": "アミノ酸配列とその機能情報を掲載している代表的なデータベースです。「UniProtKB」、「UniRef」、「UniParc」の3種類のデータベースから構成されています。\r\nUniProtKB: 文献情報などを元に手作業で高品質のアノテーションを付けたSwissProtと、機械的にアノテーションを加えたTrEMBLを公開しています。\r\nUniRef: あらかじめ行われた配列相同性検索の結果を提供しています。\r\nUniParc: 配列IDごとに他のデータベースのID等の情報をまとめています。",
-    "description_en": "This database contains information on amino acid sequences and their functions. It is composed of four core databases, UniProtKB, UniRef, UniParc, and Proteomes. UniProtKB contains two types of data, which are manually curated high quality SwissProt annotations based on literature information, and automatically annotated TrEMBL. \r\nUniRef provides results of sequence similarity searches. \r\nUniParc integrates information such as ID for other databases per sequence ID.\r\nProteomes provides proteome data of each organism with completely sequenced genomes.",
-    "organization_ja": "UniProt Consortium",
-    "organization_en": "UniProt Consortium"
+    ]
   },
   "wikipathways": {
     "label": "WikiPathways",
