@@ -1442,27 +1442,6 @@
       "method": "awk -F '\\t' 'FNR!=1{split($6,a,\"|\");for(i in a){if(a[i]~/^HGNC:/)print $2 \"\\t\" gensub(/^.*:/,\"\",\"g\",a[i])}}' $TOGOID_ROOT/input/ncbigene/Homo_sapiens.gene_info"
     }
   },
-  "ncbigene-omim_gene": {
-    "link": {
-      "forward": {
-        "label": "seeAlso",
-        "namespace": "rdfs",
-        "prefix": "http://www.w3.org/2000/01/rdf-schema#",
-        "predicate": "seeAlso"
-      },
-      "reverse": {
-        "label": "seeAlso",
-        "namespace": "rdfs",
-        "prefix": "http://www.w3.org/2000/01/rdf-schema#",
-        "predicate": "seeAlso"
-      },
-      "file": "sample.tsv"
-    },
-    "update": {
-      "frequency": "Weekly",
-      "method": "awk -F '\\t' 'FNR!=1{split($6,a,\"|\");for(i in a){if(a[i]~/^MIM:/)print $2 \"\\t\" gensub(/^.*:/,\"\",\"g\",a[i])}}' $TOGOID_ROOT/input/ncbigene/Homo_sapiens.gene_info"
-    }
-  },
   "ncbigene-mirbase": {
     "link": {
       "forward": {
@@ -1482,6 +1461,27 @@
     "update": {
       "frequency": "Weekly",
       "method": "awk -F '\\t' 'FNR!=1{split($6,a,\"|\");for(i in a){if(a[i]~/^miRBase:/)print $2 \"\\t\" gensub(/^.*:/,\"\",\"g\",a[i])}}' $TOGOID_ROOT/input/ncbigene/Homo_sapiens.gene_info"
+    }
+  },
+  "ncbigene-omim_gene": {
+    "link": {
+      "forward": {
+        "label": "seeAlso",
+        "namespace": "rdfs",
+        "prefix": "http://www.w3.org/2000/01/rdf-schema#",
+        "predicate": "seeAlso"
+      },
+      "reverse": {
+        "label": "seeAlso",
+        "namespace": "rdfs",
+        "prefix": "http://www.w3.org/2000/01/rdf-schema#",
+        "predicate": "seeAlso"
+      },
+      "file": "sample.tsv"
+    },
+    "update": {
+      "frequency": "Weekly",
+      "method": "awk -F '\\t' 'FNR!=1{split($6,a,\"|\");for(i in a){if(a[i]~/^MIM:/)print $2 \"\\t\" gensub(/^.*:/,\"\",\"g\",a[i])}}' $TOGOID_ROOT/input/ncbigene/Homo_sapiens.gene_info"
     }
   },
   "ncbigene-refseq_genomic": {
@@ -1610,27 +1610,6 @@
       "method": "sparql_csv2tsv.sh query.rq https://sparql.omabrowser.org/sparql/"
     }
   },
-  "orphanet-meddra": {
-    "link": {
-      "forward": {
-        "label": "seeAlso",
-        "namespace": "rdfs",
-        "prefix": "http://www.w3.org/2000/01/rdf-schema#",
-        "predicate": "seeAlso"
-      },
-      "reverse": {
-        "label": "seeAlso",
-        "namespace": "rdfs",
-        "prefix": "http://www.w3.org/2000/01/rdf-schema#",
-        "predicate": "seeAlso"
-      },
-      "file": "sample.tsv"
-    },
-    "update": {
-      "frequency": "Irregular",
-      "method": "sparql_csv2tsv.sh query.rq https://integbio.jp/rdf/bioportal/sparql"
-    }
-  },
   "oma_protein-uniprot": {
     "link": {
       "forward": {
@@ -1650,6 +1629,27 @@
     "update": {
       "frequency": "twoTimesAYear",
       "method": "sparql_csv2tsv.sh taxonomy.rq https://sparql.omabrowser.org/sparql/ > taxonomy.txt && sparql_taxon.rb query.rq https://sparql.omabrowser.org/sparql/ taxonomy.txt"
+    }
+  },
+  "orphanet-meddra": {
+    "link": {
+      "forward": {
+        "label": "seeAlso",
+        "namespace": "rdfs",
+        "prefix": "http://www.w3.org/2000/01/rdf-schema#",
+        "predicate": "seeAlso"
+      },
+      "reverse": {
+        "label": "seeAlso",
+        "namespace": "rdfs",
+        "prefix": "http://www.w3.org/2000/01/rdf-schema#",
+        "predicate": "seeAlso"
+      },
+      "file": "sample.tsv"
+    },
+    "update": {
+      "frequency": "Irregular",
+      "method": "sparql_csv2tsv.sh query.rq https://integbio.jp/rdf/bioportal/sparql"
     }
   },
   "orphanet-mesh": {
@@ -1883,13 +1883,13 @@
       "method": "sparql_csv2tsv.sh query.rq https://integbio.jp/rdf/mirror/ebi/sparql"
     }
   },
-  "reactome_reaction-go": {
+  "reactome_reaction-chebi": {
     "link": {
       "forward": {
-        "label": "seeAlso",
-        "namespace": "rdfs",
-        "prefix": "http://www.w3.org/2000/01/rdf-schema#",
-        "predicate": "seeAlso"
+        "label": "has component",
+        "namespace": "obo",
+        "prefix": "http://purl.obolibrary.org/obo/",
+        "predicate": "RO_0002180"
       },
       "reverse": {
         "label": "seeAlso",
@@ -1904,13 +1904,13 @@
       "method": "sparql_csv2tsv.sh query.rq https://integbio.jp/rdf/mirror/ebi/sparql"
     }
   },
-  "reactome_reaction-chebi": {
+  "reactome_reaction-go": {
     "link": {
       "forward": {
-        "label": "has component",
-        "namespace": "obo",
-        "prefix": "http://purl.obolibrary.org/obo/",
-        "predicate": "RO_0002180"
+        "label": "seeAlso",
+        "namespace": "rdfs",
+        "prefix": "http://www.w3.org/2000/01/rdf-schema#",
+        "predicate": "seeAlso"
       },
       "reverse": {
         "label": "seeAlso",
@@ -2360,27 +2360,6 @@
       "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RX/ { print $1, $18 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | awk -F'\t' '$1 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/ && $2 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/'"
     }
   },
-  "sra_experiment-sra_sample": {
-    "link": {
-      "file": "sample.tsv",
-      "forward": {
-        "label": "seeAlso",
-        "namespace": "rdfs",
-        "prefix": "http://www.w3.org/2000/01/rdf-schema#",
-        "predicate": "seeAlso"
-      },
-      "reverse": {
-        "label": "seeAlso",
-        "namespace": "rdfs",
-        "prefix": "http://www.w3.org/2000/01/rdf-schema#",
-        "predicate": "seeAlso"
-      }
-    },
-    "update": {
-      "frequency": "Daily",
-      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RX/ { print $1, $12 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | awk -F'\t' '$1 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/ && $2 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/'"
-    }
-  },
   "sra_experiment-sra_project": {
     "link": {
       "file": "sample.tsv",
@@ -2400,6 +2379,27 @@
     "update": {
       "frequency": "Daily",
       "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RX/ { print $1, $13 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | awk -F'\t' '$1 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/ && $2 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/'"
+    }
+  },
+  "sra_experiment-sra_sample": {
+    "link": {
+      "file": "sample.tsv",
+      "forward": {
+        "label": "seeAlso",
+        "namespace": "rdfs",
+        "prefix": "http://www.w3.org/2000/01/rdf-schema#",
+        "predicate": "seeAlso"
+      },
+      "reverse": {
+        "label": "seeAlso",
+        "namespace": "rdfs",
+        "prefix": "http://www.w3.org/2000/01/rdf-schema#",
+        "predicate": "seeAlso"
+      }
+    },
+    "update": {
+      "frequency": "Daily",
+      "method": "awk 'BEGIN{ FS=OFS=\"\t\" } $1 ~ /^.RX/ { print $1, $12 }' \"${TOGOID_ROOT}/input/sra/SRA_Accessions.tab\" | awk -F'\t' '$1 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/ && $2 ~ /^(SR|ER|DR|SAM|PRJ)[A-Z]{1,}[0-9]{1,}/'"
     }
   },
   "sra_project-bioproject": {
@@ -3011,27 +3011,6 @@
       "method": "sparql_thread.pl -t 10"
     }
   },
-  "uniprot-orphanet": {
-    "link": {
-      "forward": {
-        "namespace": "ro",
-        "label": "has phenotype",
-        "prefix": "http://purl.obolibrary.org/obo/",
-        "predicate": "RO_0002200"
-      },
-      "reverse": {
-        "namespace": "ro",
-        "label": "phenotype of",
-        "prefix": "http://purl.obolibrary.org/obo/",
-        "predicate": "RO_0002201"
-      },
-      "file": "sample.tsv"
-    },
-    "update": {
-      "frequency": "Monthly",
-      "method": "uniprot_idmapping2tsv.rb ${TOGOID_ROOT}/input/uniprot/idmapping.dat.gz Orphanet"
-    }
-  },
   "uniprot-omim_phenotype": {
     "link": {
       "forward": {
@@ -3051,6 +3030,27 @@
     "update": {
       "frequency": "Monthly",
       "method": "sparql_thread.pl -t 10"
+    }
+  },
+  "uniprot-orphanet": {
+    "link": {
+      "forward": {
+        "namespace": "ro",
+        "label": "has phenotype",
+        "prefix": "http://purl.obolibrary.org/obo/",
+        "predicate": "RO_0002200"
+      },
+      "reverse": {
+        "namespace": "ro",
+        "label": "phenotype of",
+        "prefix": "http://purl.obolibrary.org/obo/",
+        "predicate": "RO_0002201"
+      },
+      "file": "sample.tsv"
+    },
+    "update": {
+      "frequency": "Monthly",
+      "method": "uniprot_idmapping2tsv.rb ${TOGOID_ROOT}/input/uniprot/idmapping.dat.gz Orphanet"
     }
   },
   "uniprot-pdb": {
