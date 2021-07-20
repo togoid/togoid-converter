@@ -18,6 +18,7 @@ const Explore = (props) => {
     null,
   ]);
   const [language, setLanguage] = useState("en");
+  const [notConvertedIds, setNotConvertedIds] = useState([]);
 
   useEffect(() => {
     if (tableData.heading.length > 0) setModalVisibility(true);
@@ -53,6 +54,11 @@ const Explore = (props) => {
       .map((v) => dbCatalogue[v.name]);
     const d = await executeQuery(r, props.ids);
     const rows = d.results.slice(0, 100).map((v) => v.slice(0, routeIndex + 1));
+
+    const convertedIds = Array.from(
+      new Set(d.results.map((item) => item[0]))
+    );
+    setNotConvertedIds(props.ids.filter((i) => convertedIds.indexOf(i) === -1));
 
     setTotal(d.total);
     setTableData({ heading, rows });
@@ -381,6 +387,7 @@ const Explore = (props) => {
                         route={props.route}
                         ids={props.ids}
                         tableData={tableData}
+                        notConvertedIds={notConvertedIds}
                         total={total}
                         setModalVisibility={setModalVisibility}
                       />
