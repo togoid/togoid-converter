@@ -120,25 +120,11 @@ const ResultModal = (props) => {
           <div className="modal__top">
             <div className="item_wrapper">
               {(() => {
-                const prefix = props.tableData.heading[0].prefix
-                  .split("/")
-                  .slice(-1);
-
-                const uniqueId = Array.from(
-                  new Set(
-                    props.tableData.rows
-                      .map((item) => [item[0], prefix + item[0]])
-                      .flat()
-                  )
-                );
-                const noForwardedId = props.ids.filter(
-                  (i) => uniqueId.indexOf(i) === -1
-                );
-                if (noForwardedId.length > 0) {
+                if (props.notConvertedIds.length > 0) {
                   const limit = showAllFailed ? 10000 : 3;
                   return (
                     <span className="non_forwarded">
-                      {`IDs that were not converted: ${noForwardedId
+                      {`IDs that were not converted: ${props.notConvertedIds
                         .filter((v, i) => i < limit)
                         .join(", ")} `}
                       {!showAllFailed && (
