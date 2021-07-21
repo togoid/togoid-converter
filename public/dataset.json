@@ -65,12 +65,7 @@
         "SAMEA4760552",
         "SAMEA1572228"
       ]
-    ],
-    "name": "NCBI BioSample",
-    "description_ja": "投稿者から提供された、実験アッセイに利用される生体物質に関する記述的情報またはメタデータを保管するデータベースです。NCBI の主要なデータアーカイブに収録されているデータは、本データベースから取得されています。",
-    "description_en": "The BioSample database stores submitter-supplied descriptive information, or metadata, about the biological materials used in experimental assays, from which data stored in NCBI's primary data archives are derived.",
-    "organization_ja": "National Center for Biotechnology Information (NCBI)",
-    "organization_en": "National Center for Biotechnology Information (NCBI)"
+    ]
   },
   "ccds": {
     "label": "Consensus CDS",
@@ -380,7 +375,7 @@
     "label": "Enzyme nomenclature",
     "catalog": "nbdc01883",
     "category": "Function",
-    "regex": "^(?:EC )?(?<id>\\d+\\.(?:(?:-\\.-\\.-)|\\d+\\.(?:(?:-\\.-)|\\d+\\.(?:-|n?\\d+))))$",
+    "regex": "^(?:EC:)?(?<id>\\d+\\.(?:(?:-\\.-\\.-)|\\d+\\.(?:(?:-\\.-)|\\d+\\.(?:-|n?\\d+))))$",
     "prefix": "http://identifiers.org/ec-code/",
     "examples": [
       [
@@ -396,23 +391,18 @@
         "2.3.1.138"
       ],
       [
-        "EC 1.6.3.1",
-        "EC 2.4.1.353",
-        "EC 1.1.1.288",
-        "EC 1.5.1.2",
-        "EC 3.1.1.71",
-        "EC 1.3.1.31",
-        "EC 3.5.1.29",
-        "EC 1.16.1.1",
-        "EC 3.1.3.48",
-        "EC 2.3.1.138"
+        "EC:1.6.3.1",
+        "EC:2.4.1.353",
+        "EC:1.1.1.288",
+        "EC:1.5.1.2",
+        "EC:3.1.1.71",
+        "EC:1.3.1.31",
+        "EC:3.5.1.29",
+        "EC:1.16.1.1",
+        "EC:3.1.3.48",
+        "EC:2.3.1.138"
       ]
-    ],
-    "name": "ExplorEnz",
-    "description_ja": "IUBMB 酵素学名リストのデータにアクセスするための新たなツールとして開発されたデータベースです。MySQL データベースに格納されているデータは、IUPAC 標準に従い化学名のフォーマットを保存しています。EC番号、反応、説明と他のデータベースへのリンク、文献を収録しています。EC番号によるブラウズや反応名、文献による検索が可能です。",
-    "description_en": "The Enzyme Database was developed as a new way to access the data of the IUBMB Enzyme Nomenclature List. The data, which are stored in a MySQL database, preserve the formatting of chemical names according to IUPAC standards.",
-    "organization_ja": "Trinity College Dublin",
-    "organization_en": "Trinity College Dublin"
+    ]
   },
   "ena": {
     "catalog": "nbdc00432",
@@ -585,24 +575,14 @@
         "hgnc:22224",
         "hgnc:19741"
       ]
-    ],
-    "name": "HUGO Gene Nomenclature Committee",
-    "description_ja": "HGNCデータベースは、HGNC (HUGO Gene Nomenclature Comittee) が既知のヒトの遺伝子ごとに承認した全ての遺伝子名と短縮名（シンボル）を収録しています。HGNC承認の遺伝子命名法、遺伝子情報、ゲノム、プロテオミクス、表現型情報へのリンクを提供しています。",
-    "description_en": "The HUGO Gene Nomenclature Committee (HGNC) aims to assign a unique and ideally meaningful name and symbol to every human gene. The HGNC database currently comprises over 40,000 public records containing approved human gene nomenclature and associated gene information. The website enables direct links to the searchable HGNC database and other related database resources, such as the HCOP orthology search tool and manually curated gene family webpages.",
-    "organization_ja": "Human Genome Organisation (HUGO)",
-    "organization_en": "Human Genome Organisation (HUGO)"
+    ]
   },
   "hgnc_symbol": {
     "label": "HGNC gene symbol",
     "catalog": "nbdc01774",
     "category": "Gene",
     "regex": "^(?<id>[A-Za-z-0-9_]+)\\@?$",
-    "prefix": "http://identifiers.org/hgnc.symbol/",
-    "name": "HUGO Gene Nomenclature Committee",
-    "description_ja": "HGNCデータベースは、HGNC (HUGO Gene Nomenclature Comittee) が既知のヒトの遺伝子ごとに承認した全ての遺伝子名と短縮名（シンボル）を収録しています。HGNC承認の遺伝子命名法、遺伝子情報、ゲノム、プロテオミクス、表現型情報へのリンクを提供しています。",
-    "description_en": "The HUGO Gene Nomenclature Committee (HGNC) aims to assign a unique and ideally meaningful name and symbol to every human gene. The HGNC database currently comprises over 40,000 public records containing approved human gene nomenclature and associated gene information. The website enables direct links to the searchable HGNC database and other related database resources, such as the HCOP orthology search tool and manually curated gene family webpages.",
-    "organization_ja": "Human Genome Organisation (HUGO)",
-    "organization_en": "Human Genome Organisation (HUGO)"
+    "prefix": "http://identifiers.org/hgnc.symbol/"
   },
   "hmdb": {
     "label": "HMDB",
@@ -1252,12 +1232,7 @@
         "FHVAHGE",
         "PYVYVTH"
       ]
-    ],
-    "name": "Orthologous MAtrix",
-    "description_ja": "OMA (Orthologous MAtrix) プロジェクトは、完全長ゲノム間のオーソログを推論するための方法およびデータベースです。種内または種間で保持される相同配列（オーソログ、パラログ）について、保持種名、染色体位置、遺伝子オントロジー、外部DBへのリンクとオーソログリスト、シンテニー領域のリスト、オーソログ領域の階層状況を収録しています。",
-    "description_en": "The OMA (“Orthologous MAtrix”) project is a method and database for the inference of orthologs among complete genomes. The distinctive features of OMA are its broad scope and size, high quality of inferences, feature-rich web interface, availability of data in a wide range of formats and interfaces, and frequent update schedule of two releases per year.",
-    "organization_ja": "Dessimoz Lab,Computational Evolutionary Biology and Genomics",
-    "organization_en": "Dessimoz Lab,Computational Evolutionary Biology and Genomics"
+    ]
   },
   "oma_protein": {
     "label": "OMA protein",
@@ -1278,12 +1253,7 @@
         "HUMAN02190",
         "HUMAN02112"
       ]
-    ],
-    "name": "Orthologous MAtrix",
-    "description_ja": "OMA (Orthologous MAtrix) プロジェクトは、完全長ゲノム間のオーソログを推論するための方法およびデータベースです。種内または種間で保持される相同配列（オーソログ、パラログ）について、保持種名、染色体位置、遺伝子オントロジー、外部DBへのリンクとオーソログリスト、シンテニー領域のリスト、オーソログ領域の階層状況を収録しています。",
-    "description_en": "The OMA (“Orthologous MAtrix”) project is a method and database for the inference of orthologs among complete genomes. The distinctive features of OMA are its broad scope and size, high quality of inferences, feature-rich web interface, availability of data in a wide range of formats and interfaces, and frequent update schedule of two releases per year.",
-    "organization_ja": "Dessimoz Lab,Computational Evolutionary Biology and Genomics",
-    "organization_en": "Dessimoz Lab,Computational Evolutionary Biology and Genomics"
+    ]
   },
   "omim_gene": {
     "label": "OMIM gene",
@@ -1874,12 +1844,7 @@
         "10732",
         "11278"
       ]
-    ],
-    "name": "Rhea",
-    "description_ja": "酵素の機能に関するアノテーションと代謝ネットワークの説明を提供するために設計されたリソースです。生化学反応に関する包括的で非冗長なこのリソースは、専門家がキュレーションを行っています。Rhea に含まれる説明には、IUBMB Enzyme Nomenclature リストをカバーする酵素触媒反応の他、自然発生反応などその他の反応の説明も収録しています（ChEBI：Chemical Entities of Biological Interest の低分子オントロジーに含まれるエンティティを利用）。",
-    "description_en": "Rhea is a comprehensive and non-redundant resource of expert-curated biochemical reactions designed for the functional annotation of enzymes and the description of metabolic networks. Rhea describes enzyme-catalyzed reactions covering the IUBMB Enzyme Nomenclature list as well as additional reactions, including spontaneously occurring reactions, using entities from the ChEBI (Chemical Entities of Biological Interest) ontology of small molecules.",
-    "organization_ja": "Swiss Institute of Bioinformatics (SIB)",
-    "organization_en": "Swiss Institute of Bioinformatics (SIB)"
+    ]
   },
   "sra_accession": {
     "label": "SRA accession",
@@ -2172,11 +2137,6 @@
         "WP4545_r116235",
         "WP4462_r102079"
       ]
-    ],
-    "name": "WikiPathways",
-    "description_ja": "生物学的パスウェイのキュレーションに特化したオープンな共同プラットフォームです。 パスウェイマップとそれを構成するタンパク質や遺伝子の配列、機能、ゲノムブラウザなど詳細情報へのリンクを収録しています。",
-    "description_en": "WikiPathways is an open, collaborative platform dedicated to the curation of biological pathways. WikiPathways was established to facilitate the contribution and maintenance of pathway information by the biology community.",
-    "organization_ja": "Universiteit Maastricht",
-    "organization_en": "Universiteit Maastricht"
+    ]
   }
 }
