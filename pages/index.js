@@ -41,7 +41,11 @@ const Home = () => {
                 ids: [],
               });
             }
-          } else if (k.split("-").pop() === r.name) {
+          } else if (
+            dbConfig[k].link.reverse &&
+            k.split("-").pop() === r.name
+          ) {
+            // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
             const name = k.split("-")[0];
             if (
               !candidates.find((v) => v.name === name) &&
