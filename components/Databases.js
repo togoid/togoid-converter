@@ -150,16 +150,12 @@ const Databases = (props) => {
                           <dt>CATEGORY</dt>
                           <dd>{dbCatalogue[key].category}</dd>
                         </div>
-                        {dbCatalogue[key].organization_en && language === "en" && (
+                        {dbCatalogue[key][`organization_${language}`] && (
                           <div className="data__wrapper">
                             <dt>ORGANIZATION</dt>
-                            <dd>{dbCatalogue[key].organization_en}</dd>
-                          </div>
-                        )}
-                        {dbCatalogue[key].organization_ja && language === "ja" && (
-                          <div className="data__wrapper">
-                            <dt>ORGANIZATION</dt>
-                            <dd>{dbCatalogue[key].organization_ja}</dd>
+                            <dd>
+                              {dbCatalogue[key][`organization_${language}`]}
+                            </dd>
                           </div>
                         )}
                         {dbCatalogue[key].examples && (
