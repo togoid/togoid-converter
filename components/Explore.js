@@ -375,24 +375,20 @@ const Explore = (props) => {
                               <dt>CATEGORY</dt>
                               <dd>{dbCatalogue[database].category}</dd>
                             </div>
-                            {dbCatalogue[database].organization_en &&
-                              language === "en" && (
-                                <div className="modal--through__data_list__item">
-                                  <dt>ORGANIZATION</dt>
-                                  <dd>
-                                    {dbCatalogue[database].organization_en}
-                                  </dd>
-                                </div>
-                              )}{" "}
-                            {dbCatalogue[database].organization_ja &&
-                              language === "ja" && (
-                                <div className="modal--through__data_list__item">
-                                  <dt>ORGANIZATION</dt>
-                                  <dd>
-                                    {dbCatalogue[database].organization_ja}
-                                  </dd>
-                                </div>
-                              )}
+                            {dbCatalogue[database][
+                              `organization_${language}`
+                            ] && (
+                              <div className="modal--through__data_list__item">
+                                <dt>ORGANIZATION</dt>
+                                <dd>
+                                  {
+                                    dbCatalogue[database][
+                                      `organization_${language}`
+                                    ]
+                                  }
+                                </dd>
+                              </div>
+                            )}
                           </dl>
                         </div>
                       </div>
