@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { saveAs } from "file-saver";
 import ResultModal from "../components/ResultModal";
 import { executeQuery } from "../lib/util";
-import dbCatalogue from "../public/dataset.json";
+import dbCatalogueSparql from "../public/datasetSparql.json";
 import { ArrowArea } from "react-arrow-master";
 import { categories } from "../lib/setting";
 
@@ -37,7 +37,7 @@ const Explore = (props) => {
   const handleIdDownload = async (database, routeIndex) => {
     const r = selectDatabase(database, routeIndex).slice(0, routeIndex + 1);
     const d = await executeQuery(r, props.ids, "target");
-    const prefix = dbCatalogue[database.name].prefix.split("/").slice(-1);
+    const prefix = props.dbCatalogue[database.name].prefix.split("/").slice(-1);
 
     const text = d.results.map((result) => prefix + result).join("\r\n");
     const blob = new Blob([text], {
@@ -50,7 +50,7 @@ const Explore = (props) => {
     const r = selectDatabase(database, routeIndex).slice(0, routeIndex + 1);
     const heading = r
       .filter((v, i) => i <= routeIndex)
-      .map((v) => dbCatalogue[v.name]);
+      .map((v) => props.dbCatalogue[v.name]);
     const d = await executeQuery(r, props.ids);
     const rows = d.results.slice(0, 100).map((v) => v.slice(0, routeIndex + 1));
 
@@ -62,7 +62,7 @@ const Explore = (props) => {
   };
 
   const showInformationModal = async (v) => {
-    const dbName = Object.keys(dbCatalogue).filter(
+    const dbName = Object.keys(props.dbCatalogue).filter(
       (dataset) => dataset === v.name
     );
     setInformationModal(true);
@@ -165,7 +165,7 @@ const Explore = (props) => {
                                             : "#ffffff",
                                       }}
                                     >
-                                      {dbCatalogue[v.name].label}
+                                      {props.dbCatalogue[v.name].label}
                                     </span>
                                   </label>
                                   {visibleActionButtonIndex[0] === i &&
@@ -254,7 +254,7 @@ const Explore = (props) => {
                             className="modal--through__close"
                           />
                           <h2 className="modal--through__title">
-                            {dbCatalogue[database].label}
+                            {props.dbCatalogue[database].label}
                           </h2>
                           <div className="select_lang">
                             <div className="radio">
@@ -289,13 +289,13 @@ const Explore = (props) => {
                             </div>
                           </div>
                           <p className="modal--through__description">
-                            {dbCatalogue[database][
+                            {dbCatalogueSparql[database][
                               `description_${language}`
                             ] && (
                               <div>
                                 <p>
                                   {
-                                    dbCatalogue[database][
+                                    dbCatalogueSparql[database][
                                       `description_${language}`
                                     ]
                                   }
@@ -303,7 +303,7 @@ const Explore = (props) => {
                                 <p>
                                   Cited from{" "}
                                   <a
-                                    href={`https://integbio.jp/dbcatalog/record/${dbCatalogue[database].catalog}`}
+                                    href={`https://integbio.jp/dbcatalog/record/${props.dbCatalogue[database].catalog}`}
                                     target="_blank"
                                     rel="noreferrer"
                                   >
@@ -348,16 +348,16 @@ const Explore = (props) => {
                                         className="path_label small green"
                                         style={{
                                           backgroundColor: categories[
-                                            dbCatalogue[l].category
+                                            props.dbCatalogue[l].category
                                           ]
                                             ? categories[
-                                                dbCatalogue[l].category
+                                                props.dbCatalogue[l].category
                                               ].color
                                             : null,
                                         }}
                                         key={i}
                                       >
-                                        {dbCatalogue[l].label}
+                                        {props.dbCatalogue[l].label}
                                       </div>
                                     ))}
                                   </div>
@@ -369,20 +369,20 @@ const Explore = (props) => {
                           <dl className="modal--through__data_list">
                             <div className="modal--through__data_list__item">
                               <dt>PREFIX</dt>
-                              <dd>{dbCatalogue[database].prefix}</dd>
+                              <dd>{props.dbCatalogue[database].prefix}</dd>
                             </div>
                             <div className="modal--through__data_list__item">
                               <dt>CATEGORY</dt>
-                              <dd>{dbCatalogue[database].category}</dd>
+                              <dd>{props.dbCatalogue[database].category}</dd>
                             </div>
-                            {dbCatalogue[database][
+                            {dbCatalogueSparql[database][
                               `organization_${language}`
                             ] && (
                               <div className="modal--through__data_list__item">
                                 <dt>ORGANIZATION</dt>
                                 <dd>
                                   {
-                                    dbCatalogue[database][
+                                    dbCatalogueSparql[database][
                                       `organization_${language}`
                                     ]
                                   }
@@ -402,6 +402,7 @@ const Explore = (props) => {
                         notConvertedIds={notConvertedIds}
                         total={total}
                         setModalVisibility={setModalVisibility}
+                        dbCatalogue={props.dbCatalogue}
                       />
                     )}
                   </div>
