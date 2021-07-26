@@ -1,13 +1,12 @@
 import Head from "next/head";
 import React, { useState, useEffect } from "react";
 import NProgress from "nprogress";
+import axios from "axios";
 import Header from "../components/Header";
 import Explore from "../components/Explore";
 import Databases from "../components/Databases";
 import IdInput from "../components/IdInput";
 import Documents from "../components/Documents";
-import dbConfig from "../public/config.json";
-import dbCatalogue from "../public/dataset.json";
 import { executeQuery } from "../lib/util";
 
 const Home = () => {
@@ -18,6 +17,20 @@ const Home = () => {
   const [routePaths, setRoutePaths] = useState([]);
   const [candidatePaths, setCandidatePaths] = useState([]);
   const [idTexts, setIdTexts] = useState("");
+  const [dbCatalogue, setDbCatalogue] = useState([]);
+  const [dbConfig, setDbConfig] = useState([]);
+
+  useEffect(() => {
+    const fetchApi = async () => {
+      const promises = await Promise.all([
+        axios.get("https://api.togoid.dbcls.jp/config/dataset"),
+        axios.get("https://api.togoid.dbcls.jp/config/database"),
+      ]);
+      setDbCatalogue(promises[0].data);
+      setDbConfig(promises[1].data);
+    };
+    fetchApi();
+  }, []);
 
   useEffect(() => {
     if (route.length > 0) {
