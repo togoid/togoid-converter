@@ -55,9 +55,7 @@ const Explore = (props) => {
     const d = await executeQuery(r, props.ids);
     const rows = d.results.slice(0, 100).map((v) => v.slice(0, routeIndex + 1));
 
-    const convertedIds = Array.from(
-      new Set(d.results.map((item) => item[0]))
-    );
+    const convertedIds = Array.from(new Set(d.results.map((item) => item[0])));
     setNotConvertedIds(props.ids.filter((i) => convertedIds.indexOf(i) === -1));
 
     setTotal(d.total);
@@ -292,10 +290,29 @@ const Explore = (props) => {
                             </div>
                           </div>
                           <p className="modal--through__description">
-                            {language === "en" &&
-                              dbCatalogue[database].description_en}
-                            {language === "ja" &&
-                              dbCatalogue[database].description_ja}
+                            {dbCatalogue[database][
+                              `description_${language}`
+                            ] && (
+                              <div>
+                                <p>
+                                  {
+                                    dbCatalogue[database][
+                                      `description_${language}`
+                                    ]
+                                  }
+                                </p>
+                                <p>
+                                  Cited from{" "}
+                                  <a
+                                    href={`https://integbio.jp/dbcatalog/record/${dbCatalogue[database].catalog}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                  >
+                                    Integbio Database Catalog
+                                  </a>
+                                </p>
+                              </div>
+                            )}
                           </p>
                           {(() => {
                             const labels = Array.from(
