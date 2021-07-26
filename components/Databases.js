@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import dbCatalogue from "../public/dataset.json";
+import dbCatalogueSparql from "../public/datasetSparql.json";
 import { categories } from "../lib/setting";
 
 const Databases = (props) => {
@@ -52,8 +52,8 @@ const Databases = (props) => {
                 <h3>DB Name Index</h3>
                 {(() => {
                   const labelIndex = [];
-                  return Object.keys(dbCatalogue).map((key, i) => {
-                    const keyInitial = dbCatalogue[key].label
+                  return Object.keys(props.dbCatalogue).map((key, i) => {
+                    const keyInitial = props.dbCatalogue[key].label
                       .slice(0, 1)
                       .toUpperCase();
                     if (
@@ -75,7 +75,7 @@ const Databases = (props) => {
                 })()}
               </div>
 
-              {Object.keys(dbCatalogue).map((key) => {
+              {Object.keys(props.dbCatalogue).map((key) => {
                 const labels = Array.from(
                   new Set(
                     Object.keys(props.dbConfig).map((k) => {
@@ -95,18 +95,24 @@ const Databases = (props) => {
                     <article
                       className="database__item"
                       key={key}
-                      id={dbCatalogue[key].label.slice(0, 1).toUpperCase()}
+                      id={props.dbCatalogue[key].label
+                        .slice(0, 1)
+                        .toUpperCase()}
                     >
                       <h3 className="title">
-                        <span className="text">{dbCatalogue[key].label}</span>
+                        <span className="text">
+                          {props.dbCatalogue[key].label}
+                        </span>
                       </h3>
-                      {dbCatalogue[key][`description_${language}`] && (
+                      {dbCatalogueSparql[key][`description_${language}`] && (
                         <div className="description">
-                          <p>{dbCatalogue[key][`description_${language}`]}</p>
+                          <p>
+                            {dbCatalogueSparql[key][`description_${language}`]}
+                          </p>
                           <p>
                             Cited from{" "}
                             <a
-                              href={`https://integbio.jp/dbcatalog/record/${dbCatalogue[key].catalog}`}
+                              href={`https://integbio.jp/dbcatalog/record/${props.dbCatalogue[key].catalog}`}
                               target="_blank"
                               rel="noreferrer"
                             >
@@ -129,14 +135,15 @@ const Databases = (props) => {
                               className="path_label small green"
                               style={{
                                 backgroundColor: categories[
-                                  dbCatalogue[l].category
+                                  props.dbCatalogue[l].category
                                 ]
-                                  ? categories[dbCatalogue[l].category].color
+                                  ? categories[props.dbCatalogue[l].category]
+                                      .color
                                   : null,
                               }}
                               key={i}
                             >
-                              {dbCatalogue[l].label}
+                              {props.dbCatalogue[l].label}
                             </div>
                           ))}
                         </div>
@@ -144,39 +151,45 @@ const Databases = (props) => {
                       <dl className="data">
                         <div className="data__wrapper">
                           <dt>PREFIX</dt>
-                          <dd>{dbCatalogue[key].prefix}</dd>
+                          <dd>{props.dbCatalogue[key].prefix}</dd>
                         </div>
                         <div className="data__wrapper">
                           <dt>CATEGORY</dt>
-                          <dd>{dbCatalogue[key].category}</dd>
+                          <dd>{props.dbCatalogue[key].category}</dd>
                         </div>
-                        {dbCatalogue[key][`organization_${language}`] && (
+                        {dbCatalogueSparql[key][`organization_${language}`] && (
                           <div className="data__wrapper">
                             <dt>ORGANIZATION</dt>
                             <dd>
-                              {dbCatalogue[key][`organization_${language}`]}
+                              {
+                                dbCatalogueSparql[key][
+                                  `organization_${language}`
+                                ]
+                              }
                             </dd>
                           </div>
                         )}
-                        {dbCatalogue[key].examples && (
+                        {props.dbCatalogue[key].examples && (
                           <div className="data__wrapper">
                             <dt>EXAMPLES</dt>
                             <dd>
-                              {dbCatalogue[key].examples.map((example, i) => {
-                                return (
-                                  <li key={i}>
-                                    <a
-                                      href="#"
-                                      onClick={(e) => {
-                                        e.preventDefault();
-                                        clickExamples(example, key);
-                                      }}
-                                    >
-                                      {example.join(", ")}
-                                    </a>
-                                  </li>
-                                );
-                              })}
+                              {props.dbCatalogue[key].examples.map(
+                                (example, i) => {
+                                  return (
+                                    <li key={i}>
+                                      <a
+                                        href="#"
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          clickExamples(example, key);
+                                        }}
+                                      >
+                                        {example.join(", ")}
+                                      </a>
+                                    </li>
+                                  );
+                                }
+                              )}
                             </dd>
                           </div>
                         )}
