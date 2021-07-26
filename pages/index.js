@@ -23,8 +23,8 @@ const Home = () => {
   useEffect(() => {
     const fetchApi = async () => {
       const promises = await Promise.all([
-        axios.get("https://api.togoid.dbcls.jp/config/dataset"),
-        axios.get("https://api.togoid.dbcls.jp/config/database"),
+        axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/dataset`),
+        axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/database`),
       ]);
       setDbCatalogue(promises[0].data);
       setDbConfig(promises[1].data);
