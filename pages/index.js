@@ -417,10 +417,16 @@ const Home = () => {
               setRoute={setRoute}
               restartExplore={restartExplore}
               ids={ids}
+              dbCatalogue={dbCatalogue}
+              dbConfig={dbConfig}
             />
           )}
           {activeTab === "DATABASE" && (
-            <Databases executeExamples={executeExamples} />
+            <Databases
+              executeExamples={executeExamples}
+              dbCatalogue={dbCatalogue}
+              dbConfig={dbConfig}
+            />
           )}
           {activeTab === "DOCUMENTS" && <Documents />}
         </div>

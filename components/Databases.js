@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import dataset from "../public/dataset.json";
-import dbConfig from "../public/config.json";
 import dbCatalogue from "../public/dataset.json";
 import { categories } from "../lib/setting";
 
@@ -59,7 +57,7 @@ const Databases = (props) => {
                       .slice(0, 1)
                       .toUpperCase();
                     if (
-                      Object.keys(dbConfig).find(
+                      Object.keys(props.dbConfig).find(
                         (k) =>
                           (k.split("-").indexOf(key) === 0 ||
                             k.split("-").indexOf(key) === 1) &&
@@ -77,10 +75,10 @@ const Databases = (props) => {
                 })()}
               </div>
 
-              {Object.keys(dataset).map((key) => {
+              {Object.keys(dbCatalogue).map((key) => {
                 const labels = Array.from(
                   new Set(
-                    Object.keys(dbConfig).map((k) => {
+                    Object.keys(props.dbConfig).map((k) => {
                       const names = k.split("-");
                       if (
                         names.indexOf(key) === 0 ||
@@ -97,18 +95,18 @@ const Databases = (props) => {
                     <article
                       className="database__item"
                       key={key}
-                      id={dataset[key].label.slice(0, 1).toUpperCase()}
+                      id={dbCatalogue[key].label.slice(0, 1).toUpperCase()}
                     >
                       <h3 className="title">
-                        <span className="text">{dataset[key].label}</span>
+                        <span className="text">{dbCatalogue[key].label}</span>
                       </h3>
-                      {dataset[key][`description_${language}`] && (
+                      {dbCatalogue[key][`description_${language}`] && (
                         <div className="description">
-                          <p>{dataset[key][`description_${language}`]}</p>
+                          <p>{dbCatalogue[key][`description_${language}`]}</p>
                           <p>
                             Cited from{" "}
                             <a
-                              href={`https://integbio.jp/dbcatalog/record/${dataset[key].catalog}`}
+                              href={`https://integbio.jp/dbcatalog/record/${dbCatalogue[key].catalog}`}
                               target="_blank"
                               rel="noreferrer"
                             >
@@ -146,29 +144,29 @@ const Databases = (props) => {
                       <dl className="data">
                         <div className="data__wrapper">
                           <dt>PREFIX</dt>
-                          <dd>{dataset[key].prefix}</dd>
+                          <dd>{dbCatalogue[key].prefix}</dd>
                         </div>
                         <div className="data__wrapper">
                           <dt>CATEGORY</dt>
-                          <dd>{dataset[key].category}</dd>
+                          <dd>{dbCatalogue[key].category}</dd>
                         </div>
-                        {dataset[key].organization_en && language === "en" && (
+                        {dbCatalogue[key].organization_en && language === "en" && (
                           <div className="data__wrapper">
                             <dt>ORGANIZATION</dt>
-                            <dd>{dataset[key].organization_en}</dd>
+                            <dd>{dbCatalogue[key].organization_en}</dd>
                           </div>
                         )}
-                        {dataset[key].organization_ja && language === "ja" && (
+                        {dbCatalogue[key].organization_ja && language === "ja" && (
                           <div className="data__wrapper">
                             <dt>ORGANIZATION</dt>
-                            <dd>{dataset[key].organization_ja}</dd>
+                            <dd>{dbCatalogue[key].organization_ja}</dd>
                           </div>
                         )}
-                        {dataset[key].examples && (
+                        {dbCatalogue[key].examples && (
                           <div className="data__wrapper">
                             <dt>EXAMPLES</dt>
                             <dd>
-                              {dataset[key].examples.map((example, i) => {
+                              {dbCatalogue[key].examples.map((example, i) => {
                                 return (
                                   <li key={i}>
                                     <a

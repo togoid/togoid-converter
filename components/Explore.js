@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { saveAs } from "file-saver";
 import ResultModal from "../components/ResultModal";
 import { executeQuery } from "../lib/util";
-import dbConfig from "../public/config.json";
 import dbCatalogue from "../public/dataset.json";
 import { ArrowArea } from "react-arrow-master";
 import { categories } from "../lib/setting";
@@ -317,7 +316,7 @@ const Explore = (props) => {
                           {(() => {
                             const labels = Array.from(
                               new Set(
-                                Object.keys(dbConfig).map((k) => {
+                                Object.keys(props.dbConfig).map((k) => {
                                   const names = k.split("-");
                                   if (
                                     names.indexOf(database) === 0 ||
