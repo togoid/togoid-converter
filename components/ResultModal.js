@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import copy from "copy-to-clipboard";
 import { saveAs } from "file-saver";
 import { executeQuery, exportCSV } from "../lib/util";
-import dbCatalogue from "../public/dataset.json";
 import { categories } from "../lib/setting";
 
 const ResultModal = (props) => {
@@ -65,7 +64,7 @@ const ResultModal = (props) => {
 
   const handleURLDownload = async () => {
     const dbName = props.route[props.route.length - 1].name;
-    const dbPrefix = dbCatalogue[dbName].prefix;
+    const dbPrefix = props.dbCatalogue[dbName].prefix;
     const d = await executeQuery(props.route, props.ids, "target");
     const texts = d.results.map((v) => dbPrefix + v).join("\r\n");
     const blob = new Blob([texts], {
