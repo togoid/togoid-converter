@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import dataset from "../public/dataset.json";
-import dbConfig from "../public/config.json";
-import dbCatalogue from "../public/dataset.json";
+import dbCatalogueSparql from "../public/datasetSparql.json";
 import { categories } from "../lib/setting";
 
 const Databases = (props) => {
@@ -54,12 +52,12 @@ const Databases = (props) => {
                 <h3>DB Name Index</h3>
                 {(() => {
                   const labelIndex = [];
-                  return Object.keys(dbCatalogue).map((key, i) => {
-                    const keyInitial = dbCatalogue[key].label
+                  return Object.keys(props.dbCatalogue).map((key, i) => {
+                    const keyInitial = props.dbCatalogue[key].label
                       .slice(0, 1)
                       .toUpperCase();
                     if (
-                      Object.keys(dbConfig).find(
+                      Object.keys(props.dbConfig).find(
                         (k) =>
                           (k.split("-").indexOf(key) === 0 ||
                             k.split("-").indexOf(key) === 1) &&
@@ -77,10 +75,10 @@ const Databases = (props) => {
                 })()}
               </div>
 
-              {Object.keys(dataset).map((key) => {
+              {Object.keys(props.dbCatalogue).map((key) => {
                 const labels = Array.from(
                   new Set(
-                    Object.keys(dbConfig).map((k) => {
+                    Object.keys(props.dbConfig).map((k) => {
                       const names = k.split("-");
                       if (
                         names.indexOf(key) === 0 ||
@@ -97,21 +95,30 @@ const Databases = (props) => {
                     <article
                       className="database__item"
                       key={key}
-                      id={dataset[key].label.slice(0, 1).toUpperCase()}
+                      id={props.dbCatalogue[key].label
+                        .slice(0, 1)
+                        .toUpperCase()}
                     >
                       <h3 className="title">
-                        <span className="text">{dataset[key].label}</span>
+                        <span className="text">
+                          {props.dbCatalogue[key].label}
+                        </span>
                       </h3>
-                      {dataset[key][`description_${language}`] && (
+                      {dbCatalogueSparql[key][`description_${language}`] && (
                         <div className="description">
-                          {dataset[key][`description_${language}`]} Cited from {" "}
-                          <a
-                            href={`https://integbio.jp/dbcatalog/record/${dataset[key].catalog}`}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            Integbio Database Catalog
-                          </a>
+                          <p>
+                            {dbCatalogueSparql[key][`description_${language}`]}
+                          </p>
+                          <p>
+                            Cited from{" "}
+                            <a
+                              href={`https://integbio.jp/dbcatalog/record/${props.dbCatalogue[key].catalog}`}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              Integbio Database Catalog
+                            </a>
+                          </p>
                         </div>
                       )}
                       <div className="path">
@@ -128,14 +135,15 @@ const Databases = (props) => {
                               className="path_label small green"
                               style={{
                                 backgroundColor: categories[
-                                  dbCatalogue[l].category
+                                  props.dbCatalogue[l].category
                                 ]
-                                  ? categories[dbCatalogue[l].category].color
+                                  ? categories[props.dbCatalogue[l].category]
+                                      .color
                                   : null,
                               }}
                               key={i}
                             >
-                              {dbCatalogue[l].label}
+                              {props.dbCatalogue[l].label}
                             </div>
                           ))}
                         </div>
@@ -143,43 +151,45 @@ const Databases = (props) => {
                       <dl className="data">
                         <div className="data__wrapper">
                           <dt>PREFIX</dt>
-                          <dd>{dataset[key].prefix}</dd>
+                          <dd>{props.dbCatalogue[key].prefix}</dd>
                         </div>
                         <div className="data__wrapper">
                           <dt>CATEGORY</dt>
-                          <dd>{dataset[key].category}</dd>
+                          <dd>{props.dbCatalogue[key].category}</dd>
                         </div>
-                        {dataset[key].organization_en && language === "en" && (
+                        {dbCatalogueSparql[key][`organization_${language}`] && (
                           <div className="data__wrapper">
                             <dt>ORGANIZATION</dt>
-                            <dd>{dataset[key].organization_en}</dd>
+                            <dd>
+                              {
+                                dbCatalogueSparql[key][
+                                  `organization_${language}`
+                                ]
+                              }
+                            </dd>
                           </div>
                         )}
-                        {dataset[key].organization_ja && language === "ja" && (
-                          <div className="data__wrapper">
-                            <dt>ORGANIZATION</dt>
-                            <dd>{dataset[key].organization_ja}</dd>
-                          </div>
-                        )}
-                        {dataset[key].examples && (
+                        {props.dbCatalogue[key].examples && (
                           <div className="data__wrapper">
                             <dt>EXAMPLES</dt>
                             <dd>
-                              {dataset[key].examples.map((example, i) => {
-                                return (
-                                  <li key={i}>
-                                    <a
-                                      href="#"
-                                      onClick={(e) => {
-                                        e.preventDefault();
-                                        clickExamples(example, key);
-                                      }}
-                                    >
-                                      {example.join(", ")}
-                                    </a>
-                                  </li>
-                                );
-                              })}
+                              {props.dbCatalogue[key].examples.map(
+                                (example, i) => {
+                                  return (
+                                    <li key={i}>
+                                      <a
+                                        href="#"
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          clickExamples(example, key);
+                                        }}
+                                      >
+                                        {example.join(", ")}
+                                      </a>
+                                    </li>
+                                  );
+                                }
+                              )}
                             </dd>
                           </div>
                         )}
