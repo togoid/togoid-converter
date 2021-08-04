@@ -54,8 +54,15 @@ const Explore = (props) => {
     const d = await executeQuery(r, props.ids);
     const rows = d.results.slice(0, 100).map((v) => v.slice(0, routeIndex + 1));
 
+    const dbRegExp = new RegExp(props.dbCatalogue[r[0].name].regex);
     const convertedIds = Array.from(new Set(d.results.map((item) => item[0])));
-    setNotConvertedIds(props.ids.filter((i) => convertedIds.indexOf(i) === -1));
+    setNotConvertedIds(
+      props.ids.filter((i) => {
+        const match = i.match(dbRegExp);
+        const firstNamedCapture = Object.values(match.groups).find((v) => v);
+        return convertedIds.indexOf(firstNamedCapture) === -1;
+      })
+    );
 
     setTotal(d.total);
     setTableData({ heading, rows });
