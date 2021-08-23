@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { saveAs } from "file-saver";
 import ResultModal from "../components/ResultModal";
 import { executeQuery } from "../lib/util";
-import dbCatalogueSparql from "../public/datasetSparql.json";
 import { ArrowArea } from "react-arrow-master";
 import { categories } from "../lib/setting";
 
@@ -296,29 +295,33 @@ const Explore = (props) => {
                             </div>
                           </div>
                           <p className="modal--through__description">
-                            {dbCatalogueSparql[database][
-                              `description_${language}`
-                            ] && (
-                              <div>
-                                <p>
-                                  {
-                                    dbCatalogueSparql[database][
-                                      `description_${language}`
-                                    ]
-                                  }
-                                </p>
-                                <p>
-                                  Cited from{" "}
-                                  <a
-                                    href={`https://integbio.jp/dbcatalog/record/${props.dbCatalogue[database].catalog}`}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                  >
-                                    Integbio Database Catalog
-                                  </a>
-                                </p>
-                              </div>
-                            )}
+                            {Object.prototype.hasOwnProperty.call(
+                              props.dbDesc,
+                              database
+                            ) &&
+                              props.dbDesc[database][
+                                `description_${language}`
+                              ] && (
+                                <div>
+                                  <p>
+                                    {
+                                      props.dbDesc[database][
+                                        `description_${language}`
+                                      ]
+                                    }
+                                  </p>
+                                  <p>
+                                    Cited from{" "}
+                                    <a
+                                      href={`https://integbio.jp/dbcatalog/record/${props.dbCatalogue[database].catalog}`}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                    >
+                                      Integbio Database Catalog
+                                    </a>
+                                  </p>
+                                </div>
+                              )}
                           </p>
                           {(() => {
                             const labels = Array.from(
@@ -382,20 +385,24 @@ const Explore = (props) => {
                               <dt>CATEGORY</dt>
                               <dd>{props.dbCatalogue[database].category}</dd>
                             </div>
-                            {dbCatalogueSparql[database][
-                              `organization_${language}`
-                            ] && (
-                              <div className="modal--through__data_list__item">
-                                <dt>ORGANIZATION</dt>
-                                <dd>
-                                  {
-                                    dbCatalogueSparql[database][
-                                      `organization_${language}`
-                                    ]
-                                  }
-                                </dd>
-                              </div>
-                            )}
+                            {Object.prototype.hasOwnProperty.call(
+                              props.dbDesc,
+                              database
+                            ) &&
+                              props.dbDesc[database][
+                                `organization_${language}`
+                              ] && (
+                                <div className="modal--through__data_list__item">
+                                  <dt>ORGANIZATION</dt>
+                                  <dd>
+                                    {
+                                      props.dbDesc[database][
+                                        `organization_${language}`
+                                      ]
+                                    }
+                                  </dd>
+                                </div>
+                              )}
                           </dl>
                         </div>
                       </div>

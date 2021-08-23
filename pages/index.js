@@ -19,15 +19,20 @@ const Home = () => {
   const [idTexts, setIdTexts] = useState("");
   const [dbCatalogue, setDbCatalogue] = useState([]);
   const [dbConfig, setDbConfig] = useState([]);
+  const [dbDesc, setDbDesc] = useState([]);
 
   useEffect(() => {
     const fetchApi = async () => {
       const promises = await Promise.all([
         axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/dataset`),
         axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/database`),
+        axios.get(
+          `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/descriptions`
+        ),
       ]);
       setDbCatalogue(promises[0].data);
       setDbConfig(promises[1].data);
+      setDbDesc(promises[2].data);
     };
     fetchApi();
   }, []);
@@ -419,6 +424,7 @@ const Home = () => {
               ids={ids}
               dbCatalogue={dbCatalogue}
               dbConfig={dbConfig}
+              dbDesc={dbDesc}
             />
           )}
           {activeTab === "DATABASE" && (
@@ -426,6 +432,7 @@ const Home = () => {
               executeExamples={executeExamples}
               dbCatalogue={dbCatalogue}
               dbConfig={dbConfig}
+              dbDesc={dbDesc}
             />
           )}
           {activeTab === "DOCUMENTS" && <Documents />}
