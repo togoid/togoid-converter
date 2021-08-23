@@ -35,7 +35,7 @@ const Explore = (props) => {
 
   const handleIdDownload = async (database, routeIndex) => {
     const r = selectDatabase(database, routeIndex).slice(0, routeIndex + 1);
-    const d = await executeQuery(r, props.ids, "target");
+    const d = await executeQuery(r, props.ids, "target", false);
     const prefix = props.dbCatalogue[database.name].prefix.split("/").slice(-1);
 
     const text = d.results.map((result) => prefix + result).join("\r\n");
@@ -50,7 +50,7 @@ const Explore = (props) => {
     const heading = r
       .filter((v, i) => i <= routeIndex)
       .map((v) => props.dbCatalogue[v.name]);
-    const d = await executeQuery(r, props.ids);
+    const d = await executeQuery(r, props.ids, "all", true);
     const rows = d.results.slice(0, 100).map((v) => v.slice(0, routeIndex + 1));
 
     const dbRegExp = new RegExp(props.dbCatalogue[r[0].name].regex);
