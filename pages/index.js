@@ -15,6 +15,7 @@ const Home = () => {
   const [databaseNodesList, setDatabaseNodesList] = useState([]);
   const [route, setRoute] = useState([]);
   const [routePaths, setRoutePaths] = useState([]);
+  const [previousRoute, setPreviousRoute] = useState([]);
   const [candidatePaths, setCandidatePaths] = useState([]);
   const [idTexts, setIdTexts] = useState("");
   const [dbCatalogue, setDbCatalogue] = useState([]);
@@ -385,6 +386,10 @@ const Home = () => {
           setIdTexts={setIdTexts}
           idTexts={idTexts}
           handleTopExamples={handleTopExamples}
+          route={route}
+          setPreviousRoute={setPreviousRoute}
+          dbCatalogue={dbCatalogue}
+          tryKeepRoute={tryKeepRoute}
         />
         <div className="drawing_area">
           <div className="tab_wrapper">
