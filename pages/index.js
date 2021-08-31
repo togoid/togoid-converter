@@ -285,6 +285,15 @@ const Home = () => {
     setRoute([startRoute]);
   };
 
+  const tryKeepRoute = (idTexts) => {
+    const checkIndex = handleIdTextsSubmit(idTexts).findIndex(
+      (element) => element.name === previousRoute[0].name
+    );
+    if (checkIndex !== -1) {
+      setRoute([previousRoute[0]]);
+    }
+  };
+
   return (
     <div className="home">
       <Head>
