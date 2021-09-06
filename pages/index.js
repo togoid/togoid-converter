@@ -14,7 +14,6 @@ const Home = () => {
   const [activeTab, setActiveTab] = useState("EXPLORE");
   const [databaseNodesList, setDatabaseNodesList] = useState([]);
   const [route, setRoute] = useState([]);
-  const [routePaths, setRoutePaths] = useState([]);
   const [candidatePaths, setCandidatePaths] = useState([]);
   const [idTexts, setIdTexts] = useState("");
   const [dbCatalogue, setDbCatalogue] = useState([]);
@@ -116,53 +115,48 @@ const Home = () => {
         nodesList.forEach((nodes, i) => {
           if (i === 0) return;
           nodes.forEach((v) => {
-            if (route[i] && route[i].name === v.name) return;
-            candidatePaths.push({
-              from: {
-                id: `total${i - 1}-${route[i - 1].name}`,
-                posX: "right",
-                posY: "middle",
-              },
-              to: {
-                id: `node${i}-${v.name}`,
-                posX: "left",
-                posY: "middle",
-              },
-              style: {
-                color: "#dddddd",
-                head: "none",
-                arrow: "smooth",
-                width: 1.5,
-              },
-            });
+            if (route[i] && route[i].name === v.name) {
+              candidatePaths.push({
+                from: {
+                  id: `total${i - 1}-${route[i - 1].name}`,
+                  posX: "right",
+                  posY: "middle",
+                },
+                to: {
+                  id: `node${i}-${v.name}`,
+                  posX: "left",
+                  posY: "middle",
+                },
+                style: {
+                  color: "#1A8091",
+                  head: "none",
+                  arrow: "smooth",
+                  width: 2,
+                },
+              });
+            } else {
+              candidatePaths.push({
+                from: {
+                  id: `total${i - 1}-${route[i - 1].name}`,
+                  posX: "right",
+                  posY: "middle",
+                },
+                to: {
+                  id: `node${i}-${v.name}`,
+                  posX: "left",
+                  posY: "middle",
+                },
+                style: {
+                  color: "#dddddd",
+                  head: "none",
+                  arrow: "smooth",
+                  width: 1.5,
+                },
+              });
+            }
           });
         });
         setCandidatePaths(candidatePaths);
-
-        const routePaths = [];
-        route.forEach((v, i) => {
-          if (route[i + 1]) {
-            routePaths.push({
-              from: {
-                id: `total${i}-${v.name}`,
-                posX: "right",
-                posY: "middle",
-              },
-              to: {
-                id: `node${i + 1}-${route[i + 1].name}`,
-                posX: "left",
-                posY: "middle",
-              },
-              style: {
-                color: "#1A8091",
-                head: "none",
-                arrow: "smooth",
-                width: 2,
-              },
-            });
-          }
-        });
-        setRoutePaths(routePaths);
       });
 
       return () => {
@@ -416,7 +410,6 @@ const Home = () => {
           {activeTab === "EXPLORE" && (
             <Explore
               databaseNodesList={databaseNodesList}
-              routePaths={routePaths}
               candidatePaths={candidatePaths}
               route={route}
               setRoute={setRoute}
