@@ -44,9 +44,20 @@ const Home = () => {
       const convertFunc = async () => {
         const abortController = new AbortController();
         if (isUseKeepRoute) {
-          for (let i = 0; i < route.length; i++) {
-            await createNodesList(route.slice(0, i + 1));
+          const r = route;
+          for (let i = 0; i < previousRoute.length; i++) {
+            await createNodesList(r);
+            if (i < previousRoute.length - 1) {
+              const v = databaseNodesList[i + 1].find(
+                (element) => element.name === previousRoute[i + 1].name
+              );
+              if (v === -1 || v.total === 0) {
+                break;
+              }
+              r.push(previousRoute[i + 1]);
+            }
           }
+          setRoute(r);
           setIsUseKeepRoute(false);
         } else {
           await createNodesList(route);
@@ -305,7 +316,7 @@ const Home = () => {
       (element) => element.name === previousRoute[0].name
     );
     if (checkIndex !== -1) {
-      setRoute(previousRoute);
+      setRoute([previousRoute[0]]);
       setIsUseKeepRoute(true);
     }
   };
