@@ -50,7 +50,7 @@ const Home = () => {
               const v = databaseNodesList[i + 1].find(
                 (element) => element.name === previousRoute[i + 1].name
               );
-              if (v === -1 || v.total === 0) {
+              if (v === undefined || v.total === 0) {
                 break;
               }
               r.push(previousRoute[i + 1]);
@@ -296,13 +296,18 @@ const Home = () => {
     };
     executeExamples(examples[key].join("\n"), key);
   };
+
   const executeExamples = (idTexts, key) => {
     setActiveTab("EXPLORE");
     setIdTexts(idTexts);
-    const startRoute = handleIdTextsSubmit(idTexts).find(
-      (ele) => ele.name === key
-    );
-    setRoute([startRoute]);
+
+    // previousRouteがある時はtryKeepRouteを実行し、falseの時は残りの処理を実行
+    if (!previousRoute.length || !tryKeepRoute(idTexts)) {
+      const startRoute = handleIdTextsSubmit(idTexts).find(
+        (ele) => ele.name === key
+      );
+      setRoute([startRoute]);
+    }
   };
 
   const tryKeepRoute = (idTexts) => {
@@ -312,7 +317,9 @@ const Home = () => {
     if (checkIndex !== -1) {
       setRoute([previousRoute[0]]);
       setIsUseKeepRoute(true);
+      return true;
     }
+    return false;
   };
 
   return (
