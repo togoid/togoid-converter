@@ -81,6 +81,27 @@ const Explore = (props) => {
   const handleActionButtonVisibility = (i, j) => {
     setVisibleActionButtonIndex([i, j]);
   };
+
+  const handleSelectDropDown = (e) => {
+    props.setSelectedDropDown(e.target.value);
+    if (props.isOther) {
+      selectOther(e.target.value);
+    }
+  };
+
+  const selectOther = (v = null) => {
+    if (v) {
+      console.log(v);
+      props.lookupRoute(v);
+    } else {
+      if (props.selectedDropDown) {
+        props.setIsOther(true);
+      }
+      console.log(props.selectedDropDown);
+      props.lookupRoute(props.selectedDropDown);
+    }
+  };
+
   return (
     <div className="explore">
       <div className="drawing_area">
@@ -234,6 +255,35 @@ const Explore = (props) => {
                             </li>
                           ))}
                         </ul>
+                        {!props.isOther &&
+                          i !== 0 &&
+                          i === props.databaseNodesList.length - 1 && (
+                            <div id={`nodeOther`} className={`radio green`}>
+                              <input
+                                type="radio"
+                                name={`resultOther`}
+                                id={`resultOther`}
+                                className="radio__input"
+                                onChange={() => selectOther()}
+                                checked={props.isOther}
+                              />
+                              <label
+                                htmlFor={`resultOther`}
+                                className="radio__large_label green"
+                              >
+                                <select onChange={handleSelectDropDown}>
+                                  <option> </option>
+                                  {Object.keys(props.dbCatalogue).map((key) => {
+                                    return (
+                                      <option key={key} value={key}>
+                                        {props.dbCatalogue[key].label}
+                                      </option>
+                                    );
+                                  })}
+                                </select>
+                              </label>
+                            </div>
+                          )}
                       </div>
                     ))}
 
