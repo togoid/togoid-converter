@@ -21,6 +21,8 @@ const Home = () => {
   const [dbCatalogue, setDbCatalogue] = useState([]);
   const [dbConfig, setDbConfig] = useState([]);
   const [dbDesc, setDbDesc] = useState([]);
+  const [selectedDropDown, setSelectedDropDown] = useState(null);
+  const [isOther, setIsOther] = useState(false);
 
   useEffect(() => {
     const fetchApi = async () => {
@@ -68,6 +70,8 @@ const Home = () => {
       };
 
       convertFunc();
+      setSelectedDropDown(null);
+      setIsOther(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route]);
@@ -194,6 +198,28 @@ const Home = () => {
             });
           }
         });
+
+        // 逆引き用のpath
+        if (i === nodesList.length - 1) {
+          candidatePaths.push({
+            from: {
+              id: `total${i - 1}-${routeTemp[i - 1].name}`,
+              posX: "right",
+              posY: "middle",
+            },
+            to: {
+              id: `nodeOther`,
+              posX: "left",
+              posY: "middle",
+            },
+            style: {
+              color: "#dddddd",
+              head: "none",
+              arrow: "smooth",
+              width: 1.5,
+            },
+          });
+        }
       });
       setCandidatePaths(candidatePaths);
     });
@@ -320,6 +346,192 @@ const Home = () => {
       return true;
     }
     return false;
+  };
+
+  const lookupRoute = async (target) => {
+    let r = route[route.length - 1];
+    // console.log(r);
+    // const candidates = [];
+    const firstCandidates = [];
+    const firstCandidatesTemp = [];
+    Object.keys(dbConfig).forEach((k) => {
+      if (!firstCandidatesTemp.find((v) => v.name === r.name)) {
+        if (k.split("-").shift() === r.name) {
+          const name = k.split("-")[1];
+          if (!route.find((w) => w.name === name)) {
+            if (name === target) {
+              if (!firstCandidates.find((v) => v.name === name)) {
+                firstCandidates.push({
+                  name,
+                  category: dbCatalogue[name].category,
+                  total: 1,
+                  ids: [],
+                });
+              }
+            } else if (!firstCandidatesTemp.find((v) => v.name === name)) {
+              // 順方向の変換
+              firstCandidatesTemp.push({
+                name,
+                category: dbCatalogue[name].category,
+                total: 1,
+                ids: [],
+              });
+            }
+          }
+        } else if (dbConfig[k].link.reverse && k.split("-").pop() === r.name) {
+          // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
+          const name = k.split("-")[0];
+          if (!route.find((w) => w.name === name)) {
+            if (name === target) {
+              if (!firstCandidates.find((v) => v.name === name)) {
+                firstCandidates.push({
+                  name,
+                  category: dbCatalogue[name].category,
+                  total: 1,
+                  ids: [],
+                });
+              }
+            } else if (!firstCandidatesTemp.find((v) => v.name === name)) {
+              // 順方向の変換
+              firstCandidatesTemp.push({
+                name,
+                category: dbCatalogue[name].category,
+                total: 1,
+                ids: [],
+              });
+            }
+          }
+        }
+      }
+    });
+    // console.log(firstCandidates);
+    // console.log(firstCandidatesTemp);
+    const secondCandidates = [];
+    const secondCandidatesTempAll = [];
+
+    firstCandidatesTemp.forEach((r) => {
+      const secondCandidatesTemp = [];
+      Object.keys(dbConfig).forEach((k) => {
+        if (!secondCandidatesTemp.find((v) => v.name === r.name)) {
+          if (k.split("-").shift() === r.name) {
+            const name = k.split("-")[1];
+            if (!route.find((w) => w.name === name)) {
+              if (name === target) {
+                if (!secondCandidates.find((v) => v.name === name)) {
+                  secondCandidates.push([
+                    r,
+                    {
+                      name,
+                      category: dbCatalogue[name].category,
+                      total: 1,
+                      ids: [],
+                    },
+                  ]);
+                }
+              } else if (!secondCandidatesTemp.find((v) => v.name === name)) {
+                // 順方向の変換
+                secondCandidatesTemp.push({
+                  name,
+                  category: dbCatalogue[name].category,
+                  total: 1,
+                  ids: [],
+                });
+              }
+            }
+          } else if (
+            dbConfig[k].link.reverse &&
+            k.split("-").pop() === r.name
+          ) {
+            // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
+            const name = k.split("-")[0];
+            if (!route.find((w) => w.name === name)) {
+              if (name === target) {
+                if (!secondCandidates.find((v) => v.name === name)) {
+                  secondCandidates.push([
+                    r,
+                    {
+                      name,
+                      category: dbCatalogue[name].category,
+                      total: 1,
+                      ids: [],
+                    },
+                  ]);
+                }
+              } else if (!secondCandidatesTemp.find((v) => v.name === name)) {
+                // 順方向の変換
+                secondCandidatesTemp.push({
+                  name,
+                  category: dbCatalogue[name].category,
+                  total: 1,
+                  ids: [],
+                });
+              }
+            }
+          }
+        }
+      });
+      secondCandidatesTempAll.push(secondCandidatesTemp);
+    });
+    // console.log(secondCandidates);
+
+    const nodesList = databaseNodesList.slice(0, route.length);
+
+    nodesList[nodesList.length] = secondCandidates.map((v) => {
+      return v[0];
+    });
+
+    nodesList[nodesList.length] = [secondCandidates[0][1]];
+
+    setDatabaseNodesList(nodesList);
+
+    const candidatePaths = [];
+    nodesList.forEach((nodes, i) => {
+      if (i === 0) return;
+      else if (i === route.length) {
+        nodes.forEach((v) => {
+          candidatePaths.push({
+            from: {
+              id: `total${i - 1}-${route[i - 1].name}`,
+              posX: "right",
+              posY: "middle",
+            },
+            to: {
+              id: `node${i}-${v.name}`,
+              posX: "left",
+              posY: "middle",
+            },
+            style: {
+              color: "#dddddd",
+              head: "none",
+              arrow: "smooth",
+              width: 1.5,
+            },
+          });
+        });
+      } else {
+        nodesList[i - 1].forEach((v) => {
+          candidatePaths.push({
+            from: {
+              id: `total${i - 1}-${v.name}`,
+              posX: "right",
+              posY: "middle",
+            },
+            to: {
+              id: `node${i}-${nodes[0].name}`,
+              posX: "left",
+              posY: "middle",
+            },
+            style: {
+              color: "#dddddd",
+              head: "none",
+              arrow: "smooth",
+              width: 1.5,
+            },
+          });
+        });
+      }
+    });
+    setCandidatePaths(candidatePaths);
   };
 
   return (
@@ -466,6 +678,11 @@ const Home = () => {
               dbCatalogue={dbCatalogue}
               dbConfig={dbConfig}
               dbDesc={dbDesc}
+              selectedDropDown={selectedDropDown}
+              setSelectedDropDown={setSelectedDropDown}
+              isOther={isOther}
+              setIsOther={setIsOther}
+              lookupRoute={lookupRoute}
             />
           )}
           {activeTab === "DATABASE" && (
