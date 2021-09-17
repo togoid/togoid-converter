@@ -349,9 +349,7 @@ const Home = () => {
   };
 
   const lookupRoute = async (target) => {
-    let r = route[route.length - 1];
-    // console.log(r);
-    // const candidates = [];
+    let r = route[route.length - 1]; // let
     const firstCandidates = [];
     const firstCandidatesTemp = [];
     Object.keys(dbConfig).forEach((k) => {
@@ -404,83 +402,65 @@ const Home = () => {
         }
       }
     });
-    // console.log(firstCandidates);
-    // console.log(firstCandidatesTemp);
+
     const secondCandidates = [];
-    const secondCandidatesTempAll = [];
 
     firstCandidatesTemp.forEach((r) => {
-      const secondCandidatesTemp = [];
       Object.keys(dbConfig).forEach((k) => {
-        if (!secondCandidatesTemp.find((v) => v.name === r.name)) {
-          if (k.split("-").shift() === r.name) {
-            const name = k.split("-")[1];
-            if (!route.find((w) => w.name === name)) {
-              if (name === target) {
-                if (!secondCandidates.find((v) => v.name === name)) {
-                  secondCandidates.push([
-                    r,
-                    {
-                      name,
-                      category: dbCatalogue[name].category,
-                      total: 1,
-                      ids: [],
-                    },
-                  ]);
-                }
-              } else if (!secondCandidatesTemp.find((v) => v.name === name)) {
-                // 順方向の変換
-                secondCandidatesTemp.push({
-                  name,
-                  category: dbCatalogue[name].category,
-                  total: 1,
-                  ids: [],
-                });
+        if (k.split("-").shift() === r.name) {
+          const name = k.split("-")[1];
+          if (!route.find((w) => w.name === name)) {
+            if (name === target) {
+              if (!secondCandidates.find((v) => v.name === name)) {
+                //if不要かも
+                secondCandidates.push([
+                  r,
+                  {
+                    name,
+                    category: dbCatalogue[name].category,
+                    total: 1,
+                    ids: [],
+                  },
+                ]);
               }
             }
-          } else if (
-            dbConfig[k].link.reverse &&
-            k.split("-").pop() === r.name
-          ) {
-            // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
-            const name = k.split("-")[0];
-            if (!route.find((w) => w.name === name)) {
-              if (name === target) {
-                if (!secondCandidates.find((v) => v.name === name)) {
-                  secondCandidates.push([
-                    r,
-                    {
-                      name,
-                      category: dbCatalogue[name].category,
-                      total: 1,
-                      ids: [],
-                    },
-                  ]);
-                }
-              } else if (!secondCandidatesTemp.find((v) => v.name === name)) {
-                // 順方向の変換
-                secondCandidatesTemp.push({
-                  name,
-                  category: dbCatalogue[name].category,
-                  total: 1,
-                  ids: [],
-                });
+          }
+        } else if (dbConfig[k].link.reverse && k.split("-").pop() === r.name) {
+          // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
+          const name = k.split("-")[0];
+          if (!route.find((w) => w.name === name)) {
+            if (name === target) {
+              if (!secondCandidates.find((v) => v.name === name)) {
+                //if現状仕事していない
+                secondCandidates.push([
+                  r,
+                  {
+                    name,
+                    category: dbCatalogue[name].category,
+                    total: 1,
+                    ids: [],
+                  },
+                ]);
               }
             }
           }
         }
       });
-      secondCandidatesTempAll.push(secondCandidatesTemp);
     });
     // console.log(secondCandidates);
 
-    const nodesList = databaseNodesList.slice(0, route.length);
+    let nodesList = databaseNodesList.slice(0, route.length); // let
 
-    nodesList[nodesList.length] = secondCandidates.map((v) => {
+    if (!secondCandidates.length) {
+      console.log("no");
+      return;
+    }
+    const candidates = secondCandidates.map((v) => {
       return v[0];
     });
 
-    nodesList[nodesList.length] = [secondCandidates[0][1]];
+    nodesList = await getTotal(candidates, nodesList);
+    nodesList = await getTotalSecond(secondCandidates, nodesList);
 
     setDatabaseNodesList(nodesList);
 
@@ -509,29 +489,129 @@ const Home = () => {
           });
         });
       } else {
-        nodesList[i - 1].forEach((v) => {
-          candidatePaths.push({
-            from: {
-              id: `total${i - 1}-${v.name}`,
-              posX: "right",
-              posY: "middle",
-            },
-            to: {
-              id: `node${i}-${nodes[0].name}`,
-              posX: "left",
-              posY: "middle",
-            },
-            style: {
-              color: "#dddddd",
-              head: "none",
-              arrow: "smooth",
-              width: 1.5,
-            },
-          });
+        nodes.forEach((v, j) => {
+          if (j > 0 && nodes[j - 1].name === v.name) {
+            candidatePaths.push({
+              from: {
+                id: `total${i - 1}-${nodesList[i - 1][j].name}`,
+                posX: "right",
+                posY: "middle",
+              },
+              to: {
+                id: `node${i}-${v.name}-${j}`,
+                posX: "left",
+                posY: "middle",
+              },
+              style: {
+                color: "#dddddd",
+                head: "none",
+                arrow: "smooth",
+                width: 1.5,
+              },
+            });
+          } else {
+            candidatePaths.push({
+              from: {
+                id: `total${i - 1}-${nodesList[i - 1][j].name}`,
+                posX: "right",
+                posY: "middle",
+              },
+              to: {
+                id: `node${i}-${v.name}`,
+                posX: "left",
+                posY: "middle",
+              },
+              style: {
+                color: "#dddddd",
+                head: "none",
+                arrow: "smooth",
+                width: 1.5,
+              },
+            });
+          }
         });
       }
     });
     setCandidatePaths(candidatePaths);
+  };
+
+  const getTotal = async (candidates, nodesList) => {
+    console.log(candidates);
+    NProgress.start();
+    const promises = candidates.map((v) => {
+      const r = route.slice();
+      console.log(r);
+      console.log(nodesList);
+      r.push(v);
+      return new Promise(function (resolve) {
+        // エラーになった変換でもnullを返してresolve
+        return executeQuery(r, ids, "target", "only")
+          .then((v) => {
+            NProgress.inc(1 / candidates.length);
+            resolve(v);
+          })
+          .catch(() => resolve(null));
+      });
+    });
+
+    await Promise.all(promises).then((values) => {
+      NProgress.done();
+      // 先端の変換候補を追加
+      nodesList[nodesList.length] = candidates
+        .map((v, i) => {
+          const _v = Object.assign({}, v);
+          if (!values[i]) {
+            _v.total = -1;
+          } else if (values[i].total) {
+            _v.total = values[i].total;
+          } else {
+            return null;
+          }
+
+          return _v;
+        })
+        .filter((v) => v);
+    });
+    return nodesList;
+  };
+
+  const getTotalSecond = async (candidates, nodesList) => {
+    const temp = candidates.map((w) => w[1]);
+    NProgress.start();
+    const promises = temp.map((v, i) => {
+      const r = route.slice();
+      r.push(candidates[i][0]);
+      r.push(v);
+      return new Promise(function (resolve) {
+        // エラーになった変換でもnullを返してresolve
+        return executeQuery(r, ids, "target", "only")
+          .then((v) => {
+            NProgress.inc(1 / temp.length);
+            resolve(v);
+          })
+          .catch(() => resolve(null));
+      });
+    });
+
+    await Promise.all(promises).then((values) => {
+      NProgress.done();
+      // 先端の変換候補を追加
+      nodesList[nodesList.length] = temp
+        .map((v, i) => {
+          const _v = Object.assign({}, v);
+          if (!values[i]) {
+            _v.total = -1;
+          } else if (values[i].total) {
+            _v.total = values[i].total;
+          } else {
+            return null;
+          }
+
+          return _v;
+        })
+        .filter((v) => v);
+    });
+    return nodesList;
   };
 
   return (

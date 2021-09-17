@@ -144,7 +144,11 @@ const Explore = (props) => {
                               className="result_list__item"
                             >
                               <div
-                                id={`node${i}-${v.name}`}
+                                id={
+                                  j > 0 && nodes[j - 1].name === v.name
+                                    ? `node${i}-${v.name}-${j}`
+                                    : `node${i}-${v.name}`
+                                }
                                 className={`radio green ${
                                   i === 0 || v.total > 0 ? null : "not_found"
                                 }`}
@@ -274,11 +278,17 @@ const Explore = (props) => {
                                 <select onChange={handleSelectDropDown}>
                                   <option> </option>
                                   {Object.keys(props.dbCatalogue).map((key) => {
-                                    return (
-                                      <option key={key} value={key}>
-                                        {props.dbCatalogue[key].label}
-                                      </option>
-                                    );
+                                    if (
+                                      !props.databaseNodesList[i].find((v) => {
+                                        return v.name === key;
+                                      })
+                                    ) {
+                                      return (
+                                        <option key={key} value={key}>
+                                          {props.dbCatalogue[key].label}
+                                        </option>
+                                      );
+                                    }
                                   })}
                                 </select>
                               </label>
