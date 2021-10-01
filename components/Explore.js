@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { saveAs } from "file-saver";
 import ResultModal from "../components/ResultModal";
+import InformationModal from "../components/InformationModal";
 import { executeQuery } from "../lib/util";
 import { ArrowArea } from "react-arrow-master";
 import { categories } from "../lib/setting";
@@ -15,7 +16,6 @@ const Explore = (props) => {
     null,
     null,
   ]);
-  const [language, setLanguage] = useState("en");
   const [notConvertedIds, setNotConvertedIds] = useState([]);
 
   useEffect(() => {
@@ -67,15 +67,12 @@ const Explore = (props) => {
     setTableData({ heading, rows });
   };
 
-  const showInformationModal = async (v) => {
+  const showInformationModal = (v) => {
     const dbName = Object.keys(props.dbCatalogue).filter(
       (dataset) => dataset === v.name
     );
     setInformationModal(true);
     setDatabase(dbName[0]);
-  };
-  const hideInformationModal = async () => {
-    setInformationModal(false);
   };
 
   const handleActionButtonVisibility = (i, j) => {
@@ -298,167 +295,13 @@ const Explore = (props) => {
                     ))}
 
                   {informationModal && (
-                    <div
-                      className="modal modal--through"
-                      onClick={() => hideInformationModal()}
-                    >
-                      <div
-                        className="modal__inner modal__inner--through"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                      >
-                        <button
-                          onClick={() => hideInformationModal()}
-                          className="modal--through__close"
-                        />
-                        <h2 className="modal--through__title">
-                          {props.dbCatalogue[database].label}
-                        </h2>
-                        <div className="select_lang">
-                          <div className="radio">
-                            <input
-                              type="radio"
-                              id="en"
-                              name="en"
-                              value="en"
-                              className="radio__input"
-                              style={{ width: "20px", height: "20px" }}
-                              onChange={() => setLanguage("en")}
-                              checked={language === "en"}
-                            />
-                            <label htmlFor="en" className="radio__label">
-                              en
-                            </label>
-                          </div>
-                          <div className="radio">
-                            <input
-                              type="radio"
-                              id="ja"
-                              name="ja"
-                              value="ja"
-                              className="radio__input"
-                              style={{ width: "20px", height: "20px" }}
-                              onChange={() => setLanguage("ja")}
-                              checked={language === "ja"}
-                            />
-                            <label htmlFor="ja" className="radio__label">
-                              ja
-                            </label>
-                          </div>
-                        </div>
-                        <p className="modal--through__description">
-                          {Object.prototype.hasOwnProperty.call(
-                            props.dbDesc,
-                            database
-                          ) &&
-                            props.dbDesc[database][
-                              `description_${language}`
-                            ] && (
-                              <div>
-                                <p>
-                                  {
-                                    props.dbDesc[database][
-                                      `description_${language}`
-                                    ]
-                                  }
-                                </p>
-                                <p>
-                                  Cited from{" "}
-                                  <a
-                                    href={`https://integbio.jp/dbcatalog/record/${props.dbCatalogue[database].catalog}`}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                  >
-                                    Integbio Database Catalog
-                                  </a>
-                                </p>
-                              </div>
-                            )}
-                        </p>
-                        {(() => {
-                          const labels = Array.from(
-                            new Set(
-                              Object.keys(props.dbConfig).map((k) => {
-                                const names = k.split("-");
-                                if (
-                                  names.indexOf(database) === 0 ||
-                                  names.indexOf(database) === 1
-                                ) {
-                                  return names.indexOf(database) === 0
-                                    ? names[1]
-                                    : names[0];
-                                }
-                              })
-                            )
-                          ).filter((v) => v);
-
-                          if (labels.length) {
-                            return (
-                              <div className="modal--through__buttons path">
-                                <div className="path_label small white">
-                                  LINK TO
-                                </div>
-                                <svg className="arrow" viewBox="0 0 24 24">
-                                  <path
-                                    fill="currentColor"
-                                    d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
-                                  />
-                                </svg>
-                                <div className="path_children">
-                                  {labels.map((l, i) => (
-                                    <div
-                                      className="path_label small green"
-                                      style={{
-                                        backgroundColor: categories[
-                                          props.dbCatalogue[l].category
-                                        ]
-                                          ? categories[
-                                              props.dbCatalogue[l].category
-                                            ].color
-                                          : null,
-                                      }}
-                                      key={i}
-                                    >
-                                      {props.dbCatalogue[l].label}
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                            );
-                          }
-                        })()}
-
-                        <dl className="modal--through__data_list">
-                          <div className="modal--through__data_list__item">
-                            <dt>PREFIX</dt>
-                            <dd>{props.dbCatalogue[database].prefix}</dd>
-                          </div>
-                          <div className="modal--through__data_list__item">
-                            <dt>CATEGORY</dt>
-                            <dd>{props.dbCatalogue[database].category}</dd>
-                          </div>
-                          {Object.prototype.hasOwnProperty.call(
-                            props.dbDesc,
-                            database
-                          ) &&
-                            props.dbDesc[database][
-                              `organization_${language}`
-                            ] && (
-                              <div className="modal--through__data_list__item">
-                                <dt>ORGANIZATION</dt>
-                                <dd>
-                                  {
-                                    props.dbDesc[database][
-                                      `organization_${language}`
-                                    ]
-                                  }
-                                </dd>
-                              </div>
-                            )}
-                        </dl>
-                      </div>
-                    </div>
+                    <InformationModal
+                      setInformationModal={setInformationModal}
+                      database={database}
+                      dbCatalogue={props.dbCatalogue}
+                      dbConfig={props.dbConfig}
+                      dbDesc={props.dbDesc}
+                    />
                   )}
 
                   {modalVisibility && (
