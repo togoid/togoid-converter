@@ -22,7 +22,7 @@ const Home = () => {
   const [dbConfig, setDbConfig] = useState([]);
   const [dbDesc, setDbDesc] = useState([]);
   const [selectedDropDown, setSelectedDropDown] = useState(null);
-  const [isOther, setIsOther] = useState(false);
+  const [isSpecific, setIsSpecific] = useState(false);
 
   useEffect(() => {
     const fetchApi = async () => {
@@ -44,144 +44,8 @@ const Home = () => {
     if (route.length > 0) {
       const convertFunc = async () => {
         const abortController = new AbortController();
-        if (isOther) {
-          console.log("other");
-          console.log(route);
-          const candidatePaths = [];
-          console.log(databaseNodesList);
-          let num;
-          databaseNodesList.forEach((nodes, i) => {
-            if (i === 0) return;
-            else if (i < route.length) {
-              nodes.forEach((v, j) => {
-                if (route[i] && route[i].name === v.name) {
-                  num = j;
-                  candidatePaths.push({
-                    from: {
-                      id: `total${i - 1}-${route[i - 1].name}`,
-                      posX: "right",
-                      posY: "middle",
-                    },
-                    to: {
-                      id: `node${i}-${v.name}`,
-                      posX: "left",
-                      posY: "middle",
-                    },
-                    style: {
-                      color: "#1A8091",
-                      head: "none",
-                      arrow: "smooth",
-                      width: 2,
-                    },
-                  });
-                } else {
-                  candidatePaths.push({
-                    from: {
-                      id: `total${i - 1}-${route[i - 1].name}`,
-                      posX: "right",
-                      posY: "middle",
-                    },
-                    to: {
-                      id: `node${i}-${v.name}`,
-                      posX: "left",
-                      posY: "middle",
-                    },
-                    style: {
-                      color: "#dddddd",
-                      head: "none",
-                      arrow: "smooth",
-                      width: 1.5,
-                    },
-                  });
-                }
-              });
-            } else {
-              nodes.forEach((v, j) => {
-                if (j > 0 && nodes[j - 1].name === v.name) {
-                  if (j === num) {
-                    candidatePaths.push({
-                      from: {
-                        id: `total${i - 1}-${databaseNodesList[i - 1][j].name}`,
-                        posX: "right",
-                        posY: "middle",
-                      },
-                      to: {
-                        id: `node${i}-${v.name}-${j}`,
-                        posX: "left",
-                        posY: "middle",
-                      },
-                      style: {
-                        color: "#1A8091",
-                        head: "none",
-                        arrow: "smooth",
-                        width: 2,
-                      },
-                    });
-                  } else {
-                    candidatePaths.push({
-                      from: {
-                        id: `total${i - 1}-${databaseNodesList[i - 1][j].name}`,
-                        posX: "right",
-                        posY: "middle",
-                      },
-                      to: {
-                        id: `node${i}-${v.name}-${j}`,
-                        posX: "left",
-                        posY: "middle",
-                      },
-                      style: {
-                        color: "#dddddd",
-                        head: "none",
-                        arrow: "smooth",
-                        width: 1.5,
-                      },
-                    });
-                  }
-                } else {
-                  if (j === num) {
-                    candidatePaths.push({
-                      from: {
-                        id: `total${i - 1}-${databaseNodesList[i - 1][j].name}`,
-                        posX: "right",
-                        posY: "middle",
-                      },
-                      to: {
-                        id: `node${i}-${v.name}`,
-                        posX: "left",
-                        posY: "middle",
-                      },
-                      style: {
-                        color: "#1A8091",
-                        head: "none",
-                        arrow: "smooth",
-                        width: 2,
-                      },
-                    });
-                  } else {
-                    candidatePaths.push({
-                      from: {
-                        id: `total${i - 1}-${databaseNodesList[i - 1][j].name}`,
-                        posX: "right",
-                        posY: "middle",
-                      },
-                      to: {
-                        id: `node${i}-${v.name}`,
-                        posX: "left",
-                        posY: "middle",
-                      },
-                      style: {
-                        color: "#dddddd",
-                        head: "none",
-                        arrow: "smooth",
-                        width: 1.5,
-                      },
-                    });
-                  }
-                }
-              });
-            }
-          });
-          setCandidatePaths(candidatePaths);
+        if (isSpecific) {
+          createSpecificModePath();
         } else if (isUseKeepRoute) {
           const r = route;
           for (let i = 0; i < previousRoute.length; i++) {
@@ -209,7 +73,7 @@ const Home = () => {
 
       convertFunc();
       setSelectedDropDown(null);
-      setIsOther(false);
+      setIsSpecific(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route]);
@@ -297,70 +161,66 @@ const Home = () => {
         if (i === 0) return;
         nodes.forEach((v) => {
           if (route[i] && route[i].name === v.name) {
-            candidatePaths.push({
-              from: {
-                id: `total${i - 1}-${route[i - 1].name}`,
-                posX: "right",
-                posY: "middle",
-              },
-              to: {
-                id: `node${i}-${v.name}`,
-                posX: "left",
-                posY: "middle",
-              },
-              style: {
-                color: "#1A8091",
-                head: "none",
-                arrow: "smooth",
-                width: 2,
-              },
-            });
+            candidatePaths.push(
+              getPathStyle(
+                `total${i - 1}-${route[i - 1].name}`,
+                `node${i}-${v.name}`,
+                true
+              )
+            );
           } else {
-            candidatePaths.push({
-              from: {
-                id: `total${i - 1}-${route[i - 1].name}`,
-                posX: "right",
-                posY: "middle",
-              },
-              to: {
-                id: `node${i}-${v.name}`,
-                posX: "left",
-                posY: "middle",
-              },
-              style: {
-                color: "#dddddd",
-                head: "none",
-                arrow: "smooth",
-                width: 1.5,
-              },
-            });
+            candidatePaths.push(
+              getPathStyle(
+                `total${i - 1}-${route[i - 1].name}`,
+                `node${i}-${v.name}`,
+                false
+              )
+            );
           }
         });
 
         // 逆引き用のpath
         if (i === nodesList.length - 1) {
-          candidatePaths.push({
-            from: {
-              id: `total${i - 1}-${routeTemp[i - 1].name}`,
-              posX: "right",
-              posY: "middle",
-            },
-            to: {
-              id: `nodeOther`,
-              posX: "left",
-              posY: "middle",
-            },
-            style: {
-              color: "#dddddd",
-              head: "none",
-              arrow: "smooth",
-              width: 1.5,
-            },
-          });
+          candidatePaths.push(
+            getPathStyle(
+              `total${i - 1}-${routeTemp[i - 1].name}`,
+              `nodeOther`,
+              false
+            )
+          );
         }
       });
       setCandidatePaths(candidatePaths);
     });
+  };
+
+  const getPathStyle = (fromId, toId, isRoute) => {
+    const style = isRoute
+      ? {
+          color: "#1A8091",
+          head: "none",
+          arrow: "smooth",
+          width: 2,
+        }
+      : {
+          color: "#dddddd",
+          head: "none",
+          arrow: "smooth",
+          width: 1.5,
+        };
+    return {
+      from: {
+        id: fromId,
+        posX: "right",
+        posY: "middle",
+      },
+      to: {
+        id: toId,
+        posX: "left",
+        posY: "middle",
+      },
+      style: style,
+    };
   };
 
   /**
@@ -591,7 +451,7 @@ const Home = () => {
 
     if (!secondCandidates.length) {
       console.log("no");
-      setIsOther(false);
+      setIsSpecific(false);
       return;
     }
     const candidates = secondCandidates.map((v) => {
@@ -608,65 +468,32 @@ const Home = () => {
       if (i === 0) return;
       else if (i <= route.length) {
         nodes.forEach((v) => {
-          candidatePaths.push({
-            from: {
-              id: `total${i - 1}-${route[i - 1].name}`,
-              posX: "right",
-              posY: "middle",
-            },
-            to: {
-              id: `node${i}-${v.name}`,
-              posX: "left",
-              posY: "middle",
-            },
-            style: {
-              color: "#dddddd",
-              head: "none",
-              arrow: "smooth",
-              width: 1.5,
-            },
-          });
+          candidatePaths.push(
+            getPathStyle(
+              `total${i - 1}-${route[i - 1].name}`,
+              `node${i}-${v.name}`,
+              false
+            )
+          );
         });
       } else {
         nodes.forEach((v, j) => {
           if (j > 0 && nodes[j - 1].name === v.name) {
-            candidatePaths.push({
-              from: {
-                id: `total${i - 1}-${nodesList[i - 1][j].name}`,
-                posX: "right",
-                posY: "middle",
-              },
-              to: {
-                id: `node${i}-${v.name}-${j}`,
-                posX: "left",
-                posY: "middle",
-              },
-              style: {
-                color: "#dddddd",
-                head: "none",
-                arrow: "smooth",
-                width: 1.5,
-              },
-            });
+            candidatePaths.push(
+              getPathStyle(
+                `total${i - 1}-${nodesList[i - 1][j].name}`,
+                `node${i}-${v.name}-${j}`,
+                false
+              )
+            );
           } else {
-            candidatePaths.push({
-              from: {
-                id: `total${i - 1}-${nodesList[i - 1][j].name}`,
-                posX: "right",
-                posY: "middle",
-              },
-              to: {
-                id: `node${i}-${v.name}`,
-                posX: "left",
-                posY: "middle",
-              },
-              style: {
-                color: "#dddddd",
-                head: "none",
-                arrow: "smooth",
-                width: 1.5,
-              },
-            });
+            candidatePaths.push(
+              getPathStyle(
+                `total${i - 1}-${nodesList[i - 1][j].name}`,
+                `node${i}-${v.name}`,
+                false
+              )
+            );
           }
         });
       }
@@ -751,6 +578,80 @@ const Home = () => {
         .filter((v) => v);
     });
     return nodesList;
+  };
+
+  const createSpecificModePath = () => {
+    console.log("other");
+    console.log(route);
+    const candidatePaths = [];
+    console.log(databaseNodesList);
+    let num;
+    databaseNodesList.forEach((nodes, i) => {
+      if (i === 0) return;
+      else if (i < route.length) {
+        nodes.forEach((v, j) => {
+          if (route[i] && route[i].name === v.name) {
+            num = j;
+            candidatePaths.push(
+              getPathStyle(
+                `total${i - 1}-${route[i - 1].name}`,
+                `node${i}-${v.name}`,
+                true
+              )
+            );
+          } else {
+            candidatePaths.push(
+              getPathStyle(
+                `total${i - 1}-${route[i - 1].name}`,
+                `node${i}-${v.name}`,
+                false
+              )
+            );
+          }
+        });
+      } else {
+        nodes.forEach((v, j) => {
+          if (j > 0 && nodes[j - 1].name === v.name) {
+            if (j === num) {
+              candidatePaths.push(
+                getPathStyle(
+                  `total${i - 1}-${databaseNodesList[i - 1][j].name}`,
+                  `node${i}-${v.name}-${j}`,
+                  true
+                )
+              );
+            } else {
+              candidatePaths.push(
+                getPathStyle(
+                  `total${i - 1}-${databaseNodesList[i - 1][j].name}`,
+                  `node${i}-${v.name}-${j}`,
+                  false
+                )
+              );
+            }
+          } else {
+            if (j === num) {
+              candidatePaths.push(
+                getPathStyle(
+                  `total${i - 1}-${databaseNodesList[i - 1][j].name}`,
+                  `node${i}-${v.name}`,
+                  true
+                )
+              );
+            } else {
+              candidatePaths.push(
+                getPathStyle(
+                  `total${i - 1}-${databaseNodesList[i - 1][j].name}`,
+                  `node${i}-${v.name}`,
+                  false
+                )
+              );
+            }
+          }
+        });
+      }
+    });
+    setCandidatePaths(candidatePaths);
   };
 
   return (
@@ -899,8 +800,8 @@ const Home = () => {
               dbDesc={dbDesc}
               selectedDropDown={selectedDropDown}
               setSelectedDropDown={setSelectedDropDown}
-              isOther={isOther}
-              setIsOther={setIsOther}
+              isSpecific={isSpecific}
+              setIsSpecific={setIsSpecific}
               lookupRoute={lookupRoute}
             />
           )}
