@@ -7,7 +7,7 @@ import Databases from "../components/Databases";
 import IdInput from "../components/IdInput";
 import Documents from "../components/Documents";
 import TabWrapper from "../components/TabWrapper";
-import { executeQuery } from "../lib/util";
+import { executeQuery, getPathStyle } from "../lib/util";
 import { topExamples } from "../lib/examples";
 
 const Home = () => {
@@ -193,35 +193,6 @@ const Home = () => {
       });
       setCandidatePaths(candidatePaths);
     });
-  };
-
-  const getPathStyle = (fromId, toId, isRoute) => {
-    const style = isRoute
-      ? {
-          color: "#1A8091",
-          head: "none",
-          arrow: "smooth",
-          width: 2,
-        }
-      : {
-          color: "#dddddd",
-          head: "none",
-          arrow: "smooth",
-          width: 1.5,
-        };
-    return {
-      from: {
-        id: fromId,
-        posX: "right",
-        posY: "middle",
-      },
-      to: {
-        id: toId,
-        posX: "left",
-        posY: "middle",
-      },
-      style: style,
-    };
   };
 
   /**
