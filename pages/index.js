@@ -44,7 +44,145 @@ const Home = () => {
     if (route.length > 0) {
       const convertFunc = async () => {
         const abortController = new AbortController();
-        if (isUseKeepRoute) {
+        if (isOther) {
+          console.log("other");
+          console.log(route);
+          const candidatePaths = [];
+          console.log(databaseNodesList);
+          let num;
+          databaseNodesList.forEach((nodes, i) => {
+            if (i === 0) return;
+            else if (i < route.length) {
+              nodes.forEach((v, j) => {
+                if (route[i] && route[i].name === v.name) {
+                  num = j;
+                  candidatePaths.push({
+                    from: {
+                      id: `total${i - 1}-${route[i - 1].name}`,
+                      posX: "right",
+                      posY: "middle",
+                    },
+                    to: {
+                      id: `node${i}-${v.name}`,
+                      posX: "left",
+                      posY: "middle",
+                    },
+                    style: {
+                      color: "#1A8091",
+                      head: "none",
+                      arrow: "smooth",
+                      width: 2,
+                    },
+                  });
+                } else {
+                  candidatePaths.push({
+                    from: {
+                      id: `total${i - 1}-${route[i - 1].name}`,
+                      posX: "right",
+                      posY: "middle",
+                    },
+                    to: {
+                      id: `node${i}-${v.name}`,
+                      posX: "left",
+                      posY: "middle",
+                    },
+                    style: {
+                      color: "#dddddd",
+                      head: "none",
+                      arrow: "smooth",
+                      width: 1.5,
+                    },
+                  });
+                }
+              });
+            } else {
+              nodes.forEach((v, j) => {
+                if (j > 0 && nodes[j - 1].name === v.name) {
+                  if (j === num) {
+                    candidatePaths.push({
+                      from: {
+                        id: `total${i - 1}-${databaseNodesList[i - 1][j].name}`,
+                        posX: "right",
+                        posY: "middle",
+                      },
+                      to: {
+                        id: `node${i}-${v.name}-${j}`,
+                        posX: "left",
+                        posY: "middle",
+                      },
+                      style: {
+                        color: "#1A8091",
+                        head: "none",
+                        arrow: "smooth",
+                        width: 2,
+                      },
+                    });
+                  } else {
+                    candidatePaths.push({
+                      from: {
+                        id: `total${i - 1}-${databaseNodesList[i - 1][j].name}`,
+                        posX: "right",
+                        posY: "middle",
+                      },
+                      to: {
+                        id: `node${i}-${v.name}-${j}`,
+                        posX: "left",
+                        posY: "middle",
+                      },
+                      style: {
+                        color: "#dddddd",
+                        head: "none",
+                        arrow: "smooth",
+                        width: 1.5,
+                      },
+                    });
+                  }
+                } else {
+                  if (j === num) {
+                    candidatePaths.push({
+                      from: {
+                        id: `total${i - 1}-${databaseNodesList[i - 1][j].name}`,
+                        posX: "right",
+                        posY: "middle",
+                      },
+                      to: {
+                        id: `node${i}-${v.name}`,
+                        posX: "left",
+                        posY: "middle",
+                      },
+                      style: {
+                        color: "#1A8091",
+                        head: "none",
+                        arrow: "smooth",
+                        width: 2,
+                      },
+                    });
+                  } else {
+                    candidatePaths.push({
+                      from: {
+                        id: `total${i - 1}-${databaseNodesList[i - 1][j].name}`,
+                        posX: "right",
+                        posY: "middle",
+                      },
+                      to: {
+                        id: `node${i}-${v.name}`,
+                        posX: "left",
+                        posY: "middle",
+                      },
+                      style: {
+                        color: "#dddddd",
+                        head: "none",
+                        arrow: "smooth",
+                        width: 1.5,
+                      },
+                    });
+                  }
+                }
+              });
+            }
+          });
+          setCandidatePaths(candidatePaths);
+        } else if (isUseKeepRoute) {
           const r = route;
           for (let i = 0; i < previousRoute.length; i++) {
             await createNodesList(r);
@@ -453,6 +591,7 @@ const Home = () => {
 
     if (!secondCandidates.length) {
       console.log("no");
+      setIsOther(false);
       return;
     }
     const candidates = secondCandidates.map((v) => {
@@ -467,7 +606,7 @@ const Home = () => {
     const candidatePaths = [];
     nodesList.forEach((nodes, i) => {
       if (i === 0) return;
-      else if (i === route.length) {
+      else if (i <= route.length) {
         nodes.forEach((v) => {
           candidatePaths.push({
             from: {
