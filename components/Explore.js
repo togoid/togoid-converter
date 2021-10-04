@@ -81,7 +81,7 @@ const Explore = (props) => {
 
   const handleSelectDropDown = (e) => {
     props.setSelectedDropDown(e.target.value);
-    if (props.isOther) {
+    if (props.isSpecific) {
       selectOther(e.target.value);
     }
   };
@@ -92,7 +92,7 @@ const Explore = (props) => {
       props.lookupRoute(v);
     } else {
       if (props.selectedDropDown) {
-        props.setIsOther(true);
+        props.setIsSpecific(true);
       }
       console.log(props.selectedDropDown);
       props.lookupRoute(props.selectedDropDown);
@@ -256,7 +256,7 @@ const Explore = (props) => {
                             </li>
                           ))}
                         </ul>
-                        {!props.isOther &&
+                        {!props.isSpecific &&
                           i !== 0 &&
                           i === props.databaseNodesList.length - 1 && (
                             <div id={`nodeOther`} className={`radio green`}>
@@ -266,7 +266,7 @@ const Explore = (props) => {
                                 id={`resultOther`}
                                 className="radio__input"
                                 onChange={() => selectOther()}
-                                checked={props.isOther}
+                                checked={props.isSpecific}
                               />
                               <label
                                 htmlFor={`resultOther`}
