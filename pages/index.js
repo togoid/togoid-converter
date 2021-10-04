@@ -45,9 +45,10 @@ const Home = () => {
     if (route.length > 0) {
       const convertFunc = async () => {
         const abortController = new AbortController();
-        if (isSpecific) {
+        if (isSpecific && route.length >= databaseNodesList.length - 1) {
           createSpecificModePath();
         } else if (isUseKeepRoute) {
+          setIsSpecific(false);
           const r = route;
           for (let i = 0; i < previousRoute.length; i++) {
             await createNodesList(r);
@@ -64,6 +65,7 @@ const Home = () => {
           setRoute(r);
           setIsUseKeepRoute(false);
         } else {
+          setIsSpecific(false);
           await createNodesList(route);
         }
 
@@ -74,7 +76,6 @@ const Home = () => {
 
       convertFunc();
       setSelectedDropDown(null);
-      setIsSpecific(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route]);
@@ -420,23 +421,13 @@ const Home = () => {
         });
       } else {
         nodes.forEach((v, j) => {
-          if (j > 0 && nodes[j - 1].name === v.name) {
-            candidatePaths.push(
-              getPathStyle(
-                `total${i - 1}-${nodesList[i - 1][j].name}`,
-                `node${i}-${v.name}-${j}`,
-                false
-              )
-            );
-          } else {
-            candidatePaths.push(
-              getPathStyle(
-                `total${i - 1}-${nodesList[i - 1][j].name}`,
-                `node${i}-${v.name}`,
-                false
-              )
-            );
-          }
+          candidatePaths.push(
+            getPathStyle(
+              `total${i - 1}-${nodesList[i - 1][j].name}`,
+              `node${i}-${v.name}`,
+              false
+            )
+          );
         });
       }
     });
@@ -530,7 +521,11 @@ const Home = () => {
     let num;
     databaseNodesList.forEach((nodes, i) => {
       if (i === 0) return;
-      else if (i < route.length) {
+      else if (
+        i < route.length &&
+        (databaseNodesList.length !== route.length ||
+          i !== databaseNodesList.length - 1)
+      ) {
         nodes.forEach((v, j) => {
           if (route[i] && route[i].name === v.name) {
             num = j;
@@ -553,42 +548,22 @@ const Home = () => {
         });
       } else {
         nodes.forEach((v, j) => {
-          if (j > 0 && nodes[j - 1].name === v.name) {
-            if (j === num) {
-              candidatePaths.push(
-                getPathStyle(
-                  `total${i - 1}-${databaseNodesList[i - 1][j].name}`,
-                  `node${i}-${v.name}-${j}`,
-                  true
-                )
-              );
-            } else {
-              candidatePaths.push(
-                getPathStyle(
-                  `total${i - 1}-${databaseNodesList[i - 1][j].name}`,
-                  `node${i}-${v.name}-${j}`,
-                  false
-                )
-              );
-            }
+          if (j === num) {
+            candidatePaths.push(
+              getPathStyle(
+                `total${i - 1}-${databaseNodesList[i - 1][j].name}`,
+                `node${i}-${v.name}`,
+                true
+              )
+            );
           } else {
-            if (j === num) {
-              candidatePaths.push(
-                getPathStyle(
-                  `total${i - 1}-${databaseNodesList[i - 1][j].name}`,
-                  `node${i}-${v.name}`,
-                  true
-                )
-              );
-            } else {
-              candidatePaths.push(
-                getPathStyle(
-                  `total${i - 1}-${databaseNodesList[i - 1][j].name}`,
-                  `node${i}-${v.name}`,
-                  false
-                )
-              );
-            }
+            candidatePaths.push(
+              getPathStyle(
+                `total${i - 1}-${databaseNodesList[i - 1][j].name}`,
+                `node${i}-${v.name}`,
+                false
+              )
+            );
           }
         });
       }
