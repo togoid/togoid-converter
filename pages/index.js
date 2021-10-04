@@ -6,6 +6,7 @@ import Explore from "../components/Explore";
 import Databases from "../components/Databases";
 import IdInput from "../components/IdInput";
 import Documents from "../components/Documents";
+import TabWrapper from "../components/TabWrapper";
 import { executeQuery } from "../lib/util";
 
 const Home = () => {
@@ -668,32 +669,7 @@ const Home = () => {
           tryKeepRoute={tryKeepRoute}
         />
         <div className="drawing_area">
-          <div className="tab_wrapper">
-            <button
-              onClick={() => setActiveTab("EXPLORE")}
-              className={
-                activeTab === "EXPLORE" ? "button_tab active" : "button_tab"
-              }
-            >
-              EXPLORE
-            </button>
-            <button
-              onClick={() => setActiveTab("DATABASE")}
-              className={
-                activeTab === "DATABASE" ? "button_tab active" : "button_tab"
-              }
-            >
-              DATABASES
-            </button>
-            <button
-              onClick={() => setActiveTab("DOCUMENTS")}
-              className={
-                activeTab === "DOCUMENTS" ? "button_tab active" : "button_tab"
-              }
-            >
-              DOCUMENTS
-            </button>
-          </div>
+          <TabWrapper activeTab={activeTab} setActiveTab={setActiveTab} />
           {activeTab === "EXPLORE" && (
             <Explore
               databaseNodesList={databaseNodesList}
