@@ -290,55 +290,42 @@ const Home = () => {
   };
 
   const lookupRoute = async (target) => {
-    let r = route[route.length - 1]; // let
-    const firstCandidates = [];
+    const r = route[route.length - 1];
     const firstCandidatesTemp = [];
+
+    // tergetと一致しない変換可能なものを取得
     Object.keys(dbConfig).forEach((k) => {
       if (!firstCandidatesTemp.find((v) => v.name === r.name)) {
-        if (k.split("-").shift() === r.name) {
-          const name = k.split("-")[1];
-          if (!route.find((w) => w.name === name)) {
-            if (name === target) {
-              if (!firstCandidates.find((v) => v.name === name)) {
-                firstCandidates.push({
-                  name,
-                  category: dbCatalogue[name].category,
-                  total: 1,
-                  ids: [],
-                });
-              }
-            } else if (!firstCandidatesTemp.find((v) => v.name === name)) {
-              // 順方向の変換
-              firstCandidatesTemp.push({
-                name,
-                category: dbCatalogue[name].category,
-                total: 1,
-                ids: [],
-              });
-            }
+        const keySplit = k.split("-");
+        if (keySplit[0] === r.name) {
+          const name = keySplit[1];
+          if (
+            name !== target &&
+            !route.find((w) => w.name === name) &&
+            !firstCandidatesTemp.find((v) => v.name === name)
+          ) {
+            // 順方向の変換
+            firstCandidatesTemp.push({
+              name,
+              category: dbCatalogue[name].category,
+              total: 1,
+              ids: [],
+            });
           }
-        } else if (dbConfig[k].link.reverse && k.split("-").pop() === r.name) {
+        } else if (dbConfig[k].link.reverse && keySplit[1] === r.name) {
           // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
-          const name = k.split("-")[0];
-          if (!route.find((w) => w.name === name)) {
-            if (name === target) {
-              if (!firstCandidates.find((v) => v.name === name)) {
-                firstCandidates.push({
-                  name,
-                  category: dbCatalogue[name].category,
-                  total: 1,
-                  ids: [],
-                });
-              }
-            } else if (!firstCandidatesTemp.find((v) => v.name === name)) {
-              // 順方向の変換
-              firstCandidatesTemp.push({
-                name,
-                category: dbCatalogue[name].category,
-                total: 1,
-                ids: [],
-              });
-            }
+          const name = keySplit[0];
+          if (
+            name !== target &&
+            !route.find((w) => w.name === name) &&
+            !firstCandidatesTemp.find((v) => v.name === name)
+          ) {
+            firstCandidatesTemp.push({
+              name,
+              category: dbCatalogue[name].category,
+              total: 1,
+              ids: [],
+            });
           }
         }
       }
@@ -348,12 +335,16 @@ const Home = () => {
 
     firstCandidatesTemp.forEach((r) => {
       Object.keys(dbConfig).forEach((k) => {
-        if (k.split("-").shift() === r.name) {
-          const name = k.split("-")[1];
+        const keySplit = k.split("-");
+        if (keySplit[0] === r.name) {
+          const name = keySplit[1];
           if (!route.find((w) => w.name === name)) {
             if (name === target) {
-              if (!secondCandidates.find((v) => v.name === name)) {
-                //if不要かも
+              if (
+                !secondCandidates.find(
+                  (v) => v[0].name === r.name && v[1].name === name
+                )
+              ) {
                 secondCandidates.push([
                   r,
                   {
@@ -366,13 +357,16 @@ const Home = () => {
               }
             }
           }
-        } else if (dbConfig[k].link.reverse && k.split("-").pop() === r.name) {
+        } else if (dbConfig[k].link.reverse && keySplit[1] === r.name) {
           // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
-          const name = k.split("-")[0];
+          const name = keySplit[0];
           if (!route.find((w) => w.name === name)) {
             if (name === target) {
-              if (!secondCandidates.find((v) => v.name === name)) {
-                //if現状仕事していない
+              if (
+                !secondCandidates.find(
+                  (v) => v[0].name === r.name && v[1].name === name
+                )
+              ) {
                 secondCandidates.push([
                   r,
                   {
@@ -388,23 +382,19 @@ const Home = () => {
         }
       });
     });
-    // console.log(secondCandidates);
-
-    let nodesList = databaseNodesList.slice(0, route.length); // let
 
     if (!secondCandidates.length) {
-      console.log("no");
       setIsSpecific(false);
       return;
     }
-    const candidates = secondCandidates.map((v) => {
-      return v[0];
-    });
+    const candidates = [
+      secondCandidates.map((v) => v[0]),
+      secondCandidates.map((v) => v[1]),
+    ];
 
-    nodesList = await getTotal(candidates, nodesList);
-    nodesList = await getTotalSecond(secondCandidates, nodesList);
+    const nodesList = await getTotal(candidates);
 
-    setDatabaseNodesList(nodesList);
+    await setDatabaseNodesList(nodesList);
 
     const candidatePaths = [];
     nodesList.forEach((nodes, i) => {
@@ -434,90 +424,51 @@ const Home = () => {
     setCandidatePaths(candidatePaths);
   };
 
-  const getTotal = async (candidates, nodesList) => {
-    console.log(candidates);
-    NProgress.start();
-    const promises = candidates.map((v) => {
-      const r = route.slice();
-      console.log(r);
-      console.log(nodesList);
-      r.push(v);
-      return new Promise(function (resolve) {
-        // エラーになった変換でもnullを返してresolve
-        return executeQuery(r, ids, "target", "only")
-          .then((v) => {
-            NProgress.inc(1 / candidates.length);
-            resolve(v);
-          })
-          .catch(() => resolve(null));
+  const getTotal = async (candidates) => {
+    const nodesList = databaseNodesList.slice(0, route.length);
+    for (const [i, candidate] of candidates.entries()) {
+      NProgress.start();
+      const promises = candidate.map((v, j) => {
+        const r = route.slice();
+        if (i !== 0) {
+          r.push(candidates[0][j]);
+        }
+        r.push(v);
+        return new Promise(function (resolve) {
+          // エラーになった変換でもnullを返してresolve
+          return executeQuery(r, ids, "target", "only")
+            .then((v) => {
+              NProgress.inc(1 / candidate.length);
+              resolve(v);
+            })
+            .catch(() => resolve(null));
+        });
       });
-    });
 
-    await Promise.all(promises).then((values) => {
-      NProgress.done();
-      // 先端の変換候補を追加
-      nodesList[nodesList.length] = candidates
-        .map((v, i) => {
-          const _v = Object.assign({}, v);
-          if (!values[i]) {
-            _v.total = -1;
-          } else if (values[i].total) {
-            _v.total = values[i].total;
-          } else {
-            return null;
-          }
+      await Promise.all(promises).then((values) => {
+        NProgress.done();
+        // 先端の変換候補を追加
+        nodesList[nodesList.length] = candidate
+          .map((v, i) => {
+            const _v = Object.assign({}, v);
+            if (!values[i]) {
+              _v.total = -1;
+            } else if (values[i].total) {
+              _v.total = values[i].total;
+            } else {
+              return null;
+            }
 
-          return _v;
-        })
-        .filter((v) => v);
-    });
-    return nodesList;
-  };
-
-  const getTotalSecond = async (candidates, nodesList) => {
-    const temp = candidates.map((w) => w[1]);
-    NProgress.start();
-    const promises = temp.map((v, i) => {
-      const r = route.slice();
-      r.push(candidates[i][0]);
-      r.push(v);
-      return new Promise(function (resolve) {
-        // エラーになった変換でもnullを返してresolve
-        return executeQuery(r, ids, "target", "only")
-          .then((v) => {
-            NProgress.inc(1 / temp.length);
-            resolve(v);
+            return _v;
           })
-          .catch(() => resolve(null));
+          .filter((v) => v);
       });
-    });
-
-    await Promise.all(promises).then((values) => {
-      NProgress.done();
-      // 先端の変換候補を追加
-      nodesList[nodesList.length] = temp
-        .map((v, i) => {
-          const _v = Object.assign({}, v);
-          if (!values[i]) {
-            _v.total = -1;
-          } else if (values[i].total) {
-            _v.total = values[i].total;
-          } else {
-            return null;
-          }
-
-          return _v;
-        })
-        .filter((v) => v);
-    });
+    }
     return nodesList;
   };
 
   const createSpecificModePath = () => {
-    console.log("other");
-    console.log(route);
     const candidatePaths = [];
-    console.log(databaseNodesList);
     let num;
     databaseNodesList.forEach((nodes, i) => {
       if (i === 0) return;
