@@ -295,9 +295,10 @@ const Explore = (props) => {
                                   <option> </option>
                                   {Object.keys(props.dbCatalogue).map((key) => {
                                     if (
-                                      !props.databaseNodesList[i].find((v) => {
-                                        return v.name === key;
-                                      })
+                                      !props.databaseNodesList[i].find(
+                                        (v) => v.name === key
+                                      ) &&
+                                      !props.route.find((v) => v.name === key)
                                     ) {
                                       return (
                                         <option key={key} value={key}>
