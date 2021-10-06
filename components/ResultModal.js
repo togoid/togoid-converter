@@ -120,43 +120,20 @@ const ResultModal = (props) => {
     exportCSV([h, ...rows]);
   };
 
-  // const handleIdDownload = async () => {
-  //   const d = await executeQuery(
-  //     props.route,
-  //     props.ids,
-  //     "target",
-  //     10000,
-  //     false
-  //   );
-  //   const prefix = props.tableData.heading[
-  //     props.tableData.heading.length - 1
-  //   ].prefix
-  //     .split("/")
-  //     .slice(-1);
+  const handleExportTEXT = async () => {
+    const include =
+      previewMode < 2 ? "all" : previewMode < 4 ? "pair" : "target";
+    const d = await executeQuery(props.route, props.ids, include, 10000, false);
 
-  //   const text = d.results.map((result) => prefix + result).join("\r\n");
-  //   const blob = new Blob([text], {
-  //     type: "text/plain;charset=utf-8",
-  //   });
-  //   saveAs(blob, "ids.txt");
-  // };
+    const results = previewMode < 4 ? d.results : d.results.map((v) => [v]);
+    const rows = formatTable(props.tableData.heading, results)[1];
 
-  // const handleURLDownload = async () => {
-  //   const dbName = props.route[props.route.length - 1].name;
-  //   const dbPrefix = props.dbCatalogue[dbName].prefix;
-  //   const d = await executeQuery(
-  //     props.route,
-  //     props.ids,
-  //     "target",
-  //     10000,
-  //     false
-  //   );
-  //   const texts = d.results.map((v) => dbPrefix + v).join("\r\n");
-  //   const blob = new Blob([texts], {
-  //     type: "text/plain;charset=utf-8",
-  //   });
-  //   saveAs(blob, "urls.txt");
-  // };
+    const text = rows.join("\r\n");
+    const blob = new Blob([text], {
+      type: "text/plain;charset=utf-8",
+    });
+    saveAs(blob, "ids.txt");
+  };
 
   const previewModeList = [
     "all IDs",
@@ -280,17 +257,11 @@ const ResultModal = (props) => {
                         DOWNLOAD as CSV
                       </button>
                       <button
-                        // onClick={handleURLDownload}
+                        onClick={handleExportTEXT}
                         className="child_menu__item"
                       >
                         DOWNLOAD as TEXT
                       </button>
-                      {/* <button
-                        onClick={handleExportCSV}
-                        className="child_menu__item"
-                      >
-                        Download table as CSV
-                      </button> */}
                     </div>
                   ) : (
                     ""
