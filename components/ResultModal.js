@@ -34,8 +34,11 @@ const ResultModal = (props) => {
   const formatTable = (tableHeading, tableRows) => {
     if (previewMode === 0) {
       // all IDs
+      const subPrefixList = tableHeading.map((v) =>
+        v.prefix.slice(v.prefix.lastIndexOf("/") + 1)
+      );
       const rows = tableRows.map((v) =>
-        v.map((w, j) => [tableHeading[j].prefix.split("/").slice(-1) + w])
+        v.map((w, j) => [subPrefixList[j] + w])
       );
       const url = tableRows.map((v) =>
         v.map((w, j) => [tableHeading[j].prefix + w])
@@ -49,11 +52,18 @@ const ResultModal = (props) => {
       return [tableHeading, rows, rows];
     } else if (previewMode === 2) {
       // origin and targets IDs
+      const subPrefixList = [
+        tableHeading[0].prefix.slice(
+          tableHeading[0].prefix.lastIndexOf("/") + 1
+        ),
+        tableHeading[tableHeading.length - 1].prefix.slice(
+          tableHeading[tableHeading.length - 1].prefix.lastIndexOf("/") + 1
+        ),
+      ];
       const heading = [tableHeading[0], tableHeading[tableHeading.length - 1]];
       const rows = tableRows.map((v) => [
-        tableHeading[0].prefix.split("/").slice(-1) + v[0],
-        tableHeading[tableHeading.length - 1].prefix.split("/").slice(-1) +
-          v[v.length - 1],
+        subPrefixList[0] + v[0],
+        subPrefixList[subPrefixList.length - 1] + v[v.length - 1],
       ]);
       const url = tableRows.map((v) => [
         tableHeading[0].prefix + v[0],
@@ -70,10 +80,14 @@ const ResultModal = (props) => {
       return [heading, rows, rows];
     } else if (previewMode === 4) {
       // target IDs
+      const subPrefixList = [
+        tableHeading[tableHeading.length - 1].prefix.slice(
+          tableHeading[tableHeading.length - 1].prefix.lastIndexOf("/") + 1
+        ),
+      ];
       const heading = [tableHeading[tableHeading.length - 1]];
       const rows = tableRows.map((v) => [
-        tableHeading[tableHeading.length - 1].prefix.split("/").slice(-1) +
-          v[v.length - 1],
+        subPrefixList[subPrefixList.length - 1] + v[v.length - 1],
       ]);
       const url = tableRows.map((v) => [
         tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
@@ -83,8 +97,7 @@ const ResultModal = (props) => {
       // target URLs
       const heading = [tableHeading[tableHeading.length - 1]];
       const rows = tableRows.map((v) => [
-        props.dbCatalogue[props.route[props.route.length - 1].name].prefix +
-          v[v.length - 1],
+        tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
       ]);
       return [heading, rows, rows];
     }
