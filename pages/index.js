@@ -132,7 +132,7 @@ const Home = () => {
       r.push(v);
       return new Promise(function (resolve) {
         // エラーになった変換でもnullを返してresolve
-        return executeQuery(r, ids, "target", "only")
+        return executeQuery(r, ids, "target", 10000, "only")
           .then((v) => {
             NProgress.inc(1 / candidates.length);
             resolve(v);
@@ -436,7 +436,7 @@ const Home = () => {
         r.push(v);
         return new Promise(function (resolve) {
           // エラーになった変換でもnullを返してresolve
-          return executeQuery(r, ids, "target", "only")
+          return executeQuery(r, ids, "target", 10000, "only")
             .then((v) => {
               NProgress.inc(1 / candidate.length);
               resolve(v);

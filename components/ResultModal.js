@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import copy from "copy-to-clipboard";
 import { saveAs } from "file-saver";
 import { executeQuery, exportCSV } from "../lib/util";
@@ -8,6 +8,98 @@ const ResultModal = (props) => {
   const [copied, setCopied] = useState(false);
   const [showAllFailed, setShowAllFailed] = useState(false);
   const [showLinks, setShowLinks] = useState(false);
+  const [previewMode, setPreviewMode] = useState(0);
+  const [modTable, setModTable] = useState(null);
+
+  useEffect(() => {
+    if (previewMode === 0) {
+      // all IDs
+      setModTable({
+        heading: props.tableData.heading,
+        rows: props.tableData.rows.map((v) =>
+          v.map((w, j) => [
+            props.tableData.heading[j].prefix.split("/").slice(-1) + w,
+          ])
+        ),
+        url: props.tableData.rows.map((v) =>
+          v.map((w, j) => [props.tableData.heading[j].prefix + w])
+        ),
+      });
+    } else if (previewMode === 1) {
+      // all URLs
+      const rows = props.tableData.rows.map((v) =>
+        v.map((w, j) => [props.tableData.heading[j].prefix + w])
+      );
+      setModTable({
+        heading: props.tableData.heading,
+        rows: rows,
+        url: rows,
+      });
+    } else if (previewMode === 2) {
+      // origin and targets IDs
+      const rows = props.tableData.rows.map((v) => [
+        props.tableData.heading[0].prefix.split("/").slice(-1) + v[0],
+        props.tableData.heading[props.tableData.heading.length - 1].prefix
+          .split("/")
+          .slice(-1) + v[props.tableData.heading.length - 1],
+      ]);
+      const url = props.tableData.rows.map((v) => [
+        props.tableData.heading[0].prefix + v[0],
+        props.tableData.heading[props.tableData.heading.length - 1].prefix +
+          v[props.tableData.heading.length - 1],
+      ]);
+      setModTable({
+        heading: [
+          props.tableData.heading[0],
+          props.tableData.heading[props.tableData.heading.length - 1],
+        ],
+        rows: rows,
+        url: url,
+      });
+    } else if (previewMode === 3) {
+      // origin and taregets URLs
+      const rows = props.tableData.rows.map((v) => [
+        props.tableData.heading[0].prefix + v[0],
+        props.tableData.heading[props.tableData.heading.length - 1].prefix +
+          v[props.tableData.heading.length - 1],
+      ]);
+      setModTable({
+        heading: [
+          props.tableData.heading[0],
+          props.tableData.heading[props.tableData.heading.length - 1],
+        ],
+        rows: rows,
+        url: rows,
+      });
+    } else if (previewMode === 4) {
+      // target IDs
+      const rows = props.tableData.rows.map((v) => [
+        props.tableData.heading[props.tableData.heading.length - 1].prefix
+          .split("/")
+          .slice(-1) + v[props.tableData.heading.length - 1],
+      ]);
+      const url = props.tableData.rows.map((v) => [
+        props.tableData.heading[props.tableData.heading.length - 1].prefix +
+          v[props.tableData.heading.length - 1],
+      ]);
+      setModTable({
+        heading: [props.tableData.heading[props.tableData.heading.length - 1]],
+        rows: rows,
+        url: url,
+      });
+    } else if (previewMode === 5) {
+      // target URLs
+      const rows = props.tableData.rows.map((v) => [
+        props.dbCatalogue[props.route[props.route.length - 1].name].prefix +
+          v[props.tableData.heading.length - 1],
+      ]);
+      setModTable({
+        heading: [props.tableData.heading[props.tableData.heading.length - 1]],
+        rows: rows,
+        url: rows,
+      });
+    }
+  }, [previewMode]);
 
   const handleMenu = async () => {
     if (showLinks) {
@@ -17,61 +109,88 @@ const ResultModal = (props) => {
     }
   };
 
-  const handleClipboardCopy = async (e) => {
-    e.preventDefault();
-    const d = await executeQuery(props.route, props.ids, "target", false);
-    const prefix = props.tableData.heading[
-      props.tableData.heading.length - 1
-    ].prefix
-      .split("/")
-      .slice(-1);
+  // const handleClipboardCopy = async (e) => {
+  //   e.preventDefault();
+  //   const d = await executeQuery(
+  //     props.route,
+  //     props.ids,
+  //     "target",
+  //     10000,
+  //     false
+  //   );
+  //   const prefix = props.tableData.heading[
+  //     props.tableData.heading.length - 1
+  //   ].prefix
+  //     .split("/")
+  //     .slice(-1);
 
-    const text = d.results.map((result) => prefix + result).join("\r\n");
-    copy(text, {
-      format: "text/plain",
-    });
-    setCopied(true);
-    setTimeout(() => {
-      setCopied(false);
-    }, 1000);
-  };
+  //   const text = d.results.map((result) => prefix + result).join("\r\n");
+  //   copy(text, {
+  //     format: "text/plain",
+  //   });
+  //   setCopied(true);
+  //   setTimeout(() => {
+  //     setCopied(false);
+  //   }, 1000);
+  // };
 
-  const handleExportCSV = async () => {
-    const d = await executeQuery(props.route, props.ids, "all", false);
-    const h = props.tableData.heading.map((v) => v.label);
-    const result = d.results.map((data) =>
-      data.map(
-        (d, j) => props.tableData.heading[j].prefix.split("/").slice(-1) + d
-      )
-    );
-    exportCSV([h, ...result]);
-  };
+  // const handleExportCSV = async () => {
+  //   const d = await executeQuery(props.route, props.ids, "all", 10000, false);
+  //   const h = props.tableData.heading.map((v) => v.label);
+  //   const result = d.results.map((data) =>
+  //     data.map(
+  //       (d, j) => props.tableData.heading[j].prefix.split("/").slice(-1) + d
+  //     )
+  //   );
+  //   exportCSV([h, ...result]);
+  // };
 
-  const handleIdDownload = async () => {
-    const d = await executeQuery(props.route, props.ids, "target", false);
-    const prefix = props.tableData.heading[
-      props.tableData.heading.length - 1
-    ].prefix
-      .split("/")
-      .slice(-1);
+  // const handleIdDownload = async () => {
+  //   const d = await executeQuery(
+  //     props.route,
+  //     props.ids,
+  //     "target",
+  //     10000,
+  //     false
+  //   );
+  //   const prefix = props.tableData.heading[
+  //     props.tableData.heading.length - 1
+  //   ].prefix
+  //     .split("/")
+  //     .slice(-1);
 
-    const text = d.results.map((result) => prefix + result).join("\r\n");
-    const blob = new Blob([text], {
-      type: "text/plain;charset=utf-8",
-    });
-    saveAs(blob, "ids.txt");
-  };
+  //   const text = d.results.map((result) => prefix + result).join("\r\n");
+  //   const blob = new Blob([text], {
+  //     type: "text/plain;charset=utf-8",
+  //   });
+  //   saveAs(blob, "ids.txt");
+  // };
 
-  const handleURLDownload = async () => {
-    const dbName = props.route[props.route.length - 1].name;
-    const dbPrefix = props.dbCatalogue[dbName].prefix;
-    const d = await executeQuery(props.route, props.ids, "target", false);
-    const texts = d.results.map((v) => dbPrefix + v).join("\r\n");
-    const blob = new Blob([texts], {
-      type: "text/plain;charset=utf-8",
-    });
-    saveAs(blob, "urls.txt");
-  };
+  // const handleURLDownload = async () => {
+  //   const dbName = props.route[props.route.length - 1].name;
+  //   const dbPrefix = props.dbCatalogue[dbName].prefix;
+  //   const d = await executeQuery(
+  //     props.route,
+  //     props.ids,
+  //     "target",
+  //     10000,
+  //     false
+  //   );
+  //   const texts = d.results.map((v) => dbPrefix + v).join("\r\n");
+  //   const blob = new Blob([texts], {
+  //     type: "text/plain;charset=utf-8",
+  //   });
+  //   saveAs(blob, "urls.txt");
+  // };
+
+  const previewModeList = [
+    "all IDs",
+    "all URLs",
+    "origin and targets IDs",
+    "origin and taregets URLs",
+    "target IDs",
+    "target URLs",
+  ];
 
   return (
     <div className="modal" onClick={() => props.setModalVisibility(false)}>
@@ -119,12 +238,12 @@ const ResultModal = (props) => {
           <div className="modal__top">
             <div className="item_wrapper">
               {(() => {
-                if (props.notConvertedIds.length > 0) {
+                if (props.notConvertedIds.length) {
                   const limit = showAllFailed ? 10000 : 3;
                   return (
                     <span className="non_forwarded">
                       {`IDs that were not converted: ${props.notConvertedIds
-                        .filter((v, i) => i < limit)
+                        .filter((_, i) => i < limit)
                         .join(", ")} `}
                       {!showAllFailed && (
                         <a
@@ -141,6 +260,20 @@ const ResultModal = (props) => {
                   );
                 }
               })()}
+
+              <div className="tab_wrapper">
+                {previewModeList.map((v, i) => (
+                  <button
+                    key={v}
+                    onClick={() => setPreviewMode(i)}
+                    className={
+                      previewMode === i ? "button_tab active" : "button_tab"
+                    }
+                  >
+                    {v}
+                  </button>
+                ))}
+              </div>
 
               {props.tableData && props.tableData.rows.length > 0 && (
                 <div className="export_button">
@@ -162,27 +295,27 @@ const ResultModal = (props) => {
                         {copied ? (
                           <span>Copied.</span>
                         ) : (
-                          <span>Copy target IDs.</span>
+                          <span>Copy to Clipboard</span>
                         )}
                       </button>
                       <button
                         onClick={handleIdDownload}
                         className="child_menu__item"
                       >
-                        Download target IDs
+                        DOWNLOAD as CSV
                       </button>
                       <button
                         onClick={handleURLDownload}
                         className="child_menu__item"
                       >
-                        Download target URLs
+                        DOWNLOAD as TEXT
                       </button>
-                      <button
+                      {/* <button
                         onClick={handleExportCSV}
                         className="child_menu__item"
                       >
                         Download table as CSV
-                      </button>
+                      </button> */}
                     </div>
                   ) : (
                     ""
@@ -199,27 +332,23 @@ const ResultModal = (props) => {
           <table className="table">
             <thead>
               <tr>
-                {props.tableData &&
-                  props.tableData.heading.length > 0 &&
-                  props.tableData.heading.map((v, i) => (
-                    <th key={i}>{v.label}</th>
-                  ))}
+                {modTable &&
+                  modTable.heading.length > 0 &&
+                  modTable.heading.map((v, i) => <th key={i}>{v.label}</th>)}
               </tr>
             </thead>
             <tbody>
-              {props.tableData && props.tableData.rows.length > 0 ? (
-                props.tableData.rows.map((data, i) => (
+              {modTable && modTable.rows.length > 0 ? (
+                modTable.rows.map((data, i) => (
                   <tr key={i}>
                     {data.map((d, j) => (
                       <td key={j}>
                         <a
-                          href={props.tableData.heading[j].prefix + d}
+                          href={modTable.url[i][j]}
                           target="_blank"
                           rel="noreferrer"
                         >
-                          {props.tableData.heading[j].prefix
-                            .split("/")
-                            .slice(-1) + d}
+                          {d}
                         </a>
                       </td>
                     ))}
