@@ -109,16 +109,16 @@ const ResultModal = (props) => {
     }, 1000);
   };
 
-  // const handleExportCSV = async () => {
-  //   const d = await executeQuery(props.route, props.ids, "all", 10000, false);
-  //   const h = props.tableData.heading.map((v) => v.label);
-  //   const result = d.results.map((data) =>
-  //     data.map(
-  //       (d, j) => props.tableData.heading[j].prefix.split("/").slice(-1) + d
-  //     )
-  //   );
-  //   exportCSV([h, ...result]);
-  // };
+  const handleExportCSV = async () => {
+    const include =
+      previewMode < 2 ? "all" : previewMode < 4 ? "pair" : "target";
+    const d = await executeQuery(props.route, props.ids, include, 10000, false);
+
+    const results = previewMode < 4 ? d.results : d.results.map((v) => [v]);
+    const [heading, rows] = formatTable(props.tableData.heading, results);
+    const h = heading.map((v) => v.label);
+    exportCSV([h, ...rows]);
+  };
 
   // const handleIdDownload = async () => {
   //   const d = await executeQuery(
@@ -274,7 +274,7 @@ const ResultModal = (props) => {
                         )}
                       </button>
                       <button
-                        // onClick={handleIdDownload}
+                        onClick={handleExportCSV}
                         className="child_menu__item"
                       >
                         DOWNLOAD as CSV
