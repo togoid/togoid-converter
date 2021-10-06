@@ -12,93 +12,15 @@ const ResultModal = (props) => {
   const [modTable, setModTable] = useState(null);
 
   useEffect(() => {
-    if (previewMode === 0) {
-      // all IDs
-      setModTable({
-        heading: props.tableData.heading,
-        rows: props.tableData.rows.map((v) =>
-          v.map((w, j) => [
-            props.tableData.heading[j].prefix.split("/").slice(-1) + w,
-          ])
-        ),
-        url: props.tableData.rows.map((v) =>
-          v.map((w, j) => [props.tableData.heading[j].prefix + w])
-        ),
-      });
-    } else if (previewMode === 1) {
-      // all URLs
-      const rows = props.tableData.rows.map((v) =>
-        v.map((w, j) => [props.tableData.heading[j].prefix + w])
-      );
-      setModTable({
-        heading: props.tableData.heading,
-        rows: rows,
-        url: rows,
-      });
-    } else if (previewMode === 2) {
-      // origin and targets IDs
-      const rows = props.tableData.rows.map((v) => [
-        props.tableData.heading[0].prefix.split("/").slice(-1) + v[0],
-        props.tableData.heading[props.tableData.heading.length - 1].prefix
-          .split("/")
-          .slice(-1) + v[props.tableData.heading.length - 1],
-      ]);
-      const url = props.tableData.rows.map((v) => [
-        props.tableData.heading[0].prefix + v[0],
-        props.tableData.heading[props.tableData.heading.length - 1].prefix +
-          v[props.tableData.heading.length - 1],
-      ]);
-      setModTable({
-        heading: [
-          props.tableData.heading[0],
-          props.tableData.heading[props.tableData.heading.length - 1],
-        ],
-        rows: rows,
-        url: url,
-      });
-    } else if (previewMode === 3) {
-      // origin and taregets URLs
-      const rows = props.tableData.rows.map((v) => [
-        props.tableData.heading[0].prefix + v[0],
-        props.tableData.heading[props.tableData.heading.length - 1].prefix +
-          v[props.tableData.heading.length - 1],
-      ]);
-      setModTable({
-        heading: [
-          props.tableData.heading[0],
-          props.tableData.heading[props.tableData.heading.length - 1],
-        ],
-        rows: rows,
-        url: rows,
-      });
-    } else if (previewMode === 4) {
-      // target IDs
-      const rows = props.tableData.rows.map((v) => [
-        props.tableData.heading[props.tableData.heading.length - 1].prefix
-          .split("/")
-          .slice(-1) + v[props.tableData.heading.length - 1],
-      ]);
-      const url = props.tableData.rows.map((v) => [
-        props.tableData.heading[props.tableData.heading.length - 1].prefix +
-          v[props.tableData.heading.length - 1],
-      ]);
-      setModTable({
-        heading: [props.tableData.heading[props.tableData.heading.length - 1]],
-        rows: rows,
-        url: url,
-      });
-    } else if (previewMode === 5) {
-      // target URLs
-      const rows = props.tableData.rows.map((v) => [
-        props.dbCatalogue[props.route[props.route.length - 1].name].prefix +
-          v[props.tableData.heading.length - 1],
-      ]);
-      setModTable({
-        heading: [props.tableData.heading[props.tableData.heading.length - 1]],
-        rows: rows,
-        url: rows,
-      });
-    }
+    const [heading, rows, url] = formatTable(
+      props.tableData.heading,
+      props.tableData.rows
+    );
+    setModTable({
+      heading: heading,
+      rows: rows,
+      url: url,
+    });
   }, [previewMode]);
 
   const handleMenu = async () => {
@@ -109,30 +31,83 @@ const ResultModal = (props) => {
     }
   };
 
-  // const handleClipboardCopy = async (e) => {
-  //   e.preventDefault();
-  //   const d = await executeQuery(
-  //     props.route,
-  //     props.ids,
-  //     "target",
-  //     10000,
-  //     false
-  //   );
-  //   const prefix = props.tableData.heading[
-  //     props.tableData.heading.length - 1
-  //   ].prefix
-  //     .split("/")
-  //     .slice(-1);
+  const formatTable = (tableHeading, tableRows) => {
+    if (previewMode === 0) {
+      // all IDs
+      const rows = tableRows.map((v) =>
+        v.map((w, j) => [tableHeading[j].prefix.split("/").slice(-1) + w])
+      );
+      const url = tableRows.map((v) =>
+        v.map((w, j) => [tableHeading[j].prefix + w])
+      );
+      return [tableHeading, rows, url];
+    } else if (previewMode === 1) {
+      // all URLs
+      const rows = tableRows.map((v) =>
+        v.map((w, j) => [tableHeading[j].prefix + w])
+      );
+      return [tableHeading, rows, rows];
+    } else if (previewMode === 2) {
+      // origin and targets IDs
+      const heading = [tableHeading[0], tableHeading[tableHeading.length - 1]];
+      const rows = tableRows.map((v) => [
+        tableHeading[0].prefix.split("/").slice(-1) + v[0],
+        tableHeading[tableHeading.length - 1].prefix.split("/").slice(-1) +
+          v[v.length - 1],
+      ]);
+      const url = tableRows.map((v) => [
+        tableHeading[0].prefix + v[0],
+        tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
+      ]);
+      return [heading, rows, url];
+    } else if (previewMode === 3) {
+      // origin and taregets URLs
+      const heading = [tableHeading[0], tableHeading[tableHeading.length - 1]];
+      const rows = tableRows.map((v) => [
+        tableHeading[0].prefix + v[0],
+        tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
+      ]);
+      return [heading, rows, rows];
+    } else if (previewMode === 4) {
+      // target IDs
+      const heading = [tableHeading[tableHeading.length - 1]];
+      const rows = tableRows.map((v) => [
+        tableHeading[tableHeading.length - 1].prefix.split("/").slice(-1) +
+          v[v.length - 1],
+      ]);
+      const url = tableRows.map((v) => [
+        tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
+      ]);
+      return [heading, rows, url];
+    } else if (previewMode === 5) {
+      // target URLs
+      const heading = [tableHeading[tableHeading.length - 1]];
+      const rows = tableRows.map((v) => [
+        props.dbCatalogue[props.route[props.route.length - 1].name].prefix +
+          v[v.length - 1],
+      ]);
+      return [heading, rows, rows];
+    }
+  };
 
-  //   const text = d.results.map((result) => prefix + result).join("\r\n");
-  //   copy(text, {
-  //     format: "text/plain",
-  //   });
-  //   setCopied(true);
-  //   setTimeout(() => {
-  //     setCopied(false);
-  //   }, 1000);
-  // };
+  const handleClipboardCopy = async (e) => {
+    const include =
+      previewMode < 2 ? "all" : previewMode < 4 ? "pair" : "target";
+
+    e.preventDefault();
+    const d = await executeQuery(props.route, props.ids, include, 10000, false);
+
+    const results = previewMode < 4 ? d.results : d.results.map((v) => [v]);
+    const rows = formatTable(props.tableData.heading, results)[1];
+    const text = rows.join("\r\n");
+    copy(text, {
+      format: "text/plain",
+    });
+    setCopied(true);
+    setTimeout(() => {
+      setCopied(false);
+    }, 1000);
+  };
 
   // const handleExportCSV = async () => {
   //   const d = await executeQuery(props.route, props.ids, "all", 10000, false);
@@ -299,13 +274,13 @@ const ResultModal = (props) => {
                         )}
                       </button>
                       <button
-                        onClick={handleIdDownload}
+                        // onClick={handleIdDownload}
                         className="child_menu__item"
                       >
                         DOWNLOAD as CSV
                       </button>
                       <button
-                        onClick={handleURLDownload}
+                        // onClick={handleURLDownload}
                         className="child_menu__item"
                       >
                         DOWNLOAD as TEXT
