@@ -14,6 +14,8 @@ const Home = () => {
   const [activeTab, setActiveTab] = useState("EXPLORE");
   const [databaseNodesList, setDatabaseNodesList] = useState([]);
   const [route, setRoute] = useState([]);
+  const [previousRoute, setPreviousRoute] = useState([]);
+  const [isUseKeepRoute, setIsUseKeepRoute] = useState(false);
   const [candidatePaths, setCandidatePaths] = useState([]);
   const [idTexts, setIdTexts] = useState("");
   const [dbCatalogue, setDbCatalogue] = useState([]);
@@ -38,130 +40,34 @@ const Home = () => {
 
   useEffect(() => {
     if (route.length > 0) {
-      const abortController = new AbortController();
-      const nodesList = databaseNodesList.slice(0, route.length);
-      const r = route[route.length - 1];
-      const candidates = [];
-      Object.keys(dbConfig).forEach((k) => {
-        if (!candidates.find((v) => v.name === r.name)) {
-          if (k.split("-").shift() === r.name) {
-            const name = k.split("-")[1];
-            if (
-              !candidates.find((v) => v.name === name) &&
-              !route.find((w) => w.name === name)
-            ) {
-              // 順方向の変換
-              candidates.push({
-                name,
-                category: dbCatalogue[name].category,
-                total: 1,
-                ids: [],
-              });
-            }
-          } else if (
-            dbConfig[k].link.reverse &&
-            k.split("-").pop() === r.name
-          ) {
-            // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
-            const name = k.split("-")[0];
-            if (
-              !candidates.find((v) => v.name === name) &&
-              !route.find((w) => w.name === name)
-            ) {
-              // 逆方向の変換
-              candidates.push({
-                name,
-                category: dbCatalogue[name].category,
-                total: 1,
-                ids: [],
-              });
+      const convertFunc = async () => {
+        const abortController = new AbortController();
+        if (isUseKeepRoute) {
+          const r = route;
+          for (let i = 0; i < previousRoute.length; i++) {
+            await createNodesList(r);
+            if (i < previousRoute.length - 1) {
+              const v = databaseNodesList[i + 1].find(
+                (element) => element.name === previousRoute[i + 1].name
+              );
+              if (v === -1 || v.total === 0) {
+                break;
+              }
+              r.push(previousRoute[i + 1]);
             }
           }
+          setRoute(r);
+          setIsUseKeepRoute(false);
+        } else {
+          await createNodesList(route);
         }
-      });
-      NProgress.start();
-      const promises = candidates.map((v) => {
-        const r = route.slice();
-        r.push(v);
-        return new Promise(function (resolve) {
-          // エラーになった変換でもnullを返してresolve
-          return executeQuery(r, ids, "target", "only")
-            .then((v) => {
-              NProgress.inc(1 / candidates.length);
-              resolve(v);
-            })
-            .catch(() => resolve(null));
-        });
-      });
 
-      Promise.all(promises).then((values) => {
-        NProgress.done();
-        // 先端の変換候補を追加
-        nodesList[route.length] = candidates.map((v, i) => {
-          const _v = Object.assign({}, v);
-          if (!values[i]) {
-            _v.total = -1;
-          } else if (values[i].total) {
-            _v.total = values[i].total;
-          } else {
-            _v.total = 0;
-          }
-
-          return _v;
-        });
-        setDatabaseNodesList(nodesList);
-
-        const candidatePaths = [];
-        nodesList.forEach((nodes, i) => {
-          if (i === 0) return;
-          nodes.forEach((v) => {
-            if (route[i] && route[i].name === v.name) {
-              candidatePaths.push({
-                from: {
-                  id: `total${i - 1}-${route[i - 1].name}`,
-                  posX: "right",
-                  posY: "middle",
-                },
-                to: {
-                  id: `node${i}-${v.name}`,
-                  posX: "left",
-                  posY: "middle",
-                },
-                style: {
-                  color: "#1A8091",
-                  head: "none",
-                  arrow: "smooth",
-                  width: 2,
-                },
-              });
-            } else {
-              candidatePaths.push({
-                from: {
-                  id: `total${i - 1}-${route[i - 1].name}`,
-                  posX: "right",
-                  posY: "middle",
-                },
-                to: {
-                  id: `node${i}-${v.name}`,
-                  posX: "left",
-                  posY: "middle",
-                },
-                style: {
-                  color: "#dddddd",
-                  head: "none",
-                  arrow: "smooth",
-                  width: 1.5,
-                },
-              });
-            }
-          });
-        });
-        setCandidatePaths(candidatePaths);
-      });
-
-      return () => {
-        abortController.abort();
+        return () => {
+          abortController.abort();
+        };
       };
+
+      convertFunc();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route]);
@@ -171,6 +77,128 @@ const Home = () => {
       clearExplore();
     }
   }, [idTexts]);
+
+  const createNodesList = async (routeTemp) => {
+    const nodesList = isUseKeepRoute
+      ? databaseNodesList
+      : databaseNodesList.slice(0, routeTemp.length);
+    const r = routeTemp[routeTemp.length - 1];
+    const candidates = [];
+    Object.keys(dbConfig).forEach((k) => {
+      if (!candidates.find((v) => v.name === r.name)) {
+        if (k.split("-").shift() === r.name) {
+          const name = k.split("-")[1];
+          if (
+            !candidates.find((v) => v.name === name) &&
+            !routeTemp.find((w) => w.name === name)
+          ) {
+            // 順方向の変換
+            candidates.push({
+              name,
+              category: dbCatalogue[name].category,
+              total: 1,
+              ids: [],
+            });
+          }
+        } else if (dbConfig[k].link.reverse && k.split("-").pop() === r.name) {
+          // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
+          const name = k.split("-")[0];
+          if (
+            !candidates.find((v) => v.name === name) &&
+            !routeTemp.find((w) => w.name === name)
+          ) {
+            // 逆方向の変換
+            candidates.push({
+              name,
+              category: dbCatalogue[name].category,
+              total: 1,
+              ids: [],
+            });
+          }
+        }
+      }
+    });
+    NProgress.start();
+    const promises = candidates.map((v) => {
+      const r = routeTemp.slice();
+      r.push(v);
+      return new Promise(function (resolve) {
+        // エラーになった変換でもnullを返してresolve
+        return executeQuery(r, ids, "target", "only")
+          .then((v) => {
+            NProgress.inc(1 / candidates.length);
+            resolve(v);
+          })
+          .catch(() => resolve(null));
+      });
+    });
+
+    await Promise.all(promises).then((values) => {
+      NProgress.done();
+      // 先端の変換候補を追加
+      nodesList[routeTemp.length] = candidates.map((v, i) => {
+        const _v = Object.assign({}, v);
+        if (!values[i]) {
+          _v.total = -1;
+        } else if (values[i].total) {
+          _v.total = values[i].total;
+        } else {
+          _v.total = 0;
+        }
+
+        return _v;
+      });
+      setDatabaseNodesList(nodesList);
+
+      const candidatePaths = [];
+      nodesList.forEach((nodes, i) => {
+        if (i === 0) return;
+        nodes.forEach((v) => {
+          if (route[i] && route[i].name === v.name) {
+            candidatePaths.push({
+              from: {
+                id: `total${i - 1}-${route[i - 1].name}`,
+                posX: "right",
+                posY: "middle",
+              },
+              to: {
+                id: `node${i}-${v.name}`,
+                posX: "left",
+                posY: "middle",
+              },
+              style: {
+                color: "#1A8091",
+                head: "none",
+                arrow: "smooth",
+                width: 2,
+              },
+            });
+          } else {
+            candidatePaths.push({
+              from: {
+                id: `total${i - 1}-${route[i - 1].name}`,
+                posX: "right",
+                posY: "middle",
+              },
+              to: {
+                id: `node${i}-${v.name}`,
+                posX: "left",
+                posY: "middle",
+              },
+              style: {
+                color: "#dddddd",
+                head: "none",
+                arrow: "smooth",
+                width: 1.5,
+              },
+            });
+          }
+        });
+      });
+      setCandidatePaths(candidatePaths);
+
+    });
+  };
 
   /**
    * idsに入力されたIDまたはIDリストをidPatternsから正規表現で検索
@@ -278,6 +306,16 @@ const Home = () => {
     setRoute([startRoute]);
   };
 
+  const tryKeepRoute = (idTexts) => {
+    const checkIndex = handleIdTextsSubmit(idTexts).findIndex(
+      (element) => element.name === previousRoute[0].name
+    );
+    if (checkIndex !== -1) {
+      setRoute([previousRoute[0]]);
+      setIsUseKeepRoute(true);
+    }
+  };
+
   return (
     <div className="home">
       <Head>
@@ -379,6 +417,10 @@ const Home = () => {
           setIdTexts={setIdTexts}
           idTexts={idTexts}
           handleTopExamples={handleTopExamples}
+          route={route}
+          setPreviousRoute={setPreviousRoute}
+          dbCatalogue={dbCatalogue}
+          tryKeepRoute={tryKeepRoute}
         />
         <div className="drawing_area">
           <div className="tab_wrapper">
