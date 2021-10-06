@@ -12,15 +12,11 @@ const ResultModal = (props) => {
   const [modTable, setModTable] = useState(null);
 
   useEffect(() => {
-    const [heading, rows, url] = formatTable(
+    const result = formatPreviewTable(
       props.tableData.heading,
       props.tableData.rows
     );
-    setModTable({
-      heading: heading,
-      rows: rows,
-      url: url,
-    });
+    setModTable(result);
   }, [previewMode]);
 
   const handleMenu = async () => {
@@ -31,25 +27,28 @@ const ResultModal = (props) => {
     }
   };
 
-  const formatTable = (tableHeading, tableRows) => {
+  const formatPreviewTable = (tableHeading, tableRows) => {
+    const table = { heading: [], rows: [], url: [] };
     if (previewMode === 0) {
       // all IDs
       const subPrefixList = tableHeading.map((v) =>
         v.prefix.slice(v.prefix.lastIndexOf("/") + 1)
       );
-      const rows = tableRows.map((v) =>
-        v.map((w, j) => [subPrefixList[j] + w])
-      );
-      const url = tableRows.map((v) =>
-        v.map((w, j) => [tableHeading[j].prefix + w])
-      );
-      return [tableHeading, rows, url];
+      const rows = [];
+      const url = [];
+      for (const v of tableRows) {
+        rows.push(v.map((w, j) => [subPrefixList[j] + w]));
+        url.push(v.map((w, j) => [tableHeading[j].prefix + w]));
+      }
+      table.heading = tableHeading;
+      table.rows = rows;
+      table.url = url;
     } else if (previewMode === 1) {
       // all URLs
-      const rows = tableRows.map((v) =>
+      table.heading = tableHeading;
+      table.rows = table.url = tableRows.map((v) =>
         v.map((w, j) => [tableHeading[j].prefix + w])
       );
-      return [tableHeading, rows, rows];
     } else if (previewMode === 2) {
       // origin and targets IDs
       const subPrefixList = [
@@ -60,24 +59,28 @@ const ResultModal = (props) => {
           tableHeading[tableHeading.length - 1].prefix.lastIndexOf("/") + 1
         ),
       ];
-      const heading = [tableHeading[0], tableHeading[tableHeading.length - 1]];
-      const rows = tableRows.map((v) => [
-        subPrefixList[0] + v[0],
-        subPrefixList[subPrefixList.length - 1] + v[v.length - 1],
-      ]);
-      const url = tableRows.map((v) => [
-        tableHeading[0].prefix + v[0],
-        tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
-      ]);
-      return [heading, rows, url];
+      table.heading = [tableHeading[0], tableHeading[tableHeading.length - 1]];
+      const rows = [];
+      const url = [];
+      for (const v of tableRows) {
+        rows.push([
+          subPrefixList[0] + v[0],
+          subPrefixList[subPrefixList.length - 1] + v[v.length - 1],
+        ]);
+        url.push([
+          tableHeading[0].prefix + v[0],
+          tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
+        ]);
+      }
+      table.rows = rows;
+      table.url = url;
     } else if (previewMode === 3) {
       // origin and taregets URLs
-      const heading = [tableHeading[0], tableHeading[tableHeading.length - 1]];
-      const rows = tableRows.map((v) => [
+      table.heading = [tableHeading[0], tableHeading[tableHeading.length - 1]];
+      table.rows = table.url = tableRows.map((v) => [
         tableHeading[0].prefix + v[0],
         tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
       ]);
-      return [heading, rows, rows];
     } else if (previewMode === 4) {
       // target IDs
       const subPrefixList = [
@@ -85,33 +88,105 @@ const ResultModal = (props) => {
           tableHeading[tableHeading.length - 1].prefix.lastIndexOf("/") + 1
         ),
       ];
-      const heading = [tableHeading[tableHeading.length - 1]];
-      const rows = tableRows.map((v) => [
-        subPrefixList[subPrefixList.length - 1] + v[v.length - 1],
-      ]);
-      const url = tableRows.map((v) => [
-        tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
-      ]);
-      return [heading, rows, url];
+      table.heading = [tableHeading[tableHeading.length - 1]];
+      const rows = [];
+      const url = [];
+      for (const v of tableRows) {
+        rows.push([subPrefixList[subPrefixList.length - 1] + v[v.length - 1]]);
+        url.push([
+          tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
+        ]);
+      }
+      table.rows = rows;
+      table.url = url;
     } else if (previewMode === 5) {
       // target URLs
-      const heading = [tableHeading[tableHeading.length - 1]];
-      const rows = tableRows.map((v) => [
+      table.heading = [tableHeading[tableHeading.length - 1]];
+      table.rows = table.url = tableRows.map((v) => [
         tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
       ]);
-      return [heading, rows, rows];
     }
+    return table;
+  };
+
+  const formatExportTable = (tableHeading, tableRows) => {
+    const exportTable = { heading: [], rows: [] };
+    if (previewMode === 0) {
+      // all IDs
+      const subPrefixList = tableHeading.map((v) =>
+        v.prefix.slice(v.prefix.lastIndexOf("/") + 1)
+      );
+      exportTable.heading = tableHeading;
+      exportTable.rows = tableRows.map((v) =>
+        v.map((w, j) => [subPrefixList[j] + w])
+      );
+    } else if (previewMode === 1) {
+      // all URLs
+      exportTable.heading = tableHeading;
+      exportTable.rows = tableRows.map((v) =>
+        v.map((w, j) => [tableHeading[j].prefix + w])
+      );
+    } else if (previewMode === 2) {
+      // origin and targets IDs
+      const subPrefixList = [
+        tableHeading[0].prefix.slice(
+          tableHeading[0].prefix.lastIndexOf("/") + 1
+        ),
+        tableHeading[tableHeading.length - 1].prefix.slice(
+          tableHeading[tableHeading.length - 1].prefix.lastIndexOf("/") + 1
+        ),
+      ];
+      exportTable.heading = [
+        tableHeading[0],
+        tableHeading[tableHeading.length - 1],
+      ];
+      exportTable.rows = tableRows.map((v) => [
+        subPrefixList[0] + v[0],
+        subPrefixList[subPrefixList.length - 1] + v[v.length - 1],
+      ]);
+    } else if (previewMode === 3) {
+      // origin and taregets URLs
+      exportTable.heading = [
+        tableHeading[0],
+        tableHeading[tableHeading.length - 1],
+      ];
+      exportTable.rows = tableRows.map((v) => [
+        tableHeading[0].prefix + v[0],
+        tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
+      ]);
+    } else if (previewMode === 4) {
+      // target IDs
+      const subPrefixList = [
+        tableHeading[tableHeading.length - 1].prefix.slice(
+          tableHeading[tableHeading.length - 1].prefix.lastIndexOf("/") + 1
+        ),
+      ];
+      exportTable.heading = [tableHeading[tableHeading.length - 1]];
+      exportTable.rows = tableRows.map((v) => [
+        subPrefixList[subPrefixList.length - 1] + v[v.length - 1],
+      ]);
+    } else if (previewMode === 5) {
+      // target URLs
+      exportTable.heading = [tableHeading[tableHeading.length - 1]];
+      exportTable.rows = tableRows.map((v) => [
+        tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
+      ]);
+    }
+    return exportTable;
   };
 
   const handleClipboardCopy = async (e) => {
-    const include =
-      previewMode < 2 ? "all" : previewMode < 4 ? "pair" : "target";
-
     e.preventDefault();
-    const d = await executeQuery(props.route, props.ids, include, 10000, false);
+    const d = await executeQuery(
+      props.route,
+      props.ids,
+      getInclude(),
+      10000,
+      false
+    );
 
     const results = previewMode < 4 ? d.results : d.results.map((v) => [v]);
-    const rows = formatTable(props.tableData.heading, results)[1];
+    const { rows } = formatExportTable(props.tableData.heading, results);
     const text = rows.join("\r\n");
     copy(text, {
       format: "text/plain",
@@ -123,29 +198,45 @@ const ResultModal = (props) => {
   };
 
   const handleExportCSV = async () => {
-    const include =
-      previewMode < 2 ? "all" : previewMode < 4 ? "pair" : "target";
-    const d = await executeQuery(props.route, props.ids, include, 10000, false);
+    const d = await executeQuery(
+      props.route,
+      props.ids,
+      getInclude(),
+      10000,
+      false
+    );
 
     const results = previewMode < 4 ? d.results : d.results.map((v) => [v]);
-    const [heading, rows] = formatTable(props.tableData.heading, results);
+    const { heading, rows } = formatExportTable(
+      props.tableData.heading,
+      results
+    );
     const h = heading.map((v) => v.label);
     exportCSV([h, ...rows]);
   };
 
   const handleExportTEXT = async () => {
-    const include =
-      previewMode < 2 ? "all" : previewMode < 4 ? "pair" : "target";
-    const d = await executeQuery(props.route, props.ids, include, 10000, false);
+    const d = await executeQuery(
+      props.route,
+      props.ids,
+      getInclude(),
+      10000,
+      false
+    );
 
     const results = previewMode < 4 ? d.results : d.results.map((v) => [v]);
-    const rows = formatTable(props.tableData.heading, results)[1];
+    const { rows } = formatExportTable(props.tableData.heading, results);
 
     const text = rows.join("\r\n");
     const blob = new Blob([text], {
       type: "text/plain;charset=utf-8",
     });
     saveAs(blob, "ids.txt");
+  };
+
+  const getInclude = () => {
+    const includeList = ["all", "all", "pair", "pair", "target", "target"];
+    return includeList[previewMode];
   };
 
   const previewModeList = [
