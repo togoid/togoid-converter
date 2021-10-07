@@ -1,12 +1,12 @@
 import Head from "next/head";
 import React, { useState, useEffect } from "react";
 import NProgress from "nprogress";
+import axios from "axios";
 import Header from "../components/Header";
 import Explore from "../components/Explore";
 import Databases from "../components/Databases";
 import IdInput from "../components/IdInput";
-import dbConfig from "../public/config.json";
-import dbCatalogue from "../public/dataset.json";
+import Documents from "../components/Documents";
 import { executeQuery } from "../lib/util";
 
 const Home = () => {
@@ -17,6 +17,20 @@ const Home = () => {
   const [routePaths, setRoutePaths] = useState([]);
   const [candidatePaths, setCandidatePaths] = useState([]);
   const [idTexts, setIdTexts] = useState("");
+  const [dbCatalogue, setDbCatalogue] = useState([]);
+  const [dbConfig, setDbConfig] = useState([]);
+
+  useEffect(() => {
+    const fetchApi = async () => {
+      const promises = await Promise.all([
+        axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/dataset`),
+        axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/database`),
+      ]);
+      setDbCatalogue(promises[0].data);
+      setDbConfig(promises[1].data);
+    };
+    fetchApi();
+  }, []);
 
   useEffect(() => {
     if (route.length > 0) {
@@ -28,8 +42,11 @@ const Home = () => {
         if (!candidates.find((v) => v.name === r.name)) {
           if (k.split("-").shift() === r.name) {
             const name = k.split("-")[1];
-            if (!candidates.find((v) => v.name === name)) {
-              // 順方向の変換、ただし変換経路を逆行させない
+            if (
+              !candidates.find((v) => v.name === name) &&
+              !route.find((w) => w.name === name)
+            ) {
+              // 順方向の変換
               candidates.push({
                 name,
                 category: dbCatalogue[name].category,
@@ -37,10 +54,17 @@ const Home = () => {
                 ids: [],
               });
             }
-          } else if (k.split("-").pop() === r.name) {
+          } else if (
+            dbConfig[k].link.reverse &&
+            k.split("-").pop() === r.name
+          ) {
+            // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
             const name = k.split("-")[0];
-            if (!candidates.find((v) => v.name === name)) {
-              // 逆方向の変換、ただし変換経路を逆行させない
+            if (
+              !candidates.find((v) => v.name === name) &&
+              !route.find((w) => w.name === name)
+            ) {
+              // 逆方向の変換
               candidates.push({
                 name,
                 category: dbCatalogue[name].category,
@@ -55,19 +79,15 @@ const Home = () => {
       const promises = candidates.map((v) => {
         const r = route.slice();
         r.push(v);
-        if (!route.find((w) => w.name === v.name)) {
-          return new Promise(function (resolve) {
-            // エラーになった変換でもnullを返してresolve
-            return executeQuery(r, ids, "target")
-              .then((v) => {
-                NProgress.inc(1 / candidates.length);
-                resolve(v);
-              })
-              .catch(() => resolve(null));
-          });
-        } else {
-          return -1;
-        }
+        return new Promise(function (resolve) {
+          // エラーになった変換でもnullを返してresolve
+          return executeQuery(r, ids, "target")
+            .then((v) => {
+              NProgress.inc(1 / candidates.length);
+              resolve(v);
+            })
+            .catch(() => resolve(null));
+        });
       });
 
       Promise.all(promises).then((values) => {
@@ -75,13 +95,15 @@ const Home = () => {
         // 先端の変換候補を追加
         nodesList[route.length] = candidates.map((v, i) => {
           const _v = Object.assign({}, v);
-          if (values[i] !== -1) {
-            _v.total = values[i] && values[i].total ? values[i].total : 0;
-            return _v;
+          if (!values[i]) {
+            _v.total = -1;
+          } else if (values[i].total) {
+            _v.total = values[i].total;
           } else {
-            _v.total = "-";
-            return _v;
+            _v.total = 0;
           }
+
+          return _v;
         });
         setDatabaseNodesList(nodesList);
 
@@ -101,7 +123,12 @@ const Home = () => {
                 posX: "left",
                 posY: "middle",
               },
-              style: { color: "#dddddd", head: "none", arrow: "smooth" },
+              style: {
+                color: "#dddddd",
+                head: "none",
+                arrow: "smooth",
+                width: 1.5,
+              },
             });
           });
         });
@@ -184,6 +211,7 @@ const Home = () => {
       });
       setDatabaseNodesList([databases]);
       setRoute([]);
+      return databases;
     }
   };
 
@@ -206,19 +234,55 @@ const Home = () => {
       .map((v) => v.trim());
     clearExplore();
     setIds(ids);
-    searchDatabase(ids);
+    return searchDatabase(ids);
   };
 
-  const exploreExamplesExecute = (examples) => {
+  const handleTopExamples = (key) => {
+    const examples = {
+      refseq_rna: [
+        "NM_001354870",
+        "NM_002467",
+        "NM_001173531",
+        "NM_001285986",
+        "NM_001285987",
+        "NM_002701",
+        "NM_203289",
+        "NM_003106",
+        "NM_001314052",
+        "NM_004235",
+      ],
+      ensembl_gene: [
+        "ENSG00000136997",
+        "ENSG00000204531",
+        "ENSG00000181449",
+        "ENSG00000136826",
+      ],
+      uniprot: [
+        "P01106",
+        "Q01860",
+        "M1S623",
+        "D2IYK3",
+        "F2Z381",
+        "P48431",
+        "A0A0U3FYV6",
+        "O43474",
+      ],
+    };
+    executeExamples(examples[key].join("\n"), key);
+  };
+  const executeExamples = (idTexts, key) => {
     setActiveTab("EXPLORE");
-    setIdTexts(examples);
-    handleIdTextsSubmit(examples);
+    setIdTexts(idTexts);
+    const startRoute = handleIdTextsSubmit(idTexts).find(
+      (ele) => ele.name === key
+    );
+    setRoute([startRoute]);
   };
 
   return (
     <div className="home">
       <Head>
-        <title>Togo ID</title>
+        <title>TogoID</title>
         <link rel="icon" href="/favicon.ico" />
         <meta
           property="og:image"
@@ -307,7 +371,6 @@ const Home = () => {
           data-width="auto"
           data-color="mono"
           data-license-type="none"
-          data-year="2019"
         ></script>
       </Head>
       <Header />
@@ -316,6 +379,7 @@ const Home = () => {
           handleSubmit={handleIdTextsSubmit}
           setIdTexts={setIdTexts}
           idTexts={idTexts}
+          handleTopExamples={handleTopExamples}
         />
         <div className="drawing_area">
           <div className="tab_wrapper">
@@ -335,8 +399,16 @@ const Home = () => {
             >
               DATABASES
             </button>
+            <button
+              onClick={() => setActiveTab("DOCUMENTS")}
+              className={
+                activeTab === "DOCUMENTS" ? "button_tab active" : "button_tab"
+              }
+            >
+              DOCUMENTS
+            </button>
           </div>
-          {activeTab === "EXPLORE" ? (
+          {activeTab === "EXPLORE" && (
             <Explore
               databaseNodesList={databaseNodesList}
               routePaths={routePaths}
@@ -345,10 +417,18 @@ const Home = () => {
               setRoute={setRoute}
               restartExplore={restartExplore}
               ids={ids}
+              dbCatalogue={dbCatalogue}
+              dbConfig={dbConfig}
             />
-          ) : (
-            <Databases exploreExamplesExecute={exploreExamplesExecute} />
           )}
+          {activeTab === "DATABASE" && (
+            <Databases
+              executeExamples={executeExamples}
+              dbCatalogue={dbCatalogue}
+              dbConfig={dbConfig}
+            />
+          )}
+          {activeTab === "DOCUMENTS" && <Documents />}
         </div>
       </main>
     </div>

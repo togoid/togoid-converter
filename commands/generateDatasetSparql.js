@@ -1,10 +1,8 @@
 const fs = require("fs"),
   path = require("path"),
   yaml = require("js-yaml");
-fetch = require("node-fetch");
+const fetch = require("node-fetch");
 const dir = "../togoid-config/config/";
-
-const configs = {};
 
 const walk = function (p, fileCallback, errCallback) {
   fs.readdir(p, function (err, files) {
@@ -14,9 +12,10 @@ const walk = function (p, fileCallback, errCallback) {
     }
 
     files.forEach(function (f) {
-      const fp = path.join(p, f); // to full-path
       if (f === "dataset.yaml") {
+        const fp = path.join(p, f); // to full-path
         const jsonObject = yaml.load(fs.readFileSync(fp, "utf8"));
+        const sparqleObject = {};
         Object.keys(jsonObject).forEach((key) => {
           fetch("https://integbio.jp/togosite/sparql", {
             headers: {
@@ -28,17 +27,18 @@ const walk = function (p, fileCallback, errCallback) {
           })
             .then((response) => response.json())
             .then((data) => {
-              jsonObject[key]["name"] =
+              sparqleObject[key] = {};
+              sparqleObject[key]["name"] =
                 data["results"]["bindings"][0]["db_name_ja"]["value"];
-              jsonObject[key]["description_ja"] =
+              sparqleObject[key]["description_ja"] =
                 data["results"]["bindings"][0]["description_ja"]["value"];
-              jsonObject[key]["description_en"] =
+              sparqleObject[key]["description_en"] =
                 data["results"]["bindings"][0]["description_en"]["value"];
-              jsonObject[key]["organization_ja"] =
+              sparqleObject[key]["organization_ja"] =
                 data["results"]["bindings"][0]["organization_label_ja"][
                   "value"
                 ];
-              jsonObject[key]["organization_en"] =
+              sparqleObject[key]["organization_en"] =
                 data["results"]["bindings"][0]["organization_label_en"][
                   "value"
                 ];
@@ -46,16 +46,11 @@ const walk = function (p, fileCallback, errCallback) {
         });
         setTimeout(function () {
           fs.writeFileSync(
-            "../public/dataset.json",
-            JSON.stringify(jsonObject, null, 2)
+            "../public/datasetSparql.json",
+            JSON.stringify(sparqleObject, null, 2)
           );
         }, 5000);
         return;
-      }
-      if (fs.statSync(fp).isDirectory()) {
-        walk(fp, fileCallback); // ディレクトリなら再帰
-      } else if (fs.statSync(fp).isFile() && /.*\.yaml/.test(fp)) {
-        configs[path.basename(p)] = fileCallback(fp);
       }
     });
   });
@@ -74,7 +69,3 @@ walk(
     console.log("Receive err:" + err); // エラー受信
   }
 );
-
-setTimeout(function () {
-  fs.writeFileSync("../public/config.json", JSON.stringify(configs, null, 2));
-}, 5000);

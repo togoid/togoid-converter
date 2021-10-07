@@ -2,12 +2,20 @@ import React, { useState } from "react";
 import copy from "copy-to-clipboard";
 import { saveAs } from "file-saver";
 import { executeQuery, exportCSV } from "../lib/util";
-import dbCatalogue from "../public/dataset.json";
 import { categories } from "../lib/setting";
 
 const ResultModal = (props) => {
   const [copied, setCopied] = useState(false);
   const [showAllFailed, setShowAllFailed] = useState(false);
+  const [showLinks, setShowLinks] = useState(false);
+
+  const handleMenu = async () => {
+    if (showLinks) {
+      setShowLinks(false);
+    } else {
+      setShowLinks(true);
+    }
+  };
 
   const handleClipboardCopy = async (e) => {
     e.preventDefault();
@@ -19,7 +27,9 @@ const ResultModal = (props) => {
       .slice(-1);
 
     const text = d.results.map((result) => prefix + result).join("\r\n");
-    copy(text);
+    copy(text, {
+      format: "text/plain",
+    });
     setCopied(true);
     setTimeout(() => {
       setCopied(false);
@@ -54,7 +64,7 @@ const ResultModal = (props) => {
 
   const handleURLDownload = async () => {
     const dbName = props.route[props.route.length - 1].name;
-    const dbPrefix = dbCatalogue[dbName].prefix;
+    const dbPrefix = props.dbCatalogue[dbName].prefix;
     const d = await executeQuery(props.route, props.ids, "target");
     const texts = d.results.map((v) => dbPrefix + v).join("\r\n");
     const blob = new Blob([texts], {
@@ -83,10 +93,10 @@ const ResultModal = (props) => {
               />
             </svg>
           </button>
-          <h2 className="title">ID forwarding</h2>
+          <h2 className="title">Results</h2>
 
           <div className="modal__path">
-            <p className="modal__heading">PATH</p>
+            <p className="modal__heading">Route</p>
             <div className="modal__path__frame">
               <div className="modal__path__frame__inner">
                 {props.tableData.heading.map((v, i) => (
@@ -109,25 +119,11 @@ const ResultModal = (props) => {
           <div className="modal__top">
             <div className="item_wrapper">
               {(() => {
-                const prefix = props.tableData.heading[0].prefix
-                  .split("/")
-                  .slice(-1);
-
-                const uniqueId = Array.from(
-                  new Set(
-                    props.tableData.rows
-                      .map((item) => [item[0], prefix + item[0]])
-                      .flat()
-                  )
-                );
-                const noForwardedId = props.ids.filter(
-                  (i) => uniqueId.indexOf(i) === -1
-                );
-                if (noForwardedId.length > 0) {
+                if (props.notConvertedIds.length > 0) {
                   const limit = showAllFailed ? 10000 : 3;
                   return (
                     <span className="non_forwarded">
-                      {`Non forwarded IDs: ${noForwardedId
+                      {`IDs that were not converted: ${props.notConvertedIds
                         .filter((v, i) => i < limit)
                         .join(", ")} `}
                       {!showAllFailed && (
@@ -148,46 +144,49 @@ const ResultModal = (props) => {
 
               {props.tableData && props.tableData.rows.length > 0 && (
                 <div className="export_button">
-                  <button onClick={handleClipboardCopy} className="button_icon">
-                    <svg className="button_icon__icon" viewBox="0 0 24 24">
-                      <path
-                        fill="currentColor"
-                        d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
-                      />
-                    </svg>
-                    {copied ? (
-                      <span>Copied.</span>
-                    ) : (
-                      <span>Copy target IDs.</span>
-                    )}
-                  </button>
-                  <button onClick={handleIdDownload} className="button_icon">
+                  <button onClick={handleMenu} className="button_icon">
                     <svg className="button_icon__icon" viewBox="0 0 24 24">
                       <path
                         fill="currentColor"
                         d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"
                       />
                     </svg>
-                    Download target IDs
+                    Export
                   </button>
-                  <button onClick={handleURLDownload} className="button_icon">
-                    <svg className="button_icon__icon" viewBox="0 0 24 24">
-                      <path
-                        fill="currentColor"
-                        d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"
-                      />
-                    </svg>
-                    Download target URLs
-                  </button>
-                  <button onClick={handleExportCSV} className="button_icon">
-                    <svg className="button_icon__icon" viewBox="0 0 24 24">
-                      <path
-                        fill="currentColor"
-                        d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"
-                      />
-                    </svg>
-                    Download table as CSV
-                  </button>
+                  {showLinks ? (
+                    <div className="child_menu">
+                      <button
+                        onClick={handleClipboardCopy}
+                        className="child_menu__item"
+                      >
+                        {copied ? (
+                          <span>Copied.</span>
+                        ) : (
+                          <span>Copy target IDs.</span>
+                        )}
+                      </button>
+                      <button
+                        onClick={handleIdDownload}
+                        className="child_menu__item"
+                      >
+                        Download target IDs
+                      </button>
+                      <button
+                        onClick={handleURLDownload}
+                        className="child_menu__item"
+                      >
+                        Download target URLs
+                      </button>
+                      <button
+                        onClick={handleExportCSV}
+                        className="child_menu__item"
+                      >
+                        Download table as CSV
+                      </button>
+                    </div>
+                  ) : (
+                    ""
+                  )}
                 </div>
               )}
             </div>
