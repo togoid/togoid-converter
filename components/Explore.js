@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { saveAs } from "file-saver";
 import ResultModal from "../components/ResultModal";
 import { executeQuery } from "../lib/util";
-import dbConfig from "../public/config.json";
-import dbCatalogue from "../public/dataset.json";
+import dbCatalogueSparql from "../public/datasetSparql.json";
 import { ArrowArea } from "react-arrow-master";
 import { categories } from "../lib/setting";
 
@@ -18,6 +17,7 @@ const Explore = (props) => {
     null,
   ]);
   const [language, setLanguage] = useState("en");
+  const [notConvertedIds, setNotConvertedIds] = useState([]);
 
   useEffect(() => {
     if (tableData.heading.length > 0) setModalVisibility(true);
@@ -37,7 +37,7 @@ const Explore = (props) => {
   const handleIdDownload = async (database, routeIndex) => {
     const r = selectDatabase(database, routeIndex).slice(0, routeIndex + 1);
     const d = await executeQuery(r, props.ids, "target");
-    const prefix = dbCatalogue[database.name].prefix.split("/").slice(-1);
+    const prefix = props.dbCatalogue[database.name].prefix.split("/").slice(-1);
 
     const text = d.results.map((result) => prefix + result).join("\r\n");
     const blob = new Blob([text], {
@@ -50,16 +50,26 @@ const Explore = (props) => {
     const r = selectDatabase(database, routeIndex).slice(0, routeIndex + 1);
     const heading = r
       .filter((v, i) => i <= routeIndex)
-      .map((v) => dbCatalogue[v.name]);
+      .map((v) => props.dbCatalogue[v.name]);
     const d = await executeQuery(r, props.ids);
     const rows = d.results.slice(0, 100).map((v) => v.slice(0, routeIndex + 1));
+
+    const dbRegExp = new RegExp(props.dbCatalogue[r[0].name].regex);
+    const convertedIds = Array.from(new Set(d.results.map((item) => item[0])));
+    setNotConvertedIds(
+      props.ids.filter((i) => {
+        const match = i.match(dbRegExp);
+        const firstNamedCapture = Object.values(match.groups).find((v) => v);
+        return convertedIds.indexOf(firstNamedCapture) === -1;
+      })
+    );
 
     setTotal(d.total);
     setTableData({ heading, rows });
   };
 
   const showInformationModal = async (v) => {
-    const dbName = Object.keys(dbCatalogue).filter(
+    const dbName = Object.keys(props.dbCatalogue).filter(
       (dataset) => dataset === v.name
     );
     setInformationModal(true);
@@ -95,7 +105,9 @@ const Explore = (props) => {
                           {i === 0 && (
                             <React.Fragment>
                               <p className="item_first_heading">Convert from</p>
-                              <p className="item_first_count_heading">Ids</p>
+                              <p className="item_first_count_heading">
+                                Matched
+                              </p>
                             </React.Fragment>
                           )}
                           <ul
@@ -109,6 +121,10 @@ const Explore = (props) => {
                                 onMouseOver={() =>
                                   handleActionButtonVisibility(i, j)
                                 }
+                                onMouseLeave={() =>
+                                  handleActionButtonVisibility(null, null)
+                                }
+                                className="result_list__item"
                               >
                                 <div
                                   id={`node${i}-${v.name}`}
@@ -132,13 +148,31 @@ const Explore = (props) => {
                                     htmlFor={`result${i}-${j}`}
                                     className="radio__large_label green"
                                     style={{
-                                      backgroundColor: categories[v.category]
-                                        ? categories[v.category].color
-                                        : null,
+                                      opacity:
+                                        visibleActionButtonIndex[0] === i &&
+                                        visibleActionButtonIndex[1] === j
+                                          ? 0.7
+                                          : 1,
+                                      backgroundColor:
+                                        visibleActionButtonIndex[0] === i &&
+                                        visibleActionButtonIndex[1] === j
+                                          ? "#000000"
+                                          : categories[v.category]
+                                          ? categories[v.category].color
+                                          : null,
                                     }}
                                   >
-                                    <span className="radio__large_label__inner">
-                                      {dbCatalogue[v.name].label}
+                                    <span
+                                      className="radio__large_label__inner"
+                                      style={{
+                                        color:
+                                          visibleActionButtonIndex[0] === i &&
+                                          visibleActionButtonIndex[1] === j
+                                            ? "#333333"
+                                            : "#ffffff",
+                                      }}
+                                    >
+                                      {props.dbCatalogue[v.name].label}
                                     </span>
                                   </label>
                                   {visibleActionButtonIndex[0] === i &&
@@ -203,7 +237,7 @@ const Explore = (props) => {
                                     )}
                                 </div>
                                 <p id={`total${i}-${v.name}`} className="total">
-                                  {v.total}
+                                  {v.total >= 0 ? v.total : "too many"}
                                 </p>
                               </li>
                             ))}
@@ -227,7 +261,7 @@ const Explore = (props) => {
                             className="modal--through__close"
                           />
                           <h2 className="modal--through__title">
-                            {dbCatalogue[database].label}
+                            {props.dbCatalogue[database].label}
                           </h2>
                           <div className="select_lang">
                             <div className="radio">
@@ -262,41 +296,46 @@ const Explore = (props) => {
                             </div>
                           </div>
                           <p className="modal--through__description">
-                            {language === "en" &&
-                              dbCatalogue[database].description_en}
-                            {language === "ja" &&
-                              dbCatalogue[database].description_ja}
+                            {dbCatalogueSparql[database][
+                              `description_${language}`
+                            ] && (
+                              <div>
+                                <p>
+                                  {
+                                    dbCatalogueSparql[database][
+                                      `description_${language}`
+                                    ]
+                                  }
+                                </p>
+                                <p>
+                                  Cited from{" "}
+                                  <a
+                                    href={`https://integbio.jp/dbcatalog/record/${props.dbCatalogue[database].catalog}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                  >
+                                    Integbio Database Catalog
+                                  </a>
+                                </p>
+                              </div>
+                            )}
                           </p>
                           {(() => {
-                            const labels = Object.keys(dbConfig).map((k, i) => {
-                              const names = k.split("-");
-                              if (
-                                names.indexOf(database) === 0 ||
-                                names.indexOf(database) === 1
-                              ) {
-                                const name =
-                                  names.indexOf(database) === 0
-                                    ? names[1]
-                                    : names[0];
-                                const label = dbCatalogue[name].label;
-                                return (
-                                  <div
-                                    className="path_label small green"
-                                    style={{
-                                      backgroundColor: categories[
-                                        dbCatalogue[name].category
-                                      ]
-                                        ? categories[dbCatalogue[name].category]
-                                            .color
-                                        : null,
-                                    }}
-                                    key={i}
-                                  >
-                                    {label}
-                                  </div>
-                                );
-                              }
-                            });
+                            const labels = Array.from(
+                              new Set(
+                                Object.keys(props.dbConfig).map((k) => {
+                                  const names = k.split("-");
+                                  if (
+                                    names.indexOf(database) === 0 ||
+                                    names.indexOf(database) === 1
+                                  ) {
+                                    return names.indexOf(database) === 0
+                                      ? names[1]
+                                      : names[0];
+                                  }
+                                })
+                              )
+                            ).filter((v) => v);
 
                             if (labels.length) {
                               return (
@@ -310,7 +349,25 @@ const Explore = (props) => {
                                       d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
                                     />
                                   </svg>
-                                  <div className="path_children">{labels}</div>
+                                  <div className="path_children">
+                                    {labels.map((l, i) => (
+                                      <div
+                                        className="path_label small green"
+                                        style={{
+                                          backgroundColor: categories[
+                                            props.dbCatalogue[l].category
+                                          ]
+                                            ? categories[
+                                                props.dbCatalogue[l].category
+                                              ].color
+                                            : null,
+                                        }}
+                                        key={i}
+                                      >
+                                        {props.dbCatalogue[l].label}
+                                      </div>
+                                    ))}
+                                  </div>
                                 </div>
                               );
                             }
@@ -319,30 +376,26 @@ const Explore = (props) => {
                           <dl className="modal--through__data_list">
                             <div className="modal--through__data_list__item">
                               <dt>PREFIX</dt>
-                              <dd>{dbCatalogue[database].prefix}</dd>
+                              <dd>{props.dbCatalogue[database].prefix}</dd>
                             </div>
                             <div className="modal--through__data_list__item">
                               <dt>CATEGORY</dt>
-                              <dd>{dbCatalogue[database].category}</dd>
+                              <dd>{props.dbCatalogue[database].category}</dd>
                             </div>
-                            {dbCatalogue[database].organization_en &&
-                              language === "en" && (
-                                <div className="modal--through__data_list__item">
-                                  <dt>ORGANIZATION</dt>
-                                  <dd>
-                                    {dbCatalogue[database].organization_en}
-                                  </dd>
-                                </div>
-                              )}{" "}
-                            {dbCatalogue[database].organization_ja &&
-                              language === "ja" && (
-                                <div className="modal--through__data_list__item">
-                                  <dt>ORGANIZATION</dt>
-                                  <dd>
-                                    {dbCatalogue[database].organization_ja}
-                                  </dd>
-                                </div>
-                              )}
+                            {dbCatalogueSparql[database][
+                              `organization_${language}`
+                            ] && (
+                              <div className="modal--through__data_list__item">
+                                <dt>ORGANIZATION</dt>
+                                <dd>
+                                  {
+                                    dbCatalogueSparql[database][
+                                      `organization_${language}`
+                                    ]
+                                  }
+                                </dd>
+                              </div>
+                            )}
                           </dl>
                         </div>
                       </div>
@@ -353,8 +406,10 @@ const Explore = (props) => {
                         route={props.route}
                         ids={props.ids}
                         tableData={tableData}
+                        notConvertedIds={notConvertedIds}
                         total={total}
                         setModalVisibility={setModalVisibility}
+                        dbCatalogue={props.dbCatalogue}
                       />
                     )}
                   </div>
@@ -363,18 +418,6 @@ const Explore = (props) => {
             </div>
           </div>
         </div>
-        {/*
-        <div className="notice_area">
-          <p className="heading">NOTICE</p>
-          <p className="text">
-            - Your IDs match with “NCBI Gene”
-            <br />
-            - Relation(s) found: “HGNC”, “xxx”, “yyy”, “zzz”
-            <br />- LINE 999 “xxx-xxx-xxxx“ is not match the pattern. <br />-
-            LINE 999 “xxx-xxx-xxxx“ is not match the pattern.
-          </p>
-        </div>
-*/}
       </div>
     </div>
   );

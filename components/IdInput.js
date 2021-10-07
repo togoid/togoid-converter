@@ -40,7 +40,7 @@ const IdInput = (props) => {
           <textarea
             cols="30"
             rows="10"
-            placeholder="Input IDs"
+            placeholder="Input your ID (set), separated by comma, space, or newline (e.g. 5460, 6657, 9314, 4609 for NCBI gene)."
             className="textarea__input"
             value={props.idTexts}
             onChange={(e) => props.setIdTexts(e.target.value)}
@@ -71,6 +71,42 @@ const IdInput = (props) => {
           />
         </div>
       </form>
+      <div className="input_area__bottom">
+
+        <div className="input_area__bottom__links">
+          <p className="input_area__bottom__square">Examples:</p>
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              props.handleTopExamples("refseq_rna");
+            }}
+            className="input_area__bottom__link"
+          >
+            Refseq RNA
+          </a>
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              props.handleTopExamples("ensembl_gene");
+            }}
+            className="input_area__bottom__link"
+          >
+            Ensembl gene
+          </a>
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              props.handleTopExamples("uniprot");
+            }}
+            className="input_area__bottom__link"
+          >
+            Uniprot
+          </a>
+        </div>
+      </div>
     </div>
   );
 };
