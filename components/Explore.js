@@ -64,7 +64,7 @@ const Explore = (props) => {
       })
     );
 
-    setTotal(d.total);
+    setTotal(database.total);
     setTableData({ heading, rows });
   };
 
