@@ -81,7 +81,7 @@ const Home = () => {
         r.push(v);
         return new Promise(function (resolve) {
           // エラーになった変換でもnullを返してresolve
-          return executeQuery(r, ids, "target")
+          return executeQuery(r, ids, "all")
             .then((v) => {
               NProgress.inc(1 / candidates.length);
               resolve(v);
