@@ -130,22 +130,24 @@ const Databases = (props) => {
                           />
                         </svg>
                         <div className="path__children">
-                          {labels.map((l, i) => (
-                            <div
-                              className="path_label small green"
-                              style={{
-                                backgroundColor: categories[
-                                  props.dbCatalogue[l].category
-                                ]
-                                  ? categories[props.dbCatalogue[l].category]
-                                      .color
-                                  : null,
-                              }}
-                              key={i}
-                            >
-                              {props.dbCatalogue[l].label}
-                            </div>
-                          ))}
+                          {labels.map((l, i) =>
+                            props.dbCatalogue[l] ? (
+                              <div
+                                className="path_label small green"
+                                style={{
+                                  backgroundColor: categories[
+                                    props.dbCatalogue[l].category
+                                  ]
+                                    ? categories[props.dbCatalogue[l].category]
+                                        .color
+                                    : null,
+                                }}
+                                key={i}
+                              >
+                                {props.dbCatalogue[l].label}
+                              </div>
+                            ) : null
+                          )}
                         </div>
                       </div>
                       <dl className="data">
