@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { saveAs } from "file-saver";
 import ResultModal from "../components/ResultModal";
+import InformationModal from "../components/InformationModal";
 import { executeQuery } from "../lib/util";
-import dbCatalogueSparql from "../public/datasetSparql.json";
 import { ArrowArea } from "react-arrow-master";
 import { categories } from "../lib/setting";
 
@@ -16,7 +16,6 @@ const Explore = (props) => {
     null,
     null,
   ]);
-  const [language, setLanguage] = useState("en");
   const [notConvertedIds, setNotConvertedIds] = useState([]);
 
   useEffect(() => {
@@ -36,7 +35,7 @@ const Explore = (props) => {
 
   const handleIdDownload = async (database, routeIndex) => {
     const r = selectDatabase(database, routeIndex).slice(0, routeIndex + 1);
-    const d = await executeQuery(r, props.ids, "target");
+    const d = await executeQuery(r, props.ids, "target", false);
     const prefix = props.dbCatalogue[database.name].prefix.split("/").slice(-1);
 
     const text = d.results.map((result) => prefix + result).join("\r\n");
@@ -51,7 +50,7 @@ const Explore = (props) => {
     const heading = r
       .filter((v, i) => i <= routeIndex)
       .map((v) => props.dbCatalogue[v.name]);
-    const d = await executeQuery(r, props.ids);
+    const d = await executeQuery(r, props.ids, "all", true);
     const rows = d.results.slice(0, 100).map((v) => v.slice(0, routeIndex + 1));
 
     const dbRegExp = new RegExp(props.dbCatalogue[r[0].name].regex);
@@ -68,20 +67,38 @@ const Explore = (props) => {
     setTableData({ heading, rows });
   };
 
-  const showInformationModal = async (v) => {
+  const showInformationModal = (v) => {
     const dbName = Object.keys(props.dbCatalogue).filter(
       (dataset) => dataset === v.name
     );
     setInformationModal(true);
     setDatabase(dbName[0]);
   };
-  const hideInformationModal = async () => {
-    setInformationModal(false);
-  };
 
   const handleActionButtonVisibility = (i, j) => {
     setVisibleActionButtonIndex([i, j]);
   };
+
+  const handleSelectDropDown = (e) => {
+    props.setSelectedDropDown(e.target.value);
+    if (props.isSpecific) {
+      selectOther(e.target.value);
+    }
+  };
+
+  const selectOther = (v = null) => {
+    if (v) {
+      console.log(v);
+      props.lookupRoute(v);
+    } else {
+      if (props.selectedDropDown) {
+        props.setIsSpecific(true);
+      }
+      console.log(props.selectedDropDown);
+      props.lookupRoute(props.selectedDropDown);
+    }
+  };
+
   return (
     <div className="explore">
       <div className="drawing_area">
@@ -95,88 +112,85 @@ const Explore = (props) => {
           )}
           <div className="panel__inner">
             <div className="explore">
-              <ArrowArea arrows={props.routePaths}>
-                <ArrowArea arrows={props.candidatePaths}>
-                  <div className="drawing">
-                    {props.databaseNodesList &&
-                      props.databaseNodesList.length > 0 &&
-                      props.databaseNodesList.map((nodes, i) => (
-                        <div className="item_wrapper" key={i}>
-                          {i === 0 && (
-                            <React.Fragment>
-                              <p className="item_first_heading">Convert from</p>
-                              <p className="item_first_count_heading">
-                                Matched
-                              </p>
-                            </React.Fragment>
-                          )}
-                          <ul
-                            className={
-                              i === 0 ? "result_list first" : "result_list"
-                            }
-                          >
-                            {nodes.map((v, j) => (
-                              <li
-                                key={j}
-                                onMouseOver={() =>
-                                  handleActionButtonVisibility(i, j)
-                                }
-                                onMouseLeave={() =>
-                                  handleActionButtonVisibility(null, null)
-                                }
-                                className="result_list__item"
-                              >
-                                <div
-                                  id={`node${i}-${v.name}`}
-                                  className={`radio green ${
-                                    i === 0 || v.total > 0 ? null : "not_found"
-                                  }`}
+              <ArrowArea arrows={props.candidatePaths}>
+                <div className="drawing">
+                  {props.databaseNodesList &&
+                    props.databaseNodesList.length > 0 &&
+                    props.databaseNodesList.map((nodes, i) => (
+                      <div className="item_wrapper" key={i}>
+                        {i === 0 && (
+                          <React.Fragment>
+                            <p className="item_first_heading">Convert from</p>
+                            <p className="item_first_count_heading">Matched</p>
+                          </React.Fragment>
+                        )}
+                        <ul
+                          className={
+                            i === 0 ? "result_list first" : "result_list"
+                          }
+                        >
+                          {nodes.map((v, j) => {
+                            if (!(j > 0 && nodes[j - 1].name === v.name)) {
+                              const isActionButtonVisible =
+                                visibleActionButtonIndex[0] === i &&
+                                visibleActionButtonIndex[1] === j;
+                              return (
+                                <li
+                                  key={j}
+                                  onMouseOver={() =>
+                                    handleActionButtonVisibility(i, j)
+                                  }
+                                  onMouseLeave={() =>
+                                    handleActionButtonVisibility(null, null)
+                                  }
+                                  className="result_list__item"
                                 >
-                                  <input
-                                    type="radio"
-                                    name={`result${i}`}
-                                    id={`result${i}-${j}`}
-                                    className="radio__input"
-                                    checked={Boolean(
-                                      props.route[i] &&
-                                        props.route[i].name === v.name
-                                    )}
-                                    onChange={() => selectDatabase(v, i)}
-                                    disabled={i > 0 && !v.total}
-                                  />
-                                  <label
-                                    htmlFor={`result${i}-${j}`}
-                                    className="radio__large_label green"
-                                    style={{
-                                      opacity:
-                                        visibleActionButtonIndex[0] === i &&
-                                        visibleActionButtonIndex[1] === j
+                                  <div
+                                    id={`node${i}-${v.name}`}
+                                    className={`radio green ${
+                                      i === 0 || v.total > 0
+                                        ? null
+                                        : "not_found"
+                                    }`}
+                                  >
+                                    <input
+                                      type="radio"
+                                      name={`result${i}`}
+                                      id={`result${i}-${j}`}
+                                      className="radio__input"
+                                      checked={Boolean(
+                                        props.route[i] &&
+                                          props.route[i].name === v.name
+                                      )}
+                                      onChange={() => selectDatabase(v, i)}
+                                      disabled={i > 0 && !v.total}
+                                    />
+                                    <label
+                                      htmlFor={`result${i}-${j}`}
+                                      className="radio__large_label green"
+                                      style={{
+                                        opacity: isActionButtonVisible
                                           ? 0.7
                                           : 1,
-                                      backgroundColor:
-                                        visibleActionButtonIndex[0] === i &&
-                                        visibleActionButtonIndex[1] === j
+                                        backgroundColor: isActionButtonVisible
                                           ? "#000000"
                                           : categories[v.category]
                                           ? categories[v.category].color
                                           : null,
-                                    }}
-                                  >
-                                    <span
-                                      className="radio__large_label__inner"
-                                      style={{
-                                        color:
-                                          visibleActionButtonIndex[0] === i &&
-                                          visibleActionButtonIndex[1] === j
-                                            ? "#333333"
-                                            : "#ffffff",
                                       }}
                                     >
-                                      {props.dbCatalogue[v.name].label}
-                                    </span>
-                                  </label>
-                                  {visibleActionButtonIndex[0] === i &&
-                                    visibleActionButtonIndex[1] === j && (
+                                      <span
+                                        className="radio__large_label__inner"
+                                        style={{
+                                          color: isActionButtonVisible
+                                            ? "#333333"
+                                            : "#ffffff",
+                                        }}
+                                      >
+                                        {props.dbCatalogue[v.name].label}
+                                      </span>
+                                    </label>
+                                    {isActionButtonVisible && (
                                       <div className="action_icons">
                                         {i > 0 && v.total > 0 && (
                                           <button
@@ -235,185 +249,89 @@ const Explore = (props) => {
                                         </button>
                                       </div>
                                     )}
-                                </div>
-                                <p id={`total${i}-${v.name}`} className="total">
-                                  {v.total >= 0 ? v.total : "too many"}
-                                </p>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))}
-
-                    {informationModal && (
-                      <div
-                        className="modal modal--through"
-                        onClick={() => hideInformationModal()}
-                      >
-                        <div
-                          className="modal__inner modal__inner--through"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                          }}
-                        >
-                          <button
-                            onClick={() => hideInformationModal()}
-                            className="modal--through__close"
-                          />
-                          <h2 className="modal--through__title">
-                            {props.dbCatalogue[database].label}
-                          </h2>
-                          <div className="select_lang">
-                            <div className="radio">
-                              <input
-                                type="radio"
-                                id="en"
-                                name="en"
-                                value="en"
-                                className="radio__input"
-                                style={{ width: "20px", height: "20px" }}
-                                onChange={() => setLanguage("en")}
-                                checked={language === "en"}
-                              />
-                              <label htmlFor="en" className="radio__label">
-                                en
-                              </label>
-                            </div>
-                            <div className="radio">
-                              <input
-                                type="radio"
-                                id="ja"
-                                name="ja"
-                                value="ja"
-                                className="radio__input"
-                                style={{ width: "20px", height: "20px" }}
-                                onChange={() => setLanguage("ja")}
-                                checked={language === "ja"}
-                              />
-                              <label htmlFor="ja" className="radio__label">
-                                ja
-                              </label>
-                            </div>
-                          </div>
-                          <p className="modal--through__description">
-                            {dbCatalogueSparql[database][
-                              `description_${language}`
-                            ] && (
-                              <div>
-                                <p>
-                                  {
-                                    dbCatalogueSparql[database][
-                                      `description_${language}`
-                                    ]
-                                  }
-                                </p>
-                                <p>
-                                  Cited from{" "}
-                                  <a
-                                    href={`https://integbio.jp/dbcatalog/record/${props.dbCatalogue[database].catalog}`}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                  >
-                                    Integbio Database Catalog
-                                  </a>
-                                </p>
-                              </div>
-                            )}
-                          </p>
-                          {(() => {
-                            const labels = Array.from(
-                              new Set(
-                                Object.keys(props.dbConfig).map((k) => {
-                                  const names = k.split("-");
-                                  if (
-                                    names.indexOf(database) === 0 ||
-                                    names.indexOf(database) === 1
-                                  ) {
-                                    return names.indexOf(database) === 0
-                                      ? names[1]
-                                      : names[0];
-                                  }
-                                })
-                              )
-                            ).filter((v) => v);
-
-                            if (labels.length) {
-                              return (
-                                <div className="modal--through__buttons path">
-                                  <div className="path_label small white">
-                                    LINK TO
                                   </div>
-                                  <svg className="arrow" viewBox="0 0 24 24">
-                                    <path
-                                      fill="currentColor"
-                                      d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
-                                    />
-                                  </svg>
-                                  <div className="path_children">
-                                    {labels.map((l, i) => (
-                                      <div
-                                        className="path_label small green"
-                                        style={{
-                                          backgroundColor: categories[
-                                            props.dbCatalogue[l].category
-                                          ]
-                                            ? categories[
-                                                props.dbCatalogue[l].category
-                                              ].color
-                                            : null,
-                                        }}
-                                        key={i}
-                                      >
-                                        {props.dbCatalogue[l].label}
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
+                                  {(!props.isSpecific ||
+                                    i !==
+                                      props.databaseNodesList.length - 1) && (
+                                    <p
+                                      id={`total${i}-${v.name}`}
+                                      className="total"
+                                    >
+                                      {props.isSpecific &&
+                                      i === props.databaseNodesList.length - 2
+                                        ? props.databaseNodesList[i + 1][j]
+                                            .total
+                                        : v.total >= 0
+                                        ? v.total
+                                        : "too many"}
+                                    </p>
+                                  )}
+                                </li>
                               );
                             }
-                          })()}
-
-                          <dl className="modal--through__data_list">
-                            <div className="modal--through__data_list__item">
-                              <dt>PREFIX</dt>
-                              <dd>{props.dbCatalogue[database].prefix}</dd>
+                          })}
+                        </ul>
+                        {!props.isSpecific &&
+                          i !== 0 &&
+                          i === props.databaseNodesList.length - 1 && (
+                            <div id={`nodeOther`} className={`radio green`}>
+                              <input
+                                type="radio"
+                                name={`resultOther`}
+                                id={`resultOther`}
+                                className="radio__input"
+                                onChange={() => selectOther()}
+                                checked={props.isSpecific}
+                              />
+                              <label
+                                htmlFor={`resultOther`}
+                                className="radio__large_label green"
+                              >
+                                <select onChange={handleSelectDropDown}>
+                                  <option> </option>
+                                  {Object.keys(props.dbCatalogue).map((key) => {
+                                    if (
+                                      !props.databaseNodesList[i].find(
+                                        (v) => v.name === key
+                                      ) &&
+                                      !props.route.find((v) => v.name === key)
+                                    ) {
+                                      return (
+                                        <option key={key} value={key}>
+                                          {props.dbCatalogue[key].label}
+                                        </option>
+                                      );
+                                    }
+                                  })}
+                                </select>
+                              </label>
                             </div>
-                            <div className="modal--through__data_list__item">
-                              <dt>CATEGORY</dt>
-                              <dd>{props.dbCatalogue[database].category}</dd>
-                            </div>
-                            {dbCatalogueSparql[database][
-                              `organization_${language}`
-                            ] && (
-                              <div className="modal--through__data_list__item">
-                                <dt>ORGANIZATION</dt>
-                                <dd>
-                                  {
-                                    dbCatalogueSparql[database][
-                                      `organization_${language}`
-                                    ]
-                                  }
-                                </dd>
-                              </div>
-                            )}
-                          </dl>
-                        </div>
+                          )}
                       </div>
-                    )}
+                    ))}
 
-                    {modalVisibility && (
-                      <ResultModal
-                        route={props.route}
-                        ids={props.ids}
-                        tableData={tableData}
-                        notConvertedIds={notConvertedIds}
-                        total={total}
-                        setModalVisibility={setModalVisibility}
-                        dbCatalogue={props.dbCatalogue}
-                      />
-                    )}
-                  </div>
-                </ArrowArea>
+                  {informationModal && (
+                    <InformationModal
+                      setInformationModal={setInformationModal}
+                      database={database}
+                      dbCatalogue={props.dbCatalogue}
+                      dbConfig={props.dbConfig}
+                      dbDesc={props.dbDesc}
+                    />
+                  )}
+
+                  {modalVisibility && (
+                    <ResultModal
+                      route={props.route}
+                      ids={props.ids}
+                      tableData={tableData}
+                      notConvertedIds={notConvertedIds}
+                      total={total}
+                      setModalVisibility={setModalVisibility}
+                      dbCatalogue={props.dbCatalogue}
+                    />
+                  )}
+                </div>
               </ArrowArea>
             </div>
           </div>
