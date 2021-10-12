@@ -62,7 +62,7 @@ const Explore = (props) => {
         return convertedIds.indexOf(firstNamedCapture) === -1;
       })
     );
-    setTotal(d.total);
+    setTotal(database.total);
     setTableData({ heading, rows });
   };
 

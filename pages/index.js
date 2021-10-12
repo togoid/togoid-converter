@@ -254,6 +254,7 @@ const Home = () => {
         String.fromCharCode(s.charCodeAt(0) - 0xfee0)
       )
       .split(/[\s,\n,、,,]+/)
+      .filter((v) => v)
       .map((v) => v.trim());
     clearExplore();
     setIds(ids);
