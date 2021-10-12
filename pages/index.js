@@ -1,4 +1,3 @@
-import Head from "next/head";
 import React, { useState, useEffect } from "react";
 import NProgress from "nprogress";
 import axios from "axios";
@@ -7,162 +6,76 @@ import Explore from "../components/Explore";
 import Databases from "../components/Databases";
 import IdInput from "../components/IdInput";
 import Documents from "../components/Documents";
-import { executeQuery } from "../lib/util";
+import TabWrapper from "../components/TabWrapper";
+import { executeQuery, getPathStyle } from "../lib/util";
+import { topExamples } from "../lib/examples";
 
 const Home = () => {
   const [ids, setIds] = useState([]);
   const [activeTab, setActiveTab] = useState("EXPLORE");
   const [databaseNodesList, setDatabaseNodesList] = useState([]);
   const [route, setRoute] = useState([]);
-  const [routePaths, setRoutePaths] = useState([]);
+  const [previousRoute, setPreviousRoute] = useState([]);
+  const [isUseKeepRoute, setIsUseKeepRoute] = useState(false);
   const [candidatePaths, setCandidatePaths] = useState([]);
   const [idTexts, setIdTexts] = useState("");
   const [dbCatalogue, setDbCatalogue] = useState([]);
   const [dbConfig, setDbConfig] = useState([]);
+  const [dbDesc, setDbDesc] = useState([]);
+  const [selectedDropDown, setSelectedDropDown] = useState(null);
+  const [isSpecific, setIsSpecific] = useState(false);
 
   useEffect(() => {
     const fetchApi = async () => {
       const promises = await Promise.all([
         axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/dataset`),
         axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/database`),
+        axios.get(
+          `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/descriptions`
+        ),
       ]);
       setDbCatalogue(promises[0].data);
       setDbConfig(promises[1].data);
+      setDbDesc(promises[2].data);
     };
     fetchApi();
   }, []);
 
   useEffect(() => {
     if (route.length > 0) {
-      const abortController = new AbortController();
-      const nodesList = databaseNodesList.slice(0, route.length);
-      const r = route[route.length - 1];
-      const candidates = [];
-      Object.keys(dbConfig).forEach((k) => {
-        if (!candidates.find((v) => v.name === r.name)) {
-          if (k.split("-").shift() === r.name) {
-            const name = k.split("-")[1];
-            if (
-              !candidates.find((v) => v.name === name) &&
-              !route.find((w) => w.name === name)
-            ) {
-              // 順方向の変換
-              candidates.push({
-                name,
-                category: dbCatalogue[name].category,
-                total: 1,
-                ids: [],
-              });
-            }
-          } else if (
-            dbConfig[k].link.reverse &&
-            k.split("-").pop() === r.name
-          ) {
-            // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
-            const name = k.split("-")[0];
-            if (
-              !candidates.find((v) => v.name === name) &&
-              !route.find((w) => w.name === name)
-            ) {
-              // 逆方向の変換
-              candidates.push({
-                name,
-                category: dbCatalogue[name].category,
-                total: 1,
-                ids: [],
-              });
+      const convertFunc = async () => {
+        const abortController = new AbortController();
+        if (isSpecific && route.length >= databaseNodesList.length - 1) {
+          createSpecificModePath();
+        } else if (isUseKeepRoute) {
+          setIsSpecific(false);
+          const r = route;
+          for (let i = 0; i < previousRoute.length; i++) {
+            await createNodesList(r);
+            if (i < previousRoute.length - 1) {
+              const v = databaseNodesList[i + 1].find(
+                (element) => element.name === previousRoute[i + 1].name
+              );
+              if (v === undefined || v.total === 0) {
+                break;
+              }
+              r.push(previousRoute[i + 1]);
             }
           }
+          setRoute(r);
+          setIsUseKeepRoute(false);
+        } else {
+          setIsSpecific(false);
+          await createNodesList(route);
         }
-      });
-      NProgress.start();
-      const promises = candidates.map((v) => {
-        const r = route.slice();
-        r.push(v);
-        return new Promise(function (resolve) {
-          // エラーになった変換でもnullを返してresolve
-          return executeQuery(r, ids, "target")
-            .then((v) => {
-              NProgress.inc(1 / candidates.length);
-              resolve(v);
-            })
-            .catch(() => resolve(null));
-        });
-      });
 
-      Promise.all(promises).then((values) => {
-        NProgress.done();
-        // 先端の変換候補を追加
-        nodesList[route.length] = candidates.map((v, i) => {
-          const _v = Object.assign({}, v);
-          if (!values[i]) {
-            _v.total = -1;
-          } else if (values[i].total) {
-            _v.total = values[i].total;
-          } else {
-            _v.total = 0;
-          }
-
-          return _v;
-        });
-        setDatabaseNodesList(nodesList);
-
-        const candidatePaths = [];
-        nodesList.forEach((nodes, i) => {
-          if (i === 0) return;
-          nodes.forEach((v) => {
-            if (route[i] && route[i].name === v.name) return;
-            candidatePaths.push({
-              from: {
-                id: `total${i - 1}-${route[i - 1].name}`,
-                posX: "right",
-                posY: "middle",
-              },
-              to: {
-                id: `node${i}-${v.name}`,
-                posX: "left",
-                posY: "middle",
-              },
-              style: {
-                color: "#dddddd",
-                head: "none",
-                arrow: "smooth",
-                width: 1.5,
-              },
-            });
-          });
-        });
-        setCandidatePaths(candidatePaths);
-
-        const routePaths = [];
-        route.forEach((v, i) => {
-          if (route[i + 1]) {
-            routePaths.push({
-              from: {
-                id: `total${i}-${v.name}`,
-                posX: "right",
-                posY: "middle",
-              },
-              to: {
-                id: `node${i + 1}-${route[i + 1].name}`,
-                posX: "left",
-                posY: "middle",
-              },
-              style: {
-                color: "#1A8091",
-                head: "none",
-                arrow: "smooth",
-                width: 2,
-              },
-            });
-          }
-        });
-        setRoutePaths(routePaths);
-      });
-
-      return () => {
-        abortController.abort();
+        return () => {
+          abortController.abort();
+        };
       };
+
+      convertFunc();
+      setSelectedDropDown(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route]);
@@ -172,6 +85,116 @@ const Home = () => {
       clearExplore();
     }
   }, [idTexts]);
+
+  const createNodesList = async (routeTemp) => {
+    const nodesList = isUseKeepRoute
+      ? databaseNodesList
+      : databaseNodesList.slice(0, routeTemp.length);
+    const r = routeTemp[routeTemp.length - 1];
+    const candidates = [];
+    Object.keys(dbConfig).forEach((k) => {
+      if (!candidates.find((v) => v.name === r.name)) {
+        if (k.split("-").shift() === r.name) {
+          const name = k.split("-")[1];
+          if (
+            !candidates.find((v) => v.name === name) &&
+            !routeTemp.find((w) => w.name === name)
+          ) {
+            // 順方向の変換
+            candidates.push({
+              name,
+              category: dbCatalogue[name].category,
+              total: 1,
+              ids: [],
+            });
+          }
+        } else if (dbConfig[k].link.reverse && k.split("-").pop() === r.name) {
+          // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
+          const name = k.split("-")[0];
+          if (
+            !candidates.find((v) => v.name === name) &&
+            !routeTemp.find((w) => w.name === name)
+          ) {
+            // 逆方向の変換
+            candidates.push({
+              name,
+              category: dbCatalogue[name].category,
+              total: 1,
+              ids: [],
+            });
+          }
+        }
+      }
+    });
+    NProgress.start();
+    const promises = candidates.map((v) => {
+      const r = routeTemp.slice();
+      r.push(v);
+      return new Promise(function (resolve) {
+        // エラーになった変換でもnullを返してresolve
+        return executeQuery(r, ids, "target", "only")
+          .then((v) => {
+            NProgress.inc(1 / candidates.length);
+            resolve(v);
+          })
+          .catch(() => resolve(null));
+      });
+    });
+
+    await Promise.all(promises).then((values) => {
+      NProgress.done();
+      // 先端の変換候補を追加
+      nodesList[routeTemp.length] = candidates.map((v, i) => {
+        const _v = Object.assign({}, v);
+        if (!values[i]) {
+          _v.total = -1;
+        } else if (values[i].total) {
+          _v.total = values[i].total;
+        } else {
+          _v.total = 0;
+        }
+
+        return _v;
+      });
+      setDatabaseNodesList(nodesList);
+
+      const candidatePaths = [];
+      nodesList.forEach((nodes, i) => {
+        if (i === 0) return;
+        nodes.forEach((v) => {
+          if (route[i] && route[i].name === v.name) {
+            candidatePaths.push(
+              getPathStyle(
+                `total${i - 1}-${route[i - 1].name}`,
+                `node${i}-${v.name}`,
+                true
+              )
+            );
+          } else {
+            candidatePaths.push(
+              getPathStyle(
+                `total${i - 1}-${route[i - 1].name}`,
+                `node${i}-${v.name}`,
+                false
+              )
+            );
+          }
+        });
+
+        // 逆引き用のpath
+        if (i === nodesList.length - 1) {
+          candidatePaths.push(
+            getPathStyle(
+              `total${i - 1}-${routeTemp[i - 1].name}`,
+              `nodeOther`,
+              false
+            )
+          );
+        }
+      });
+      setCandidatePaths(candidatePaths);
+    });
+  };
 
   /**
    * idsに入力されたIDまたはIDリストをidPatternsから正規表現で検索
@@ -238,141 +261,269 @@ const Home = () => {
   };
 
   const handleTopExamples = (key) => {
-    const examples = {
-      refseq_rna: [
-        "NM_001354870",
-        "NM_002467",
-        "NM_001173531",
-        "NM_001285986",
-        "NM_001285987",
-        "NM_002701",
-        "NM_203289",
-        "NM_003106",
-        "NM_001314052",
-        "NM_004235",
-      ],
-      ensembl_gene: [
-        "ENSG00000136997",
-        "ENSG00000204531",
-        "ENSG00000181449",
-        "ENSG00000136826",
-      ],
-      uniprot: [
-        "P01106",
-        "Q01860",
-        "M1S623",
-        "D2IYK3",
-        "F2Z381",
-        "P48431",
-        "A0A0U3FYV6",
-        "O43474",
-      ],
-    };
-    executeExamples(examples[key].join("\n"), key);
+    executeExamples(topExamples[key].join("\n"), key);
   };
+
   const executeExamples = (idTexts, key) => {
     setActiveTab("EXPLORE");
     setIdTexts(idTexts);
-    const startRoute = handleIdTextsSubmit(idTexts).find(
-      (ele) => ele.name === key
+
+    // previousRouteがある時はtryKeepRouteを実行し、falseの時は残りの処理を実行
+    if (!previousRoute.length || !tryKeepRoute(idTexts)) {
+      const startRoute = handleIdTextsSubmit(idTexts).find(
+        (ele) => ele.name === key
+      );
+      setRoute([startRoute]);
+    }
+  };
+
+  const tryKeepRoute = (idTexts) => {
+    const checkIndex = handleIdTextsSubmit(idTexts).findIndex(
+      (element) => element.name === previousRoute[0].name
     );
-    setRoute([startRoute]);
+    if (checkIndex !== -1) {
+      setRoute([previousRoute[0]]);
+      setIsUseKeepRoute(true);
+      return true;
+    }
+    return false;
+  };
+
+  const lookupRoute = async (target) => {
+    const r = route[route.length - 1];
+    const firstCandidatesTemp = [];
+
+    // tergetと一致しない変換可能なものを取得
+    Object.keys(dbConfig).forEach((k) => {
+      if (!firstCandidatesTemp.find((v) => v.name === r.name)) {
+        const keySplit = k.split("-");
+        if (keySplit[0] === r.name) {
+          const name = keySplit[1];
+          if (
+            name !== target &&
+            !route.find((w) => w.name === name) &&
+            !firstCandidatesTemp.find((v) => v.name === name)
+          ) {
+            // 順方向の変換
+            firstCandidatesTemp.push({
+              name,
+              category: dbCatalogue[name].category,
+              total: 1,
+              ids: [],
+            });
+          }
+        } else if (dbConfig[k].link.reverse && keySplit[1] === r.name) {
+          // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
+          const name = keySplit[0];
+          if (
+            name !== target &&
+            !route.find((w) => w.name === name) &&
+            !firstCandidatesTemp.find((v) => v.name === name)
+          ) {
+            firstCandidatesTemp.push({
+              name,
+              category: dbCatalogue[name].category,
+              total: 1,
+              ids: [],
+            });
+          }
+        }
+      }
+    });
+
+    const secondCandidates = [];
+
+    firstCandidatesTemp.forEach((r) => {
+      Object.keys(dbConfig).forEach((k) => {
+        const keySplit = k.split("-");
+        if (keySplit[0] === r.name) {
+          const name = keySplit[1];
+          if (!route.find((w) => w.name === name)) {
+            if (name === target) {
+              if (
+                !secondCandidates.find(
+                  (v) => v[0].name === r.name && v[1].name === name
+                )
+              ) {
+                secondCandidates.push([
+                  r,
+                  {
+                    name,
+                    category: dbCatalogue[name].category,
+                    total: 1,
+                    ids: [],
+                  },
+                ]);
+              }
+            }
+          }
+        } else if (dbConfig[k].link.reverse && keySplit[1] === r.name) {
+          // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
+          const name = keySplit[0];
+          if (!route.find((w) => w.name === name)) {
+            if (name === target) {
+              if (
+                !secondCandidates.find(
+                  (v) => v[0].name === r.name && v[1].name === name
+                )
+              ) {
+                secondCandidates.push([
+                  r,
+                  {
+                    name,
+                    category: dbCatalogue[name].category,
+                    total: 1,
+                    ids: [],
+                  },
+                ]);
+              }
+            }
+          }
+        }
+      });
+    });
+
+    if (!secondCandidates.length) {
+      setIsSpecific(false);
+      return;
+    }
+    const candidates = [
+      secondCandidates.map((v) => v[0]),
+      secondCandidates.map((v) => v[1]),
+    ];
+
+    const nodesList = await getTotal(candidates);
+
+    await setDatabaseNodesList(nodesList);
+
+    const candidatePaths = [];
+    nodesList.forEach((nodes, i) => {
+      if (i === 0) return;
+      else if (i <= route.length) {
+        nodes.forEach((v) => {
+          candidatePaths.push(
+            getPathStyle(
+              `total${i - 1}-${route[i - 1].name}`,
+              `node${i}-${v.name}`,
+              false
+            )
+          );
+        });
+      } else {
+        nodes.forEach((v, j) => {
+          candidatePaths.push(
+            getPathStyle(
+              `total${i - 1}-${nodesList[i - 1][j].name}`,
+              `node${i}-${v.name}`,
+              false
+            )
+          );
+        });
+      }
+    });
+    setCandidatePaths(candidatePaths);
+  };
+
+  const getTotal = async (candidates) => {
+    const nodesList = databaseNodesList.slice(0, route.length);
+    for (const [i, candidate] of candidates.entries()) {
+      NProgress.start();
+      const promises = candidate.map((v, j) => {
+        const r = route.slice();
+        if (i !== 0) {
+          r.push(candidates[0][j]);
+        }
+        r.push(v);
+        return new Promise(function (resolve) {
+          // エラーになった変換でもnullを返してresolve
+          return executeQuery(r, ids, "target", "only")
+            .then((v) => {
+              NProgress.inc(1 / candidate.length);
+              resolve(v);
+            })
+            .catch(() => resolve(null));
+        });
+      });
+
+      await Promise.all(promises).then((values) => {
+        NProgress.done();
+        // 先端の変換候補を追加
+        nodesList[nodesList.length] = candidate
+          .map((v, i) => {
+            const _v = Object.assign({}, v);
+            if (!values[i]) {
+              _v.total = -1;
+            } else if (values[i].total) {
+              _v.total = values[i].total;
+            } else {
+              return null;
+            }
+
+            return _v;
+          })
+          .filter((v) => v);
+      });
+    }
+    return nodesList;
+  };
+
+  const createSpecificModePath = () => {
+    const candidatePaths = [];
+    let num;
+    databaseNodesList.forEach((nodes, i) => {
+      if (i === 0) return;
+      else if (
+        i < route.length &&
+        (databaseNodesList.length !== route.length ||
+          i !== databaseNodesList.length - 1)
+      ) {
+        nodes.forEach((v, j) => {
+          if (route[i] && route[i].name === v.name) {
+            num = j;
+            candidatePaths.push(
+              getPathStyle(
+                `total${i - 1}-${route[i - 1].name}`,
+                `node${i}-${v.name}`,
+                true
+              )
+            );
+          } else {
+            candidatePaths.push(
+              getPathStyle(
+                `total${i - 1}-${route[i - 1].name}`,
+                `node${i}-${v.name}`,
+                false
+              )
+            );
+          }
+        });
+      } else {
+        nodes.forEach((v, j) => {
+          if (j === num) {
+            candidatePaths.push(
+              getPathStyle(
+                `total${i - 1}-${databaseNodesList[i - 1][j].name}`,
+                `node${i}-${v.name}`,
+                true
+              )
+            );
+          } else {
+            candidatePaths.push(
+              getPathStyle(
+                `total${i - 1}-${databaseNodesList[i - 1][j].name}`,
+                `node${i}-${v.name}`,
+                false
+              )
+            );
+          }
+        });
+      }
+    });
+    setCandidatePaths(candidatePaths);
   };
 
   return (
     <div className="home">
-      <Head>
-        <title>TogoID</title>
-        <link rel="icon" href="/favicon.ico" />
-        <meta
-          property="og:image"
-          content="https://togoid.dbcls.jp/images/ogp.png"
-        />
-        <link
-          rel="apple-touch-icon"
-          sizes="57x57"
-          href="/apple-icon-57x57.png"
-        />
-        <link
-          rel="apple-touch-icon"
-          sizes="60x60"
-          href="/apple-icon-60x60.png"
-        />
-        <link
-          rel="apple-touch-icon"
-          sizes="72x72"
-          href="/apple-icon-72x72.png"
-        />
-        <link
-          rel="apple-touch-icon"
-          sizes="76x76"
-          href="/apple-icon-76x76.png"
-        />
-        <link
-          rel="apple-touch-icon"
-          sizes="114x114"
-          href="/apple-icon-114x114.png"
-        />
-        <link
-          rel="apple-touch-icon"
-          sizes="120x120"
-          href="/apple-icon-120x120.png"
-        />
-        <link
-          rel="apple-touch-icon"
-          sizes="144x144"
-          href="/apple-icon-144x144.png"
-        />
-        <link
-          rel="apple-touch-icon"
-          sizes="152x152"
-          href="/apple-icon-152x152.png"
-        />
-        <link
-          rel="apple-touch-icon"
-          sizes="180x180"
-          href="/apple-icon-180x180.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="192x192"
-          href="/android-icon-192x192.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="32x32"
-          href="/favicon-32x32.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="96x96"
-          href="/favicon-96x96.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="16x16"
-          href="/favicon-16x16.png"
-        />
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="msapplication-TileColor" content="#ffffff" />
-        <meta name="msapplication-TileImage" content="/ms-icon-144x144.png" />
-        <meta name="theme-color" content="#ffffff" />
-        <script
-          type="text/javascript"
-          src="https://dbcls.rois.ac.jp/DBCLS-common-header-footer/v2/script/common-header-and-footer.js"
-          id="common-header-and-footer__script"
-          data-show-footer="true"
-          data-show-footer-license="true"
-          data-show-footer-links="true"
-          data-width="auto"
-          data-color="mono"
-          data-license-type="none"
-        ></script>
-      </Head>
       <Header />
       <main className="main">
         <IdInput
@@ -380,38 +531,16 @@ const Home = () => {
           setIdTexts={setIdTexts}
           idTexts={idTexts}
           handleTopExamples={handleTopExamples}
+          route={route}
+          setPreviousRoute={setPreviousRoute}
+          dbCatalogue={dbCatalogue}
+          tryKeepRoute={tryKeepRoute}
         />
         <div className="drawing_area">
-          <div className="tab_wrapper">
-            <button
-              onClick={() => setActiveTab("EXPLORE")}
-              className={
-                activeTab === "EXPLORE" ? "button_tab active" : "button_tab"
-              }
-            >
-              EXPLORE
-            </button>
-            <button
-              onClick={() => setActiveTab("DATABASE")}
-              className={
-                activeTab === "DATABASE" ? "button_tab active" : "button_tab"
-              }
-            >
-              DATABASES
-            </button>
-            <button
-              onClick={() => setActiveTab("DOCUMENTS")}
-              className={
-                activeTab === "DOCUMENTS" ? "button_tab active" : "button_tab"
-              }
-            >
-              DOCUMENTS
-            </button>
-          </div>
+          <TabWrapper activeTab={activeTab} setActiveTab={setActiveTab} />
           {activeTab === "EXPLORE" && (
             <Explore
               databaseNodesList={databaseNodesList}
-              routePaths={routePaths}
               candidatePaths={candidatePaths}
               route={route}
               setRoute={setRoute}
@@ -419,6 +548,12 @@ const Home = () => {
               ids={ids}
               dbCatalogue={dbCatalogue}
               dbConfig={dbConfig}
+              dbDesc={dbDesc}
+              selectedDropDown={selectedDropDown}
+              setSelectedDropDown={setSelectedDropDown}
+              isSpecific={isSpecific}
+              setIsSpecific={setIsSpecific}
+              lookupRoute={lookupRoute}
             />
           )}
           {activeTab === "DATABASE" && (
@@ -426,6 +561,7 @@ const Home = () => {
               executeExamples={executeExamples}
               dbCatalogue={dbCatalogue}
               dbConfig={dbConfig}
+              dbDesc={dbDesc}
             />
           )}
           {activeTab === "DOCUMENTS" && <Documents />}
