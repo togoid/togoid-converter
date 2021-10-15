@@ -7,6 +7,7 @@ import Databases from "../components/Databases";
 import IdInput from "../components/IdInput";
 import Documents from "../components/Documents";
 import TabWrapper from "../components/TabWrapper";
+import Navigate from "../components/Navigate";
 import { executeQuery, getPathStyle } from "../lib/util";
 import { topExamples } from "../lib/examples";
 
@@ -539,8 +540,8 @@ const Home = () => {
         />
         <div className="drawing_area">
           <TabWrapper activeTab={activeTab} setActiveTab={setActiveTab} />
-          {activeTab === "EXPLORE" && (
-            <Explore
+          {activeTab === "NAVIGATE" && (
+            <Navigate
               databaseNodesList={databaseNodesList}
               candidatePaths={candidatePaths}
               route={route}
@@ -555,6 +556,19 @@ const Home = () => {
               isSpecific={isSpecific}
               setIsSpecific={setIsSpecific}
               lookupRoute={lookupRoute}
+            />
+          )}
+          {activeTab === "EXPLORE" && (
+            <Explore
+              databaseNodesList={databaseNodesList}
+              candidatePaths={candidatePaths}
+              route={route}
+              setRoute={setRoute}
+              restartExplore={restartExplore}
+              ids={ids}
+              dbCatalogue={dbCatalogue}
+              dbConfig={dbConfig}
+              dbDesc={dbDesc}
             />
           )}
           {activeTab === "DATABASE" && (

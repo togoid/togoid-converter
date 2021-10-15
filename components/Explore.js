@@ -78,26 +78,6 @@ const Explore = (props) => {
     setVisibleActionButtonIndex([i, j]);
   };
 
-  const handleSelectDropDown = (e) => {
-    props.setSelectedDropDown(e.target.value);
-    if (props.isSpecific) {
-      selectOther(e.target.value);
-    }
-  };
-
-  const selectOther = (v = null) => {
-    if (v) {
-      console.log(v);
-      props.lookupRoute(v);
-    } else {
-      if (props.selectedDropDown) {
-        props.setIsSpecific(true);
-      }
-      console.log(props.selectedDropDown);
-      props.lookupRoute(props.selectedDropDown);
-    }
-  };
-
   return (
     <div className="explore">
       <div className="drawing_area">
@@ -249,63 +229,17 @@ const Explore = (props) => {
                                       </div>
                                     )}
                                   </div>
-                                  {(!props.isSpecific ||
-                                    i !==
-                                      props.databaseNodesList.length - 1) && (
-                                    <p
-                                      id={`total${i}-${v.name}`}
-                                      className="total"
-                                    >
-                                      {props.isSpecific &&
-                                      i === props.databaseNodesList.length - 2
-                                        ? props.databaseNodesList[i + 1][j]
-                                            .total
-                                        : v.total >= 0
-                                        ? v.total
-                                        : "too many"}
-                                    </p>
-                                  )}
+                                  <p
+                                    id={`total${i}-${v.name}`}
+                                    className="total"
+                                  >
+                                    {v.total >= 0 ? v.total : "too many"}
+                                  </p>
                                 </li>
                               );
                             }
                           })}
                         </ul>
-                        {!props.isSpecific &&
-                          i !== 0 &&
-                          i === props.databaseNodesList.length - 1 && (
-                            <div id={`nodeOther`} className={`radio green`}>
-                              <input
-                                type="radio"
-                                name={`resultOther`}
-                                id={`resultOther`}
-                                className="radio__input"
-                                onChange={() => selectOther()}
-                                checked={props.isSpecific}
-                              />
-                              <label
-                                htmlFor={`resultOther`}
-                                className="radio__large_label green"
-                              >
-                                <select onChange={handleSelectDropDown}>
-                                  <option> </option>
-                                  {Object.keys(props.dbCatalogue).map((key) => {
-                                    if (
-                                      !props.databaseNodesList[i].find(
-                                        (v) => v.name === key
-                                      ) &&
-                                      !props.route.find((v) => v.name === key)
-                                    ) {
-                                      return (
-                                        <option key={key} value={key}>
-                                          {props.dbCatalogue[key].label}
-                                        </option>
-                                      );
-                                    }
-                                  })}
-                                </select>
-                              </label>
-                            </div>
-                          )}
                       </div>
                     ))}
 
