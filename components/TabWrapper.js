@@ -1,6 +1,14 @@
 const TabWrapper = (props) => (
   <div className="tab_wrapper">
     <button
+      onClick={() => props.setActiveTab("NAVIGATE")}
+      className={
+        props.activeTab === "NAVIGATE" ? "button_tab active" : "button_tab"
+      }
+    >
+      NAVIGATE
+    </button>
+    <button
       onClick={() => props.setActiveTab("EXPLORE")}
       className={
         props.activeTab === "EXPLORE" ? "button_tab active" : "button_tab"
