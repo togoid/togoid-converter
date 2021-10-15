@@ -24,7 +24,6 @@ const Home = () => {
   const [dbConfig, setDbConfig] = useState([]);
   const [dbDesc, setDbDesc] = useState([]);
   const [selectedDropDown, setSelectedDropDown] = useState(null);
-  const [isSpecific, setIsSpecific] = useState(false);
 
   useEffect(() => {
     const fetchApi = async () => {
@@ -46,10 +45,16 @@ const Home = () => {
     if (route.length > 0) {
       const convertFunc = async () => {
         const abortController = new AbortController();
-        if (isSpecific && route.length >= databaseNodesList.length - 1) {
-          createSpecificModePath();
+        if (activeTab === "NAVIGATE") {
+          if (route.length === 1) {
+            setDatabaseNodesList([databaseNodesList[0]]);
+            setCandidatePaths([
+              getPathStyle(`total${0}-${route[0].name}`, `nodeOther`, false),
+            ]);
+          } else {
+            createSpecificModePath();
+          }
         } else if (isUseKeepRoute) {
-          setIsSpecific(false);
           const r = route;
           for (let i = 0; i < previousRoute.length; i++) {
             await createNodesList(r);
@@ -66,7 +71,6 @@ const Home = () => {
           setRoute(r);
           setIsUseKeepRoute(false);
         } else {
-          setIsSpecific(false);
           await createNodesList(route);
         }
 
@@ -181,17 +185,6 @@ const Home = () => {
             );
           }
         });
-
-        // 逆引き用のpath
-        if (i === nodesList.length - 1) {
-          candidatePaths.push(
-            getPathStyle(
-              `total${i - 1}-${routeTemp[i - 1].name}`,
-              `nodeOther`,
-              false
-            )
-          );
-        }
       });
       setCandidatePaths(candidatePaths);
     });
@@ -386,7 +379,6 @@ const Home = () => {
     });
 
     if (!secondCandidates.length) {
-      setIsSpecific(false);
       return;
     }
     const candidates = [
@@ -553,8 +545,6 @@ const Home = () => {
               dbDesc={dbDesc}
               selectedDropDown={selectedDropDown}
               setSelectedDropDown={setSelectedDropDown}
-              isSpecific={isSpecific}
-              setIsSpecific={setIsSpecific}
               lookupRoute={lookupRoute}
             />
           )}
