@@ -472,43 +472,11 @@ const Home = () => {
       thirdCandidates.map((v) => v[2]),
     ];
 
-    const nodesList1 = await getTotal(candidatesSecond);
-
     // 変換が途中で失敗したものを消す（too manyも消してしまっている）
-    for (let i = 0; i < nodesList1[1].length; i++) {
-      if (nodesList1[1][i].total < 1) {
-        nodesList1[1].splice(i, 1);
-        nodesList1[2].splice(i, 1);
-        i--;
-      } else if (nodesList1[2][i].total < 1) {
-        nodesList1[1].splice(i, 1);
-        nodesList1[2].splice(i, 1);
-        i--;
-      }
-    }
-    const nodesList2 = await getTotal(candidatesThird);
-
-    // 変換が途中で失敗したものを消す（too manyも消してしまっている）
-    for (let i = 0; i < nodesList2[1].length; i++) {
-      if (nodesList2[1][i].total < 1) {
-        nodesList2[1].splice(i, 1);
-        nodesList2[2].splice(i, 1);
-        nodesList2[3].splice(i, 1);
-
-        i--;
-      } else if (nodesList2[2][i].total < 1) {
-        nodesList2[1].splice(i, 1);
-        nodesList2[2].splice(i, 1);
-        nodesList2[3].splice(i, 1);
-
-        i--;
-      } else if (nodesList2[3][i].total < 1) {
-        nodesList2[1].splice(i, 1);
-        nodesList2[2].splice(i, 1);
-        nodesList2[3].splice(i, 1);
-        i--;
-      }
-    }
+    const [nodesList1, nodesList2] = removeZeroNode(
+      await getTotal(candidatesSecond),
+      await getTotal(candidatesThird)
+    );
 
     const nodesList = [
       nodesList1[0],
@@ -608,6 +576,36 @@ const Home = () => {
       });
     }
     return nodesList;
+  };
+
+  const removeZeroNode = (nodesList1, nodesList2) => {
+    // let 及び 破壊的処理あり
+    let i = 0;
+    while (i < nodesList1[1].length) {
+      if (nodesList1[1][i].total < 1 || nodesList1[2][i].total < 1) {
+        nodesList1[1].splice(i, 1);
+        nodesList1[2].splice(i, 1);
+      } else {
+        i++;
+      }
+    }
+
+    i = 0;
+    while (i < nodesList2[1].length) {
+      if (
+        nodesList2[1][i].total < 1 ||
+        nodesList2[2][i].total < 1 ||
+        nodesList2[3][i].total < 1
+      ) {
+        nodesList2[1].splice(i, 1);
+        nodesList2[2].splice(i, 1);
+        nodesList2[3].splice(i, 1);
+      } else {
+        i++;
+      }
+    }
+
+    return [nodesList1, nodesList2];
   };
 
   const createSpecificModePath = () => {
