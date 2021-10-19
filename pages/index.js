@@ -573,7 +573,10 @@ const Home = () => {
       NProgress.start();
       const promises = candidate.map((v, j) => {
         const r = route.slice();
-        if (i !== 0) {
+        if (i === 1) {
+          r.push(candidates[i - 1][j]);
+        } else if (i === 2) {
+          r.push(candidates[i - 2][j]);
           r.push(candidates[i - 1][j]);
         }
         r.push(v);
