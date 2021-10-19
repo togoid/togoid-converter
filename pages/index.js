@@ -168,23 +168,13 @@ const Home = () => {
       nodesList.forEach((nodes, i) => {
         if (i === 0) return;
         nodes.forEach((v) => {
-          if (route[i] && route[i].name === v.name) {
-            candidatePaths.push(
-              getPathStyle(
-                `total${i - 1}-${route[i - 1].name}`,
-                `node${i}-${v.name}`,
-                true
-              )
-            );
-          } else {
-            candidatePaths.push(
-              getPathStyle(
-                `total${i - 1}-${route[i - 1].name}`,
-                `node${i}-${v.name}`,
-                false
-              )
-            );
-          }
+          candidatePaths.push(
+            getPathStyle(
+              `total${i - 1}-${route[i - 1].name}`,
+              `node${i}-${v.name}`,
+              route[i] && route[i].name === v.name
+            )
+          );
         });
       });
       setCandidatePaths(candidatePaths);
@@ -623,23 +613,13 @@ const Home = () => {
       if (i === 0) return;
       else if (i === 1) {
         nodes.forEach((v, j) => {
-          if (offsetRoute[i] === j) {
-            candidatePaths.push(
-              getPathStyle(
-                `total${i - 1}-${route[i - 1].name}`,
-                `node${i}-${v.name}-${j}`,
-                true
-              )
-            );
-          } else {
-            candidatePaths.push(
-              getPathStyle(
-                `total${i - 1}-${route[i - 1].name}`,
-                `node${i}-${v.name}-${j}`,
-                false
-              )
-            );
-          }
+          candidatePaths.push(
+            getPathStyle(
+              `total${i - 1}-${route[i - 1].name}`,
+              `node${i}-${v.name}-${j}`,
+              j === offsetRoute[i]
+            )
+          );
         });
       } else if (i === databaseNodesList.length - 1) {
         nodes.forEach((v, j) => {
