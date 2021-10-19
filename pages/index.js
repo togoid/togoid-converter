@@ -24,6 +24,7 @@ const Home = () => {
   const [dbConfig, setDbConfig] = useState([]);
   const [dbDesc, setDbDesc] = useState([]);
   const [selectedDropDown, setSelectedDropDown] = useState(null);
+  const [offsetRoute, setOffsetRoute] = useState([]);
 
   useEffect(() => {
     const fetchApi = async () => {
@@ -470,8 +471,6 @@ const Home = () => {
       });
     });
 
-    console.log(thirdCandidates);
-
     const candidatesSecond = [
       secondCandidates.map((v) => v[0]),
       secondCandidates.map((v) => v[1]),
@@ -490,22 +489,10 @@ const Home = () => {
       if (nodesList1[1][i].total < 1) {
         nodesList1[1].splice(i, 1);
         nodesList1[2].splice(i, 1);
-        if (nodesList1[3]) {
-          nodesList1[3].splice(i, 1);
-        }
-
         i--;
       } else if (nodesList1[2][i].total < 1) {
         nodesList1[1].splice(i, 1);
         nodesList1[2].splice(i, 1);
-        if (nodesList1[3]) {
-          nodesList1[3].splice(i, 1);
-        }
-        i--;
-      } else if (nodesList1[3] && nodesList1[3][i].total < 1) {
-        nodesList1[1].splice(i, 1);
-        nodesList1[2].splice(i, 1);
-        nodesList1[3].splice(i, 1);
         i--;
       }
     }
@@ -516,19 +503,16 @@ const Home = () => {
       if (nodesList2[1][i].total < 1) {
         nodesList2[1].splice(i, 1);
         nodesList2[2].splice(i, 1);
-        if (nodesList2[3]) {
-          nodesList2[3].splice(i, 1);
-        }
+        nodesList2[3].splice(i, 1);
 
         i--;
       } else if (nodesList2[2][i].total < 1) {
         nodesList2[1].splice(i, 1);
         nodesList2[2].splice(i, 1);
-        if (nodesList2[3]) {
-          nodesList2[3].splice(i, 1);
-        }
+        nodesList2[3].splice(i, 1);
+
         i--;
-      } else if (nodesList2[3] && nodesList2[3][i].total < 1) {
+      } else if (nodesList2[3][i].total < 1) {
         nodesList2[1].splice(i, 1);
         nodesList2[2].splice(i, 1);
         nodesList2[3].splice(i, 1);
@@ -542,7 +526,6 @@ const Home = () => {
       nodesList1[1].map((_) => null).concat(nodesList2[2]),
       nodesList1[2].concat(nodesList2[3]),
     ];
-    console.log(nodesList);
     await setDatabaseNodesList(nodesList);
 
     const candidatePaths = [];
@@ -636,13 +619,11 @@ const Home = () => {
 
   const createSpecificModePath = () => {
     const candidatePaths = [];
-    let num;
     databaseNodesList.forEach((nodes, i) => {
       if (i === 0) return;
       else if (i === 1) {
         nodes.forEach((v, j) => {
-          if (route[i] && route[i].name === v.name) {
-            num = j;
+          if (offsetRoute[i] === j) {
             candidatePaths.push(
               getPathStyle(
                 `total${i - 1}-${route[i - 1].name}`,
@@ -667,7 +648,7 @@ const Home = () => {
               getPathStyle(
                 `total${i - 2}-${databaseNodesList[i - 2][j].name}-${j}`,
                 `node${i}-${v.name}-0`,
-                false
+                j === offsetRoute[i - 2]
               )
             );
           } else {
@@ -675,7 +656,7 @@ const Home = () => {
               getPathStyle(
                 `total${i - 1}-${databaseNodesList[i - 1][j].name}-${j}`,
                 `node${i}-${v.name}-0`,
-                false
+                j === offsetRoute[i - 2]
               )
             );
           }
@@ -683,20 +664,12 @@ const Home = () => {
       } else {
         nodes.forEach((v, j) => {
           if (v === null) return;
-          else if (j === num) {
+          else {
             candidatePaths.push(
               getPathStyle(
                 `total${i - 1}-${databaseNodesList[i - 1][j].name}-${j}`,
                 `node${i}-${v.name}-${j}`,
-                true
-              )
-            );
-          } else {
-            candidatePaths.push(
-              getPathStyle(
-                `total${i - 1}-${databaseNodesList[i - 1][j].name}-${j}`,
-                `node${i}-${v.name}-${j}`,
-                false
+                j === offsetRoute[i - 1]
               )
             );
           }
@@ -736,6 +709,8 @@ const Home = () => {
               selectedDropDown={selectedDropDown}
               setSelectedDropDown={setSelectedDropDown}
               lookupRoute={lookupRoute}
+              offsetRoute={offsetRoute}
+              setOffsetRoute={setOffsetRoute}
             />
           )}
           {activeTab === "EXPLORE" && (
