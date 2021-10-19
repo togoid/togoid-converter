@@ -327,6 +327,7 @@ const Home = () => {
     });
 
     const secondCandidates = [];
+    const secondCandidatesTemp = [];
 
     firstCandidatesTemp.forEach((r) => {
       Object.keys(dbConfig).forEach((k) => {
@@ -350,6 +351,20 @@ const Home = () => {
                   },
                 ]);
               }
+            } else if (
+              !secondCandidatesTemp.find(
+                (v) => v[0].name === r.name && v[1].name === name
+              )
+            ) {
+              secondCandidatesTemp.push([
+                r,
+                {
+                  name,
+                  category: dbCatalogue[name].category,
+                  total: 1,
+                  ids: [],
+                },
+              ]);
             }
           }
         } else if (dbConfig[k].link.reverse && keySplit[1] === r.name) {
@@ -372,21 +387,109 @@ const Home = () => {
                   },
                 ]);
               }
+            } else if (
+              !secondCandidatesTemp.find(
+                (v) => v[0].name === r.name && v[1].name === name
+              )
+            ) {
+              secondCandidatesTemp.push([
+                r,
+                {
+                  name,
+                  category: dbCatalogue[name].category,
+                  total: 1,
+                  ids: [],
+                },
+              ]);
             }
           }
         }
       });
     });
 
-    if (!secondCandidates.length) {
+    if (!secondCandidates.length || !secondCandidatesTemp.length) {
       return;
     }
-    const candidates = [
+
+    const thirdCandidates = [];
+    secondCandidatesTemp.forEach((r) => {
+      Object.keys(dbConfig).forEach((k) => {
+        const keySplit = k.split("-");
+        if (keySplit[0] === r[1].name) {
+          const name = keySplit[1];
+          if (!route.find((w) => w.name === name)) {
+            if (name === target) {
+              if (
+                !thirdCandidates.find(
+                  (v) =>
+                    v[0].name === r[0].name &&
+                    v[1].name === r[1].name &&
+                    v[2].name === name
+                )
+              ) {
+                thirdCandidates.push([
+                  r[0],
+                  r[1],
+                  {
+                    name,
+                    category: dbCatalogue[name].category,
+                    total: 1,
+                    ids: [],
+                  },
+                ]);
+              }
+            }
+          }
+        } else if (dbConfig[k].link.reverse && keySplit[1] === r[1].name) {
+          // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
+          const name = keySplit[0];
+          if (!route.find((w) => w.name === name)) {
+            if (name === target) {
+              if (
+                !thirdCandidates.find(
+                  (v) =>
+                    v[0].name === r[0].name &&
+                    v[1].name === r[1].name &&
+                    v[2].name === name
+                )
+              ) {
+                thirdCandidates.push([
+                  r[0],
+                  r[1],
+                  {
+                    name,
+                    category: dbCatalogue[name].category,
+                    total: 1,
+                    ids: [],
+                  },
+                ]);
+              }
+            }
+          }
+        }
+      });
+    });
+
+    console.log(thirdCandidates);
+
+    const candidatesSecond = [
       secondCandidates.map((v) => v[0]),
       secondCandidates.map((v) => v[1]),
     ];
 
-    const nodesList = await getTotal(candidates);
+    // const candidatesThird = [
+    //   thirdCandidates.map((v) => v[0]),
+    //   thirdCandidates.map((v) => v[1]),
+    //   thirdCandidates.map((v) => v[2]),
+    // ];
+
+    // const candidates = [
+    //   candidatesSecond[0].concat(candidatesThird[0]),
+    //   candidatesSecond[1].concat(candidatesThird[1]),
+    // ];
+    // console.log(candidates);
+
+    const nodesList = await getTotal(candidatesSecond);
 
     await setDatabaseNodesList(nodesList);
 
@@ -424,8 +527,10 @@ const Home = () => {
       NProgress.start();
       const promises = candidate.map((v, j) => {
         const r = route.slice();
+        // console.log(i);
         if (i !== 0) {
-          r.push(candidates[0][j]);
+          // console.log(candidates[i - 1][j]);
+          r.push(candidates[i - 1][j]);
         }
         r.push(v);
         return new Promise(function (resolve) {
