@@ -212,7 +212,16 @@ const Navigate = (props) => {
                           <div>
                             <ul className="result_list">
                               {nodes.map((v, j) => {
-                                if (!(j > 0 && nodes[j - 1].name === v.name)) {
+                                if (v === null) {
+                                  return (
+                                    <div className="item_wrapper">
+                                      <ul className="result_list"></ul>
+                                    </div>
+                                  );
+                                } else if (
+                                  i !== props.databaseNodesList.length - 1 ||
+                                  j < 1
+                                ) {
                                   const isActionButtonVisible =
                                     visibleActionButtonIndex[0] === i &&
                                     visibleActionButtonIndex[1] === j;
@@ -228,7 +237,7 @@ const Navigate = (props) => {
                                       className="result_list__item"
                                     >
                                       <div
-                                        id={`node${i}-${v.name}`}
+                                        id={`node${i}-${v.name}-${j}`}
                                         className={`radio green ${
                                           v.total > 0 ? null : "not_found"
                                         }`}
@@ -333,7 +342,7 @@ const Navigate = (props) => {
                                       {i !==
                                         props.databaseNodesList.length - 1 && (
                                         <p
-                                          id={`total${i}-${v.name}`}
+                                          id={`total${i}-${v.name}-${j}`}
                                           className="total"
                                         >
                                           {i ===

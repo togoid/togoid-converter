@@ -407,7 +407,7 @@ const Home = () => {
       });
     });
 
-    if (!secondCandidates.length || !secondCandidatesTemp.length) {
+    if (!secondCandidates.length && !secondCandidatesTemp.length) {
       return;
     }
 
@@ -477,41 +477,114 @@ const Home = () => {
       secondCandidates.map((v) => v[1]),
     ];
 
-    // const candidatesThird = [
-    //   thirdCandidates.map((v) => v[0]),
-    //   thirdCandidates.map((v) => v[1]),
-    //   thirdCandidates.map((v) => v[2]),
-    // ];
+    const candidatesThird = [
+      thirdCandidates.map((v) => v[0]),
+      thirdCandidates.map((v) => v[1]),
+      thirdCandidates.map((v) => v[2]),
+    ];
 
-    // const candidates = [
-    //   candidatesSecond[0].concat(candidatesThird[0]),
-    //   candidatesSecond[1].concat(candidatesThird[1]),
-    // ];
-    // console.log(candidates);
+    const nodesList1 = await getTotal(candidatesSecond);
 
-    const nodesList = await getTotal(candidatesSecond);
+    // 変換が途中で失敗したものを消す（too manyも消してしまっている）
+    for (let i = 0; i < nodesList1[1].length; i++) {
+      if (nodesList1[1][i].total < 1) {
+        nodesList1[1].splice(i, 1);
+        nodesList1[2].splice(i, 1);
+        if (nodesList1[3]) {
+          nodesList1[3].splice(i, 1);
+        }
 
+        i--;
+      } else if (nodesList1[2][i].total < 1) {
+        nodesList1[1].splice(i, 1);
+        nodesList1[2].splice(i, 1);
+        if (nodesList1[3]) {
+          nodesList1[3].splice(i, 1);
+        }
+        i--;
+      } else if (nodesList1[3] && nodesList1[3][i].total < 1) {
+        nodesList1[1].splice(i, 1);
+        nodesList1[2].splice(i, 1);
+        nodesList1[3].splice(i, 1);
+        i--;
+      }
+    }
+    const nodesList2 = await getTotal(candidatesThird);
+
+    // 変換が途中で失敗したものを消す（too manyも消してしまっている）
+    for (let i = 0; i < nodesList2[1].length; i++) {
+      if (nodesList2[1][i].total < 1) {
+        nodesList2[1].splice(i, 1);
+        nodesList2[2].splice(i, 1);
+        if (nodesList2[3]) {
+          nodesList2[3].splice(i, 1);
+        }
+
+        i--;
+      } else if (nodesList2[2][i].total < 1) {
+        nodesList2[1].splice(i, 1);
+        nodesList2[2].splice(i, 1);
+        if (nodesList2[3]) {
+          nodesList2[3].splice(i, 1);
+        }
+        i--;
+      } else if (nodesList2[3] && nodesList2[3][i].total < 1) {
+        nodesList2[1].splice(i, 1);
+        nodesList2[2].splice(i, 1);
+        nodesList2[3].splice(i, 1);
+        i--;
+      }
+    }
+
+    const nodesList = [
+      nodesList1[0].concat(nodesList2[0]),
+      nodesList1[1].concat(nodesList2[1]),
+      nodesList1[1].map((_) => null).concat(nodesList2[2]),
+      nodesList1[2].concat(nodesList2[3]),
+    ];
+    console.log(nodesList);
     await setDatabaseNodesList(nodesList);
 
     const candidatePaths = [];
     nodesList.forEach((nodes, i) => {
       if (i === 0) return;
-      else if (i <= route.length) {
-        nodes.forEach((v) => {
+      else if (i === 1) {
+        nodes.forEach((v, j) => {
           candidatePaths.push(
             getPathStyle(
               `total${i - 1}-${route[i - 1].name}`,
-              `node${i}-${v.name}`,
+              `node${i}-${v.name}-${j}`,
               false
             )
           );
         });
+      } else if (i === nodesList.length - 1) {
+        nodes.forEach((v, j) => {
+          if (nodesList[i - 1][j] === null) {
+            candidatePaths.push(
+              getPathStyle(
+                `total${i - 2}-${nodesList[i - 2][j].name}-${j}`,
+                `node${i}-${v.name}-0`,
+                false
+              )
+            );
+          } else {
+            candidatePaths.push(
+              getPathStyle(
+                `total${i - 1}-${nodesList[i - 1][j].name}-${j}`,
+                `node${i}-${v.name}-0`,
+                false
+              )
+            );
+          }
+        });
       } else {
         nodes.forEach((v, j) => {
+          if (v === null) return;
           candidatePaths.push(
             getPathStyle(
-              `total${i - 1}-${nodesList[i - 1][j].name}`,
-              `node${i}-${v.name}`,
+              `total${i - 1}-${nodesList[i - 1][j].name}-${j}`,
+              `node${i}-${v.name}-${j}`,
               false
             )
           );
@@ -527,9 +600,7 @@ const Home = () => {
       NProgress.start();
       const promises = candidate.map((v, j) => {
         const r = route.slice();
-        // console.log(i);
         if (i !== 0) {
-          // console.log(candidates[i - 1][j]);
           r.push(candidates[i - 1][j]);
         }
         r.push(v);
@@ -547,20 +618,17 @@ const Home = () => {
       await Promise.all(promises).then((values) => {
         NProgress.done();
         // 先端の変換候補を追加
-        nodesList[nodesList.length] = candidate
-          .map((v, i) => {
-            const _v = Object.assign({}, v);
-            if (!values[i]) {
-              _v.total = -1;
-            } else if (values[i].total) {
-              _v.total = values[i].total;
-            } else {
-              return null;
-            }
-
-            return _v;
-          })
-          .filter((v) => v);
+        nodesList[nodesList.length] = candidate.map((v, i) => {
+          const _v = Object.assign({}, v);
+          if (!values[i]) {
+            _v.total = -1;
+          } else if (values[i].total) {
+            _v.total = values[i].total;
+          } else {
+            _v.total = 0;
+          }
+          return _v;
+        });
       });
     }
     return nodesList;
@@ -571,18 +639,14 @@ const Home = () => {
     let num;
     databaseNodesList.forEach((nodes, i) => {
       if (i === 0) return;
-      else if (
-        i < route.length &&
-        (databaseNodesList.length !== route.length ||
-          i !== databaseNodesList.length - 1)
-      ) {
+      else if (i === 1) {
         nodes.forEach((v, j) => {
           if (route[i] && route[i].name === v.name) {
             num = j;
             candidatePaths.push(
               getPathStyle(
                 `total${i - 1}-${route[i - 1].name}`,
-                `node${i}-${v.name}`,
+                `node${i}-${v.name}-${j}`,
                 true
               )
             );
@@ -590,7 +654,27 @@ const Home = () => {
             candidatePaths.push(
               getPathStyle(
                 `total${i - 1}-${route[i - 1].name}`,
-                `node${i}-${v.name}`,
+                `node${i}-${v.name}-${j}`,
+                false
+              )
+            );
+          }
+        });
+      } else if (i === databaseNodesList.length - 1) {
+        nodes.forEach((v, j) => {
+          if (databaseNodesList[i - 1][j] === null) {
+            candidatePaths.push(
+              getPathStyle(
+                `total${i - 2}-${databaseNodesList[i - 2][j].name}-${j}`,
+                `node${i}-${v.name}-0`,
+                false
+              )
+            );
+          } else {
+            candidatePaths.push(
+              getPathStyle(
+                `total${i - 1}-${databaseNodesList[i - 1][j].name}-${j}`,
+                `node${i}-${v.name}-0`,
                 false
               )
             );
@@ -598,19 +682,20 @@ const Home = () => {
         });
       } else {
         nodes.forEach((v, j) => {
-          if (j === num) {
+          if (v === null) return;
+          else if (j === num) {
             candidatePaths.push(
               getPathStyle(
-                `total${i - 1}-${databaseNodesList[i - 1][j].name}`,
-                `node${i}-${v.name}`,
+                `total${i - 1}-${databaseNodesList[i - 1][j].name}-${j}`,
+                `node${i}-${v.name}-${j}`,
                 true
               )
             );
           } else {
             candidatePaths.push(
               getPathStyle(
-                `total${i - 1}-${databaseNodesList[i - 1][j].name}`,
-                `node${i}-${v.name}`,
+                `total${i - 1}-${databaseNodesList[i - 1][j].name}-${j}`,
+                `node${i}-${v.name}-${j}`,
                 false
               )
             );
