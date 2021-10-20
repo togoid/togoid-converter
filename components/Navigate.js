@@ -78,7 +78,13 @@ const Navigate = (props) => {
         return convertedIds.indexOf(firstNamedCapture) === -1;
       })
     );
-    setTotal(database.total);
+
+    if (routeIndex === props.databaseNodesList.length - 1) {
+      setTotal(props.databaseNodesList[routeIndex][props.offsetRoute[1]].total);
+    } else {
+      setTotal(database.total);
+    }
+
     setTableData({ heading, rows });
   };
 
@@ -367,9 +373,15 @@ const Navigate = (props) => {
                                           props.databaseNodesList.length - 2
                                             ? props.databaseNodesList[i + 1][j]
                                                 .total
-                                            : v.total >= 0
-                                            ? v.total
-                                            : "too many"}
+                                            : i ===
+                                                props.databaseNodesList.length -
+                                                  3 &&
+                                              props.databaseNodesList[i + 1][
+                                                j
+                                              ] === null
+                                            ? props.databaseNodesList[i + 2][j]
+                                                .total
+                                            : v.total}
                                         </p>
                                       )}
                                     </li>
