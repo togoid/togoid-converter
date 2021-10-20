@@ -50,7 +50,7 @@ const Explore = (props) => {
     const heading = r
       .filter((v, i) => i <= routeIndex)
       .map((v) => props.dbCatalogue[v.name]);
-    const d = await executeQuery(r, props.ids, "all", 100, true);
+    const d = await executeQuery(r, props.ids, "all", 100, false);
     const rows = d.results.map((v) => v.slice(0, routeIndex + 1));
 
     const dbRegExp = new RegExp(props.dbCatalogue[r[0].name].regex);
