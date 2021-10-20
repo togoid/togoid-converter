@@ -1,7 +1,7 @@
 const TabWrapper = (props) => (
   <div className="tab_wrapper">
     <button
-      onClick={() => props.setActiveTab("NAVIGATE")}
+      onClick={() => props.changeIndexTab("NAVIGATE")}
       className={
         props.activeTab === "NAVIGATE" ? "button_tab active" : "button_tab"
       }
@@ -9,7 +9,7 @@ const TabWrapper = (props) => (
       NAVIGATE
     </button>
     <button
-      onClick={() => props.setActiveTab("EXPLORE")}
+      onClick={() => props.changeIndexTab("EXPLORE")}
       className={
         props.activeTab === "EXPLORE" ? "button_tab active" : "button_tab"
       }
@@ -17,7 +17,7 @@ const TabWrapper = (props) => (
       EXPLORE
     </button>
     <button
-      onClick={() => props.setActiveTab("DATABASE")}
+      onClick={() => props.changeIndexTab("DATABASE")}
       className={
         props.activeTab === "DATABASE" ? "button_tab active" : "button_tab"
       }
@@ -25,7 +25,7 @@ const TabWrapper = (props) => (
       DATABASES
     </button>
     <button
-      onClick={() => props.setActiveTab("DOCUMENTS")}
+      onClick={() => props.changeIndexTab("DOCUMENTS")}
       className={
         props.activeTab === "DOCUMENTS" ? "button_tab active" : "button_tab"
       }

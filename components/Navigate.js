@@ -167,8 +167,8 @@ const Navigate = (props) => {
                                         id={`result${i}-${j}`}
                                         className="radio__input"
                                         checked={Boolean(
-                                          props.offsetRoute[i] &&
-                                            props.offsetRoute[i] === j
+                                          props.route[i] &&
+                                            props.route[i].name === v.name
                                         )}
                                         onChange={() => selectDatabase(v, i, j)}
                                       />

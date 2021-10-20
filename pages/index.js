@@ -25,6 +25,7 @@ const Home = () => {
   const [dbDesc, setDbDesc] = useState([]);
   const [selectedDropDown, setSelectedDropDown] = useState(null);
   const [offsetRoute, setOffsetRoute] = useState([]);
+  const [previousSearchTab, setPreviousSearchTab] = useState("EXPLORE");
 
   useEffect(() => {
     const fetchApi = async () => {
@@ -251,7 +252,7 @@ const Home = () => {
   };
 
   const executeExamples = (idTexts, key) => {
-    setActiveTab("EXPLORE");
+    changeIndexTab("EXPLORE");
     setIdTexts(idTexts);
 
     // previousRouteがある時はtryKeepRouteを実行し、falseの時は残りの処理を実行
@@ -660,6 +661,18 @@ const Home = () => {
     setCandidatePaths(candidatePaths);
   };
 
+  const changeIndexTab = (name) => {
+    if (
+      (previousSearchTab === "NAVIGATE" && name === "EXPLORE") ||
+      (previousSearchTab === "EXPLORE" && name === "NAVIGATE")
+    ) {
+      setRoute(route.slice(0, 1));
+      setDatabaseNodesList(databaseNodesList.slice(0, 1));
+      setPreviousSearchTab(name);
+    }
+    setActiveTab(name);
+  };
+
   return (
     <div className="home">
       <Header />
@@ -675,7 +688,7 @@ const Home = () => {
           tryKeepRoute={tryKeepRoute}
         />
         <div className="drawing_area">
-          <TabWrapper activeTab={activeTab} setActiveTab={setActiveTab} />
+          <TabWrapper activeTab={activeTab} changeIndexTab={changeIndexTab} />
           {activeTab === "NAVIGATE" && (
             <Navigate
               databaseNodesList={databaseNodesList}
