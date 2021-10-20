@@ -481,7 +481,7 @@ const Home = () => {
     const nodesList = [
       nodesList1[0],
       nodesList1[1].concat(nodesList2[1]),
-      nodesList1[1].map((_) => null).concat(nodesList2[2]),
+      Array(nodesList1[1].length).fill(null).concat(nodesList2[2]),
       nodesList1[2].concat(nodesList2[3]),
     ];
     await setDatabaseNodesList(nodesList);
