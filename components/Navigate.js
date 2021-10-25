@@ -181,7 +181,7 @@ const Navigate = (props) => {
                                             : null,
                                         }}
                                       >
-                                        <span
+                                        <p
                                           className="radio__large_label__inner"
                                           style={{
                                             color: isActionButtonVisible
@@ -189,8 +189,14 @@ const Navigate = (props) => {
                                               : "#ffffff",
                                           }}
                                         >
-                                          {props.dbCatalogue[v.name].label}
-                                        </span>
+                                          <span className="text">{props.dbCatalogue[v.name].label}</span>
+                                          <span
+                                            id={`total${i}-${v.name}`}
+                                            className="total"
+                                          >
+                                            {v.total >= 0 ? v.total : "too many"}
+                                          </span>
+                                        </p>
                                       </label>
                                       {isActionButtonVisible && (
                                         <div className="action_icons">
@@ -214,12 +220,6 @@ const Navigate = (props) => {
                                         </div>
                                       )}
                                     </div>
-                                    <p
-                                      id={`total${i}-${v.name}`}
-                                      className="total"
-                                    >
-                                      {v.total >= 0 ? v.total : "too many"}
-                                    </p>
                                   </li>
                                 );
                               })}
@@ -284,7 +284,7 @@ const Navigate = (props) => {
                                               : null,
                                           }}
                                         >
-                                          <span
+                                          <p
                                             className="radio__large_label__inner"
                                             style={{
                                               color: isActionButtonVisible
@@ -292,8 +292,14 @@ const Navigate = (props) => {
                                                 : "#ffffff",
                                             }}
                                           >
-                                            {props.dbCatalogue[v.name].label}
-                                          </span>
+                                            <span className="text">{props.dbCatalogue[v.name].label}</span>
+                                            <span
+                                              id={`total${i}-${v.name}-${j}`}
+                                              className="total"
+                                            >
+                                              {v.total}
+                                            </span>
+                                          </p>
                                         </label>
                                         {isActionButtonVisible && (
                                           <div className="action_icons">
@@ -355,12 +361,6 @@ const Navigate = (props) => {
                                           </div>
                                         )}
                                       </div>
-                                      <p
-                                        id={`total${i}-${v.name}-${j}`}
-                                        className="total"
-                                      >
-                                        {v.total}
-                                      </p>
                                     </li>
                                   );
                                 }
@@ -386,7 +386,10 @@ const Navigate = (props) => {
                               htmlFor={`resultOther`}
                               className="radio__large_label green"
                             >
-                              <select onChange={handleSelectDropDown}>
+                              <select
+                                onChange={handleSelectDropDown}
+                                className="dropdown"
+                              >
                                 {Object.keys(props.dbCatalogue).map((key) => {
                                   if (
                                     !props.route.find((v) => v.name === key)
