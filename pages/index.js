@@ -23,7 +23,6 @@ const Home = () => {
   const [dbCatalogue, setDbCatalogue] = useState([]);
   const [dbConfig, setDbConfig] = useState([]);
   const [dbDesc, setDbDesc] = useState([]);
-  const [selectedDropDown, setSelectedDropDown] = useState(null);
   const [offsetRoute, setOffsetRoute] = useState([]);
   const [previousSearchTab, setPreviousSearchTab] = useState("EXPLORE");
 
@@ -82,7 +81,6 @@ const Home = () => {
       };
 
       convertFunc();
-      setSelectedDropDown(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route]);
@@ -649,8 +647,6 @@ const Home = () => {
               dbCatalogue={dbCatalogue}
               dbConfig={dbConfig}
               dbDesc={dbDesc}
-              selectedDropDown={selectedDropDown}
-              setSelectedDropDown={setSelectedDropDown}
               lookupRoute={lookupRoute}
               offsetRoute={offsetRoute}
               setOffsetRoute={setOffsetRoute}
