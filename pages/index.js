@@ -87,12 +87,6 @@ const Home = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route]);
 
-  useEffect(() => {
-    if (idTexts === "") {
-      clearExplore();
-    }
-  }, [idTexts]);
-
   const createNodesList = async (routeTemp) => {
     const nodesList = isUseKeepRoute
       ? databaseNodesList
