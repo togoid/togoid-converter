@@ -12,6 +12,7 @@ const ResultModal = (props) => {
   const [modTable, setModTable] = useState(null);
 
   useEffect(() => {
+    console.log(previewMode);
     const result = formatPreviewTable(
       props.tableData.heading,
       props.tableData.rows
@@ -317,25 +318,16 @@ const ResultModal = (props) => {
                 }
               })()}
 
-              <div className="tab_wrapper">
-                {previewModeList.map((v, i) => (
-                  <button
-                    key={v}
-                    onClick={() => setPreviewMode(i)}
-                    className={
-                      previewMode === i ? "button_tab active" : "button_tab"
-                    }
-                  >
-                    {v}
-                  </button>
-                ))}
-              </div>
-
               {props.tableData && props.tableData.rows.length > 0 && (
                 <div className="export_button">
-                  <select name="selectTab" id="" className="dropdown">
+                  <select
+                    name="selectTab"
+                    id=""
+                    className="dropdown"
+                    onChange={(e) => setPreviewMode(Number(e.target.value))}
+                  >
                     {previewModeList.map((v, i) => (
-                      <option key={v} onClick={() => setPreviewMode(i)}>
+                      <option key={v} value={i}>
                         {v}
                       </option>
                     ))}
