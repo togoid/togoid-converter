@@ -183,6 +183,9 @@
       position: relative;
       display: flex;
       justify-content: flex-end;
+      .dropdown {
+        margin: 0 16px 0 0;
+      }
       .child_menu {
         position: absolute;
         top: calc(100% + 9px);
