@@ -506,7 +506,7 @@ const Home = () => {
             candidatePaths.push(
               getPathStyle(
                 `total${i - 2}-${nodesList[i - 2][j].name}-${j}`,
-                `node${i}-${v.name}-0`,
+                `node${i}-${v.name}-${j}`,
                 false
               )
             );
@@ -514,7 +514,7 @@ const Home = () => {
             candidatePaths.push(
               getPathStyle(
                 `total${i - 1}-${nodesList[i - 1][j].name}-${j}`,
-                `node${i}-${v.name}-0`,
+                `node${i}-${v.name}-${j}`,
                 false
               )
             );
@@ -629,7 +629,7 @@ const Home = () => {
             candidatePaths.push(
               getPathStyle(
                 `total${i - 2}-${databaseNodesList[i - 2][j].name}-${j}`,
-                `node${i}-${v.name}-0`,
+                `node${i}-${v.name}-${j}`,
                 j === offsetRoute[i - 2]
               )
             );
@@ -637,7 +637,7 @@ const Home = () => {
             candidatePaths.push(
               getPathStyle(
                 `total${i - 1}-${databaseNodesList[i - 1][j].name}-${j}`,
-                `node${i}-${v.name}-0`,
+                `node${i}-${v.name}-${j}`,
                 j === offsetRoute[i - 2]
               )
             );
