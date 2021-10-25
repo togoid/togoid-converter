@@ -78,12 +78,37 @@ const Explore = (props) => {
     setVisibleActionButtonIndex([i, j]);
   };
 
+  const handleKeepRoute = (e) => {
+    if (e.target.checked) {
+      props.setPreviousRoute(props.route);
+      const keepRouteText = props.route.map(
+        (v) => props.dbCatalogue[v.name].label
+      );
+      setPreviousRouteText(keepRouteText.join(" - "));
+    } else {
+      props.setPreviousRoute([]);
+      setPreviousRouteText("");
+    }
+  };
+
   return (
     <div className="explore">
       <div className="drawing_area">
         <div className="panel">
           {props.databaseNodesList && props.databaseNodesList.length > 0 && (
             <div className="panel__button">
+              <div className="switch_button">
+                <input
+                  type="checkbox"
+                  onChange={handleKeepRoute}
+                  checked
+                  id="keepRoot"
+                  className="switch_button__input"
+                />
+                <label htmlFor="keepRoot" className="label">
+                  <span className="text">Try keeping route</span>
+                </label>
+              </div>
               <button onClick={handleReset} className="button_clear">
                 Clear
               </button>
