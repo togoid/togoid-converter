@@ -95,18 +95,8 @@ const Navigate = (props) => {
     setVisibleActionButtonIndex([i, j]);
   };
 
-  const handleSelectDropDown = (e) => {
-    props.setSelectedDropDown(e.target.value);
-  };
-
-  const selectOther = (v = null) => {
-    if (v) {
-      console.log(v);
-      props.lookupRoute(v);
-    } else {
-      console.log(props.selectedDropDown);
-      props.lookupRoute(props.selectedDropDown);
-    }
+  const handleSelectDropDown = (value) => {
+    props.lookupRoute(value);
   };
 
   return (
@@ -379,21 +369,17 @@ const Navigate = (props) => {
                       <div className="item_wrapper">
                         <ul className="result_list">
                           <div id={`nodeOther`} className={`radio green`}>
-                            <input
-                              type="radio"
-                              name={`resultOther`}
-                              id={`resultOther`}
-                              className="radio__input"
-                              onChange={() => selectOther()}
-                            />
                             <label
                               htmlFor={`resultOther`}
                               className="radio__large_label green"
                             >
                               <select
-                                onChange={handleSelectDropDown}
                                 className="dropdown"
+                                onChange={(e) =>
+                                  handleSelectDropDown(e.target.value)
+                                }
                               >
+                                <option>---</option>
                                 {Object.keys(props.dbCatalogue).map((key) => {
                                   if (
                                     !props.route.find((v) => v.name === key)
