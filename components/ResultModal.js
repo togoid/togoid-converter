@@ -333,6 +333,13 @@ const ResultModal = (props) => {
 
               {props.tableData && props.tableData.rows.length > 0 && (
                 <div className="export_button">
+                  <select name="selectTab" id="" className="dropdown">
+                    {previewModeList.map((v, i) => (
+                      <option key={v} onClick={() => setPreviewMode(i)}>
+                        {v}
+                      </option>
+                    ))}
+                  </select>
                   <button onClick={handleMenu} className="button_icon">
                     <svg className="button_icon__icon" viewBox="0 0 24 24">
                       <path
