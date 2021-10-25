@@ -189,12 +189,14 @@ const Navigate = (props) => {
                                               : "#ffffff",
                                           }}
                                         >
-                                          <span className="text">{props.dbCatalogue[v.name].label}</span>
+                                          <span className="text">
+                                            {props.dbCatalogue[v.name].label}
+                                          </span>
                                           <span
                                             id={`total${i}-${v.name}`}
                                             className="total"
                                           >
-                                            {v.total >= 0 ? v.total : "too many"}
+                                            {v.total}
                                           </span>
                                         </p>
                                       </label>
@@ -292,7 +294,9 @@ const Navigate = (props) => {
                                                 : "#ffffff",
                                             }}
                                           >
-                                            <span className="text">{props.dbCatalogue[v.name].label}</span>
+                                            <span className="text">
+                                              {props.dbCatalogue[v.name].label}
+                                            </span>
                                             <span
                                               id={`total${i}-${v.name}-${j}`}
                                               className="total"
