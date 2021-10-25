@@ -1,12 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 
 const IdInput = (props) => {
-  const [previousRouteText, setPreviousRouteText] = useState("");
-
   const handleSubmit = (e) => {
     if (e) e.preventDefault();
 
-    if (previousRouteText) {
+    if (props.isKeepRouteChecked && props.previousRoute.length) {
       props.tryKeepRoute(props.idTexts);
     } else {
       const list = props.handleSubmit(props.idTexts);
@@ -41,19 +39,6 @@ const IdInput = (props) => {
     };
 
     e.target.value = "";
-  };
-
-  const handleKeepRoute = (e) => {
-    if (e.target.checked) {
-      props.setPreviousRoute(props.route);
-      const keepRouteText = props.route.map(
-        (v) => props.dbCatalogue[v.name].label
-      );
-      setPreviousRouteText(keepRouteText.join(" - "));
-    } else {
-      props.setPreviousRoute([]);
-      setPreviousRouteText("");
-    }
   };
 
   return (
@@ -94,12 +79,6 @@ const IdInput = (props) => {
           />
         </div>
       </form>
-
-      <label>
-        <input type="checkbox" onChange={handleKeepRoute} />
-        Try keeping route
-      </label>
-      <p>{previousRouteText}</p>
 
       <div className="input_area__bottom">
         <div className="input_area__bottom__links">

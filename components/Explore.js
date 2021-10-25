@@ -26,6 +26,9 @@ const Explore = (props) => {
     const r = props.route.slice(0, i);
     r[i] = database;
     props.setRoute(r);
+    if (props.isKeepRouteChecked) {
+      props.setPreviousRoute(r);
+    }
     return r;
   };
 
@@ -79,15 +82,11 @@ const Explore = (props) => {
   };
 
   const handleKeepRoute = (e) => {
+    props.setIsKeepRouteChecked(e.target.checked);
     if (e.target.checked) {
       props.setPreviousRoute(props.route);
-      const keepRouteText = props.route.map(
-        (v) => props.dbCatalogue[v.name].label
-      );
-      setPreviousRouteText(keepRouteText.join(" - "));
     } else {
       props.setPreviousRoute([]);
-      setPreviousRouteText("");
     }
   };
 
@@ -101,7 +100,7 @@ const Explore = (props) => {
                 <input
                   type="checkbox"
                   onChange={handleKeepRoute}
-                  checked
+                  checked={Boolean(props.isKeepRouteChecked)}
                   id="keepRoot"
                   className="switch_button__input"
                 />
