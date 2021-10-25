@@ -683,6 +683,7 @@ const Home = () => {
           idTexts={idTexts}
           handleTopExamples={handleTopExamples}
           route={route}
+          setRoute={setRoute}
           setPreviousRoute={setPreviousRoute}
           dbCatalogue={dbCatalogue}
           tryKeepRoute={tryKeepRoute}

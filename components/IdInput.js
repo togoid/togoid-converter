@@ -9,7 +9,10 @@ const IdInput = (props) => {
     if (previousRouteText) {
       props.tryKeepRoute(props.idTexts);
     } else {
-      props.handleSubmit(props.idTexts);
+      const list = props.handleSubmit(props.idTexts);
+      if (list.length === 1) {
+        props.setRoute(list);
+      }
     }
   };
 
