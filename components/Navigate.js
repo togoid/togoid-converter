@@ -79,12 +79,7 @@ const Navigate = (props) => {
       })
     );
 
-    if (routeIndex === props.databaseNodesList.length - 1) {
-      setTotal(props.databaseNodesList[routeIndex][props.offsetRoute[1]].total);
-    } else {
-      setTotal(database.total);
-    }
-
+    setTotal(database.total);
     setTableData({ heading, rows });
   };
 
@@ -240,10 +235,7 @@ const Navigate = (props) => {
                                       <ul className="result_list"></ul>
                                     </div>
                                   );
-                                } else if (
-                                  i !== props.databaseNodesList.length - 1 ||
-                                  j < 1
-                                ) {
+                                } else {
                                   const isActionButtonVisible =
                                     visibleActionButtonIndex[0] === i &&
                                     visibleActionButtonIndex[1] === j;
@@ -363,27 +355,12 @@ const Navigate = (props) => {
                                           </div>
                                         )}
                                       </div>
-                                      {i !==
-                                        props.databaseNodesList.length - 1 && (
-                                        <p
-                                          id={`total${i}-${v.name}-${j}`}
-                                          className="total"
-                                        >
-                                          {i ===
-                                          props.databaseNodesList.length - 2
-                                            ? props.databaseNodesList[i + 1][j]
-                                                .total
-                                            : i ===
-                                                props.databaseNodesList.length -
-                                                  3 &&
-                                              props.databaseNodesList[i + 1][
-                                                j
-                                              ] === null
-                                            ? props.databaseNodesList[i + 2][j]
-                                                .total
-                                            : v.total}
-                                        </p>
-                                      )}
+                                      <p
+                                        id={`total${i}-${v.name}-${j}`}
+                                        className="total"
+                                      >
+                                        {v.total}
+                                      </p>
                                     </li>
                                   );
                                 }
