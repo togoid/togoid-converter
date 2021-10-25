@@ -54,7 +54,7 @@ const Home = () => {
               getPathStyle(`total${0}-${route[0].name}`, `nodeOther`, false),
             ]);
           } else {
-            createSpecificModePath();
+            createSpecificModePath(databaseNodesList);
           }
         } else if (isUseKeepRoute) {
           const r = route;
@@ -86,12 +86,6 @@ const Home = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route]);
-
-  useEffect(() => {
-    if (idTexts === "") {
-      clearExplore();
-    }
-  }, [idTexts]);
 
   const createNodesList = async (routeTemp) => {
     const nodesList = isUseKeepRoute
@@ -487,53 +481,7 @@ const Home = () => {
     ];
     await setDatabaseNodesList(nodesList);
 
-    const candidatePaths = [];
-    nodesList.forEach((nodes, i) => {
-      if (i === 0) return;
-      else if (i === 1) {
-        nodes.forEach((v, j) => {
-          candidatePaths.push(
-            getPathStyle(
-              `total${i - 1}-${route[i - 1].name}`,
-              `node${i}-${v.name}-${j}`,
-              false
-            )
-          );
-        });
-      } else if (i === nodesList.length - 1) {
-        nodes.forEach((v, j) => {
-          if (nodesList[i - 1][j] === null) {
-            candidatePaths.push(
-              getPathStyle(
-                `total${i - 2}-${nodesList[i - 2][j].name}-${j}`,
-                `node${i}-${v.name}-0`,
-                false
-              )
-            );
-          } else {
-            candidatePaths.push(
-              getPathStyle(
-                `total${i - 1}-${nodesList[i - 1][j].name}-${j}`,
-                `node${i}-${v.name}-0`,
-                false
-              )
-            );
-          }
-        });
-      } else {
-        nodes.forEach((v, j) => {
-          if (v === null) return;
-          candidatePaths.push(
-            getPathStyle(
-              `total${i - 1}-${nodesList[i - 1][j].name}-${j}`,
-              `node${i}-${v.name}-${j}`,
-              false
-            )
-          );
-        });
-      }
-    });
-    setCandidatePaths(candidatePaths);
+    createSpecificModePath(nodesList);
   };
 
   const getTotal = async (candidates) => {
@@ -609,9 +557,9 @@ const Home = () => {
     return [nodesList1, nodesList2];
   };
 
-  const createSpecificModePath = () => {
+  const createSpecificModePath = (nodesList) => {
     const candidatePaths = [];
-    databaseNodesList.forEach((nodes, i) => {
+    nodesList.forEach((nodes, i) => {
       if (i === 0) return;
       else if (i === 1) {
         nodes.forEach((v, j) => {
@@ -623,21 +571,21 @@ const Home = () => {
             )
           );
         });
-      } else if (i === databaseNodesList.length - 1) {
+      } else if (i === nodesList.length - 1) {
         nodes.forEach((v, j) => {
-          if (databaseNodesList[i - 1][j] === null) {
+          if (nodesList[i - 1][j] === null) {
             candidatePaths.push(
               getPathStyle(
-                `total${i - 2}-${databaseNodesList[i - 2][j].name}-${j}`,
-                `node${i}-${v.name}-0`,
+                `total${i - 2}-${nodesList[i - 2][j].name}-${j}`,
+                `node${i}-${v.name}-${j}`,
                 j === offsetRoute[i - 2]
               )
             );
           } else {
             candidatePaths.push(
               getPathStyle(
-                `total${i - 1}-${databaseNodesList[i - 1][j].name}-${j}`,
-                `node${i}-${v.name}-0`,
+                `total${i - 1}-${nodesList[i - 1][j].name}-${j}`,
+                `node${i}-${v.name}-${j}`,
                 j === offsetRoute[i - 2]
               )
             );
@@ -649,7 +597,7 @@ const Home = () => {
           else {
             candidatePaths.push(
               getPathStyle(
-                `total${i - 1}-${databaseNodesList[i - 1][j].name}-${j}`,
+                `total${i - 1}-${nodesList[i - 1][j].name}-${j}`,
                 `node${i}-${v.name}-${j}`,
                 j === offsetRoute[i - 1]
               )
@@ -683,6 +631,7 @@ const Home = () => {
           idTexts={idTexts}
           handleTopExamples={handleTopExamples}
           route={route}
+          setRoute={setRoute}
           setPreviousRoute={setPreviousRoute}
           dbCatalogue={dbCatalogue}
           tryKeepRoute={tryKeepRoute}
