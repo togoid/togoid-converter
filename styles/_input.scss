@@ -222,7 +222,6 @@
     width: 200px;
     font-size: 1.2rem;
     color: $textColor02;
-    margin: 0 0 0 35px;
     line-height: 24px;
     text-align: center;
     border-radius: 5px;
@@ -239,7 +238,7 @@
     &:before {
       position: absolute;
       top: 50%;
-      left: 0;
+      right: -30px;
       display: inline-block;
       content: '';
       width: 18px;
@@ -247,10 +246,13 @@
       transform: translateY(-50%);
       border-radius: 50%;
       border: 1px solid $gray01;
+      background: $white;
     }
     &__inner {
       position: relative;
-      display: block;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       text-align: left;
       padding: 8px 15px;
       color: #ffffff;
@@ -288,7 +290,7 @@
         &:after {
           position: absolute;
           top: 50%;
-          left: 3px;
+          right: -27px;
           content: '';
           display: inline-block;
           width: 14px;

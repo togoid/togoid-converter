@@ -173,9 +173,6 @@ const Explore = (props) => {
                                       htmlFor={`result${i}-${j}`}
                                       className="radio__large_label green"
                                       style={{
-                                        opacity: isActionButtonVisible
-                                          ? 0.7
-                                          : 1,
                                         backgroundColor: isActionButtonVisible
                                           ? "#000000"
                                           : categories[v.category]
@@ -183,7 +180,7 @@ const Explore = (props) => {
                                           : null,
                                       }}
                                     >
-                                      <span
+                                      <p
                                         className="radio__large_label__inner"
                                         style={{
                                           color: isActionButtonVisible
@@ -191,8 +188,16 @@ const Explore = (props) => {
                                             : "#ffffff",
                                         }}
                                       >
-                                        {props.dbCatalogue[v.name].label}
-                                      </span>
+                                        <span className="text">
+                                          {props.dbCatalogue[v.name].label}
+                                        </span>
+                                        <span
+                                          id={`total${i}-${v.name}`}
+                                          className="total"
+                                        >
+                                          {v.total >= 0 ? v.total : "too many"}
+                                        </span>
+                                      </p>
                                     </label>
                                     {isActionButtonVisible && (
                                       <div className="action_icons">
@@ -254,12 +259,6 @@ const Explore = (props) => {
                                       </div>
                                     )}
                                   </div>
-                                  <p
-                                    id={`total${i}-${v.name}`}
-                                    className="total"
-                                  >
-                                    {v.total >= 0 ? v.total : "too many"}
-                                  </p>
                                 </li>
                               );
                             }
