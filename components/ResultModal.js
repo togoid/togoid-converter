@@ -12,7 +12,6 @@ const ResultModal = (props) => {
   const [modTable, setModTable] = useState(null);
 
   useEffect(() => {
-    console.log(previewMode);
     const result = formatPreviewTable(
       props.tableData.heading,
       props.tableData.rows
