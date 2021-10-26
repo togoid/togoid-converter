@@ -341,32 +341,34 @@ const Navigate = (props) => {
                         )}
                       </div>
                     ))}
-                  {props.route.length === 1 &&
-                    props.databaseNodesList.length === 1 && (
-                      <div className="item_wrapper">
-                        <ul className="result_list">
-                          <div id={`nodeOther`} className={`radio green`}>
-                            <select
-                              className="dropdown"
-                              onChange={(e) =>
-                                handleSelectDropDown(e.target.value)
+                  {((props.route.length === 1 &&
+                    props.databaseNodesList.length === 1) ||
+                    (props.databaseNodesList[1] &&
+                      props.databaseNodesList[1].length === 0)) && (
+                    <div className="item_wrapper">
+                      <ul className="result_list">
+                        <div id={`nodeOther`} className={`radio green`}>
+                          <select
+                            className="dropdown"
+                            onChange={(e) =>
+                              handleSelectDropDown(e.target.value)
+                            }
+                          >
+                            <option>---</option>
+                            {Object.keys(props.dbCatalogue).map((key) => {
+                              if (!props.route.find((v) => v.name === key)) {
+                                return (
+                                  <option key={key} value={key}>
+                                    {props.dbCatalogue[key].label}
+                                  </option>
+                                );
                               }
-                            >
-                              <option>---</option>
-                              {Object.keys(props.dbCatalogue).map((key) => {
-                                if (!props.route.find((v) => v.name === key)) {
-                                  return (
-                                    <option key={key} value={key}>
-                                      {props.dbCatalogue[key].label}
-                                    </option>
-                                  );
-                                }
-                              })}
-                            </select>
-                          </div>
-                        </ul>
-                      </div>
-                    )}
+                            })}
+                          </select>
+                        </div>
+                      </ul>
+                    </div>
+                  )}
 
                   {informationModal && (
                     <InformationModal

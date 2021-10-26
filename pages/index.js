@@ -51,7 +51,7 @@ const Home = () => {
           if (route.length === 1) {
             setDatabaseNodesList([databaseNodesList[0]]);
             setCandidatePaths([
-              getPathStyle(`total${0}-${route[0].name}`, `nodeOther`, false),
+              getPathStyle(`node${0}-${route[0].name}`, `nodeOther`, false),
             ]);
           } else {
             createSpecificModePath(databaseNodesList);
@@ -472,12 +472,22 @@ const Home = () => {
       await getTotal(candidatesThird)
     );
 
-    const nodesList = [
-      nodesList1[0],
-      nodesList1[1].concat(nodesList2[1]),
-      Array(nodesList1[1].length).fill(null).concat(nodesList2[2]),
-      nodesList1[2].concat(nodesList2[3]),
-    ];
+    const nodesList = [nodesList1[0]];
+    if (nodesList1[2].length || nodesList2[3].length) {
+      nodesList.push(nodesList1[1].concat(nodesList2[1]));
+      nodesList.push(
+        Array(nodesList1[1].length).fill(null).concat(nodesList2[2])
+      );
+      nodesList.push(nodesList1[2].concat(nodesList2[3]));
+    } else if (nodesList2[2].length) {
+      nodesList.push(nodesList1[1].concat(nodesList2[1]));
+      nodesList.push(
+        Array(nodesList1[1].length).fill(null).concat(nodesList2[2])
+      );
+    } else if (nodesList1[1].length || nodesList2[1].length) {
+      nodesList.push(nodesList1[1].concat(nodesList2[1]));
+    }
+
     await setDatabaseNodesList(nodesList);
 
     createSpecificModePath(nodesList);
@@ -559,8 +569,13 @@ const Home = () => {
   const createSpecificModePath = (nodesList) => {
     const candidatePaths = [];
     nodesList.forEach((nodes, i) => {
-      if (i === 0) return;
-      else if (i === 1) {
+      if (i === 0) {
+        if (nodesList.length === 1) {
+          candidatePaths.push(
+            getPathStyle(`node${0}-${route[0].name}`, `nodeOther`, false)
+          );
+        }
+      } else if (i === 1) {
         nodes.forEach((v, j) => {
           candidatePaths.push(
             getPathStyle(
