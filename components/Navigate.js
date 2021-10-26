@@ -346,30 +346,23 @@ const Navigate = (props) => {
                       <div className="item_wrapper">
                         <ul className="result_list">
                           <div id={`nodeOther`} className={`radio green`}>
-                            <label
-                              htmlFor={`resultOther`}
-                              className="radio__large_label green"
+                            <select
+                              className="dropdown"
+                              onChange={(e) =>
+                                handleSelectDropDown(e.target.value)
+                              }
                             >
-                              <select
-                                className="dropdown"
-                                onChange={(e) =>
-                                  handleSelectDropDown(e.target.value)
+                              <option>---</option>
+                              {Object.keys(props.dbCatalogue).map((key) => {
+                                if (!props.route.find((v) => v.name === key)) {
+                                  return (
+                                    <option key={key} value={key}>
+                                      {props.dbCatalogue[key].label}
+                                    </option>
+                                  );
                                 }
-                              >
-                                <option>---</option>
-                                {Object.keys(props.dbCatalogue).map((key) => {
-                                  if (
-                                    !props.route.find((v) => v.name === key)
-                                  ) {
-                                    return (
-                                      <option key={key} value={key}>
-                                        {props.dbCatalogue[key].label}
-                                      </option>
-                                    );
-                                  }
-                                })}
-                              </select>
-                            </label>
+                              })}
+                            </select>
                           </div>
                         </ul>
                       </div>
