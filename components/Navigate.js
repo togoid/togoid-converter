@@ -23,15 +23,15 @@ const Navigate = (props) => {
   }, [tableData]);
 
   const selectDatabase = (database) => {
-    const r = [database];
-    props.setRoute(r);
+    props.setRoute([database]);
     props.setOffsetRoute(null);
   };
 
-  const selectDatabaseModal = (j) => {
+  const selectDatabaseModal = (i, j) => {
     const r = props.databaseNodesList
       .map((node, l) => (l === 0 ? props.route[0] : node[j]))
-      .filter((v) => v);
+      .filter((v) => v)
+      .slice(0, i + 1);
     props.setRoute(r);
     props.setOffsetRoute(j);
     return r;
@@ -42,7 +42,7 @@ const Navigate = (props) => {
   };
 
   const handleIdDownload = async (database, routeIndex, j) => {
-    const r = selectDatabaseModal(j).slice(0, routeIndex + 1);
+    const r = selectDatabaseModal(routeIndex, j);
     const d = await executeQuery(r, props.ids, "target", 10000, false);
     const prefix = props.dbCatalogue[database.name].prefix.split("/").slice(-1);
 
@@ -54,15 +54,13 @@ const Navigate = (props) => {
   };
 
   const showModal = async (database, routeIndex, j) => {
-    const r = selectDatabaseModal(j).slice(0, routeIndex + 1);
-    const heading = r
-      .filter((v, i) => i <= routeIndex)
-      .map((v) => props.dbCatalogue[v.name]);
+    const r = selectDatabaseModal(routeIndex, j);
+    const heading = r.map((v) => props.dbCatalogue[v.name]);
     const d = await executeQuery(r, props.ids, "all", 100, false);
-    const rows = d.results.map((v) => v.slice(0, routeIndex + 1));
+    const rows = d.results;
 
     const dbRegExp = new RegExp(props.dbCatalogue[r[0].name].regex);
-    const convertedIds = Array.from(new Set(d.results.map((item) => item[0])));
+    const convertedIds = Array.from(new Set(rows.map((item) => item[0])));
     setNotConvertedIds(
       props.ids.filter((i) => {
         const match = i.match(dbRegExp);
