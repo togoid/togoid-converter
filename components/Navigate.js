@@ -114,9 +114,6 @@ const Navigate = (props) => {
                           <div>
                             <React.Fragment>
                               <p className="item_first_heading">Convert from</p>
-                              <p className="item_first_count_heading">
-                                Matched
-                              </p>
                             </React.Fragment>
                             <ul className="result_list first">
                               {nodes.map((v, j) => {
