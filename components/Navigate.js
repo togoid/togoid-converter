@@ -22,26 +22,18 @@ const Navigate = (props) => {
     if (tableData.heading.length > 0) setModalVisibility(true);
   }, [tableData]);
 
-  const selectDatabase = (database, i, j = null) => {
-    const r = props.route.slice(0, i);
-    if (i === 0 || r[i - 1]) {
-      r[i] = database;
-    } else {
-      r[i - 1] = database;
-    }
-
-    if (
-      i > 0 &&
-      j !== null &&
-      props.databaseNodesList[i + 1] &&
-      props.databaseNodesList[i + 1][j] !== null
-    ) {
-      r[i + 1] = props.databaseNodesList[i + 1][j];
-    }
+  const selectDatabase = (database) => {
+    const r = [database];
     props.setRoute(r);
-    const offset = props.offsetRoute.slice(0, i);
-    offset[i] = j;
-    props.setOffsetRoute(offset);
+    props.setOffsetRoute(null);
+  };
+
+  const selectDatabaseModal = (j) => {
+    const r = props.databaseNodesList
+      .map((node, l) => (l === 0 ? props.route[0] : node[j]))
+      .filter((v) => v);
+    props.setRoute(r);
+    props.setOffsetRoute(j);
     return r;
   };
 
@@ -49,8 +41,8 @@ const Navigate = (props) => {
     props.restartExplore();
   };
 
-  const handleIdDownload = async (database, routeIndex) => {
-    const r = selectDatabase(database, routeIndex).slice(0, routeIndex + 1);
+  const handleIdDownload = async (database, routeIndex, j) => {
+    const r = selectDatabaseModal(j).slice(0, routeIndex + 1);
     const d = await executeQuery(r, props.ids, "target", 10000, false);
     const prefix = props.dbCatalogue[database.name].prefix.split("/").slice(-1);
 
@@ -61,8 +53,8 @@ const Navigate = (props) => {
     saveAs(blob, "ids.txt");
   };
 
-  const showModal = async (database, routeIndex) => {
-    const r = selectDatabase(database, routeIndex).slice(0, routeIndex + 1);
+  const showModal = async (database, routeIndex, j) => {
+    const r = selectDatabaseModal(j).slice(0, routeIndex + 1);
     const heading = r
       .filter((v, i) => i <= routeIndex)
       .map((v) => props.dbCatalogue[v.name]);
@@ -248,20 +240,6 @@ const Navigate = (props) => {
                                           v.total > 0 ? null : "not_found"
                                         }`}
                                       >
-                                        <input
-                                          type="radio"
-                                          name={`result${i}`}
-                                          id={`result${i}-${j}`}
-                                          className="radio__input"
-                                          checked={Boolean(
-                                            props.offsetRoute[i] &&
-                                              props.offsetRoute[i] === j
-                                          )}
-                                          onChange={() =>
-                                            selectDatabase(v, i, j)
-                                          }
-                                          disabled={!v.total}
-                                        />
                                         <label
                                           htmlFor={`result${i}-${j}`}
                                           className="radio__large_label green"
@@ -299,7 +277,9 @@ const Navigate = (props) => {
                                           <div className="action_icons">
                                             {v.total > 0 && (
                                               <button
-                                                onClick={() => showModal(v, i)}
+                                                onClick={() =>
+                                                  showModal(v, i, j)
+                                                }
                                                 className="action_icons__item"
                                               >
                                                 <svg
@@ -318,7 +298,7 @@ const Navigate = (props) => {
                                             {v.total > 0 && (
                                               <button
                                                 onClick={() =>
-                                                  handleIdDownload(v, i)
+                                                  handleIdDownload(v, i, j)
                                                 }
                                                 className="action_icons__item"
                                               >

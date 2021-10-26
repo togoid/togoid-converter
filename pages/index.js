@@ -23,7 +23,7 @@ const Home = () => {
   const [dbCatalogue, setDbCatalogue] = useState([]);
   const [dbConfig, setDbConfig] = useState([]);
   const [dbDesc, setDbDesc] = useState([]);
-  const [offsetRoute, setOffsetRoute] = useState([]);
+  const [offsetRoute, setOffsetRoute] = useState(null);
   const [previousSearchTab, setPreviousSearchTab] = useState("EXPLORE");
   const [isKeepRouteChecked, setIsKeepRouteChecked] = useState(true);
 
@@ -566,7 +566,7 @@ const Home = () => {
             getPathStyle(
               `node${i - 1}-${route[i - 1].name}`,
               `node${i}-${v.name}-${j}`,
-              j === offsetRoute[i]
+              j === offsetRoute
             )
           );
         });
@@ -577,7 +577,7 @@ const Home = () => {
               getPathStyle(
                 `node${i - 2}-${nodesList[i - 2][j].name}-${j}`,
                 `node${i}-${v.name}-${j}`,
-                j === offsetRoute[i - 2]
+                j === offsetRoute
               )
             );
           } else {
@@ -585,7 +585,7 @@ const Home = () => {
               getPathStyle(
                 `node${i - 1}-${nodesList[i - 1][j].name}-${j}`,
                 `node${i}-${v.name}-${j}`,
-                j === offsetRoute[i - 2]
+                j === offsetRoute
               )
             );
           }
@@ -598,7 +598,7 @@ const Home = () => {
               getPathStyle(
                 `node${i - 1}-${nodesList[i - 1][j].name}-${j}`,
                 `node${i}-${v.name}-${j}`,
-                j === offsetRoute[i - 1]
+                j === offsetRoute
               )
             );
           }
