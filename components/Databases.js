@@ -104,23 +104,28 @@ const Databases = (props) => {
                           {props.dbCatalogue[key].label}
                         </span>
                       </h3>
-                      {dbCatalogueSparql[key][`description_${language}`] && (
-                        <div className="description">
-                          <p>
-                            {dbCatalogueSparql[key][`description_${language}`]}
-                          </p>
-                          <p>
-                            Cited from{" "}
-                            <a
-                              href={`https://integbio.jp/dbcatalog/record/${props.dbCatalogue[key].catalog}`}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              Integbio Database Catalog
-                            </a>
-                          </p>
-                        </div>
-                      )}
+                      {dbCatalogueSparql[key] &&
+                        dbCatalogueSparql[key][`description_${language}`] && (
+                          <div className="description">
+                            <p>
+                              {
+                                dbCatalogueSparql[key][
+                                  `description_${language}`
+                                ]
+                              }
+                            </p>
+                            <p>
+                              Cited from{" "}
+                              <a
+                                href={`https://integbio.jp/dbcatalog/record/${props.dbCatalogue[key].catalog}`}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                Integbio Database Catalog
+                              </a>
+                            </p>
+                          </div>
+                        )}
                       <div className="path">
                         <div className="path_label small white">LINK TO</div>
                         <svg className="icon" viewBox="0 0 24 24">
@@ -159,18 +164,21 @@ const Databases = (props) => {
                           <dt>CATEGORY</dt>
                           <dd>{props.dbCatalogue[key].category}</dd>
                         </div>
-                        {dbCatalogueSparql[key][`organization_${language}`] && (
-                          <div className="data__wrapper">
-                            <dt>ORGANIZATION</dt>
-                            <dd>
-                              {
-                                dbCatalogueSparql[key][
-                                  `organization_${language}`
-                                ]
-                              }
-                            </dd>
-                          </div>
-                        )}
+                        {dbCatalogueSparql[key] &&
+                          dbCatalogueSparql[key][
+                            `organization_${language}`
+                          ] && (
+                            <div className="data__wrapper">
+                              <dt>ORGANIZATION</dt>
+                              <dd>
+                                {
+                                  dbCatalogueSparql[key][
+                                    `organization_${language}`
+                                  ]
+                                }
+                              </dd>
+                            </div>
+                          )}
                         {props.dbCatalogue[key].examples && (
                           <div className="data__wrapper">
                             <dt>EXAMPLES</dt>
