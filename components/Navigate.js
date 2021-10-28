@@ -89,7 +89,6 @@ const Navigate = (props) => {
     props.lookupRoute(value);
   };
 
-  console.log(props.candidatePaths);
   return (
     <div className="explore navigate">
       <div className="drawing_area">
@@ -217,7 +216,10 @@ const Navigate = (props) => {
                               {nodes.map((v, j) => {
                                 if (v === null) {
                                   return (
-                                    <div className="item_wrapper">
+                                    <div
+                                      id={`to${i}-${j}`}
+                                      className="item_wrapper"
+                                    >
                                       <ul className="result_list"></ul>
                                     </div>
                                   );
@@ -237,7 +239,7 @@ const Navigate = (props) => {
                                       className="result_list__item"
                                     >
                                       <div
-                                        id={`to${i}-${v.name}-${j}`}
+                                        id={`to${i}-${j}`}
                                         className={`radio green ${
                                           v.total > 0 ? null : "not_found"
                                         }`}
@@ -259,7 +261,7 @@ const Navigate = (props) => {
                                           }}
                                         >
                                           <div
-                                            id={`from${i}-${v.name}-${j}`}
+                                            id={`from${i}-${j}`}
                                             className="dummy"
                                           />
                                           <p

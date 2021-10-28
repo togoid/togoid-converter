@@ -54,7 +54,7 @@ const Home = () => {
               getPathStyle(`from${0}-${route[0].name}`, `nodeOther`, false),
             ]);
           } else {
-            createSpecificModePath(databaseNodesList);
+            createNavigatePath(databaseNodesList);
           }
         } else if (isUseKeepRoute) {
           const r = route;
@@ -271,20 +271,24 @@ const Home = () => {
 
   const lookupRoute = async (target) => {
     const r = route[route.length - 1];
+    const firstCandidates = [];
     const firstCandidatesTemp = [];
 
-    // tergetと一致しない変換可能なものを取得
     Object.keys(dbConfig).forEach((k) => {
-      if (!firstCandidatesTemp.find((v) => v.name === r.name)) {
-        const keySplit = k.split("-");
-        if (keySplit[0] === r.name) {
-          const name = keySplit[1];
-          if (
-            name !== target &&
-            !route.find((w) => w.name === name) &&
-            !firstCandidatesTemp.find((v) => v.name === name)
-          ) {
-            // 順方向の変換
+      const keySplit = k.split("-");
+      if (keySplit[0] === r.name) {
+        const name = keySplit[1];
+        if (!route.find((w) => w.name === name)) {
+          if (name === target) {
+            if (!firstCandidates.length) {
+              firstCandidates.push({
+                name,
+                category: dbCatalogue[name].category,
+                total: 1,
+                ids: [],
+              });
+            }
+          } else if (!firstCandidatesTemp.find((v) => v.name === name)) {
             firstCandidatesTemp.push({
               name,
               category: dbCatalogue[name].category,
@@ -292,14 +296,21 @@ const Home = () => {
               ids: [],
             });
           }
-        } else if (dbConfig[k].link.reverse && keySplit[1] === r.name) {
-          // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
-          const name = keySplit[0];
-          if (
-            name !== target &&
-            !route.find((w) => w.name === name) &&
-            !firstCandidatesTemp.find((v) => v.name === name)
-          ) {
+        }
+      } else if (dbConfig[k].link.reverse && keySplit[1] === r.name) {
+        // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
+        const name = keySplit[0];
+        if (!route.find((w) => w.name === name)) {
+          if (name === target) {
+            if (!firstCandidates.length) {
+              firstCandidates.push({
+                name,
+                category: dbCatalogue[name].category,
+                total: 1,
+                ids: [],
+              });
+            }
+          } else if (!firstCandidatesTemp.find((v) => v.name === name)) {
             firstCandidatesTemp.push({
               name,
               category: dbCatalogue[name].category,
@@ -472,25 +483,20 @@ const Home = () => {
       await getTotal(candidatesThird)
     );
 
-    const nodesList = [nodesList1[0]];
-    if (nodesList1[2].length || nodesList2[3].length) {
-      nodesList.push(nodesList1[1].concat(nodesList2[1]));
-      nodesList.push(
-        Array(nodesList1[1].length).fill(null).concat(nodesList2[2])
-      );
-      nodesList.push(nodesList1[2].concat(nodesList2[3]));
-    } else if (nodesList2[2].length) {
-      nodesList.push(nodesList1[1].concat(nodesList2[1]));
-      nodesList.push(
-        Array(nodesList1[1].length).fill(null).concat(nodesList2[2])
-      );
-    } else if (nodesList1[1].length || nodesList2[1].length) {
-      nodesList.push(nodesList1[1].concat(nodesList2[1]));
-    }
+    const nodesList = [
+      nodesList1[0],
+      Array(firstCandidates.length)
+        .fill(null)
+        .concat(nodesList1[1], nodesList2[1]),
+      Array(firstCandidates.length)
+        .fill(null)
+        .concat(Array(nodesList1[1].length).fill(null), nodesList2[2]),
+      firstCandidates.concat(nodesList1[2], nodesList2[3]),
+    ].filter((v) => v.length);
 
     await setDatabaseNodesList(nodesList);
 
-    createSpecificModePath(nodesList);
+    createNavigatePath(nodesList);
   };
 
   const getTotal = async (candidates) => {
@@ -566,7 +572,7 @@ const Home = () => {
     return [nodesList1, nodesList2];
   };
 
-  const createSpecificModePath = (nodesList) => {
+  const createNavigatePath = (nodesList) => {
     const candidatePaths = [];
     nodesList.forEach((nodes, i) => {
       if (i === 0) {
@@ -577,31 +583,60 @@ const Home = () => {
         }
       } else if (i === 1) {
         nodes.forEach((v, j) => {
-          candidatePaths.push(
-            getPathStyle(
-              `from${i - 1}-${route[i - 1].name}`,
-              `to${i}-${v.name}-${j}`,
-              j === offsetRoute
-            )
-          );
-        });
-      } else if (i === nodesList.length - 1) {
-        nodes.forEach((v, j) => {
-          if (nodesList[i - 1][j] === null) {
+          if (v === null) {
             candidatePaths.push(
               getPathStyle(
-                `to${i - 2}-${nodesList[i - 2][j].name}-${j}`,
-                `to${i}-${v.name}-${j}`,
+                `from${0}-${route[0].name}`,
+                `to${i}-${j}`,
                 j === offsetRoute
               )
             );
           } else {
             candidatePaths.push(
               getPathStyle(
-                `to${i - 1}-${nodesList[i - 1][j].name}-${j}`,
-                `to${i}-${v.name}-${j}`,
+                `from${0}-${route[0].name}`,
+                `to${i}-${j}`,
                 j === offsetRoute
               )
+            );
+          }
+        });
+      } else if (i === nodesList.length - 1) {
+        nodes.forEach((v, j) => {
+          if (nodesList[i - 2][j] === null) {
+            candidatePaths.push({
+              from: {
+                id: `to${i - 2}-${j}`,
+                posX: "left",
+                posY: "middle",
+              },
+              to: {
+                id: `to${i}-${j}`,
+                posX: "left",
+                posY: "middle",
+              },
+              style:
+                j === offsetRoute
+                  ? {
+                      color: "#1A8091",
+                      head: "none",
+                      arrow: "smooth",
+                      width: 2,
+                    }
+                  : {
+                      color: "#dddddd",
+                      head: "none",
+                      arrow: "smooth",
+                      width: 1.5,
+                    },
+            });
+          } else if (nodesList[i - 1][j] === null) {
+            candidatePaths.push(
+              getPathStyle(`to${i - 2}-${j}`, `to${i}-${j}`, j === offsetRoute)
+            );
+          } else {
+            candidatePaths.push(
+              getPathStyle(`to${i - 1}-${j}`, `to${i}-${j}`, j === offsetRoute)
             );
           }
         });
@@ -610,11 +645,7 @@ const Home = () => {
           if (v === null) return;
           else {
             candidatePaths.push(
-              getPathStyle(
-                `to${i - 1}-${nodesList[i - 1][j].name}-${j}`,
-                `to${i}-${v.name}-${j}`,
-                j === offsetRoute
-              )
+              getPathStyle(`to${i - 1}-${j}`, `to${i}-${j}`, j === offsetRoute)
             );
           }
         });
