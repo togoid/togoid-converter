@@ -64,24 +64,31 @@ const ResultModal = (props) => {
       const rows = [];
       const url = [];
       for (const v of tableRows) {
-        rows.push([
-          subPrefixList[0] + v[0],
-          subPrefixList[subPrefixList.length - 1] + v[v.length - 1],
-        ]);
-        url.push([
-          tableHeading[0].prefix + v[0],
-          tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
-        ]);
+        const start = subPrefixList[0] + v[0];
+        const goal = subPrefixList[subPrefixList.length - 1] + v[v.length - 1];
+        if (!rows.find((w) => w[0] === start && w[1] === goal)) {
+          rows.push([start, goal]);
+          url.push([
+            tableHeading[0].prefix + v[0],
+            tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
+          ]);
+        }
       }
       table.rows = rows;
       table.url = url;
     } else if (previewMode === 3) {
       // origin and taregets URLs
       table.heading = [tableHeading[0], tableHeading[tableHeading.length - 1]];
-      table.rows = table.url = tableRows.map((v) => [
-        tableHeading[0].prefix + v[0],
-        tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
-      ]);
+      table.rows = table.url = [
+        ...new Set(
+          tableRows.map((v) =>
+            JSON.stringify([
+              tableHeading[0].prefix + v[0],
+              tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
+            ])
+          )
+        ),
+      ].map(JSON.parse);
     } else if (previewMode === 4) {
       // target IDs
       const subPrefixList = [
@@ -93,19 +100,27 @@ const ResultModal = (props) => {
       const rows = [];
       const url = [];
       for (const v of tableRows) {
-        rows.push([subPrefixList[subPrefixList.length - 1] + v[v.length - 1]]);
-        url.push([
-          tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
-        ]);
+        const goal = subPrefixList[subPrefixList.length - 1] + v[v.length - 1];
+        if (!rows.find((w) => w[0] === goal)) {
+          rows.push([goal]);
+          url.push([
+            tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
+          ]);
+        }
       }
       table.rows = rows;
       table.url = url;
     } else if (previewMode === 5) {
       // target URLs
       table.heading = [tableHeading[tableHeading.length - 1]];
-      table.rows = table.url = tableRows.map((v) => [
-        tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
-      ]);
+      table.rows = table.url = [
+        ...new Set(
+          tableRows.map(
+            (v) =>
+              tableHeading[tableHeading.length - 1].prefix + v[v.length - 1]
+          )
+        ),
+      ].map((w) => [w]);
     }
     return table;
   };
@@ -141,20 +156,32 @@ const ResultModal = (props) => {
         tableHeading[0],
         tableHeading[tableHeading.length - 1],
       ];
-      exportTable.rows = tableRows.map((v) => [
-        subPrefixList[0] + v[0],
-        subPrefixList[subPrefixList.length - 1] + v[v.length - 1],
-      ]);
+      exportTable.rows = [
+        ...new Set(
+          tableRows.map((v) =>
+            JSON.stringify([
+              subPrefixList[0] + v[0],
+              subPrefixList[subPrefixList.length - 1] + v[v.length - 1],
+            ])
+          )
+        ),
+      ].map(JSON.parse);
     } else if (previewMode === 3) {
       // origin and taregets URLs
       exportTable.heading = [
         tableHeading[0],
         tableHeading[tableHeading.length - 1],
       ];
-      exportTable.rows = tableRows.map((v) => [
-        tableHeading[0].prefix + v[0],
-        tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
-      ]);
+      exportTable.rows = [
+        ...new Set(
+          tableRows.map((v) =>
+            JSON.stringify([
+              tableHeading[0].prefix + v[0],
+              tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
+            ])
+          )
+        ),
+      ].map(JSON.parse);
     } else if (previewMode === 4) {
       // target IDs
       const subPrefixList = [
@@ -163,15 +190,24 @@ const ResultModal = (props) => {
         ),
       ];
       exportTable.heading = [tableHeading[tableHeading.length - 1]];
-      exportTable.rows = tableRows.map((v) => [
-        subPrefixList[subPrefixList.length - 1] + v[v.length - 1],
-      ]);
+      exportTable.rows = [
+        ...new Set(
+          tableRows.map(
+            (v) => subPrefixList[subPrefixList.length - 1] + v[v.length - 1]
+          )
+        ),
+      ].map((w) => [w]);
     } else if (previewMode === 5) {
       // target URLs
       exportTable.heading = [tableHeading[tableHeading.length - 1]];
-      exportTable.rows = tableRows.map((v) => [
-        tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
-      ]);
+      exportTable.rows = [
+        ...new Set(
+          tableRows.map(
+            (v) =>
+              tableHeading[tableHeading.length - 1].prefix + v[v.length - 1]
+          )
+        ),
+      ].map((w) => [w]);
     }
     return exportTable;
   };
@@ -394,10 +430,34 @@ const ResultModal = (props) => {
                 </div>
               )}
             </div>
-            {props.tableData && props.tableData.rows.length > 0 && (
-              <p className="showing">
-                Showing {props.tableData.rows.length} of {props.total} results
-              </p>
+            {modTable && modTable.rows.length > 0 && (
+              <div>
+                {(() => {
+                  if (props.total > 100) {
+                    if (previewMode <= 1) {
+                      return (
+                        <p className="showing">
+                          Showing {modTable.rows.length} of {props.total}{" "}
+                          results
+                        </p>
+                      );
+                    } else {
+                      return (
+                        <p className="showing">
+                          Showing {modTable.rows.length} of N results
+                        </p>
+                      );
+                    }
+                  } else {
+                    return (
+                      <p className="showing">
+                        Showing {modTable.rows.length} of {modTable.rows.length}{" "}
+                        results
+                      </p>
+                    );
+                  }
+                })()}
+              </div>
             )}
           </div>
           <table className="table">
