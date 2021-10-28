@@ -572,14 +572,14 @@ const Home = () => {
       if (i === 0) {
         if (nodesList.length === 1) {
           candidatePaths.push(
-            getPathStyle(`from${0}-${route[0].name}-0`, `nodeOther`, false)
+            getPathStyle(`from${0}-${route[0].name}`, `nodeOther`, false)
           );
         }
       } else if (i === 1) {
         nodes.forEach((v, j) => {
           candidatePaths.push(
             getPathStyle(
-              `from${i - 1}-${route[i - 1].name}-${j}`,
+              `from${i - 1}-${route[i - 1].name}`,
               `to${i}-${v.name}-${j}`,
               j === offsetRoute
             )
@@ -590,7 +590,7 @@ const Home = () => {
           if (nodesList[i - 1][j] === null) {
             candidatePaths.push(
               getPathStyle(
-                `from${i - 2}-${nodesList[i - 2][j].name}-${j}`,
+                `to${i - 2}-${nodesList[i - 2][j].name}-${j}`,
                 `to${i}-${v.name}-${j}`,
                 j === offsetRoute
               )
@@ -598,7 +598,7 @@ const Home = () => {
           } else {
             candidatePaths.push(
               getPathStyle(
-                `from${i - 1}-${nodesList[i - 1][j].name}-${j}`,
+                `to${i - 1}-${nodesList[i - 1][j].name}-${j}`,
                 `to${i}-${v.name}-${j}`,
                 j === offsetRoute
               )
@@ -611,7 +611,7 @@ const Home = () => {
           else {
             candidatePaths.push(
               getPathStyle(
-                `from${i - 1}-${nodesList[i - 1][j].name}-${j}`,
+                `to${i - 1}-${nodesList[i - 1][j].name}-${j}`,
                 `to${i}-${v.name}-${j}`,
                 j === offsetRoute
               )
