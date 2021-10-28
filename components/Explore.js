@@ -149,7 +149,7 @@ const Explore = (props) => {
                                   className="result_list__item"
                                 >
                                   <div
-                                    id={`node${i}-${v.name}`}
+                                    id={`to${i}-${v.name}`}
                                     className={`radio green ${
                                       i === 0 || v.total > 0
                                         ? null
@@ -179,6 +179,10 @@ const Explore = (props) => {
                                           : null,
                                       }}
                                     >
+                                      <div
+                                        id={`from${i}-${v.name}`}
+                                        className="dummy"
+                                      />
                                       <p
                                         className="radio__large_label__inner"
                                         style={{

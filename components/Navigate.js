@@ -89,8 +89,9 @@ const Navigate = (props) => {
     props.lookupRoute(value);
   };
 
+  console.log(props.candidatePaths);
   return (
-    <div className="explore">
+    <div className="explore navigate">
       <div className="drawing_area">
         <div className="panel">
           {props.databaseNodesList && props.databaseNodesList.length > 0 && (
@@ -130,7 +131,7 @@ const Navigate = (props) => {
                                     className="result_list__item"
                                   >
                                     <div
-                                      id={`node${i}-${v.name}`}
+                                      id={`to${i}-${v.name}`}
                                       className="radio green"
                                     >
                                       <input
@@ -146,7 +147,9 @@ const Navigate = (props) => {
                                       />
                                       <label
                                         htmlFor={`result${i}-${j}`}
-                                        className="radio__large_label green"
+                                        className={`radio__large_label green ${
+                                          i > 0 ? "no_radio" : ""
+                                        }`}
                                         style={{
                                           opacity: isActionButtonVisible
                                             ? 0.7
@@ -158,6 +161,10 @@ const Navigate = (props) => {
                                             : null,
                                         }}
                                       >
+                                        <div
+                                          id={`from${i}-${v.name}-${j}`}
+                                          className="dummy"
+                                        />
                                         <p
                                           className="radio__large_label__inner"
                                           style={{
@@ -230,14 +237,16 @@ const Navigate = (props) => {
                                       className="result_list__item"
                                     >
                                       <div
-                                        id={`node${i}-${v.name}-${j}`}
+                                        id={`to${i}-${v.name}-${j}`}
                                         className={`radio green ${
                                           v.total > 0 ? null : "not_found"
                                         }`}
                                       >
                                         <label
                                           htmlFor={`result${i}-${j}`}
-                                          className="radio__large_label green"
+                                          className={`radio__large_label green ${
+                                            i > 0 ? "no_radio" : ""
+                                          }`}
                                           style={{
                                             opacity: isActionButtonVisible
                                               ? 0.7
@@ -249,6 +258,10 @@ const Navigate = (props) => {
                                               : null,
                                           }}
                                         >
+                                          <div
+                                            id={`from${i}-${v.name}-${j}`}
+                                            className="dummy"
+                                          />
                                           <p
                                             className="radio__large_label__inner"
                                             style={{
