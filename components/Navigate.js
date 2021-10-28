@@ -162,7 +162,7 @@ const Navigate = (props) => {
                                         }}
                                       >
                                         <div
-                                          id={`from${i}-${v.name}-${j}`}
+                                          id={`from${i}-${v.name}`}
                                           className="dummy"
                                         />
                                         <p
