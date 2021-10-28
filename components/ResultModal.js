@@ -6,6 +6,7 @@ import { categories } from "../lib/setting";
 
 const ResultModal = (props) => {
   const [copied, setCopied] = useState(false);
+  const [urlCopied, setUrlCopied] = useState(false);
   const [showAllFailed, setShowAllFailed] = useState(false);
   const [showLinks, setShowLinks] = useState(false);
   const [previewMode, setPreviewMode] = useState(0);
@@ -248,6 +249,19 @@ const ResultModal = (props) => {
     "target URLs",
   ];
 
+  const handleClipboardURL = () => {
+    const include = getInclude();
+    const routeName = props.route.map((v) => v.name).join();
+    const text = `https://api.togoid.dbcls.jp/convert?ids=${props.ids}&route=${routeName}&include=${include}&format=csv`;
+    copy(text, {
+      format: "text/plain",
+    });
+    setUrlCopied(true);
+    setTimeout(() => {
+      setUrlCopied(false);
+    }, 1000);
+  };
+
   return (
     <div className="modal" onClick={() => props.setModalVisibility(false)}>
       <div
@@ -368,6 +382,15 @@ const ResultModal = (props) => {
                   ) : (
                     ""
                   )}
+                  <button onClick={handleClipboardURL} className="button_icon">
+                    {urlCopied ? (
+                      <span>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copied.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      </span>
+                    ) : (
+                      <span>COPY API URL</span>
+                    )}
+                  </button>
                 </div>
               )}
             </div>
