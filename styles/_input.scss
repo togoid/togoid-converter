@@ -256,6 +256,16 @@
       border: 1px solid $gray01;
       background: $white;
     }
+
+    .dummy {
+      position: absolute;
+      top: 11px;
+      right: -30px;
+      display: block;
+      width: 18px;
+      height: 18px;
+    }
+
     &__inner {
       position: relative;
       display: flex;
@@ -272,6 +282,12 @@
         height: 26px;
         overflow: hidden;
         border-radius: 50%;
+      }
+    }
+
+    &.no_radio{
+      &:before {
+        display: none;
       }
     }
   }
