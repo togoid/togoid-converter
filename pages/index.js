@@ -292,7 +292,7 @@ const Home = () => {
             firstCandidatesTemp.push({
               name,
               category: dbCatalogue[name].category,
-              total: 1,
+              total: -2,
               ids: [],
             });
           }
@@ -314,7 +314,7 @@ const Home = () => {
             firstCandidatesTemp.push({
               name,
               category: dbCatalogue[name].category,
-              total: 1,
+              total: -2,
               ids: [],
             });
           }
@@ -357,7 +357,7 @@ const Home = () => {
                 {
                   name,
                   category: dbCatalogue[name].category,
-                  total: 1,
+                  total: -2,
                   ids: [],
                 },
               ]);
@@ -393,7 +393,7 @@ const Home = () => {
                 {
                   name,
                   category: dbCatalogue[name].category,
-                  total: 1,
+                  total: -2,
                   ids: [],
                 },
               ]);
@@ -470,32 +470,27 @@ const Home = () => {
       });
     });
 
-    const firstTemp = firstCandidates.length
-      ? await getTotalFirst([firstCandidates])
-      : [];
-    const secondTemp = await getTotalSecond(secondCandidates);
-    const thirdTemp = await getTotalThird(thirdCandidates);
+    const Candidates = firstCandidates.length
+      ? [...[firstCandidates], ...secondCandidates, ...thirdCandidates]
+      : [...secondCandidates, ...thirdCandidates];
+
+    const t = await getTotal(Candidates);
+
+    const u = t.map((v) => {
+      if (v.length === 1) {
+        return [null, null, v[0]];
+      } else if (v.length === 2) {
+        return [v[0], null, v[1]];
+      } else {
+        return v;
+      }
+    });
 
     const nodesList = [
       databaseNodesList[0],
-      Array(firstTemp.map((v) => v[0]).length)
-        .fill(null)
-        .concat(
-          secondTemp.map((v) => v[0]),
-          thirdTemp.map((v) => v[0])
-        ),
-      Array(firstTemp.map((v) => v[0]).length)
-        .fill(null)
-        .concat(
-          Array(secondTemp.map((v) => v[0]).length).fill(null),
-          thirdTemp.map((v) => v[1])
-        ),
-      firstTemp
-        .map((v) => v[0])
-        .concat(
-          secondTemp.map((v) => v[1]),
-          thirdTemp.map((v) => v[2])
-        ),
+      u.map((v) => v[0]),
+      u.map((v) => v[1]),
+      u.map((v) => v[2]),
     ].filter((v) => v.length);
 
     await setDatabaseNodesList(nodesList);
@@ -503,10 +498,9 @@ const Home = () => {
     createNavigatePath(nodesList);
   };
 
-  const getTotalFirst = async (candidates) => {
+  const getTotal = async (candidates) => {
     NProgress.start();
     const promises = candidates.map((v) => {
-      console.log(v);
       const r = route.slice().concat(v);
       return new Promise(function (resolve) {
         // エラーになった変換でもnullを返してresolve
@@ -519,11 +513,10 @@ const Home = () => {
       });
     });
 
-    let nodesList;
-    await Promise.all(promises).then((values) => {
+    const nodesList = await Promise.all(promises).then((values) => {
       NProgress.done();
       // 先端の変換候補を追加
-      nodesList = candidates
+      return candidates
         .map((v, i) => {
           if (!values[i]) {
             v[v.length - 1].total = -1;
@@ -535,76 +528,6 @@ const Home = () => {
           return v;
         })
         .filter((w) => w[w.length - 1].total > 0);
-    });
-    return nodesList;
-  };
-
-  const getTotalSecond = async (candidates) => {
-    NProgress.start();
-    const promises = candidates.map((v) => {
-      const r = route.slice().concat(v);
-      return new Promise(function (resolve) {
-        // エラーになった変換でもnullを返してresolve
-        return executeQuery(r, ids, "all", 10000, "only")
-          .then((v) => {
-            NProgress.inc(1 / candidates.length);
-            resolve(v);
-          })
-          .catch(() => resolve(null));
-      });
-    });
-
-    let nodesList;
-    await Promise.all(promises).then((values) => {
-      NProgress.done();
-      // 先端の変換候補を追加
-      nodesList = candidates
-        .map((v, i) => {
-          if (!values[i]) {
-            v[v.length - 1].total = -1;
-          } else if (values[i].total) {
-            v[v.length - 1].total = values[i].total;
-          } else {
-            v[v.length - 1].total = 0;
-          }
-          return v;
-        })
-        .filter((w) => w[w.length - 1].total > 0);
-    });
-    return nodesList;
-  };
-
-  const getTotalThird = async (candidates) => {
-    NProgress.start();
-    const promises = candidates.map((v) => {
-      const r = route.slice().concat(v);
-      return new Promise(function (resolve) {
-        // エラーになった変換でもnullを返してresolve
-        return executeQuery(r, ids, "all", 10000, "only")
-          .then((v) => {
-            NProgress.inc(1 / candidates.length);
-            resolve(v);
-          })
-          .catch(() => resolve(null));
-      });
-    });
-
-    let nodesList;
-    await Promise.all(promises).then((values) => {
-      NProgress.done();
-      // 先端の変換候補を追加
-      nodesList = candidates
-        .map((v, i) => {
-          if (!values[i]) {
-            v[2].total = -1;
-          } else if (values[i].total) {
-            v[2].total = values[i].total;
-          } else {
-            v[2].total = 0;
-          }
-          return v;
-        })
-        .filter((w) => w[2].total > 0);
     });
     return nodesList;
   };

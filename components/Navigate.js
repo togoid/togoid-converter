@@ -56,7 +56,13 @@ const Navigate = (props) => {
   const showModal = async (database, routeIndex, j) => {
     const r = selectDatabaseModal(routeIndex, j);
     const heading = r.map((v) => props.dbCatalogue[v.name]);
-    const d = await executeQuery(r, props.ids, "all", 100, false);
+    const d = await executeQuery(
+      r,
+      props.ids,
+      "all",
+      100,
+      database.total === -2
+    );
     const rows = d.results;
 
     const dbRegExp = new RegExp(props.dbCatalogue[r[0].name].regex);
@@ -69,7 +75,7 @@ const Navigate = (props) => {
       })
     );
 
-    setTotal(database.total);
+    setTotal(database.total === -2 ? d.total : database.total);
     setTableData({ heading, rows });
   };
 
@@ -146,9 +152,7 @@ const Navigate = (props) => {
                                       />
                                       <label
                                         htmlFor={`result${i}-${j}`}
-                                        className={`radio__large_label green ${
-                                          i > 0 ? "no_radio" : ""
-                                        }`}
+                                        className="radio__large_label green"
                                         style={{
                                           opacity: isActionButtonVisible
                                             ? 0.7
@@ -240,15 +244,11 @@ const Navigate = (props) => {
                                     >
                                       <div
                                         id={`to${i}-${j}`}
-                                        className={`radio green ${
-                                          v.total > 0 ? null : "not_found"
-                                        }`}
+                                        className="radio green"
                                       >
                                         <label
                                           htmlFor={`result${i}-${j}`}
-                                          className={`radio__large_label green ${
-                                            i > 0 ? "no_radio" : ""
-                                          }`}
+                                          className="radio__large_label green no_radio"
                                           style={{
                                             opacity: isActionButtonVisible
                                               ? 0.7
@@ -275,55 +275,52 @@ const Navigate = (props) => {
                                             <span className="text">
                                               {props.dbCatalogue[v.name].label}
                                             </span>
-                                            <span
-                                              id={`total${i}-${v.name}-${j}`}
-                                              className="total"
-                                            >
-                                              {v.total}
-                                            </span>
+                                            {i ===
+                                              props.databaseNodesList.length -
+                                                1 && (
+                                              <span
+                                                id={`total${i}-${v.name}-${j}`}
+                                                className="total"
+                                              >
+                                                {v.total}
+                                              </span>
+                                            )}
                                           </p>
                                         </label>
                                         {isActionButtonVisible && (
                                           <div className="action_icons">
-                                            {v.total > 0 && (
-                                              <button
-                                                onClick={() =>
-                                                  showModal(v, i, j)
-                                                }
-                                                className="action_icons__item"
+                                            <button
+                                              onClick={() => showModal(v, i, j)}
+                                              className="action_icons__item"
+                                            >
+                                              <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 18 16"
                                               >
-                                                <svg
-                                                  xmlns="http://www.w3.org/2000/svg"
-                                                  viewBox="0 0 18 16"
-                                                >
-                                                  <path
-                                                    d="M5,4H19a2,2,0,0,1,2,2V18a2,2,0,0,1-2,2H5a2,2,0,0,1-2-2V6A2,2,0,0,1,5,4M5,8v4h6V8H5m8,0v4h6V8H13M5,14v4h6V14H5m8,0v4h6V14Z"
-                                                    transform="translate(-3 -4)"
-                                                    fill="#fff"
-                                                  />
-                                                </svg>
-                                              </button>
-                                            )}
-
-                                            {v.total > 0 && (
-                                              <button
-                                                onClick={() =>
-                                                  handleIdDownload(v, i, j)
-                                                }
-                                                className="action_icons__item"
+                                                <path
+                                                  d="M5,4H19a2,2,0,0,1,2,2V18a2,2,0,0,1-2,2H5a2,2,0,0,1-2-2V6A2,2,0,0,1,5,4M5,8v4h6V8H5m8,0v4h6V8H13M5,14v4h6V14H5m8,0v4h6V14Z"
+                                                  transform="translate(-3 -4)"
+                                                  fill="#fff"
+                                                />
+                                              </svg>
+                                            </button>
+                                            <button
+                                              onClick={() =>
+                                                handleIdDownload(v, i, j)
+                                              }
+                                              className="action_icons__item"
+                                            >
+                                              <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 14 17"
                                               >
-                                                <svg
-                                                  xmlns="http://www.w3.org/2000/svg"
-                                                  viewBox="0 0 14 17"
-                                                >
-                                                  <path
-                                                    d="M5,20H19V18H5M19,9H15V3H9V9H5l7,7Z"
-                                                    transform="translate(-5 -3)"
-                                                    fill="#fff"
-                                                  />
-                                                </svg>
-                                              </button>
-                                            )}
+                                                <path
+                                                  d="M5,20H19V18H5M19,9H15V3H9V9H5l7,7Z"
+                                                  transform="translate(-5 -3)"
+                                                  fill="#fff"
+                                                />
+                                              </svg>
+                                            </button>
 
                                             <button
                                               onClick={() =>
