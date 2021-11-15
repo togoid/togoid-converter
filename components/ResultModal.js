@@ -381,6 +381,21 @@ const ResultModal = (props) => {
                       </option>
                     ))}
                   </select>
+                  <button onClick={handleClipboardURL} className="button_icon">
+                    <svg className="button_icon__icon" viewBox="0 0 24 24">
+                      <path
+                        fill="currentColor"
+                        d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"
+                      />
+                    </svg>
+                    {urlCopied ? (
+                      <span>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copied.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      </span>
+                    ) : (
+                      <span>COPY API URL</span>
+                    )}
+                  </button>
                   <button onClick={handleMenu} className="button_icon">
                     <svg className="button_icon__icon" viewBox="0 0 24 24">
                       <path
@@ -418,15 +433,6 @@ const ResultModal = (props) => {
                   ) : (
                     ""
                   )}
-                  <button onClick={handleClipboardURL} className="button_icon">
-                    {urlCopied ? (
-                      <span>
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copied.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      </span>
-                    ) : (
-                      <span>COPY API URL</span>
-                    )}
-                  </button>
                 </div>
               )}
             </div>
