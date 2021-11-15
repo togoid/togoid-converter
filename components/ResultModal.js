@@ -11,6 +11,14 @@ const ResultModal = (props) => {
   const [showLinks, setShowLinks] = useState(false);
   const [previewMode, setPreviewMode] = useState(0);
   const [modTable, setModTable] = useState(null);
+  const [notConvertedIds, setNotConvertedIds] = useState([]);
+
+  useEffect(() => {
+    const ids = props.tableData.rows
+      .filter((v) => v[v.length - 1] === null)
+      .map((w) => w[0]);
+    setNotConvertedIds(ids);
+  }, []);
 
   useEffect(() => {
     const result = formatPreviewTable(
@@ -33,7 +41,7 @@ const ResultModal = (props) => {
       );
       const rows = [];
       const url = [];
-      for (const v of tableRows) {
+      for (const v of tableRows.filter((v) => v[v.length - 1] !== null)) {
         rows.push(v.map((w, j) => [subPrefixList[j] + w]));
         url.push(v.map((w, j) => [tableHeading[j].prefix + w]));
       }
@@ -43,9 +51,9 @@ const ResultModal = (props) => {
     } else if (previewMode === 1) {
       // all URLs
       table.heading = tableHeading;
-      table.rows = table.url = tableRows.map((v) =>
-        v.map((w, j) => [tableHeading[j].prefix + w])
-      );
+      table.rows = table.url = tableRows
+        .filter((v) => v[v.length - 1] !== null)
+        .map((v) => v.map((w, j) => [tableHeading[j].prefix + w]));
     } else if (previewMode === 2) {
       // origin and targets IDs
       const subPrefixList = [
@@ -59,7 +67,7 @@ const ResultModal = (props) => {
       table.heading = [tableHeading[0], tableHeading[tableHeading.length - 1]];
       const rows = [];
       const url = [];
-      for (const v of tableRows) {
+      for (const v of tableRows.filter((v) => v[v.length - 1] !== null)) {
         const start = subPrefixList[0] + v[0];
         const goal = subPrefixList[subPrefixList.length - 1] + v[v.length - 1];
         if (!rows.find((w) => w[0] === start && w[1] === goal)) {
@@ -73,16 +81,18 @@ const ResultModal = (props) => {
       table.rows = rows;
       table.url = url;
     } else if (previewMode === 3) {
-      // origin and taregets URLs
+      // origin and targets URLs
       table.heading = [tableHeading[0], tableHeading[tableHeading.length - 1]];
       table.rows = table.url = [
         ...new Set(
-          tableRows.map((v) =>
-            JSON.stringify([
-              tableHeading[0].prefix + v[0],
-              tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
-            ])
-          )
+          tableRows
+            .filter((v) => v[v.length - 1] !== null)
+            .map((v) =>
+              JSON.stringify([
+                tableHeading[0].prefix + v[0],
+                tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
+              ])
+            )
         ),
       ].map(JSON.parse);
     } else if (previewMode === 4) {
@@ -95,7 +105,7 @@ const ResultModal = (props) => {
       table.heading = [tableHeading[tableHeading.length - 1]];
       const rows = [];
       const url = [];
-      for (const v of tableRows) {
+      for (const v of tableRows.filter((v) => v[v.length - 1] !== null)) {
         const goal = subPrefixList[subPrefixList.length - 1] + v[v.length - 1];
         if (!rows.find((w) => w[0] === goal)) {
           rows.push([goal]);
@@ -111,12 +121,36 @@ const ResultModal = (props) => {
       table.heading = [tableHeading[tableHeading.length - 1]];
       table.rows = table.url = [
         ...new Set(
-          tableRows.map(
-            (v) =>
-              tableHeading[tableHeading.length - 1].prefix + v[v.length - 1]
-          )
+          tableRows
+            .filter((v) => v[v.length - 1] !== null)
+            .map(
+              (v) =>
+                tableHeading[tableHeading.length - 1].prefix + v[v.length - 1]
+            )
         ),
       ].map((w) => [w]);
+    } else if (previewMode === 6) {
+      // verbose IDs
+      const subPrefixList = tableHeading.map((v) =>
+        v.prefix.slice(v.prefix.lastIndexOf("/") + 1)
+      );
+      const rows = [];
+      const url = [];
+      for (const v of tableRows) {
+        rows.push(
+          v.map((w, j) => (w === null ? [""] : [subPrefixList[j] + w]))
+        );
+        url.push(v.map((w, j) => [tableHeading[j].prefix + w]));
+      }
+      table.heading = tableHeading;
+      table.rows = rows;
+      table.url = url;
+    } else if (previewMode === 7) {
+      // verbose URLs
+      table.heading = tableHeading;
+      table.rows = table.url = tableRows.map((v) =>
+        v.map((w, j) => (w === null ? [""] : [tableHeading[j].prefix + w]))
+      );
     }
     return table;
   };
@@ -129,15 +163,15 @@ const ResultModal = (props) => {
         v.prefix.slice(v.prefix.lastIndexOf("/") + 1)
       );
       exportTable.heading = tableHeading;
-      exportTable.rows = tableRows.map((v) =>
-        v.map((w, j) => [subPrefixList[j] + w])
-      );
+      exportTable.rows = tableRows
+        .filter((v) => v[v.length - 1] !== null)
+        .map((v) => v.map((w, j) => [subPrefixList[j] + w]));
     } else if (previewMode === 1) {
       // all URLs
       exportTable.heading = tableHeading;
-      exportTable.rows = tableRows.map((v) =>
-        v.map((w, j) => [tableHeading[j].prefix + w])
-      );
+      exportTable.rows = tableRows
+        .filter((v) => v[v.length - 1] !== null)
+        .map((v) => v.map((w, j) => [tableHeading[j].prefix + w]));
     } else if (previewMode === 2) {
       // origin and targets IDs
       const subPrefixList = [
@@ -154,28 +188,32 @@ const ResultModal = (props) => {
       ];
       exportTable.rows = [
         ...new Set(
-          tableRows.map((v) =>
-            JSON.stringify([
-              subPrefixList[0] + v[0],
-              subPrefixList[subPrefixList.length - 1] + v[v.length - 1],
-            ])
-          )
+          tableRows
+            .filter((v) => v[v.length - 1] !== null)
+            .map((v) =>
+              JSON.stringify([
+                subPrefixList[0] + v[0],
+                subPrefixList[subPrefixList.length - 1] + v[v.length - 1],
+              ])
+            )
         ),
       ].map(JSON.parse);
     } else if (previewMode === 3) {
-      // origin and taregets URLs
+      // origin and targets URLs
       exportTable.heading = [
         tableHeading[0],
         tableHeading[tableHeading.length - 1],
       ];
       exportTable.rows = [
         ...new Set(
-          tableRows.map((v) =>
-            JSON.stringify([
-              tableHeading[0].prefix + v[0],
-              tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
-            ])
-          )
+          tableRows
+            .filter((v) => v[v.length - 1] !== null)
+            .map((v) =>
+              JSON.stringify([
+                tableHeading[0].prefix + v[0],
+                tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
+              ])
+            )
         ),
       ].map(JSON.parse);
     } else if (previewMode === 4) {
@@ -188,9 +226,11 @@ const ResultModal = (props) => {
       exportTable.heading = [tableHeading[tableHeading.length - 1]];
       exportTable.rows = [
         ...new Set(
-          tableRows.map(
-            (v) => subPrefixList[subPrefixList.length - 1] + v[v.length - 1]
-          )
+          tableRows
+            .filter((v) => v[v.length - 1] !== null)
+            .map(
+              (v) => subPrefixList[subPrefixList.length - 1] + v[v.length - 1]
+            )
         ),
       ].map((w) => [w]);
     } else if (previewMode === 5) {
@@ -198,12 +238,29 @@ const ResultModal = (props) => {
       exportTable.heading = [tableHeading[tableHeading.length - 1]];
       exportTable.rows = [
         ...new Set(
-          tableRows.map(
-            (v) =>
-              tableHeading[tableHeading.length - 1].prefix + v[v.length - 1]
-          )
+          tableRows
+            .filter((v) => v[v.length - 1] !== null)
+            .map(
+              (v) =>
+                tableHeading[tableHeading.length - 1].prefix + v[v.length - 1]
+            )
         ),
       ].map((w) => [w]);
+    } else if (previewMode === 6) {
+      // verbose IDs
+      const subPrefixList = tableHeading.map((v) =>
+        v.prefix.slice(v.prefix.lastIndexOf("/") + 1)
+      );
+      exportTable.heading = tableHeading;
+      exportTable.rows = tableRows.map((v) =>
+        v.map((w, j) => (w === null ? [""] : [subPrefixList[j] + w]))
+      );
+    } else if (previewMode === 7) {
+      // verbose URLs
+      exportTable.heading = tableHeading;
+      exportTable.rows = tableRows.map((v) =>
+        v.map((w, j) => (w === null ? [""] : [tableHeading[j].prefix + w]))
+      );
     }
     return exportTable;
   };
@@ -218,7 +275,10 @@ const ResultModal = (props) => {
       false
     );
 
-    const results = previewMode < 4 ? d.results : d.results.map((v) => [v]);
+    const results =
+      previewMode < 4 || previewMode > 5
+        ? d.results
+        : d.results.map((v) => [v]);
     const { rows } = formatExportTable(props.tableData.heading, results);
     const text = rows.join("\r\n");
     copy(text, {
@@ -239,7 +299,10 @@ const ResultModal = (props) => {
       false
     );
 
-    const results = previewMode < 4 ? d.results : d.results.map((v) => [v]);
+    const results =
+      previewMode < 4 || previewMode > 5
+        ? d.results
+        : d.results.map((v) => [v]);
     const { heading, rows } = formatExportTable(
       props.tableData.heading,
       results
@@ -257,7 +320,10 @@ const ResultModal = (props) => {
       false
     );
 
-    const results = previewMode < 4 ? d.results : d.results.map((v) => [v]);
+    const results =
+      previewMode < 4 || previewMode > 5
+        ? d.results
+        : d.results.map((v) => [v]);
     const { rows } = formatExportTable(props.tableData.heading, results);
 
     const text = rows.join("\r\n");
@@ -268,7 +334,16 @@ const ResultModal = (props) => {
   };
 
   const getInclude = () => {
-    const includeList = ["all", "all", "pair", "pair", "target", "target"];
+    const includeList = [
+      "all",
+      "all",
+      "pair",
+      "pair",
+      "target",
+      "target",
+      "verbose",
+      "verbose",
+    ];
     return includeList[previewMode];
   };
 
@@ -279,7 +354,8 @@ const ResultModal = (props) => {
     "origin and targets URLs",
     "target IDs",
     "target URLs",
-    "verbose",
+    "verbose IDs",
+    "verbose URLs",
   ];
 
   const handleClipboardURL = () => {
@@ -341,11 +417,11 @@ const ResultModal = (props) => {
           <div className="modal__top">
             <div className="item_wrapper">
               {(() => {
-                if (props.notConvertedIds.length) {
+                if (notConvertedIds.length) {
                   const limit = showAllFailed ? 10000 : 3;
                   return (
                     <span className="non_forwarded">
-                      {`IDs that were not converted: ${props.notConvertedIds
+                      {`IDs that were not converted: ${notConvertedIds
                         .filter((_, i) => i < limit)
                         .join(", ")} `}
                       {!showAllFailed && (
@@ -451,6 +527,12 @@ const ResultModal = (props) => {
                         </p>
                       );
                     }
+                  } else if (previewMode >= 6) {
+                    return (
+                      <p className="showing">
+                        Showing {modTable.rows.length} of {props.total} results
+                      </p>
+                    );
                   } else {
                     return (
                       <p className="showing">
@@ -475,17 +557,23 @@ const ResultModal = (props) => {
               {modTable && modTable.rows.length > 0 ? (
                 modTable.rows.map((data, i) => (
                   <tr key={i}>
-                    {data.map((d, j) => (
-                      <td key={j}>
-                        <a
-                          href={modTable.url[i][j]}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {d}
-                        </a>
-                      </td>
-                    ))}
+                    {data.map((d, j) => {
+                      if (previewMode < 6 || d[0] !== "") {
+                        return (
+                          <td key={j}>
+                            <a
+                              href={modTable.url[i][j]}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              {d}
+                            </a>
+                          </td>
+                        );
+                      } else {
+                        return <td key={j}></td>;
+                      }
+                    })}
                   </tr>
                 ))
               ) : (

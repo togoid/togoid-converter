@@ -16,7 +16,6 @@ const Navigate = (props) => {
     null,
     null,
   ]);
-  const [notConvertedIds, setNotConvertedIds] = useState([]);
 
   useEffect(() => {
     if (tableData.heading.length > 0) setModalVisibility(true);
@@ -59,21 +58,11 @@ const Navigate = (props) => {
     const d = await executeQuery(
       r,
       props.ids,
-      "all",
+      "verbose",
       100,
       database.total === -2
     );
     const rows = d.results;
-
-    const dbRegExp = new RegExp(props.dbCatalogue[r[0].name].regex);
-    const convertedIds = Array.from(new Set(rows.map((item) => item[0])));
-    setNotConvertedIds(
-      props.ids.filter((i) => {
-        const match = i.match(dbRegExp);
-        const firstNamedCapture = Object.values(match.groups).find((v) => v);
-        return convertedIds.indexOf(firstNamedCapture) === -1;
-      })
-    );
 
     setTotal(database.total === -2 ? d.total : database.total);
     setTableData({ heading, rows });
