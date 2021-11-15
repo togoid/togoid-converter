@@ -21,11 +21,7 @@ const ResultModal = (props) => {
   }, [previewMode]);
 
   const handleMenu = async () => {
-    if (showLinks) {
-      setShowLinks(false);
-    } else {
-      setShowLinks(true);
-    }
+    setShowLinks(!showLinks);
   };
 
   const formatPreviewTable = (tableHeading, tableRows) => {
@@ -280,9 +276,10 @@ const ResultModal = (props) => {
     "all IDs",
     "all URLs",
     "origin and targets IDs",
-    "origin and taregets URLs",
+    "origin and targets URLs",
     "target IDs",
     "target URLs",
+    "verbose",
   ];
 
   const handleClipboardURL = () => {
