@@ -14,9 +14,13 @@ const ResultModal = (props) => {
   const [notConvertedIds, setNotConvertedIds] = useState([]);
 
   useEffect(() => {
-    const ids = props.tableData.rows
-      .filter((v) => v[v.length - 1] === null)
-      .map((w) => w[0]);
+    const ids = [
+      ...new Set(
+        props.tableData.rows
+          .filter((v) => v[v.length - 1] === null)
+          .map((w) => w[0])
+      ),
+    ];
     setNotConvertedIds(ids);
   }, []);
 
