@@ -384,7 +384,6 @@ const Navigate = (props) => {
                       route={props.route}
                       ids={props.ids}
                       tableData={tableData}
-                      notConvertedIds={notConvertedIds}
                       total={total}
                       setModalVisibility={setModalVisibility}
                       dbCatalogue={props.dbCatalogue}
