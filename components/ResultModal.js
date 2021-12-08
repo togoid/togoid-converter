@@ -467,49 +467,27 @@ const ResultModal = (props) => {
                     </svg>
                     {urlCopied ? (
                       <span>
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copied.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copied.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                       </span>
                     ) : (
-                      <span>COPY API URL</span>
+                      <span>Copy API URL</span>
                     )}
                   </button>
-                  <button onClick={handleMenu} className="button_icon">
-                    <svg className="button_icon__icon" viewBox="0 0 24 24">
-                      <path
-                        fill="currentColor"
-                        d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"
-                      />
-                    </svg>
-                    Export
+                  <button onClick={handleClipboardCopy} className="button_icon">
+                    {copied ? (
+                      <span>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copied.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      </span>
+                    ) : (
+                      <span>Copy to clipboard</span>
+                    )}
                   </button>
-                  {showLinks ? (
-                    <div className="child_menu">
-                      <button
-                        onClick={handleClipboardCopy}
-                        className="child_menu__item"
-                      >
-                        {copied ? (
-                          <span>Copied.</span>
-                        ) : (
-                          <span>Copy to Clipboard</span>
-                        )}
-                      </button>
-                      <button
-                        onClick={handleExportCSV}
-                        className="child_menu__item"
-                      >
-                        DOWNLOAD as CSV
-                      </button>
-                      <button
-                        onClick={handleExportTEXT}
-                        className="child_menu__item"
-                      >
-                        DOWNLOAD as TEXT
-                      </button>
-                    </div>
-                  ) : (
-                    ""
-                  )}
+                  <button onClick={handleExportCSV} className="button_icon">
+                    Download as CSV
+                  </button>
+                  <button onClick={handleExportTEXT} className="button_icon">
+                    Download as text
+                  </button>
                 </div>
               )}
             </div>
