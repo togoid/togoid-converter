@@ -224,7 +224,15 @@ const Home = () => {
 
   const restartExplore = () => {
     setDatabaseNodesList(databaseNodesList.slice(0, 1));
-    setRoute([]);
+
+    if (activeTab === "NAVIGATE") {
+      setRoute(route.slice(0, 1));
+      setCandidatePaths([
+        getPathStyle(`from${0}-${route[0].name}`, `nodeOther`, false),
+      ]);
+    } else {
+      setRoute([]);
+    }
   };
 
   const handleIdTextsSubmit = (t) => {
