@@ -355,7 +355,15 @@ const Navigate = (props) => {
                           >
                             <option>---</option>
                             {Object.keys(props.dbCatalogue).map((key) => {
-                              if (!props.route.find((v) => v.name === key)) {
+                              // ドロップダウンには LINK TO が存在するものだけを表示
+                              if (
+                                Object.keys(props.dbConfig).find(
+                                  (k) =>
+                                    k.split("-").indexOf(key) === 0 ||
+                                    k.split("-").indexOf(key) === 1
+                                ) &&
+                                !props.route.find((v) => v.name === key)
+                              ) {
                                 return (
                                   <option key={key} value={key}>
                                     {props.dbCatalogue[key].label}
