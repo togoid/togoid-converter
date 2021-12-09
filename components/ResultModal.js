@@ -8,10 +8,15 @@ const ResultModal = (props) => {
   const [copied, setCopied] = useState(false);
   const [urlCopied, setUrlCopied] = useState(false);
   const [showAllFailed, setShowAllFailed] = useState(false);
-  const [showLinks, setShowLinks] = useState(false);
+  const [showLinks, setShowLinks] = useState(
+    Array(props.tableData.heading.length).fill(false)
+  );
   const [previewMode, setPreviewMode] = useState(0);
   const [modTable, setModTable] = useState(null);
   const [notConvertedIds, setNotConvertedIds] = useState([]);
+  const [lineMode, setLineMode] = useState(
+    Array(props.tableData.heading.length).fill("ID")
+  );
 
   useEffect(() => {
     const ids = [
@@ -25,24 +30,63 @@ const ResultModal = (props) => {
   }, []);
 
   useEffect(() => {
+    console.log(lineMode);
     const result = formatPreviewTable(
       props.tableData.heading,
       props.tableData.rows
     );
     setModTable(result);
-  }, [previewMode]);
+  }, [previewMode, lineMode]);
 
-  const handleMenu = async () => {
-    setShowLinks(!showLinks);
+  const handleMenu = (e) => {
+    const num = Number(e.target.value);
+    const newShowLinks = showLinks.slice();
+    newShowLinks[num] = !newShowLinks[num];
+    setShowLinks(newShowLinks);
+  };
+
+  const handleTableID = (e) => {
+    const newLineMode = lineMode.slice();
+    if (e.target.value === "0" && (previewMode === 4 || previewMode === 5)) {
+      newLineMode[newLineMode.length - 1] = "ID";
+    } else if (
+      e.target.value === "1" &&
+      (previewMode === 2 || previewMode === 3)
+    ) {
+      newLineMode[newLineMode.length - 1] = "ID";
+    } else {
+      newLineMode[e.target.value] = "ID";
+    }
+    setLineMode(newLineMode);
+  };
+  const handleTableURL = (e) => {
+    const newLineMode = lineMode.slice();
+    if (e.target.value === "0" && (previewMode === 4 || previewMode === 5)) {
+      newLineMode[newLineMode.length - 1] = "URL";
+    } else if (
+      e.target.value === "1" &&
+      (previewMode === 2 || previewMode === 3)
+    ) {
+      newLineMode[newLineMode.length - 1] = "URL";
+    } else {
+      newLineMode[e.target.value] = "URL";
+    }
+    setLineMode(newLineMode);
   };
 
   const formatPreviewTable = (tableHeading, tableRows) => {
     const table = { heading: [], rows: [], url: [] };
-    if (previewMode === 0) {
-      // all IDs
-      const subPrefixList = tableHeading.map((v) =>
-        v.prefix.slice(v.prefix.lastIndexOf("/") + 1)
-      );
+    if (previewMode === 0 || previewMode === 1) {
+      // all
+      const subPrefixList = tableHeading.map((v, i) => {
+        // 表示モード増やすとき用
+        if (lineMode[i] === "ID") {
+          return v.prefix.slice(v.prefix.lastIndexOf("/") + 1);
+        } else if (lineMode[i] === "URL") {
+          return tableHeading[i].prefix;
+        }
+      });
+
       const rows = [];
       const url = [];
       for (const v of tableRows.filter((v) => v[v.length - 1] !== null)) {
@@ -52,21 +96,19 @@ const ResultModal = (props) => {
       table.heading = tableHeading;
       table.rows = rows;
       table.url = url;
-    } else if (previewMode === 1) {
-      // all URLs
-      table.heading = tableHeading;
-      table.rows = table.url = tableRows
-        .filter((v) => v[v.length - 1] !== null)
-        .map((v) => v.map((w, j) => [tableHeading[j].prefix + w]));
-    } else if (previewMode === 2) {
-      // origin and targets IDs
+    } else if (previewMode === 2 || previewMode === 3) {
+      // origin and targets
       const subPrefixList = [
-        tableHeading[0].prefix.slice(
-          tableHeading[0].prefix.lastIndexOf("/") + 1
-        ),
-        tableHeading[tableHeading.length - 1].prefix.slice(
-          tableHeading[tableHeading.length - 1].prefix.lastIndexOf("/") + 1
-        ),
+        lineMode[0] === "ID"
+          ? tableHeading[0].prefix.slice(
+              tableHeading[0].prefix.lastIndexOf("/") + 1
+            )
+          : tableHeading[0].prefix,
+        lineMode[tableHeading.length - 1] === "ID"
+          ? tableHeading[tableHeading.length - 1].prefix.slice(
+              tableHeading[tableHeading.length - 1].prefix.lastIndexOf("/") + 1
+            )
+          : tableHeading[tableHeading.length - 1].prefix,
       ];
       table.heading = [tableHeading[0], tableHeading[tableHeading.length - 1]];
       const rows = [];
@@ -84,27 +126,14 @@ const ResultModal = (props) => {
       }
       table.rows = rows;
       table.url = url;
-    } else if (previewMode === 3) {
-      // origin and targets URLs
-      table.heading = [tableHeading[0], tableHeading[tableHeading.length - 1]];
-      table.rows = table.url = [
-        ...new Set(
-          tableRows
-            .filter((v) => v[v.length - 1] !== null)
-            .map((v) =>
-              JSON.stringify([
-                tableHeading[0].prefix + v[0],
-                tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
-              ])
-            )
-        ),
-      ].map(JSON.parse);
-    } else if (previewMode === 4) {
-      // target IDs
+    } else if (previewMode === 4 || previewMode === 5) {
+      // target
       const subPrefixList = [
-        tableHeading[tableHeading.length - 1].prefix.slice(
-          tableHeading[tableHeading.length - 1].prefix.lastIndexOf("/") + 1
-        ),
+        lineMode[tableHeading.length - 1] === "ID"
+          ? tableHeading[tableHeading.length - 1].prefix.slice(
+              tableHeading[tableHeading.length - 1].prefix.lastIndexOf("/") + 1
+            )
+          : tableHeading[tableHeading.length - 1].prefix,
       ];
       table.heading = [tableHeading[tableHeading.length - 1]];
       const rows = [];
@@ -120,24 +149,16 @@ const ResultModal = (props) => {
       }
       table.rows = rows;
       table.url = url;
-    } else if (previewMode === 5) {
-      // target URLs
-      table.heading = [tableHeading[tableHeading.length - 1]];
-      table.rows = table.url = [
-        ...new Set(
-          tableRows
-            .filter((v) => v[v.length - 1] !== null)
-            .map(
-              (v) =>
-                tableHeading[tableHeading.length - 1].prefix + v[v.length - 1]
-            )
-        ),
-      ].map((w) => [w]);
-    } else if (previewMode === 6) {
-      // verbose IDs
-      const subPrefixList = tableHeading.map((v) =>
-        v.prefix.slice(v.prefix.lastIndexOf("/") + 1)
-      );
+    } else if (previewMode === 6 || previewMode === 7) {
+      // verbose
+      const subPrefixList = tableHeading.map((v, i) => {
+        // 表示モード増やすとき用
+        if (lineMode[i] === "ID") {
+          return v.prefix.slice(v.prefix.lastIndexOf("/") + 1);
+        } else if (lineMode[i] === "URL") {
+          return tableHeading[i].prefix;
+        }
+      });
       const rows = [];
       const url = [];
       for (const v of tableRows) {
@@ -149,42 +170,39 @@ const ResultModal = (props) => {
       table.heading = tableHeading;
       table.rows = rows;
       table.url = url;
-    } else if (previewMode === 7) {
-      // verbose URLs
-      table.heading = tableHeading;
-      table.rows = table.url = tableRows.map((v) =>
-        v.map((w, j) => (w === null ? [""] : [tableHeading[j].prefix + w]))
-      );
     }
     return table;
   };
 
   const formatExportTable = (tableHeading, tableRows) => {
     const exportTable = { heading: [], rows: [] };
-    if (previewMode === 0) {
-      // all IDs
-      const subPrefixList = tableHeading.map((v) =>
-        v.prefix.slice(v.prefix.lastIndexOf("/") + 1)
-      );
+    if (previewMode === 0 || previewMode === 1) {
+      // all
+      const subPrefixList = tableHeading.map((v, i) => {
+        // 表示モード増やすとき用
+        if (lineMode[i] === "ID") {
+          return v.prefix.slice(v.prefix.lastIndexOf("/") + 1);
+        } else if (lineMode[i] === "URL") {
+          return tableHeading[i].prefix;
+        }
+      });
       exportTable.heading = tableHeading;
       exportTable.rows = tableRows
         .filter((v) => v[v.length - 1] !== null)
         .map((v) => v.map((w, j) => [subPrefixList[j] + w]));
-    } else if (previewMode === 1) {
-      // all URLs
-      exportTable.heading = tableHeading;
-      exportTable.rows = tableRows
-        .filter((v) => v[v.length - 1] !== null)
-        .map((v) => v.map((w, j) => [tableHeading[j].prefix + w]));
-    } else if (previewMode === 2) {
-      // origin and targets IDs
+    } else if (previewMode === 2 || previewMode === 3) {
+      // origin and targets
       const subPrefixList = [
-        tableHeading[0].prefix.slice(
-          tableHeading[0].prefix.lastIndexOf("/") + 1
-        ),
-        tableHeading[tableHeading.length - 1].prefix.slice(
-          tableHeading[tableHeading.length - 1].prefix.lastIndexOf("/") + 1
-        ),
+        lineMode[0] === "ID"
+          ? tableHeading[0].prefix.slice(
+              tableHeading[0].prefix.lastIndexOf("/") + 1
+            )
+          : tableHeading[0].prefix,
+        lineMode[tableHeading.length - 1] === "ID"
+          ? tableHeading[tableHeading.length - 1].prefix.slice(
+              tableHeading[tableHeading.length - 1].prefix.lastIndexOf("/") + 1
+            )
+          : tableHeading[tableHeading.length - 1].prefix,
       ];
       exportTable.heading = [
         tableHeading[0],
@@ -202,30 +220,14 @@ const ResultModal = (props) => {
             )
         ),
       ].map(JSON.parse);
-    } else if (previewMode === 3) {
-      // origin and targets URLs
-      exportTable.heading = [
-        tableHeading[0],
-        tableHeading[tableHeading.length - 1],
-      ];
-      exportTable.rows = [
-        ...new Set(
-          tableRows
-            .filter((v) => v[v.length - 1] !== null)
-            .map((v) =>
-              JSON.stringify([
-                tableHeading[0].prefix + v[0],
-                tableHeading[tableHeading.length - 1].prefix + v[v.length - 1],
-              ])
-            )
-        ),
-      ].map(JSON.parse);
-    } else if (previewMode === 4) {
-      // target IDs
+    } else if (previewMode === 4 || previewMode === 5) {
+      // target
       const subPrefixList = [
-        tableHeading[tableHeading.length - 1].prefix.slice(
-          tableHeading[tableHeading.length - 1].prefix.lastIndexOf("/") + 1
-        ),
+        lineMode[tableHeading.length - 1] === "ID"
+          ? tableHeading[tableHeading.length - 1].prefix.slice(
+              tableHeading[tableHeading.length - 1].prefix.lastIndexOf("/") + 1
+            )
+          : tableHeading[tableHeading.length - 1].prefix,
       ];
       exportTable.heading = [tableHeading[tableHeading.length - 1]];
       exportTable.rows = [
@@ -237,33 +239,19 @@ const ResultModal = (props) => {
             )
         ),
       ].map((w) => [w]);
-    } else if (previewMode === 5) {
-      // target URLs
-      exportTable.heading = [tableHeading[tableHeading.length - 1]];
-      exportTable.rows = [
-        ...new Set(
-          tableRows
-            .filter((v) => v[v.length - 1] !== null)
-            .map(
-              (v) =>
-                tableHeading[tableHeading.length - 1].prefix + v[v.length - 1]
-            )
-        ),
-      ].map((w) => [w]);
-    } else if (previewMode === 6) {
-      // verbose IDs
-      const subPrefixList = tableHeading.map((v) =>
-        v.prefix.slice(v.prefix.lastIndexOf("/") + 1)
-      );
+    } else if (previewMode === 6 || previewMode === 7) {
+      // verbose
+      const subPrefixList = tableHeading.map((v, i) => {
+        // 表示モード増やすとき用
+        if (lineMode[i] === "ID") {
+          return v.prefix.slice(v.prefix.lastIndexOf("/") + 1);
+        } else if (lineMode[i] === "URL") {
+          return tableHeading[i].prefix;
+        }
+      });
       exportTable.heading = tableHeading;
       exportTable.rows = tableRows.map((v) =>
         v.map((w, j) => (w === null ? [""] : [subPrefixList[j] + w]))
-      );
-    } else if (previewMode === 7) {
-      // verbose URLs
-      exportTable.heading = tableHeading;
-      exportTable.rows = tableRows.map((v) =>
-        v.map((w, j) => (w === null ? [""] : [tableHeading[j].prefix + w]))
       );
     }
     return exportTable;
@@ -532,7 +520,32 @@ const ResultModal = (props) => {
               <tr>
                 {modTable &&
                   modTable.heading.length > 0 &&
-                  modTable.heading.map((v, i) => <th key={i}>{v.label}</th>)}
+                  modTable.heading.map((v, i) => (
+                    <th key={i}>
+                      {v.label}{" "}
+                      <button value={i} onClick={handleMenu}>
+                        ▼
+                      </button>
+                      {showLinks[i] && (
+                        <div className="child_menu">
+                          <button
+                            value={i}
+                            onClick={handleTableID}
+                            className="child_menu__item"
+                          >
+                            IDs
+                          </button>
+                          <button
+                            value={i}
+                            onClick={handleTableURL}
+                            className="child_menu__item"
+                          >
+                            URLs
+                          </button>
+                        </div>
+                      )}
+                    </th>
+                  ))}
               </tr>
             </thead>
             <tbody>
