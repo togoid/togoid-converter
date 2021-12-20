@@ -160,7 +160,7 @@
           & + .path_label {
             position: relative;
             margin: 0 0 0 15px;
-            &:before {
+            &::before {
               position: absolute;
               top: 50%;
               left: -15px;
@@ -170,6 +170,22 @@
               height: 1px;
               background: $gray06;
             }
+          }
+        }
+      }
+      &__item {
+        & + .modal__path__frame__item {
+          position: relative;
+          margin: 0 0 0 15px;
+          &::before {
+            position: absolute;
+            top: 50%;
+            left: -15px;
+            content: '';
+            display: inline-block;
+            width: 15px;
+            height: 1px;
+            background: $gray06;
           }
         }
       }

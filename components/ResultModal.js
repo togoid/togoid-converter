@@ -349,23 +349,26 @@ const ResultModal = (props) => {
               />
             </svg>
           </button>
-          <h2 className="title">Results</h2>
+          <h2 className="modal--through__title">Results</h2>
 
           <div className="modal__path">
             <p className="modal__heading">Route</p>
             <div className="modal__path__frame">
               <div className="modal__path__frame__inner">
                 {props.tableData.heading.map((v, i) => (
-                  <div
-                    key={i}
-                    className="path_label green"
-                    style={{
-                      backgroundColor: categories[v.category]
-                        ? categories[v.category].color
-                        : null,
-                    }}
-                  >
-                    <span className="path_label__inner">{v.label}</span>
+                  <div className="modal__path__frame__item">
+                    <div
+                      key={i}
+                      className="path_label green"
+                      style={{
+                        backgroundColor: categories[v.category]
+                          ? categories[v.category].color
+                          : null,
+                      }}
+                    >
+                      <span className="path_label__inner">{v.label}</span>
+                    </div>
+                    <div className="path_label white">プロパティ</div>
                   </div>
                 ))}
               </div>
