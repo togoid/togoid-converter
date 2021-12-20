@@ -402,49 +402,97 @@ const ResultModal = (props) => {
               })()}
 
               {props.tableData && props.tableData.rows.length > 0 && (
-                <div className="export_button">
-                  <select
-                    name="selectTab"
-                    id=""
-                    className="dropdown"
-                    onChange={(e) => setPreviewMode(Number(e.target.value))}
-                  >
+                <div className="include">
+                  <p className="modal__heading">Include</p>
+                  <div className="include__inner">
                     {previewModeList.map((v, i) => (
-                      <option key={v} value={i}>
-                        {v}
-                      </option>
+                      <div className="radio">
+                        <input
+                          id={i}
+                          key={v}
+                          value={i}
+                          name="include"
+                          type="radio"
+                          className="input"
+                        />
+                        <label htmlFor={i} className="label">
+                          {v}
+                        </label>
+                      </div>
                     ))}
-                  </select>
-                  <button onClick={handleClipboardURL} className="button_icon">
-                    <svg className="button_icon__icon" viewBox="0 0 24 24">
-                      <path
-                        fill="currentColor"
-                        d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"
-                      />
-                    </svg>
-                    {urlCopied ? (
-                      <span>
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copied.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      </span>
-                    ) : (
-                      <span>Copy API URL</span>
-                    )}
-                  </button>
-                  <button onClick={handleClipboardCopy} className="button_icon">
-                    {copied ? (
-                      <span>
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copied.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      </span>
-                    ) : (
-                      <span>Copy to clipboard</span>
-                    )}
-                  </button>
-                  <button onClick={handleExportCSV} className="button_icon">
-                    Download as CSV
-                  </button>
-                  <button onClick={handleExportTEXT} className="button_icon">
-                    Download as text
-                  </button>
+                  </div>
+                </div>
+              )}
+
+              {props.tableData && props.tableData.rows.length > 0 && (
+                <div className="action">
+                  <p className="modal__heading">Action</p>
+                  <div className="action__inner">
+                    <button
+                      onClick={handleClipboardURL}
+                      className="button_icon"
+                    >
+                      <svg className="button_icon__icon" viewBox="0 0 24 24">
+                        <path
+                          fill="currentColor"
+                          d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"
+                        />
+                      </svg>
+                      {urlCopied ? (
+                        <span>
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copied.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </span>
+                      ) : (
+                        <span>Copy API URL</span>
+                      )}
+                    </button>
+                    <button
+                      onClick={handleClipboardCopy}
+                      className="button_icon"
+                    >
+                      <svg className="button_icon__icon" viewBox="0 0 24 24">
+                        <path
+                          fill="currentColor"
+                          d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"
+                        />
+                      </svg>
+                      {copied ? (
+                        <span>
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copied.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </span>
+                      ) : (
+                        <span>Copy to clipboard</span>
+                      )}
+                    </button>
+                    <button onClick={handleExportCSV} className="button_icon">
+                      <svg
+                        className="button_icon__icon"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 14 17"
+                      >
+                        <path
+                          d="M5,20H19V18H5M19,9H15V3H9V9H5l7,7Z"
+                          transform="translate(-5 -3)"
+                          fill="#fff"
+                        />
+                      </svg>
+                      Download as CSV
+                    </button>
+                    <button onClick={handleExportTEXT} className="button_icon">
+                      <svg
+                        className="button_icon__icon"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 14 17"
+                      >
+                        <path
+                          d="M5,20H19V18H5M19,9H15V3H9V9H5l7,7Z"
+                          transform="translate(-5 -3)"
+                          fill="#fff"
+                        />
+                      </svg>
+                      Download as text
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
