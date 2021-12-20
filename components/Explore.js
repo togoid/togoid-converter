@@ -181,6 +181,12 @@ const Explore = (props) => {
                                             : "#ffffff",
                                         }}
                                       >
+                                        <span
+                                          id={`total${i}-${v.name}`}
+                                          className="total"
+                                        >
+                                          {v.total >= 0 ? v.total : "too many"}
+                                        </span>
                                         <span className="text">
                                           {props.dbCatalogue[v.name].label}
                                         </span>
