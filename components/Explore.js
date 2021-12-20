@@ -249,6 +249,36 @@ const Explore = (props) => {
                                             />
                                           </svg>
                                         </button>
+
+                                        <button className="action_icons__item">
+                                          <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="10.971"
+                                            height="12"
+                                            viewBox="0 0 10.971 12"
+                                          >
+                                            <path
+                                              d="M14.971,10.043A4.457,4.457,0,0,1,10.514,14.5H5.371V13.129h5.143a3.086,3.086,0,1,0,0-6.171H6.626L8.738,9.076l-.967.967L4,6.271,7.771,2.5l.974.967L6.626,5.586h3.888A4.457,4.457,0,0,1,14.971,10.043Z"
+                                              transform="translate(-4 -2.5)"
+                                              fill="#fff"
+                                            />
+                                          </svg>
+                                        </button>
+
+                                        <button className="action_icons__item">
+                                          <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="11.667"
+                                            height="11.667"
+                                            viewBox="0 0 11.667 11.667"
+                                          >
+                                            <path
+                                              d="M4,9.177V10.65h8.838L8.787,14.7l1.046,1.046,5.833-5.833L9.833,4.08,8.787,5.126l4.051,4.051Z"
+                                              transform="translate(-4 -4.08)"
+                                              fill="#fafafa"
+                                            />
+                                          </svg>
+                                        </button>
                                       </div>
                                     )}
                                   </div>

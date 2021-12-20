@@ -208,10 +208,14 @@
           border-radius: 5px;
           background: rgba(0, 0, 0, 0.8);
           &__item {
-            width: 28px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             border: none;
+            border-radius: 50%;
             background: none;
+            &:hover {
+              background: $purple01;
+            }
             svg {
               max-width: 14px;
               max-height: 14px;
