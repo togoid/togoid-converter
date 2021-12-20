@@ -540,27 +540,14 @@ const ResultModal = (props) => {
                   modTable.heading.map((v, i) => (
                     <th key={i}>
                       {v.label}{" "}
-                      <button value={i} onClick={handleMenu}>
-                        ▼
-                      </button>
-                      {showLinks[i] && (
-                        <div className="child_menu">
-                          <button
-                            value={i}
-                            onClick={handleTableID}
-                            className="child_menu__item"
-                          >
-                            IDs
-                          </button>
-                          <button
-                            value={i}
-                            onClick={handleTableURL}
-                            className="child_menu__item"
-                          >
-                            URLs
-                          </button>
-                        </div>
-                      )}
+                      <select name="" id="" className="select white">
+                        <option value="IDs">
+                          IDs
+                        </option>
+                        <option value="URLs">
+                          URLs
+                        </option>
+                      </select>
                     </th>
                   ))}
               </tr>
