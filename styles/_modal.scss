@@ -155,6 +155,7 @@
       background: $gray03;
       &__inner {
         display: flex;
+        flex-wrap: nowrap;
         align-items: center;
         .path_label {
           & + .path_label {
@@ -174,6 +175,9 @@
         }
       }
       &__item {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
         & + .modal__path__frame__item {
           position: relative;
           margin: 0 0 0 15px;
@@ -195,30 +199,13 @@
   &__top {
     margin: 0 0 15px;
 
-    .export_button {
-      position: relative;
-      display: flex;
-      justify-content: flex-end;
-      .dropdown {
-        margin: 0 16px 0 0;
-      }
-      .child_menu {
-        position: absolute;
-        top: calc(100% + 9px);
-        right: 0;
-        border-radius: 5px;
-        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
-        background: $blue05;
-        &__item {
-          display: block;
-          width: 100%;
-          font-size: 1.4rem;
-          color: $gray07;
-          padding: 10px 14px;
-          text-align: left;
-          border: none;
-          border-bottom: 1px solid $blue06;
-          background: none;
+    .include,
+    .action {
+      margin: 0 0 27px;
+      &__inner {
+        display: flex;
+        .radio {
+          margin: 0 24px 0 0;
         }
       }
     }
