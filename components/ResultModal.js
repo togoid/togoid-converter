@@ -8,9 +8,6 @@ const ResultModal = (props) => {
   const [copied, setCopied] = useState(false);
   const [urlCopied, setUrlCopied] = useState(false);
   const [showAllFailed, setShowAllFailed] = useState(false);
-  const [showLinks, setShowLinks] = useState(
-    Array(props.tableData.heading.length).fill(false)
-  );
   const [previewMode, setPreviewMode] = useState(0);
   const [modTable, setModTable] = useState(null);
   const [notConvertedIds, setNotConvertedIds] = useState([]);
@@ -38,32 +35,8 @@ const ResultModal = (props) => {
   }, [previewMode, lineMode]);
 
   const handleMenu = (e) => {
-    const num = Number(e.target.value);
-    const newShowLinks = showLinks.slice();
-    newShowLinks[num] = !newShowLinks[num];
-    setShowLinks(newShowLinks);
-  };
-
-  const handleTableID = (e) => {
     const newLineMode = lineMode.slice();
-    if (e.target.value === "0" && previewMode === 2) {
-      newLineMode[newLineMode.length - 1] = "ID";
-    } else if (e.target.value === "1" && previewMode === 1) {
-      newLineMode[newLineMode.length - 1] = "ID";
-    } else {
-      newLineMode[e.target.value] = "ID";
-    }
-    setLineMode(newLineMode);
-  };
-  const handleTableURL = (e) => {
-    const newLineMode = lineMode.slice();
-    if (e.target.value === "0" && previewMode === 2) {
-      newLineMode[newLineMode.length - 1] = "URL";
-    } else if (e.target.value === "1" && previewMode === 1) {
-      newLineMode[newLineMode.length - 1] = "URL";
-    } else {
-      newLineMode[e.target.value] = "URL";
-    }
+    newLineMode[e.target.id] = e.target.value;
     setLineMode(newLineMode);
   };
 
@@ -539,19 +512,27 @@ const ResultModal = (props) => {
               <tr>
                 {modTable &&
                   modTable.heading.length > 0 &&
-                  modTable.heading.map((v, i) => (
-                    <th key={i}>
-                      {v.label}{" "}
-                      <select name="" id="" className="select white">
-                        <option value="IDs">
-                          IDs
-                        </option>
-                        <option value="URLs">
-                          URLs
-                        </option>
-                      </select>
-                    </th>
-                  ))}
+                  modTable.heading.map((v, i) => {
+                    const lineNum =
+                      (i === 0 && previewMode === 2) ||
+                      (i === 1 && previewMode === 1)
+                        ? lineMode.length - 1
+                        : i;
+                    return (
+                      <th key={i}>
+                        {v.label}{" "}
+                        <select
+                          id={lineNum}
+                          className="select white"
+                          onChange={(e) => handleMenu(e)}
+                          value={lineMode[lineNum]}
+                        >
+                          <option value="ID">IDs</option>
+                          <option value="URL">URLs</option>
+                        </select>
+                      </th>
+                    );
+                  })}
               </tr>
             </thead>
             <tbody>
