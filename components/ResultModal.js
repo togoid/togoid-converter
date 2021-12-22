@@ -406,7 +406,7 @@ const ResultModal = (props) => {
                   <p className="modal__heading">Include</p>
                   <div className="include__inner">
                     {previewModeList.map((v, i) => (
-                      <div className="radio">
+                      <div className="radio" key={i}>
                         <input
                           id={i}
                           key={v}
@@ -414,6 +414,8 @@ const ResultModal = (props) => {
                           name="include"
                           type="radio"
                           className="input"
+                          checked={i === previewMode}
+                          onChange={() => setPreviewMode(i)}
                         />
                         <label htmlFor={i} className="label">
                           {v}
