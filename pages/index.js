@@ -543,7 +543,6 @@ const Home = () => {
             v[v.length - 1].total = 0;
             v[0].converted = 0;
           }
-          console.log(v);
           return v;
         })
         .filter((w) => w[w.length - 1].total > 0);
