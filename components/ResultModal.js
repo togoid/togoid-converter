@@ -241,6 +241,7 @@ const ResultModal = (props) => {
       props.ids,
       getInclude(),
       10000,
+      false,
       false
     );
 
@@ -263,6 +264,7 @@ const ResultModal = (props) => {
       props.ids,
       getInclude(),
       10000,
+      false,
       false
     );
 
@@ -282,6 +284,7 @@ const ResultModal = (props) => {
       props.ids,
       getInclude(),
       10000,
+      false,
       false
     );
 

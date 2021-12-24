@@ -106,6 +106,7 @@ const Home = () => {
               category: dbCatalogue[name].category,
               total: 1,
               ids: [],
+              converted: 1,
             });
           }
         } else if (dbConfig[k].link.reverse && k.split("-").pop() === r.name) {
@@ -121,6 +122,7 @@ const Home = () => {
               category: dbCatalogue[name].category,
               total: 1,
               ids: [],
+              converted: 1,
             });
           }
         }
@@ -132,7 +134,7 @@ const Home = () => {
       r.push(v);
       return new Promise(function (resolve) {
         // エラーになった変換でもnullを返してresolve
-        return executeQuery(r, ids, "all", 10000, "only")
+        return executeQuery(r, ids, "all", 10000, "only", true)
           .then((v) => {
             NProgress.inc(1 / candidates.length);
             resolve(v);
@@ -148,10 +150,13 @@ const Home = () => {
         const _v = Object.assign({}, v);
         if (!values[i]) {
           _v.total = -1;
+          _v.converted = -1;
         } else if (values[i].total) {
           _v.total = values[i].total;
+          _v.converted = values[i].converted;
         } else {
           _v.total = 0;
+          _v.converted = 0;
         }
 
         return _v;
@@ -286,6 +291,7 @@ const Home = () => {
                 category: dbCatalogue[name].category,
                 total: 1,
                 ids: [],
+                converted: 1,
               });
             }
           } else if (!firstCandidatesTemp.find((v) => v.name === name)) {
@@ -294,6 +300,7 @@ const Home = () => {
               category: dbCatalogue[name].category,
               total: -2,
               ids: [],
+              converted: 1,
             });
           }
         }
@@ -308,6 +315,7 @@ const Home = () => {
                 category: dbCatalogue[name].category,
                 total: 1,
                 ids: [],
+                converted: 1,
               });
             }
           } else if (!firstCandidatesTemp.find((v) => v.name === name)) {
@@ -316,6 +324,7 @@ const Home = () => {
               category: dbCatalogue[name].category,
               total: -2,
               ids: [],
+              converted: 1,
             });
           }
         }
@@ -344,6 +353,7 @@ const Home = () => {
                     category: dbCatalogue[name].category,
                     total: 1,
                     ids: [],
+                    converted: 1,
                   },
                 ]);
               }
@@ -359,6 +369,7 @@ const Home = () => {
                   category: dbCatalogue[name].category,
                   total: -2,
                   ids: [],
+                  converted: 1,
                 },
               ]);
             }
@@ -380,6 +391,7 @@ const Home = () => {
                     category: dbCatalogue[name].category,
                     total: 1,
                     ids: [],
+                    converted: 1,
                   },
                 ]);
               }
@@ -395,6 +407,7 @@ const Home = () => {
                   category: dbCatalogue[name].category,
                   total: -2,
                   ids: [],
+                  converted: 1,
                 },
               ]);
             }
@@ -435,6 +448,7 @@ const Home = () => {
                     category: dbCatalogue[name].category,
                     total: 1,
                     ids: [],
+                    converted: 1,
                   },
                 ]);
               }
@@ -461,6 +475,7 @@ const Home = () => {
                     category: dbCatalogue[name].category,
                     total: 1,
                     ids: [],
+                    converted: 1,
                   },
                 ]);
               }
@@ -504,7 +519,7 @@ const Home = () => {
       const r = route.slice().concat(v);
       return new Promise(function (resolve) {
         // エラーになった変換でもnullを返してresolve
-        return executeQuery(r, ids, "all", 10000, "only")
+        return executeQuery(r, ids, "all", 10000, "only", true)
           .then((v) => {
             NProgress.inc(1 / candidates.length);
             resolve(v);
@@ -520,11 +535,15 @@ const Home = () => {
         .map((v, i) => {
           if (!values[i]) {
             v[v.length - 1].total = -1;
+            v[0].converted = -1;
           } else if (values[i].total) {
             v[v.length - 1].total = values[i].total;
+            v[0].converted = values[i].converted;
           } else {
             v[v.length - 1].total = 0;
+            v[0].converted = 0;
           }
+          console.log(v);
           return v;
         })
         .filter((w) => w[w.length - 1].total > 0);
