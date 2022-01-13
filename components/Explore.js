@@ -37,7 +37,7 @@ const Explore = (props) => {
 
   const handleIdDownload = async (database, routeIndex) => {
     const r = selectDatabase(database, routeIndex).slice(0, routeIndex + 1);
-    const d = await executeQuery(r, props.ids, "target", 10000, false);
+    const d = await executeQuery(r, props.ids, "target", 10000, false, false);
     const prefix = props.dbCatalogue[database.name].prefix.split("/").slice(-1);
 
     const text = d.results.map((result) => prefix + result).join("\r\n");
@@ -52,7 +52,7 @@ const Explore = (props) => {
     const heading = r
       .filter((v, i) => i <= routeIndex)
       .map((v) => props.dbCatalogue[v.name]);
-    const d = await executeQuery(r, props.ids, "verbose", 100, false);
+    const d = await executeQuery(r, props.ids, "verbose", 100, false, false);
     const rows = d.results.map((v) => v.slice(0, routeIndex + 1));
 
     setTotal(database.total);
@@ -181,12 +181,20 @@ const Explore = (props) => {
                                             : "#ffffff",
                                         }}
                                       >
-                                        <span
-                                          id={`total${i}-${v.name}`}
-                                          className="total"
-                                        >
-                                          {v.total >= 0 ? v.total : "too many"}
-                                        </span>
+                                        {i > 0 ? (
+                                          <span
+                                            id={`converted${i}-${v.name}`}
+                                            className="total"
+                                          >
+                                            {v.converted >= 0
+                                              ? v.converted
+                                              : "too many"}
+                                          </span>
+                                        ) : (
+                                          <span
+                                            id={`converted${i}-${v.name}`}
+                                          ></span>
+                                        )}
                                         <span className="text">
                                           {props.dbCatalogue[v.name].label}
                                         </span>

@@ -8,10 +8,7 @@ const ResultModal = (props) => {
   const [copied, setCopied] = useState(false);
   const [urlCopied, setUrlCopied] = useState(false);
   const [showAllFailed, setShowAllFailed] = useState(false);
-  const [showLinks, setShowLinks] = useState(
-    Array(props.tableData.heading.length).fill(false)
-  );
-  const [previewMode, setPreviewMode] = useState(0);
+  const [previewMode, setPreviewMode] = useState("All");
   const [modTable, setModTable] = useState(null);
   const [notConvertedIds, setNotConvertedIds] = useState([]);
   const [lineMode, setLineMode] = useState(
@@ -37,39 +34,26 @@ const ResultModal = (props) => {
     setModTable(result);
   }, [previewMode, lineMode]);
 
-  const handleMenu = (e) => {
-    const num = Number(e.target.value);
-    const newShowLinks = showLinks.slice();
-    newShowLinks[num] = !newShowLinks[num];
-    setShowLinks(newShowLinks);
+  const previewModeList = ["All", "Origin and targets", "Target", "Verbose"];
+  const getInclude = () => {
+    const includeObj = {
+      All: "all",
+      "Origin and targets": "pair",
+      Target: "target",
+      Verbose: "verbose",
+    };
+    return includeObj[previewMode];
   };
 
-  const handleTableID = (e) => {
+  const handleMenu = (e) => {
     const newLineMode = lineMode.slice();
-    if (e.target.value === "0" && previewMode === 2) {
-      newLineMode[newLineMode.length - 1] = "ID";
-    } else if (e.target.value === "1" && previewMode === 1) {
-      newLineMode[newLineMode.length - 1] = "ID";
-    } else {
-      newLineMode[e.target.value] = "ID";
-    }
-    setLineMode(newLineMode);
-  };
-  const handleTableURL = (e) => {
-    const newLineMode = lineMode.slice();
-    if (e.target.value === "0" && previewMode === 2) {
-      newLineMode[newLineMode.length - 1] = "URL";
-    } else if (e.target.value === "1" && previewMode === 1) {
-      newLineMode[newLineMode.length - 1] = "URL";
-    } else {
-      newLineMode[e.target.value] = "URL";
-    }
+    newLineMode[e.target.id] = e.target.value;
     setLineMode(newLineMode);
   };
 
   const formatPreviewTable = (tableHeading, tableRows) => {
     const table = { heading: [], rows: [], url: [] };
-    if (previewMode === 0) {
+    if (previewMode === "All") {
       // all
       const subPrefixList = tableHeading.map((v, i) => {
         // 表示モード増やすとき用
@@ -89,7 +73,7 @@ const ResultModal = (props) => {
       table.heading = tableHeading;
       table.rows = rows;
       table.url = url;
-    } else if (previewMode === 1) {
+    } else if (previewMode === "Origin and targets") {
       // origin and targets
       const subPrefixList = [
         lineMode[0] === "ID"
@@ -119,7 +103,7 @@ const ResultModal = (props) => {
       }
       table.rows = rows;
       table.url = url;
-    } else if (previewMode === 2) {
+    } else if (previewMode === "Target") {
       // target
       const subPrefixList = [
         lineMode[tableHeading.length - 1] === "ID"
@@ -142,7 +126,7 @@ const ResultModal = (props) => {
       }
       table.rows = rows;
       table.url = url;
-    } else if (previewMode === 3) {
+    } else if (previewMode === "Verbose") {
       // verbose
       const subPrefixList = tableHeading.map((v, i) => {
         // 表示モード増やすとき用
@@ -169,7 +153,7 @@ const ResultModal = (props) => {
 
   const formatExportTable = (tableHeading, tableRows) => {
     const exportTable = { heading: [], rows: [] };
-    if (previewMode === 0) {
+    if (previewMode === "All") {
       // all
       const subPrefixList = tableHeading.map((v, i) => {
         // 表示モード増やすとき用
@@ -183,7 +167,7 @@ const ResultModal = (props) => {
       exportTable.rows = tableRows
         .filter((v) => v[v.length - 1] !== null)
         .map((v) => v.map((w, j) => [subPrefixList[j] + w]));
-    } else if (previewMode === 1) {
+    } else if (previewMode === "Origin and targets") {
       // origin and targets
       const subPrefixList = [
         lineMode[0] === "ID"
@@ -213,7 +197,7 @@ const ResultModal = (props) => {
             )
         ),
       ].map(JSON.parse);
-    } else if (previewMode === 2) {
+    } else if (previewMode === "Target") {
       // target
       const subPrefixList = [
         lineMode[tableHeading.length - 1] === "ID"
@@ -232,7 +216,7 @@ const ResultModal = (props) => {
             )
         ),
       ].map((w) => [w]);
-    } else if (previewMode === 3) {
+    } else if (previewMode === "Verbose") {
       // verbose
       const subPrefixList = tableHeading.map((v, i) => {
         // 表示モード増やすとき用
@@ -257,10 +241,12 @@ const ResultModal = (props) => {
       props.ids,
       getInclude(),
       10000,
+      false,
       false
     );
 
-    const results = previewMode !== 2 ? d.results : d.results.map((v) => [v]);
+    const results =
+      previewMode !== "Target" ? d.results : d.results.map((v) => [v]);
     const { rows } = formatExportTable(props.tableData.heading, results);
     const text = rows.join("\r\n");
     copy(text, {
@@ -278,10 +264,12 @@ const ResultModal = (props) => {
       props.ids,
       getInclude(),
       10000,
+      false,
       false
     );
 
-    const results = previewMode !== 2 ? d.results : d.results.map((v) => [v]);
+    const results =
+      previewMode !== "Target" ? d.results : d.results.map((v) => [v]);
     const { heading, rows } = formatExportTable(
       props.tableData.heading,
       results
@@ -296,10 +284,12 @@ const ResultModal = (props) => {
       props.ids,
       getInclude(),
       10000,
+      false,
       false
     );
 
-    const results = previewMode !== 2 ? d.results : d.results.map((v) => [v]);
+    const results =
+      previewMode !== "Target" ? d.results : d.results.map((v) => [v]);
     const { rows } = formatExportTable(props.tableData.heading, results);
 
     const text = rows.join("\r\n");
@@ -308,13 +298,6 @@ const ResultModal = (props) => {
     });
     saveAs(blob, "ids.txt");
   };
-
-  const getInclude = () => {
-    const includeList = ["all", "pair", "target", "verbose"];
-    return includeList[previewMode];
-  };
-
-  const previewModeList = ["All", "Origin and targets", "Target", "Verbose"];
 
   const handleClipboardURL = () => {
     const include = getInclude();
@@ -406,14 +389,16 @@ const ResultModal = (props) => {
                   <p className="modal__heading">Include</p>
                   <div className="include__inner">
                     {previewModeList.map((v, i) => (
-                      <div className="radio">
+                      <div className="radio" key={i}>
                         <input
                           id={i}
                           key={v}
-                          value={i}
+                          value={v}
                           name="include"
                           type="radio"
                           className="input"
+                          checked={v === previewMode}
+                          onChange={() => setPreviewMode(v)}
                         />
                         <label htmlFor={i} className="label">
                           {v}
@@ -500,7 +485,7 @@ const ResultModal = (props) => {
               <div>
                 {(() => {
                   if (props.total > 100) {
-                    if (previewMode === 0) {
+                    if (previewMode === "All") {
                       return (
                         <p className="showing">
                           Showing {modTable.rows.length} of {props.total}{" "}
@@ -514,7 +499,7 @@ const ResultModal = (props) => {
                         </p>
                       );
                     }
-                  } else if (previewMode === 3) {
+                  } else if (previewMode === "Verbose") {
                     return (
                       <p className="showing">
                         Showing {modTable.rows.length} of {props.total} results
@@ -537,19 +522,27 @@ const ResultModal = (props) => {
               <tr>
                 {modTable &&
                   modTable.heading.length > 0 &&
-                  modTable.heading.map((v, i) => (
-                    <th key={i}>
-                      {v.label}{" "}
-                      <select name="" id="" className="select white">
-                        <option value="IDs">
-                          IDs
-                        </option>
-                        <option value="URLs">
-                          URLs
-                        </option>
-                      </select>
-                    </th>
-                  ))}
+                  modTable.heading.map((v, i) => {
+                    const lineNum =
+                      (i === 0 && previewMode === "Target") ||
+                      (i === 1 && previewMode === "Origin and targets")
+                        ? lineMode.length - 1
+                        : i;
+                    return (
+                      <th key={i}>
+                        {v.label}{" "}
+                        <select
+                          id={lineNum}
+                          className="select white"
+                          onChange={(e) => handleMenu(e)}
+                          value={lineMode[lineNum]}
+                        >
+                          <option value="ID">IDs</option>
+                          <option value="URL">URLs</option>
+                        </select>
+                      </th>
+                    );
+                  })}
               </tr>
             </thead>
             <tbody>
