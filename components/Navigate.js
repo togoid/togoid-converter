@@ -42,7 +42,7 @@ const Navigate = (props) => {
 
   const handleIdDownload = async (database, routeIndex, j) => {
     const r = selectDatabaseModal(routeIndex, j);
-    const d = await executeQuery(r, props.ids, "target", 10000, false);
+    const d = await executeQuery(r, props.ids, "target", 10000, false, false);
     const prefix = props.dbCatalogue[database.name].prefix.split("/").slice(-1);
 
     const text = d.results.map((result) => prefix + result).join("\r\n");
@@ -60,7 +60,8 @@ const Navigate = (props) => {
       props.ids,
       "verbose",
       100,
-      database.total === -2
+      database.total === -2,
+      false
     );
     const rows = d.results;
 
@@ -165,6 +166,9 @@ const Navigate = (props) => {
                                               : "#ffffff",
                                           }}
                                         >
+                                          <span
+                                            id={`total${i}-${v.name}`}
+                                          ></span>
                                           <span className="text">
                                             {props.dbCatalogue[v.name].label}
                                           </span>
@@ -261,18 +265,36 @@ const Navigate = (props) => {
                                                 : "#ffffff",
                                             }}
                                           >
+                                            {i === 1 ? (
+                                              <span
+                                                id={`converted${i}-${v.name}-${j}`}
+                                                className="total"
+                                              >
+                                                {v.converted >= 0
+                                                  ? v.converted
+                                                  : "too many"}
+                                              </span>
+                                            ) : (
+                                              <span
+                                                id={`converted${i}-${v.name}-${j}`}
+                                              ></span>
+                                            )}
                                             <span className="text">
                                               {props.dbCatalogue[v.name].label}
                                             </span>
                                             {i ===
-                                              props.databaseNodesList.length -
-                                                1 && (
+                                            props.databaseNodesList.length -
+                                              1 ? (
                                               <span
                                                 id={`total${i}-${v.name}-${j}`}
                                                 className="total"
                                               >
                                                 {v.total}
                                               </span>
+                                            ) : (
+                                              <span
+                                                id={`total${i}-${v.name}-${j}`}
+                                              ></span>
                                             )}
                                           </p>
                                         </label>
