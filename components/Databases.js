@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import dbCatalogueSparql from "../public/datasetSparql.json";
 import { categories } from "../lib/setting";
 
 const Databases = (props) => {
@@ -104,23 +103,28 @@ const Databases = (props) => {
                           {props.dbCatalogue[key].label}
                         </span>
                       </h3>
-                      {dbCatalogueSparql[key][`description_${language}`] && (
-                        <div className="description">
-                          <p>
-                            {dbCatalogueSparql[key][`description_${language}`]}
-                          </p>
-                          <p>
-                            Cited from{" "}
-                            <a
-                              href={`https://integbio.jp/dbcatalog/record/${props.dbCatalogue[key].catalog}`}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              Integbio Database Catalog
-                            </a>
-                          </p>
-                        </div>
-                      )}
+                      {Object.prototype.hasOwnProperty.call(
+                        props.dbDesc,
+                        key
+                      ) &&
+                        props.dbDesc[key] &&
+                        props.dbDesc[key][`description_${language}`] && (
+                          <div className="description">
+                            <p>
+                              {props.dbDesc[key][`description_${language}`]}
+                            </p>
+                            <p>
+                              Cited from{" "}
+                              <a
+                                href={`https://integbio.jp/dbcatalog/record/${props.dbCatalogue[key].catalog}`}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                Integbio Database Catalog
+                              </a>
+                            </p>
+                          </div>
+                        )}
                       <div className="path">
                         <div className="path_label small white">LINK TO</div>
                         <svg className="icon" viewBox="0 0 24 24">
@@ -130,22 +134,24 @@ const Databases = (props) => {
                           />
                         </svg>
                         <div className="path__children">
-                          {labels.map((l, i) => (
-                            <div
-                              className="path_label small green"
-                              style={{
-                                backgroundColor: categories[
-                                  props.dbCatalogue[l].category
-                                ]
-                                  ? categories[props.dbCatalogue[l].category]
-                                      .color
-                                  : null,
-                              }}
-                              key={i}
-                            >
-                              {props.dbCatalogue[l].label}
-                            </div>
-                          ))}
+                          {labels.map((l, i) =>
+                            props.dbCatalogue[l] ? (
+                              <div
+                                className="path_label small green"
+                                style={{
+                                  backgroundColor: categories[
+                                    props.dbCatalogue[l].category
+                                  ]
+                                    ? categories[props.dbCatalogue[l].category]
+                                        .color
+                                    : null,
+                                }}
+                                key={i}
+                              >
+                                {props.dbCatalogue[l].label}
+                              </div>
+                            ) : null
+                          )}
                         </div>
                       </div>
                       <dl className="data">
@@ -157,18 +163,19 @@ const Databases = (props) => {
                           <dt>CATEGORY</dt>
                           <dd>{props.dbCatalogue[key].category}</dd>
                         </div>
-                        {dbCatalogueSparql[key][`organization_${language}`] && (
-                          <div className="data__wrapper">
-                            <dt>ORGANIZATION</dt>
-                            <dd>
-                              {
-                                dbCatalogueSparql[key][
-                                  `organization_${language}`
-                                ]
-                              }
-                            </dd>
-                          </div>
-                        )}
+                        {Object.prototype.hasOwnProperty.call(
+                          props.dbDesc,
+                          key
+                        ) &&
+                          props.dbDesc[key] &&
+                          props.dbDesc[key][`organization_${language}`] && (
+                            <div className="data__wrapper">
+                              <dt>ORGANIZATION</dt>
+                              <dd>
+                                {props.dbDesc[key][`organization_${language}`]}
+                              </dd>
+                            </div>
+                          )}
                         {props.dbCatalogue[key].examples && (
                           <div className="data__wrapper">
                             <dt>EXAMPLES</dt>
