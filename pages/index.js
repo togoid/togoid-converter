@@ -8,7 +8,7 @@ import IdInput from "../components/IdInput";
 import Documents from "../components/Documents";
 import TabWrapper from "../components/TabWrapper";
 import Navigate from "../components/Navigate";
-import { executeQuery, getPathStyle } from "../lib/util";
+import { executeQuery, mergePathStyle } from "../lib/util";
 import { topExamples } from "../lib/examples";
 
 const Home = () => {
@@ -50,9 +50,14 @@ const Home = () => {
         if (activeTab === "NAVIGATE") {
           if (route.length === 1) {
             setDatabaseNodesList([databaseNodesList[0]]);
-            setCandidatePaths([
-              getPathStyle(`from${0}-${route[0].name}`, `nodeOther`, false),
-            ]);
+            setCandidatePaths(
+              mergePathStyle(
+                [],
+                `from${0}-${route[0].name}`,
+                `nodeOther`,
+                false
+              )
+            );
           } else {
             createNavigatePath(databaseNodesList);
           }
@@ -163,16 +168,15 @@ const Home = () => {
       });
       setDatabaseNodesList(nodesList);
 
-      const candidatePaths = [];
+      let candidatePaths = [];
       nodesList.forEach((nodes, i) => {
         if (i === 0) return;
         nodes.forEach((v) => {
-          candidatePaths.push(
-            getPathStyle(
-              `from${i - 1}-${route[i - 1].name}`,
-              `to${i}-${v.name}`,
-              route[i] && route[i].name === v.name
-            )
+          candidatePaths = mergePathStyle(
+            candidatePaths,
+            `from${i - 1}-${route[i - 1].name}`,
+            `to${i}-${v.name}`,
+            route[i] && route[i].name === v.name
           );
         });
       });
@@ -232,9 +236,9 @@ const Home = () => {
 
     if (activeTab === "NAVIGATE") {
       setRoute(route.slice(0, 1));
-      setCandidatePaths([
-        getPathStyle(`from${0}-${route[0].name}`, `nodeOther`, false),
-      ]);
+      setCandidatePaths(
+        mergePathStyle([], `from${0}-${route[0].name}`, `nodeOther`, false)
+      );
     } else {
       setRoute([]);
     }
@@ -559,31 +563,31 @@ const Home = () => {
   };
 
   const createNavigatePath = (nodesList) => {
-    const candidatePaths = [];
+    let candidatePaths = [];
     nodesList.forEach((nodes, i) => {
       if (i === 0) {
         if (nodesList.length === 1) {
-          candidatePaths.push(
-            getPathStyle(`from${0}-${route[0].name}`, `nodeOther`, false)
+          candidatePaths = mergePathStyle(
+            candidatePaths,
+            `from${0}-${route[0].name}`,
+            `nodeOther`,
+            false
           );
         }
       } else if (i === 1) {
         nodes.forEach((v, j) => {
           if (v === null) {
-            candidatePaths.push(
-              getPathStyle(
-                `from${0}-${route[0].name}`,
-                `to${i}-${j}`,
-                j === offsetRoute
-              )
+            candidatePaths = mergePathStyle(
+              candidatePaths,
+              `from${0}-${route[0].name}`,
+              `to${i}-${j}`,
+              j === offsetRoute
             );
           } else {
-            candidatePaths.push(
-              getPathStyle(
-                `from${0}-${route[0].name}`,
-                `to${i}-${j}`,
-                j === offsetRoute
-              )
+            candidatePaths = mergePathStyle(
+              `from${0}-${route[0].name}`,
+              `to${i}-${j}`,
+              j === offsetRoute
             );
           }
         });
@@ -617,12 +621,18 @@ const Home = () => {
                     },
             });
           } else if (nodesList[i - 1][j] === null) {
-            candidatePaths.push(
-              getPathStyle(`to${i - 2}-${j}`, `to${i}-${j}`, j === offsetRoute)
+            candidatePaths = mergePathStyle(
+              candidatePaths,
+              `to${i - 2}-${j}`,
+              `to${i}-${j}`,
+              j === offsetRoute
             );
           } else {
-            candidatePaths.push(
-              getPathStyle(`to${i - 1}-${j}`, `to${i}-${j}`, j === offsetRoute)
+            candidatePaths = mergePathStyle(
+              candidatePaths,
+              `to${i - 1}-${j}`,
+              `to${i}-${j}`,
+              j === offsetRoute
             );
           }
         });
@@ -630,8 +640,11 @@ const Home = () => {
         nodes.forEach((v, j) => {
           if (v === null) return;
           else {
-            candidatePaths.push(
-              getPathStyle(`to${i - 1}-${j}`, `to${i}-${j}`, j === offsetRoute)
+            candidatePaths = mergePathStyle(
+              candidatePaths,
+              `to${i - 1}-${j}`,
+              `to${i}-${j}`,
+              j === offsetRoute
             );
           }
         });
