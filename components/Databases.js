@@ -48,7 +48,7 @@ const Databases = (props) => {
               </div>
 
               <div className="database__index">
-                <h3>DB Name Index</h3>
+                <h3>Dataset Name Index</h3>
                 {(() => {
                   const labelIndex = [];
                   return Object.keys(props.dbCatalogue).map((key, i) => {
@@ -98,8 +98,20 @@ const Databases = (props) => {
                         .slice(0, 1)
                         .toUpperCase()}
                     >
-                      <h3 className="title">
-                        <span className="text">
+                      <h3
+                        className="title"
+                        id={props.dbCatalogue[key].label.replace(/\s/g, "")}
+                      >
+                        <span
+                          style={{
+                            backgroundColor: categories[
+                              props.dbCatalogue[key].category
+                            ]
+                              ? categories[props.dbCatalogue[key].category]
+                                  .color
+                              : null,
+                          }}
+                        >
                           {props.dbCatalogue[key].label}
                         </span>
                       </h3>
@@ -136,20 +148,29 @@ const Databases = (props) => {
                         <div className="path__children">
                           {labels.map((l, i) =>
                             props.dbCatalogue[l] ? (
-                              <div
-                                className="path_label small green"
-                                style={{
-                                  backgroundColor: categories[
-                                    props.dbCatalogue[l].category
-                                  ]
-                                    ? categories[props.dbCatalogue[l].category]
-                                        .color
-                                    : null,
-                                }}
+                              <a
+                                href={
+                                  "/#" +
+                                  props.dbCatalogue[l].label.replace(/\s/g, "")
+                                }
                                 key={i}
                               >
-                                {props.dbCatalogue[l].label}
-                              </div>
+                                <div
+                                  className="path_label small green"
+                                  style={{
+                                    backgroundColor: categories[
+                                      props.dbCatalogue[l].category
+                                    ]
+                                      ? categories[
+                                          props.dbCatalogue[l].category
+                                        ].color
+                                      : null,
+                                  }}
+                                  key={i}
+                                >
+                                  {props.dbCatalogue[l].label}
+                                </div>
+                              </a>
                             ) : null
                           )}
                         </div>
