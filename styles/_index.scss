@@ -267,8 +267,16 @@
         border-bottom: none;
       }
       .title {
+        margin: -40px 0 19px;
+        padding-top: 40px;
         font-size: 1.8rem;
-        margin: 0 0 19px;
+        span {
+          background-color: $gray04;
+          border-radius: 5px;
+          color: $white;
+          padding: 3px 14px 5px;
+          border: 1px solid transparent;
+        }
         .icon {
           width: 26px;
           margin: 0 6px 0 0;
