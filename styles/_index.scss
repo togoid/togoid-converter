@@ -272,17 +272,31 @@
       margin: 0 auto;
     }
     &__index {
-      padding-bottom: 20px;
-      border-bottom: 1px solid $gray06;
-      h3 {
-        font-size: 1.6rem;
-        margin-bottom: 5px;
+      padding: 11px 20px 17px;
+      margin: 0 0 27px;
+      border-radius: 10px;
+      background: $white;
+      &__names {
+        margin: 0 0 25px;
       }
-      a {
-        color: $gray04;
-        text-decoration: underline;
-        font-weight: bold;
-        margin-right: 10px;
+      &__title {
+        font-family: Oswald;
+        font-size: 1.6rem;
+        margin: 0 0 9px;
+      }
+      &__links {
+        display: flex;
+        a {
+          font-family: Oswald;
+          font-size: 1.6rem;
+          font-weight: 100;
+          color: $gray07;
+          text-decoration: underline;
+          margin: 0 5px 0 0;
+          &:last-child {
+            margin: 0;
+          }
+        }
       }
     }
     &__item {
