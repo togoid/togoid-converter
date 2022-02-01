@@ -173,14 +173,13 @@
             }
           }
           .label_list {
-            margin: 55px 0 0 70px;
+            margin: 55px 0 0 100px;
             &__item {
               position: relative;
               display: flex;
               align-items: center;
-              margin: 0 0 15px;
               font-size: 1.2rem;
-              line-height: 24px;
+              margin: 0 0 15px;
               &.hover {
                 background: rgba(0, 0, 0, 0.8);
               }
@@ -189,13 +188,13 @@
                 display: inline-block;
                 align-items: center;
                 justify-content: space-between;
+                min-width: 100px;
+                font-family: Oswald;
                 text-align: center;
-                width: 180px;
+                padding: 0 6px;
+                line-height: 16px;
+                border-radius: 8px;
                 background-color: $white;
-                border: 1px solid $gray01;
-                border-radius: 20px;
-                margin: 4px 2px;
-                padding: 3px 3px;
               }
             }
           }
