@@ -279,6 +279,33 @@
       &__names {
         margin: 0 0 25px;
       }
+
+      &__colors {
+        display: flex;
+        flex-wrap: wrap;
+        .color {
+          margin: 0 22px 13px 0;
+          &__square,
+          &__label {
+            display: inline-block;
+            vertical-align: middle;
+          }
+
+          &__square {
+            width: 18px;
+            height: 18px;
+            margin: 0 5px 0 0;
+            border-radius: 5px;
+            background: $green01;
+          }
+
+          &__label {
+            font-family: Oswald;
+            font-size: 1.6rem;
+          }
+        }
+      }
+
       &__title {
         font-family: Oswald;
         font-size: 1.6rem;
@@ -307,15 +334,23 @@
         border-bottom: none;
       }
       .title {
-        margin: -40px 0 19px;
-        padding-top: 40px;
-        font-size: 1.8rem;
-        span {
-          background-color: $gray04;
+        margin: 0 0 19px;
+        &__square,
+        &__text {
+          display: inline-block;
+          vertical-align: middle;
+        }
+
+        &__square {
+          width: 18px;
+          height: 18px;
+          margin: 0 6px 0 0;
           border-radius: 5px;
-          color: $white;
-          padding: 3px 14px 5px;
-          border: 1px solid transparent;
+          background: $gray01;
+        }
+
+        &__text {
+          font-size: 1.8rem;
         }
         .icon {
           width: 26px;
