@@ -351,7 +351,7 @@ const ResultModal = (props) => {
                     >
                       <span className="path_label__inner">{v.label}</span>
                     </div>
-                    <div className="path_label white">プロパティ</div>
+                    <div className="path_label white">Property name</div>
                   </div>
                 ))}
               </div>
@@ -396,11 +396,11 @@ const ResultModal = (props) => {
                           value={v}
                           name="include"
                           type="radio"
-                          className="input"
+                          className="radio__input"
                           checked={v === previewMode}
                           onChange={() => setPreviewMode(v)}
                         />
-                        <label htmlFor={i} className="label">
+                        <label htmlFor={i} className="radio__label">
                           {v}
                         </label>
                       </div>
@@ -417,10 +417,17 @@ const ResultModal = (props) => {
                       onClick={handleClipboardURL}
                       className="button_icon"
                     >
-                      <svg className="button_icon__icon" viewBox="0 0 24 24">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="12"
+                        height="13.895"
+                        viewBox="0 0 12 13.895"
+                        className="button_icon__icon"
+                      >
                         <path
-                          fill="currentColor"
-                          d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"
+                          d="M12.737,13.632H5.789V4.789h6.947m0-1.263H5.789A1.263,1.263,0,0,0,4.526,4.789v8.842a1.263,1.263,0,0,0,1.263,1.263h6.947A1.263,1.263,0,0,0,14,13.632V4.789a1.263,1.263,0,0,0-1.263-1.263M10.842,1H3.263A1.263,1.263,0,0,0,2,2.263v8.842H3.263V2.263h7.579Z"
+                          transform="translate(-2 -1)"
+                          fill="#fff"
                         />
                       </svg>
                       {urlCopied ? (
@@ -435,12 +442,20 @@ const ResultModal = (props) => {
                       onClick={handleClipboardCopy}
                       className="button_icon"
                     >
-                      <svg className="button_icon__icon" viewBox="0 0 24 24">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="12"
+                        height="13.895"
+                        viewBox="0 0 12 13.895"
+                        className="button_icon__icon"
+                      >
                         <path
-                          fill="currentColor"
-                          d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"
+                          d="M12.737,13.632H5.789V4.789h6.947m0-1.263H5.789A1.263,1.263,0,0,0,4.526,4.789v8.842a1.263,1.263,0,0,0,1.263,1.263h6.947A1.263,1.263,0,0,0,14,13.632V4.789a1.263,1.263,0,0,0-1.263-1.263M10.842,1H3.263A1.263,1.263,0,0,0,2,2.263v8.842H3.263V2.263h7.579Z"
+                          transform="translate(-2 -1)"
+                          fill="#fff"
                         />
                       </svg>
+
                       {copied ? (
                         <span>
                           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copied.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -451,12 +466,15 @@ const ResultModal = (props) => {
                     </button>
                     <button onClick={handleExportCSV} className="button_icon">
                       <svg
-                        className="button_icon__icon"
                         xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 14 17"
+                        width="11.497"
+                        height="13.961"
+                        viewBox="0 0 11.497 13.961"
+                        className="button_icon__icon"
                       >
                         <path
-                          d="M5,20H19V18H5M19,9H15V3H9V9H5l7,7Z"
+                          id="download"
+                          d="M5,16.961H16.5V15.319H5M16.5,7.927H13.212V3H8.285V7.927H5l5.749,5.749Z"
                           transform="translate(-5 -3)"
                           fill="#fff"
                         />
@@ -465,12 +483,15 @@ const ResultModal = (props) => {
                     </button>
                     <button onClick={handleExportTEXT} className="button_icon">
                       <svg
-                        className="button_icon__icon"
                         xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 14 17"
+                        width="11.497"
+                        height="13.961"
+                        viewBox="0 0 11.497 13.961"
+                        className="button_icon__icon"
                       >
                         <path
-                          d="M5,20H19V18H5M19,9H15V3H9V9H5l7,7Z"
+                          id="download"
+                          d="M5,16.961H16.5V15.319H5M16.5,7.927H13.212V3H8.285V7.927H5l5.749,5.749Z"
                           transform="translate(-5 -3)"
                           fill="#fff"
                         />
@@ -488,28 +509,38 @@ const ResultModal = (props) => {
                     if (previewMode === "All") {
                       return (
                         <p className="showing">
-                          Showing {modTable.rows.length} of {props.total}{" "}
-                          results
+                          <span className="showing__text">Showing</span>
+                          <span className="showing__result">
+                            {modTable.rows.length}/{props.total}
+                          </span>
                         </p>
                       );
                     } else {
                       return (
                         <p className="showing">
-                          Showing {modTable.rows.length} of N results
+                          <span className="showing__text">Showing</span>
+                          <span className="showing__result">
+                            {modTable.rows.length}/N results
+                          </span>
                         </p>
                       );
                     }
                   } else if (previewMode === "Verbose") {
                     return (
                       <p className="showing">
-                        Showing {modTable.rows.length} of {props.total} results
+                        <span className="showing__text">Showing</span>
+                        <span className="showing__result">
+                          {modTable.rows.length}/{props.total}
+                        </span>
                       </p>
                     );
                   } else {
                     return (
                       <p className="showing">
-                        Showing {modTable.rows.length} of {modTable.rows.length}{" "}
-                        results
+                        <span className="showing__text">Showing</span>
+                        <span className="showing__result">
+                          {modTable.rows.length}/{modTable.rows.length}{" "}
+                        </span>
                       </p>
                     );
                   }
@@ -530,16 +561,18 @@ const ResultModal = (props) => {
                         : i;
                     return (
                       <th key={i}>
-                        {v.label}{" "}
-                        <select
-                          id={lineNum}
-                          className="select white"
-                          onChange={(e) => handleMenu(e)}
-                          value={lineMode[lineNum]}
-                        >
-                          <option value="ID">IDs</option>
-                          <option value="URL">URLs</option>
-                        </select>
+                        <fieldset>
+                          <label htmlFor={lineNum} className="select__label">{v.label} </label>
+                          <select
+                            id={lineNum}
+                            className="select white"
+                            onChange={(e) => handleMenu(e)}
+                            value={lineMode[lineNum]}
+                          >
+                            <option value="ID">IDs</option>
+                            <option value="URL">URLs</option>
+                          </select>
+                        </fieldset>
                       </th>
                     );
                   })}

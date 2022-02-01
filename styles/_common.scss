@@ -16,16 +16,15 @@
   &.green {
     background: $green01;
   }
-  //&.purple {
-  //  background: $purple01;
-  //}
-  //&.orange {
-  //  background: $orange01;
-  //}
   &.white {
-    border-color: $gray06;
+    width: auto;
+    font-family: Oswald;
+    font-size: 1.2rem;
+    color: $gray07;
+    padding: 0 6px;
+    line-height: 17px;
+    border: none;
     background: $white;
-    color: $textColor02;
   }
 
   &__inner {
