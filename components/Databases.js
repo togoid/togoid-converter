@@ -55,8 +55,8 @@ const Databases = (props) => {
                       const labelIndex = [];
                       return Object.keys(props.dbCatalogue).map((key, i) => {
                         const keyInitial = props.dbCatalogue[key].label
-                        .slice(0, 1)
-                        .toUpperCase();
+                          .slice(0, 1)
+                          .toUpperCase();
                         if (
                           Object.keys(props.dbConfig).find(
                             (k) =>
@@ -75,6 +75,13 @@ const Databases = (props) => {
                       });
                     })()}
                   </section>
+                </section>
+
+                <section className="database__index__colors">
+                  <a href="" className="color">
+                    <span className="color__square" />
+                    <span className="color__label">Gene</span>
+                  </a>
                 </section>
               </div>
 
@@ -107,6 +114,7 @@ const Databases = (props) => {
                         id={props.dbCatalogue[key].label.replace(/\s/g, "")}
                       >
                         <span
+                          className="title__square"
                           style={{
                             backgroundColor: categories[
                               props.dbCatalogue[key].category
@@ -115,7 +123,8 @@ const Databases = (props) => {
                                   .color
                               : null,
                           }}
-                        >
+                        />
+                        <span className="title__text">
                           {props.dbCatalogue[key].label}
                         </span>
                       </h3>
