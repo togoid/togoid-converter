@@ -63,10 +63,11 @@
 
 .select_lang {
   display: flex;
-  margin: 0 0 40px;
+  margin: 0 0 18px;
   .radio {
     margin: 0 24px 0 0;
     &__label {
+      font-family: Oswald;
       cursor: pointer;
     }
   }
