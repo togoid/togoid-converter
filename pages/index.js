@@ -112,6 +112,7 @@ const Home = () => {
               total: 1,
               ids: [],
               converted: 1,
+              link: dbConfig[`${r.name}-${name}`].link.forward.label,
             });
           }
         } else if (dbConfig[k].link.reverse && k.split("-").pop() === r.name) {
@@ -128,6 +129,7 @@ const Home = () => {
               total: 1,
               ids: [],
               converted: 1,
+              link: dbConfig[`${name}-${r.name}`].link.reverse.label,
             });
           }
         }
