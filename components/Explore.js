@@ -110,7 +110,7 @@ const Explore = (props) => {
                   {props.databaseNodesList &&
                     props.databaseNodesList.length > 0 &&
                     props.databaseNodesList.map((nodes, i) => (
-                      <React.Fragment>
+                      <React.Fragment key={i}>
                         <div className="item_wrapper" key={1}>
                           <ul className="label_list" key={2}>
                             {nodes.map((v, j) => {
