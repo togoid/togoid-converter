@@ -340,6 +340,7 @@ const ResultModal = (props) => {
               <div className="modal__path__frame__inner">
                 {props.tableData.heading.map((v, i) => (
                   <div className="modal__path__frame__item">
+                  <div className="modal__path__frame__item" key={i}>
                     <div
                       key={i}
                       className="path_label green"
@@ -562,7 +563,9 @@ const ResultModal = (props) => {
                     return (
                       <th key={i}>
                         <fieldset>
-                          <label htmlFor={lineNum} className="select__label">{v.label} </label>
+                          <label htmlFor={lineNum} className="select__label">
+                            {v.label}{" "}
+                          </label>
                           <select
                             id={lineNum}
                             className="select white"
