@@ -339,8 +339,12 @@ const ResultModal = (props) => {
             <div className="modal__path__frame">
               <div className="modal__path__frame__inner">
                 {props.tableData.heading.map((v, i) => (
-                  <div className="modal__path__frame__item">
                   <div className="modal__path__frame__item" key={i}>
+                    {i !== 0 && (
+                      <div className="path_label white">
+                        {props.route[i].link}
+                      </div>
+                    )}
                     <div
                       key={i}
                       className="path_label green"
@@ -352,7 +356,6 @@ const ResultModal = (props) => {
                     >
                       <span className="path_label__inner">{v.label}</span>
                     </div>
-                    <div className="path_label white">Property name</div>
                   </div>
                 ))}
               </div>
