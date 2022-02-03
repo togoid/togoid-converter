@@ -114,33 +114,14 @@ const Explore = (props) => {
                         <div className="item_wrapper" key={1}>
                           <ul className="label_list" key={2}>
                             {nodes.map((v, j) => {
-                              let dbLink = "";
                               if (i > 0) {
-                                // 順方向の変換を探す
-                                let c =
-                                  props.dbConfig[
-                                    `${props.route[i - 1].name}-${v.name}`
-                                  ];
-                                if (c && c.link && c.link.forward) {
-                                  dbLink = c.link.forward.label;
-                                }
-                                if (!dbLink) {
-                                  // 逆方向の変換を探す
-                                  c =
-                                    props.dbConfig[
-                                      `${v.name}-${props.route[i - 1].name}`
-                                    ];
-                                  if (c && c.link && c.link.reverse) {
-                                    dbLink = c.link.reverse.label;
-                                  }
-                                }
                                 return (
                                   <li key={j} className="label_list__item">
                                     <p
                                       id={`label${i}-${v.name}`}
                                       className="label_list__item__inner"
                                     >
-                                      {dbLink}
+                                      {v.link}
                                     </p>
                                   </li>
                                 );
