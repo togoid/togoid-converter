@@ -170,9 +170,8 @@ const Home = () => {
       nodesList.forEach((nodes, i) => {
         if (i === 0) return;
         nodes.forEach((v) => {
-          candidatePaths.push.apply(
-            candidatePaths,
-            mergePathStyle(
+          candidatePaths.push(
+            ...mergePathStyle(
               `from${i - 1}-${route[i - 1].name}`,
               `to${i}-${v.name}`,
               route[i] && route[i].name === v.name
@@ -569,9 +568,8 @@ const Home = () => {
         }
       } else if (i === 1) {
         nodes.forEach((v, j) => {
-          candidatePaths.push.apply(
-            candidatePaths,
-            mergePathStyle(
+          candidatePaths.push(
+            ...mergePathStyle(
               `from${0}-${route[0].name}`,
               `to${i}-${j}`,
               j === offsetRoute
@@ -581,45 +579,46 @@ const Home = () => {
       } else if (i === nodesList.length - 1) {
         nodes.forEach((v, j) => {
           if (nodesList[i - 2][j] === null) {
-            candidatePaths.push({
-              from: {
-                id: `to${i - 2}-${j}`,
-                posX: "left",
-                posY: "middle",
+            candidatePaths.push(
+              {
+                from: {
+                  id: `to${i - 2}-${j}`,
+                  posX: "left",
+                  posY: "middle",
+                },
+                to: {
+                  id: `label${i}-${j}`,
+                  posX: "left",
+                  posY: "middle",
+                },
+                style:
+                  j === offsetRoute
+                    ? {
+                        color: "#1A8091",
+                        head: "none",
+                        arrow: "smooth",
+                        width: 2,
+                      }
+                    : {
+                        color: "#dddddd",
+                        head: "none",
+                        arrow: "smooth",
+                        width: 1.5,
+                      },
               },
-              to: {
-                id: `to${i}-${j}`,
-                posX: "left",
-                posY: "middle",
-              },
-              style:
-                j === offsetRoute
-                  ? {
-                      color: "#1A8091",
-                      head: "none",
-                      arrow: "smooth",
-                      width: 2,
-                    }
-                  : {
-                      color: "#dddddd",
-                      head: "none",
-                      arrow: "smooth",
-                      width: 1.5,
-                    },
-            });
+              getPathStyle(`label${i}-${j}`, `to${i}-${j}`, j === offsetRoute)
+            );
           } else if (nodesList[i - 1][j] === null) {
-            candidatePaths.push.apply(
-              candidatePaths,
-              mergePathStyle(
+            candidatePaths.push(
+              ...mergePathStyle(
                 `to${i - 2}-${j}`,
                 `to${i}-${j}`,
                 j === offsetRoute
               )
             );
           } else {
-            candidatePaths.push.apply(
-              candidatePaths,
-              mergePathStyle(
+            candidatePaths.push(
+              ...mergePathStyle(
                 `to${i - 1}-${j}`,
                 `to${i}-${j}`,
                 j === offsetRoute
@@ -631,9 +630,8 @@ const Home = () => {
         nodes.forEach((v, j) => {
           if (v === null) return;
           else {
-            candidatePaths.push.apply(
-              candidatePaths,
-              mergePathStyle(
+            candidatePaths.push(
+              ...mergePathStyle(
                 `to${i - 1}-${j}`,
                 `to${i}-${j}`,
                 j === offsetRoute
