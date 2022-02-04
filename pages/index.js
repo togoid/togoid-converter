@@ -299,7 +299,7 @@ const Home = () => {
                 category: dbCatalogue[name].category,
                 total: 1,
                 converted: 1,
-                link: dbConfig[`${r.name}-${name}`].link.forward.label,
+                link: dbConfig[k].link.forward.label,
               });
             }
           } else if (!firstCandidatesTemp.find((v) => v.name === name)) {
@@ -308,7 +308,7 @@ const Home = () => {
               category: dbCatalogue[name].category,
               total: -2,
               converted: 1,
-              link: dbConfig[`${r.name}-${name}`].link.forward.label,
+              link: dbConfig[k].link.forward.label,
             });
           }
         }
@@ -323,7 +323,7 @@ const Home = () => {
                 category: dbCatalogue[name].category,
                 total: 1,
                 converted: 1,
-                link: dbConfig[`${name}-${r.name}`].link.reverse.label,
+                link: dbConfig[k].link.reverse.label,
               });
             }
           } else if (!firstCandidatesTemp.find((v) => v.name === name)) {
@@ -332,7 +332,7 @@ const Home = () => {
               category: dbCatalogue[name].category,
               total: -2,
               converted: 1,
-              link: dbConfig[`${name}-${r.name}`].link.reverse.label,
+              link: dbConfig[k].link.reverse.label,
             });
           }
         }
@@ -361,7 +361,7 @@ const Home = () => {
                     category: dbCatalogue[name].category,
                     total: 1,
                     converted: 1,
-                    link: dbConfig[`${r.name}-${name}`].link.forward.label,
+                    link: dbConfig[k].link.forward.label,
                   },
                 ]);
               }
@@ -377,7 +377,7 @@ const Home = () => {
                   category: dbCatalogue[name].category,
                   total: -2,
                   converted: 1,
-                  link: dbConfig[`${r.name}-${name}`].link.forward.label,
+                  link: dbConfig[k].link.forward.label,
                 },
               ]);
             }
@@ -399,7 +399,7 @@ const Home = () => {
                     category: dbCatalogue[name].category,
                     total: 1,
                     converted: 1,
-                    link: dbConfig[`${name}-${r.name}`].link.reverse.label,
+                    link: dbConfig[k].link.reverse.label,
                   },
                 ]);
               }
@@ -415,7 +415,7 @@ const Home = () => {
                   category: dbCatalogue[name].category,
                   total: -2,
                   converted: 1,
-                  link: dbConfig[`${name}-${r.name}`].link.reverse.label,
+                  link: dbConfig[k].link.reverse.label,
                 },
               ]);
             }
@@ -456,7 +456,7 @@ const Home = () => {
                     category: dbCatalogue[name].category,
                     total: 1,
                     converted: 1,
-                    link: dbConfig[`${r[1].name}-${name}`].link.forward.label,
+                    link: dbConfig[k].link.forward.label,
                   },
                 ]);
               }
@@ -483,7 +483,7 @@ const Home = () => {
                     category: dbCatalogue[name].category,
                     total: 1,
                     converted: 1,
-                    link: dbConfig[`${name}-${r[1].name}`].link.reverse.label,
+                    link: dbConfig[k].link.reverse.label,
                   },
                 ]);
               }
