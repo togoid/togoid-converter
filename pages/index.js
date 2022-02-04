@@ -105,7 +105,6 @@ const Home = () => {
               name,
               category: dbCatalogue[name].category,
               total: 1,
-              ids: [],
               converted: 1,
               results: [],
             });
@@ -122,7 +121,6 @@ const Home = () => {
               name,
               category: dbCatalogue[name].category,
               total: 1,
-              ids: [],
               converted: 1,
               results: [],
             });
@@ -132,11 +130,11 @@ const Home = () => {
     });
     NProgress.start();
     const promises = candidates.map((v) => {
-      const rt = [routeTemp[routeTemp.length - 1], v];
-      const idst = routeTemp[routeTemp.length - 1].results;
+      const r = [routeTemp[routeTemp.length - 1], v];
+      const ids = routeTemp[routeTemp.length - 1].results;
       return new Promise(function (resolve) {
         // エラーになった変換でもnullを返してresolve
-        return executeQuery(rt, idst, "target", 10000, true, true)
+        return executeQuery(r, ids, "target", 10000, true, true)
           .then((v) => {
             NProgress.inc(1 / candidates.length);
             resolve(v);
@@ -205,26 +203,19 @@ const Home = () => {
               name: k,
               category: dbCatalogue[k].category,
               total: 1,
-              ids: [id],
-              results: [],
+              results: [id],
             });
           } else {
             candidates[index].total += 1;
-            candidates[index].ids.push(id);
+            candidates[index].results.push(id);
           }
         }
       });
     });
     if (candidates.length > 0) {
-      // idsの使い道が分からない
-      const databases = candidates.map((v) => {
-        v.results = v.ids;
-        v.ids = v.ids.map((id) => ({ to: id }));
-        return v;
-      });
-      setDatabaseNodesList([databases]);
+      setDatabaseNodesList([candidates]);
       setRoute([]);
-      return databases;
+      return candidates;
     }
   };
 
@@ -304,7 +295,6 @@ const Home = () => {
                 name,
                 category: dbCatalogue[name].category,
                 total: 1,
-                ids: [],
                 converted: 1,
               });
             }
@@ -313,7 +303,6 @@ const Home = () => {
               name,
               category: dbCatalogue[name].category,
               total: -2,
-              ids: [],
               converted: 1,
             });
           }
@@ -328,7 +317,6 @@ const Home = () => {
                 name,
                 category: dbCatalogue[name].category,
                 total: 1,
-                ids: [],
                 converted: 1,
               });
             }
@@ -337,7 +325,6 @@ const Home = () => {
               name,
               category: dbCatalogue[name].category,
               total: -2,
-              ids: [],
               converted: 1,
             });
           }
@@ -366,7 +353,6 @@ const Home = () => {
                     name,
                     category: dbCatalogue[name].category,
                     total: 1,
-                    ids: [],
                     converted: 1,
                   },
                 ]);
@@ -382,7 +368,6 @@ const Home = () => {
                   name,
                   category: dbCatalogue[name].category,
                   total: -2,
-                  ids: [],
                   converted: 1,
                 },
               ]);
@@ -404,7 +389,6 @@ const Home = () => {
                     name,
                     category: dbCatalogue[name].category,
                     total: 1,
-                    ids: [],
                     converted: 1,
                   },
                 ]);
@@ -420,7 +404,6 @@ const Home = () => {
                   name,
                   category: dbCatalogue[name].category,
                   total: -2,
-                  ids: [],
                   converted: 1,
                 },
               ]);
@@ -461,7 +444,6 @@ const Home = () => {
                     name,
                     category: dbCatalogue[name].category,
                     total: 1,
-                    ids: [],
                     converted: 1,
                   },
                 ]);
@@ -488,7 +470,6 @@ const Home = () => {
                     name,
                     category: dbCatalogue[name].category,
                     total: 1,
-                    ids: [],
                     converted: 1,
                   },
                 ]);
