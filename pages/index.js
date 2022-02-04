@@ -107,6 +107,7 @@ const Home = () => {
               total: 1,
               ids: [],
               converted: 1,
+              results: [],
             });
           }
         } else if (dbConfig[k].link.reverse && k.split("-").pop() === r.name) {
@@ -123,6 +124,7 @@ const Home = () => {
               total: 1,
               ids: [],
               converted: 1,
+              results: [],
             });
           }
         }
@@ -130,11 +132,11 @@ const Home = () => {
     });
     NProgress.start();
     const promises = candidates.map((v) => {
-      const r = routeTemp.slice();
-      r.push(v);
+      const rt = [routeTemp[routeTemp.length - 1], v];
+      const idst = routeTemp[routeTemp.length - 1].results;
       return new Promise(function (resolve) {
         // エラーになった変換でもnullを返してresolve
-        return executeQuery(r, ids, "all", 10000, "only", true)
+        return executeQuery(rt, idst, "target", 10000, true, true)
           .then((v) => {
             NProgress.inc(1 / candidates.length);
             resolve(v);
@@ -154,6 +156,7 @@ const Home = () => {
         } else if (values[i].total) {
           _v.total = values[i].total;
           _v.converted = values[i].converted;
+          _v.results = Array.from(new Set(values[i].results));
         } else {
           _v.total = 0;
           _v.converted = 0;
@@ -203,6 +206,7 @@ const Home = () => {
               category: dbCatalogue[k].category,
               total: 1,
               ids: [id],
+              results: [],
             });
           } else {
             candidates[index].total += 1;
@@ -212,7 +216,9 @@ const Home = () => {
       });
     });
     if (candidates.length > 0) {
+      // idsの使い道が分からない
       const databases = candidates.map((v) => {
+        v.results = v.ids;
         v.ids = v.ids.map((id) => ({ to: id }));
         return v;
       });
