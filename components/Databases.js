@@ -78,10 +78,21 @@ const Databases = (props) => {
                 </section>
 
                 <section className="database__index__colors">
-                  <a href="" className="color">
-                    <span className="color__square" />
-                    <span className="color__label">Gene</span>
-                  </a>
+                  {(() => {
+                    return Object.keys(categories).map((k) => {
+                      return (
+                        <span className="color" key={k}>
+                          <span
+                            className="color__square"
+                            style={{
+                              backgroundColor: categories[k].color,
+                            }}
+                          />
+                          <span className="color__label">{k}</span>
+                        </span>
+                      );
+                    });
+                  })()}
                 </section>
               </div>
 
