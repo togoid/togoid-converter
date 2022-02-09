@@ -7,7 +7,7 @@ const IdInput = (props) => {
     if (props.previousRoute.length) {
       props.tryKeepRoute(props.idTexts);
     } else {
-      const list = props.handleSubmit(props.idTexts);
+      const list = props.handleIdTextsSubmit(props.idTexts);
       if (list.length === 1) {
         props.setRoute(list);
       }
@@ -32,7 +32,7 @@ const IdInput = (props) => {
 
     reader.onload = () => {
       props.setIdTexts(reader.result);
-      props.handleSubmit(reader.result);
+      props.handleIdTextsSubmit(reader.result);
     };
     reader.onerror = () => {
       console.log(reader.error);
