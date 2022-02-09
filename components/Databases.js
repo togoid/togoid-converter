@@ -227,6 +227,7 @@ const Databases = (props) => {
                             <dd>
                               {props.dbCatalogue[key].examples.map(
                                 (example, i) => {
+                                  /* eslint-disable */
                                   return (
                                     <li key={i}>
                                       <a
@@ -240,6 +241,7 @@ const Databases = (props) => {
                                       </a>
                                     </li>
                                   );
+                                  /* eslint-enable */
                                 }
                               )}
                             </dd>
