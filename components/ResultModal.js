@@ -7,7 +7,7 @@ import { categories } from "../lib/setting";
 const ResultModal = (props) => {
   const [copied, setCopied] = useState(false);
   const [urlCopied, setUrlCopied] = useState(false);
-  const [previewMode, setPreviewMode] = useState("All");
+  const [previewMode, setPreviewMode] = useState("All converted IDs");
   const [modTable, setModTable] = useState(null);
   const [lineMode, setLineMode] = useState(
     Array(props.tableData.heading.length).fill("ID")
@@ -21,13 +21,18 @@ const ResultModal = (props) => {
     setModTable(result);
   }, [previewMode, lineMode]);
 
-  const previewModeList = ["All", "Origin and targets", "Target", "Verbose"];
+  const previewModeList = [
+    "All converted IDs",
+    "Source and target IDs",
+    "Target IDs",
+    "All including unconverted IDs",
+  ];
   const getInclude = () => {
     const includeObj = {
-      All: "all",
-      "Origin and targets": "pair",
-      Target: "target",
-      Verbose: "verbose",
+      "All converted IDs": "all",
+      "Source and target IDs": "pair",
+      "Target IDs": "target",
+      "All including unconverted IDs": "verbose",
     };
     return includeObj[previewMode];
   };
@@ -40,7 +45,7 @@ const ResultModal = (props) => {
 
   const formatPreviewTable = (tableHeading, tableRows) => {
     const table = { heading: [], rows: [], url: [] };
-    if (previewMode === "All") {
+    if (previewMode === "All converted IDs") {
       // all
       const subPrefixList = tableHeading.map((v, i) => {
         // 表示モード増やすとき用
@@ -60,7 +65,7 @@ const ResultModal = (props) => {
       table.heading = tableHeading;
       table.rows = rows;
       table.url = url;
-    } else if (previewMode === "Origin and targets") {
+    } else if (previewMode === "Source and target IDs") {
       // origin and targets
       const subPrefixList = [
         lineMode[0] === "ID"
@@ -90,7 +95,7 @@ const ResultModal = (props) => {
       }
       table.rows = rows;
       table.url = url;
-    } else if (previewMode === "Target") {
+    } else if (previewMode === "Target IDs") {
       // target
       const subPrefixList = [
         lineMode[tableHeading.length - 1] === "ID"
@@ -113,7 +118,7 @@ const ResultModal = (props) => {
       }
       table.rows = rows;
       table.url = url;
-    } else if (previewMode === "Verbose") {
+    } else if (previewMode === "All including unconverted IDs") {
       // verbose
       const subPrefixList = tableHeading.map((v, i) => {
         // 表示モード増やすとき用
@@ -140,7 +145,7 @@ const ResultModal = (props) => {
 
   const formatExportTable = (tableHeading, tableRows) => {
     const exportTable = { heading: [], rows: [] };
-    if (previewMode === "All") {
+    if (previewMode === "All converted IDs") {
       // all
       const subPrefixList = tableHeading.map((v, i) => {
         // 表示モード増やすとき用
@@ -154,7 +159,7 @@ const ResultModal = (props) => {
       exportTable.rows = tableRows
         .filter((v) => v[v.length - 1] !== null)
         .map((v) => v.map((w, j) => [subPrefixList[j] + w]));
-    } else if (previewMode === "Origin and targets") {
+    } else if (previewMode === "Source and target IDs") {
       // origin and targets
       const subPrefixList = [
         lineMode[0] === "ID"
@@ -184,7 +189,7 @@ const ResultModal = (props) => {
             )
         ),
       ].map(JSON.parse);
-    } else if (previewMode === "Target") {
+    } else if (previewMode === "Target IDs") {
       // target
       const subPrefixList = [
         lineMode[tableHeading.length - 1] === "ID"
@@ -203,7 +208,7 @@ const ResultModal = (props) => {
             )
         ),
       ].map((w) => [w]);
-    } else if (previewMode === "Verbose") {
+    } else if (previewMode === "All including unconverted IDs") {
       // verbose
       const subPrefixList = tableHeading.map((v, i) => {
         // 表示モード増やすとき用
@@ -233,7 +238,7 @@ const ResultModal = (props) => {
     );
 
     const results =
-      previewMode !== "Target" ? d.results : d.results.map((v) => [v]);
+      previewMode !== "Target IDs" ? d.results : d.results.map((v) => [v]);
     const { rows } = formatExportTable(props.tableData.heading, results);
     const text = rows.join("\r\n");
     copy(text, {
@@ -256,7 +261,7 @@ const ResultModal = (props) => {
     );
 
     const results =
-      previewMode !== "Target" ? d.results : d.results.map((v) => [v]);
+      previewMode !== "Target IDs" ? d.results : d.results.map((v) => [v]);
     const { heading, rows } = formatExportTable(
       props.tableData.heading,
       results
@@ -276,7 +281,7 @@ const ResultModal = (props) => {
     );
 
     const results =
-      previewMode !== "Target" ? d.results : d.results.map((v) => [v]);
+      previewMode !== "Target IDs" ? d.results : d.results.map((v) => [v]);
     const { rows } = formatExportTable(props.tableData.heading, results);
 
     const text = rows.join("\r\n");
@@ -473,7 +478,7 @@ const ResultModal = (props) => {
               <div>
                 {(() => {
                   if (props.total > 100) {
-                    if (previewMode === "All") {
+                    if (previewMode === "All converted IDs") {
                       return (
                         <p className="showing">
                           <span className="showing__text">Showing</span>
@@ -492,7 +497,7 @@ const ResultModal = (props) => {
                         </p>
                       );
                     }
-                  } else if (previewMode === "Verbose") {
+                  } else if (previewMode === "All including unconverted IDs") {
                     return (
                       <p className="showing">
                         <span className="showing__text">Showing</span>
@@ -522,8 +527,8 @@ const ResultModal = (props) => {
                   modTable.heading.length > 0 &&
                   modTable.heading.map((v, i) => {
                     const lineNum =
-                      (i === 0 && previewMode === "Target") ||
-                      (i === 1 && previewMode === "Origin and targets")
+                      (i === 0 && previewMode === "Target IDs") ||
+                      (i === 1 && previewMode === "Source and target IDs")
                         ? lineMode.length - 1
                         : i;
                     return (
