@@ -9,7 +9,6 @@ import { categories } from "../lib/setting";
 const Navigate = (props) => {
   const [modalVisibility, setModalVisibility] = useState(false);
   const [tableData, setTableData] = useState({ heading: [], rows: [] });
-  const [total, setTotal] = useState(0);
   const [informationModal, setInformationModal] = useState(false);
   const [database, setDatabase] = useState(null);
   const [visibleActionButtonIndex, setVisibleActionButtonIndex] = useState([
@@ -55,17 +54,8 @@ const Navigate = (props) => {
   const showModal = async (database, routeIndex, j) => {
     const r = selectDatabaseModal(routeIndex, j);
     const heading = r.map((v) => props.dbCatalogue[v.name]);
-    const d = await executeQuery(
-      r,
-      props.ids,
-      "verbose",
-      100,
-      database.total === -2,
-      false
-    );
+    const d = await executeQuery(r, props.ids, "verbose", 100, false, false);
     const rows = d.results;
-
-    setTotal(database.total === -2 ? d.total : database.total);
     setTableData({ heading, rows });
   };
 
@@ -448,7 +438,6 @@ const Navigate = (props) => {
                       route={props.route}
                       ids={props.ids}
                       tableData={tableData}
-                      total={total}
                       setModalVisibility={setModalVisibility}
                       dbCatalogue={props.dbCatalogue}
                     />
