@@ -116,11 +116,6 @@ const Navigate = (props) => {
                         <div className="item_wrapper" key={2}>
                           {i === 0 ? (
                             <div>
-                              <React.Fragment>
-                                <p className="item_first_heading">
-                                  Convert from
-                                </p>
-                              </React.Fragment>
                               <ul className="result_list first">
                                 {nodes.map((v, j) => {
                                   const isActionButtonVisible =

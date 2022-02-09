@@ -123,14 +123,6 @@ const Explore = (props) => {
                           </div>
                         )}
                         <div className="item_wrapper" key={2}>
-                          {i === 0 && (
-                            <React.Fragment>
-                              <p className="item_first_heading">Convert from</p>
-                              <p className="item_first_count_heading">
-                                Matched
-                              </p>
-                            </React.Fragment>
-                          )}
                           <ul
                             className={
                               i === 0 ? "result_list first" : "result_list"
