@@ -476,47 +476,9 @@ const ResultModal = (props) => {
             </div>
             {modTable && modTable.rows.length > 0 && (
               <div>
-                {(() => {
-                  if (props.total > 100) {
-                    if (previewMode === "All converted IDs") {
-                      return (
-                        <p className="showing">
-                          <span className="showing__text">Showing</span>
-                          <span className="showing__result">
-                            {modTable.rows.length}/{props.total}
-                          </span>
-                        </p>
-                      );
-                    } else {
-                      return (
-                        <p className="showing">
-                          <span className="showing__text">Showing</span>
-                          <span className="showing__result">
-                            {modTable.rows.length}/N results
-                          </span>
-                        </p>
-                      );
-                    }
-                  } else if (previewMode === "All including unconverted IDs") {
-                    return (
-                      <p className="showing">
-                        <span className="showing__text">Showing</span>
-                        <span className="showing__result">
-                          {modTable.rows.length}/{props.total}
-                        </span>
-                      </p>
-                    );
-                  } else {
-                    return (
-                      <p className="showing">
-                        <span className="showing__text">Showing</span>
-                        <span className="showing__result">
-                          {modTable.rows.length}/{modTable.rows.length}{" "}
-                        </span>
-                      </p>
-                    );
-                  }
-                })()}
+                <p className="showing">
+                  <span className="showing__text">Preview</span>
+                </p>
               </div>
             )}
           </div>
