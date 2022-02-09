@@ -4,7 +4,7 @@ const IdInput = (props) => {
   const handleSubmit = (e) => {
     if (e) e.preventDefault();
 
-    if (props.isKeepRouteChecked && props.previousRoute.length) {
+    if (props.previousRoute.length) {
       props.tryKeepRoute(props.idTexts);
     } else {
       const list = props.handleSubmit(props.idTexts);
