@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import copy from "copy-to-clipboard";
-import { saveAs } from "file-saver";
-import { executeQuery, exportCSV } from "../lib/util";
+import { executeQuery, exportCSV, exportTSV } from "../lib/util";
 import { categories } from "../lib/setting";
 
 const ResultModal = (props) => {
@@ -240,7 +239,7 @@ const ResultModal = (props) => {
     const results =
       previewMode !== "Target IDs" ? d.results : d.results.map((v) => [v]);
     const { rows } = formatExportTable(props.tableData.heading, results);
-    const text = rows.join("\r\n");
+    const text = rows.join("\r\n").replace(/,/g, "\t");
     copy(text, {
       format: "text/plain",
     });
@@ -250,7 +249,7 @@ const ResultModal = (props) => {
     }, 1000);
   };
 
-  const handleExportCSV = async () => {
+  const handleExportCsvTsv = async (isCsv) => {
     const d = await executeQuery(
       props.route,
       props.ids,
@@ -267,28 +266,7 @@ const ResultModal = (props) => {
       results
     );
     const h = heading.map((v) => v.label);
-    exportCSV([h, ...rows]);
-  };
-
-  const handleExportTEXT = async () => {
-    const d = await executeQuery(
-      props.route,
-      props.ids,
-      getInclude(),
-      10000,
-      false,
-      false
-    );
-
-    const results =
-      previewMode !== "Target IDs" ? d.results : d.results.map((v) => [v]);
-    const { rows } = formatExportTable(props.tableData.heading, results);
-
-    const text = rows.join("\r\n");
-    const blob = new Blob([text], {
-      type: "text/plain;charset=utf-8",
-    });
-    saveAs(blob, "ids.txt");
+    isCsv ? exportCSV([h, ...rows]) : exportTSV([h, ...rows]);
   };
 
   const handleClipboardURL = () => {
@@ -386,29 +364,44 @@ const ResultModal = (props) => {
                   <p className="modal__heading">Action</p>
                   <div className="action__inner">
                     <button
-                      onClick={handleClipboardURL}
+                      onClick={() => handleExportCsvTsv(true)}
                       className="button_icon"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width="12"
-                        height="13.895"
-                        viewBox="0 0 12 13.895"
+                        width="11.497"
+                        height="13.961"
+                        viewBox="0 0 11.497 13.961"
                         className="button_icon__icon"
                       >
                         <path
-                          d="M12.737,13.632H5.789V4.789h6.947m0-1.263H5.789A1.263,1.263,0,0,0,4.526,4.789v8.842a1.263,1.263,0,0,0,1.263,1.263h6.947A1.263,1.263,0,0,0,14,13.632V4.789a1.263,1.263,0,0,0-1.263-1.263M10.842,1H3.263A1.263,1.263,0,0,0,2,2.263v8.842H3.263V2.263h7.579Z"
-                          transform="translate(-2 -1)"
+                          id="download"
+                          d="M5,16.961H16.5V15.319H5M16.5,7.927H13.212V3H8.285V7.927H5l5.749,5.749Z"
+                          transform="translate(-5 -3)"
                           fill="#fff"
                         />
                       </svg>
-                      {urlCopied ? (
-                        <span>
-                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copied.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </span>
-                      ) : (
-                        <span>Copy API URL</span>
-                      )}
+                      Download as CSV
+                    </button>
+                    <button
+                      onClick={() => handleExportCsvTsv(false)}
+                      className="button_icon"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="11.497"
+                        height="13.961"
+                        viewBox="0 0 11.497 13.961"
+                        className="button_icon__icon"
+                      >
+                        <path
+                          id="download"
+                          d="M5,16.961H16.5V15.319H5M16.5,7.927H13.212V3H8.285V7.927H5l5.749,5.749Z"
+                          transform="translate(-5 -3)"
+                          fill="#fff"
+                        />
+                      </svg>
+                      Download as TSV
                     </button>
                     <button
                       onClick={handleClipboardCopy}
@@ -436,39 +429,30 @@ const ResultModal = (props) => {
                         <span>Copy to clipboard</span>
                       )}
                     </button>
-                    <button onClick={handleExportCSV} className="button_icon">
+                    <button
+                      onClick={handleClipboardURL}
+                      className="button_icon"
+                    >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width="11.497"
-                        height="13.961"
-                        viewBox="0 0 11.497 13.961"
+                        width="12"
+                        height="13.895"
+                        viewBox="0 0 12 13.895"
                         className="button_icon__icon"
                       >
                         <path
-                          id="download"
-                          d="M5,16.961H16.5V15.319H5M16.5,7.927H13.212V3H8.285V7.927H5l5.749,5.749Z"
-                          transform="translate(-5 -3)"
+                          d="M12.737,13.632H5.789V4.789h6.947m0-1.263H5.789A1.263,1.263,0,0,0,4.526,4.789v8.842a1.263,1.263,0,0,0,1.263,1.263h6.947A1.263,1.263,0,0,0,14,13.632V4.789a1.263,1.263,0,0,0-1.263-1.263M10.842,1H3.263A1.263,1.263,0,0,0,2,2.263v8.842H3.263V2.263h7.579Z"
+                          transform="translate(-2 -1)"
                           fill="#fff"
                         />
                       </svg>
-                      Download as CSV
-                    </button>
-                    <button onClick={handleExportTEXT} className="button_icon">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="11.497"
-                        height="13.961"
-                        viewBox="0 0 11.497 13.961"
-                        className="button_icon__icon"
-                      >
-                        <path
-                          id="download"
-                          d="M5,16.961H16.5V15.319H5M16.5,7.927H13.212V3H8.285V7.927H5l5.749,5.749Z"
-                          transform="translate(-5 -3)"
-                          fill="#fff"
-                        />
-                      </svg>
-                      Download as text
+                      {urlCopied ? (
+                        <span>
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copied.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </span>
+                      ) : (
+                        <span>Copy API URL</span>
+                      )}
                     </button>
                   </div>
                 </div>
