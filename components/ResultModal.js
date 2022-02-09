@@ -353,7 +353,7 @@ const ResultModal = (props) => {
             <div className="item_wrapper">
               {props.tableData && props.tableData.rows.length > 0 && (
                 <div className="include">
-                  <p className="modal__heading">Include</p>
+                  <p className="modal__heading">Report</p>
                   <div className="include__inner">
                     {previewModeList.map((v, i) => (
                       <div className="radio" key={i}>
