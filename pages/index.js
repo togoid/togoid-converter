@@ -51,7 +51,12 @@ const Home = () => {
           if (route.length === 1) {
             setDatabaseNodesList([databaseNodesList[0]]);
             setCandidatePaths([
-              getPathStyle(`from${0}-${route[0].name}`, `nodeOther`, false),
+              getPathStyle(
+                `from${0}-${route[0].name}`,
+                `nodeOther`,
+                false,
+                "default"
+              ),
             ]);
           } else {
             createNavigatePath(databaseNodesList);
@@ -232,7 +237,12 @@ const Home = () => {
     if (activeTab === "NAVIGATE") {
       setRoute(route.slice(0, 1));
       setCandidatePaths([
-        getPathStyle(`from${0}-${route[0].name}`, `nodeOther`, false),
+        getPathStyle(
+          `from${0}-${route[0].name}`,
+          `nodeOther`,
+          false,
+          "default"
+        ),
       ]);
     } else {
       setRoute([]);
@@ -563,7 +573,12 @@ const Home = () => {
       if (i === 0) {
         if (nodesList.length === 1) {
           candidatePaths.push(
-            getPathStyle(`from${0}-${route[0].name}`, `nodeOther`, false)
+            getPathStyle(
+              `from${0}-${route[0].name}`,
+              `nodeOther`,
+              false,
+              "default"
+            )
           );
         }
       } else if (i === 1) {
@@ -606,7 +621,12 @@ const Home = () => {
                         width: 1.5,
                       },
               },
-              getPathStyle(`label${i}-${j}`, `to${i}-${j}`, j === offsetRoute)
+              getPathStyle(
+                `label${i}-${j}`,
+                `to${i}-${j}`,
+                j === offsetRoute,
+                "default"
+              )
             );
           } else if (nodesList[i - 1][j] === null) {
             candidatePaths.push(
