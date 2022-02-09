@@ -680,7 +680,7 @@ const Home = () => {
       <Header />
       <main className="main">
         <IdInput
-          handleSubmit={handleIdTextsSubmit}
+          handleIdTextsSubmit={handleIdTextsSubmit}
           setIdTexts={setIdTexts}
           idTexts={idTexts}
           handleTopExamples={handleTopExamples}
