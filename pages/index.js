@@ -25,7 +25,6 @@ const Home = () => {
   const [dbDesc, setDbDesc] = useState([]);
   const [offsetRoute, setOffsetRoute] = useState(null);
   const [previousSearchTab, setPreviousSearchTab] = useState("EXPLORE");
-  const [isKeepRouteChecked, setIsKeepRouteChecked] = useState(true);
 
   useEffect(() => {
     const fetchApi = async () => {
@@ -691,7 +690,6 @@ const Home = () => {
           setPreviousRoute={setPreviousRoute}
           dbCatalogue={dbCatalogue}
           tryKeepRoute={tryKeepRoute}
-          isKeepRouteChecked={isKeepRouteChecked}
           restartExplore={restartExplore}
         />
         <div className="drawing_area">
@@ -722,8 +720,6 @@ const Home = () => {
               dbConfig={dbConfig}
               dbDesc={dbDesc}
               setPreviousRoute={setPreviousRoute}
-              isKeepRouteChecked={isKeepRouteChecked}
-              setIsKeepRouteChecked={setIsKeepRouteChecked}
             />
           )}
           {activeTab === "DATABASE" && (
