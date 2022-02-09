@@ -80,22 +80,6 @@ const Explore = (props) => {
     <div className="explore">
       <div className="drawing_area">
         <div className="panel">
-          {props.databaseNodesList && props.databaseNodesList.length > 0 && (
-            <div className="panel__button">
-              <div className="switch_button">
-                <input
-                  type="checkbox"
-                  onChange={handleKeepRoute}
-                  checked={Boolean(props.isKeepRouteChecked)}
-                  id="keepRoot"
-                  className="switch_button__input"
-                />
-                <label htmlFor="keepRoot" className="label">
-                  <span className="text">Try keeping route</span>
-                </label>
-              </div>
-            </div>
-          )}
           <div className="panel__inner">
             <div className="explore">
               <ArrowArea arrows={props.candidatePaths}>
