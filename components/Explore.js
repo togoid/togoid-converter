@@ -9,7 +9,6 @@ import { categories } from "../lib/setting";
 const Explore = (props) => {
   const [modalVisibility, setModalVisibility] = useState(false);
   const [tableData, setTableData] = useState({ heading: [], rows: [] });
-  const [total, setTotal] = useState(0);
   const [informationModal, setInformationModal] = useState(false);
   const [database, setDatabase] = useState(null);
   const [visibleActionButtonIndex, setVisibleActionButtonIndex] = useState([
@@ -55,7 +54,6 @@ const Explore = (props) => {
     const d = await executeQuery(r, props.ids, "verbose", 100, false, false);
     const rows = d.results.map((v) => v.slice(0, routeIndex + 1));
 
-    setTotal(database.total);
     setTableData({ heading, rows });
   };
 
@@ -314,7 +312,6 @@ const Explore = (props) => {
                       route={props.route}
                       ids={props.ids}
                       tableData={tableData}
-                      total={total}
                       setModalVisibility={setModalVisibility}
                       dbCatalogue={props.dbCatalogue}
                     />

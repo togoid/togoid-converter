@@ -223,20 +223,6 @@
     }
   }
 
-  .showing {
-    font-family: Oswald;
-    &__text,
-    &__result {
-      display: inline-block;
-    }
-    &__text {
-      font-size: 1.6rem;
-    }
-    &__result {
-      font-size: 1.2rem;
-      margin: 0 0 0 8px;
-    }
-  }
   .table {
     margin: 0 0 40px;
     thead {
