@@ -273,13 +273,12 @@
     }
     &__index {
       padding: 11px 20px 17px;
-      margin: 0 0 27px;
+      margin: 0 0 15px;
       border-radius: 10px;
       background: $white;
-      &__names {
-        margin: 0 0 25px;
+      &.color {
+        padding: 11px 20px 0;
       }
-
       &__colors {
         display: flex;
         flex-wrap: wrap;
