@@ -7,24 +7,11 @@ import { categories } from "../lib/setting";
 const ResultModal = (props) => {
   const [copied, setCopied] = useState(false);
   const [urlCopied, setUrlCopied] = useState(false);
-  const [showAllFailed, setShowAllFailed] = useState(false);
   const [previewMode, setPreviewMode] = useState("All");
   const [modTable, setModTable] = useState(null);
-  const [notConvertedIds, setNotConvertedIds] = useState([]);
   const [lineMode, setLineMode] = useState(
     Array(props.tableData.heading.length).fill("ID")
   );
-
-  useEffect(() => {
-    const ids = [
-      ...new Set(
-        props.tableData.rows
-          .filter((v) => v[v.length - 1] === null)
-          .map((w) => w[0])
-      ),
-    ];
-    setNotConvertedIds(ids);
-  }, []);
 
   useEffect(() => {
     const result = formatPreviewTable(
@@ -364,30 +351,6 @@ const ResultModal = (props) => {
 
           <div className="modal__top">
             <div className="item_wrapper">
-              {(() => {
-                if (notConvertedIds.length) {
-                  const limit = showAllFailed ? 10000 : 3;
-                  return (
-                    <span className="non_forwarded">
-                      {`IDs that were not converted: ${notConvertedIds
-                        .filter((_, i) => i < limit)
-                        .join(", ")} `}
-                      {!showAllFailed && (
-                        <a
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setShowAllFailed(true);
-                          }}
-                        >
-                          ...more
-                        </a>
-                      )}
-                    </span>
-                  );
-                }
-              })()}
-
               {props.tableData && props.tableData.rows.length > 0 && (
                 <div className="include">
                   <p className="modal__heading">Include</p>
