@@ -672,6 +672,7 @@ const Home = () => {
           dbCatalogue={dbCatalogue}
           tryKeepRoute={tryKeepRoute}
           isKeepRouteChecked={isKeepRouteChecked}
+          restartExplore={restartExplore}
         />
         <div className="drawing_area">
           <TabWrapper activeTab={activeTab} changeIndexTab={changeIndexTab} />
@@ -681,7 +682,6 @@ const Home = () => {
               candidatePaths={candidatePaths}
               route={route}
               setRoute={setRoute}
-              restartExplore={restartExplore}
               ids={ids}
               dbCatalogue={dbCatalogue}
               dbConfig={dbConfig}
@@ -697,7 +697,6 @@ const Home = () => {
               candidatePaths={candidatePaths}
               route={route}
               setRoute={setRoute}
-              restartExplore={restartExplore}
               ids={ids}
               dbCatalogue={dbCatalogue}
               dbConfig={dbConfig}
