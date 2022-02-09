@@ -41,6 +41,10 @@ const IdInput = (props) => {
     e.target.value = "";
   };
 
+  const handleReset = () => {
+    props.restartExplore();
+  };
+
   return (
     <div className="input_area">
       <form onSubmit={handleSubmit} className="textarea">
@@ -76,6 +80,12 @@ const IdInput = (props) => {
             ref={inputRef}
             style={{ display: "none" }}
             onChange={readTextFile}
+          />
+          <input
+            className="button_small"
+            type="button"
+            value="Reset"
+            onClick={handleReset}
           />
         </div>
       </form>

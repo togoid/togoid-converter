@@ -31,10 +31,6 @@ const Explore = (props) => {
     return r;
   };
 
-  const handleReset = () => {
-    props.restartExplore();
-  };
-
   const handleIdDownload = async (database, routeIndex) => {
     const r = selectDatabase(database, routeIndex).slice(0, routeIndex + 1);
     const d = await executeQuery(r, props.ids, "target", 10000, false, false);
@@ -98,9 +94,6 @@ const Explore = (props) => {
                   <span className="text">Try keeping route</span>
                 </label>
               </div>
-              <button onClick={handleReset} className="button_clear">
-                Clear
-              </button>
             </div>
           )}
           <div className="panel__inner">
