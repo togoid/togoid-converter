@@ -338,23 +338,54 @@ const ResultModal = (props) => {
                 <div className="include">
                   <p className="modal__heading">Report</p>
                   <div className="include__inner">
-                    {previewModeList.map((v, i) => (
-                      <div className="radio" key={i}>
-                        <input
-                          id={i}
-                          key={v}
-                          value={v}
-                          name="include"
-                          type="radio"
-                          className="radio__input"
-                          checked={v === previewMode}
-                          onChange={() => setPreviewMode(v)}
-                        />
-                        <label htmlFor={i} className="radio__label">
-                          {v}
-                        </label>
-                      </div>
-                    ))}
+                    {previewModeList.map((v, i) => {
+                      if (i !== previewModeList.length - 1) {
+                        return (
+                          <div className="radio" key={i}>
+                            <input
+                              id={i}
+                              key={v}
+                              value={v}
+                              name="include"
+                              type="radio"
+                              className="radio__input"
+                              checked={v === previewMode}
+                              onChange={() => setPreviewMode(v)}
+                            />
+                            <label htmlFor={i} className="radio__label">
+                              {v}
+                            </label>
+                          </div>
+                        );
+                      }
+                    })}
+                  </div>
+                  <div className="include__inner">
+                    <div className="radio" key={previewModeList.length - 1}>
+                      <input
+                        id={previewModeList.length - 1}
+                        key={previewModeList[previewModeList.length - 1]}
+                        value={previewModeList[previewModeList.length - 1]}
+                        name="include"
+                        type="radio"
+                        className="radio__input"
+                        checked={
+                          previewModeList[previewModeList.length - 1] ===
+                          previewMode
+                        }
+                        onChange={() =>
+                          setPreviewMode(
+                            previewModeList[previewModeList.length - 1]
+                          )
+                        }
+                      />
+                      <label
+                        htmlFor={previewModeList.length - 1}
+                        className="radio__label"
+                      >
+                        {previewModeList[previewModeList.length - 1]}
+                      </label>
+                    </div>
                   </div>
                 </div>
               )}
