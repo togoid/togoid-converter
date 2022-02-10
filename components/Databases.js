@@ -78,7 +78,7 @@ const Databases = (props) => {
                 </section>
               </section>
               <section className="database__index color">
-                <h3 className="database__index__title">Color legend</h3>
+                <h3 className="database__index__title">Color Legend</h3>
                 <section className="database__index__colors">
                   {(() => {
                     return Object.keys(categories).map((k) => {
@@ -227,6 +227,7 @@ const Databases = (props) => {
                             <dd>
                               {props.dbCatalogue[key].examples.map(
                                 (example, i) => {
+                                  /* eslint-disable */
                                   return (
                                     <li key={i}>
                                       <a
@@ -240,6 +241,7 @@ const Databases = (props) => {
                                       </a>
                                     </li>
                                   );
+                                  /* eslint-enable */
                                 }
                               )}
                             </dd>
