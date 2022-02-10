@@ -4,13 +4,17 @@ const IdInput = (props) => {
   const handleSubmit = (e) => {
     if (e) e.preventDefault();
 
-    if (props.previousRoute.length) {
-      props.tryKeepRoute(props.idTexts);
-    } else {
-      const list = props.handleIdTextsSubmit(props.idTexts);
-      if (list.length === 1) {
-        props.setRoute(list);
-      }
+    const findDatabaseList = props.handleIdTextsSubmit(props.idTexts);
+    if (
+      props.previousRoute.length &&
+      findDatabaseList.find((v) => v.name === props.previousRoute[0].name)
+    ) {
+      // keepRouteを使用する
+      props.setRoute([props.previousRoute[0]]);
+      props.setIsUseKeepRoute(true);
+    } else if (findDatabaseList.length === 1) {
+      // listが1件の時は自動で選択する
+      props.setRoute(findDatabaseList);
     }
   };
 
