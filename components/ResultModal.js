@@ -17,81 +17,13 @@ const ResultModal = (props) => {
   useEffect(() => {
     const routePathList = props.tableData.heading.flatMap((v, i) => {
       if (i === 0) {
-        return {
-          from: {
-            id: `label-${i}`,
-            posX: "right",
-            posY: "middle",
-          },
-          to: {
-            id: `link-${i + 1}`,
-            posX: "left",
-            posY: "middle",
-          },
-          style: {
-            color: "#1A8091",
-            head: "default",
-            arrow: "smooth",
-            width: 1.5,
-          },
-        };
+        return getResultPathStyle(`label-${i}`, `link-${i + 1}`, "none");
       } else if (i === props.tableData.heading.length - 1) {
-        return {
-          from: {
-            id: `link-${i}`,
-            posX: "right",
-            posY: "middle",
-          },
-          to: {
-            id: `label-${i}`,
-            posX: "left",
-            posY: "middle",
-          },
-          style: {
-            color: "#1A8091",
-            head: "default",
-            arrow: "smooth",
-            width: 1.5,
-          },
-        };
+        return getResultPathStyle(`link-${i}`, `label-${i}`, "default");
       } else {
         return [
-          {
-            from: {
-              id: `link-${i}`,
-              posX: "right",
-              posY: "middle",
-            },
-            to: {
-              id: `label-${i}`,
-              posX: "left",
-              posY: "middle",
-            },
-            style: {
-              color: "#1A8091",
-              head: "default",
-              arrow: "smooth",
-              width: 1.5,
-            },
-          },
-          {
-            from: {
-              id: `label-${i}`,
-              posX: "right",
-              posY: "middle",
-            },
-            to: {
-              id: `link-${i + 1}`,
-              posX: "left",
-              posY: "middle",
-            },
-            style: {
-              color: "#1A8091",
-              head: "default",
-              arrow: "smooth",
-              width: 1.5,
-            },
-          },
+          getResultPathStyle(`link-${i}`, `label-${i}`, "default"),
+          getResultPathStyle(`label-${i}`, `link-${i + 1}`, "none"),
         ];
       }
     });
@@ -366,6 +298,27 @@ const ResultModal = (props) => {
     setTimeout(() => {
       setUrlCopied(false);
     }, 1000);
+  };
+
+  const getResultPathStyle = (from, to, head) => {
+    return {
+      from: {
+        id: from,
+        posX: "right",
+        posY: "middle",
+      },
+      to: {
+        id: to,
+        posX: "left",
+        posY: "middle",
+      },
+      style: {
+        color: "#1A8091",
+        head: head,
+        arrow: "smooth",
+        width: 1.5,
+      },
+    };
   };
 
   return (
