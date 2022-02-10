@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import copy from "copy-to-clipboard";
-import { executeQuery, exportCSV, exportTSV } from "../lib/util";
+import { executeQuery, exportCsvTsv, invokeUnparse } from "../lib/util";
 import { categories } from "../lib/setting";
 
 const ResultModal = (props) => {
@@ -239,7 +239,7 @@ const ResultModal = (props) => {
     const results =
       previewMode !== "Target IDs" ? d.results : d.results.map((v) => [v]);
     const { rows } = formatExportTable(props.tableData.heading, results);
-    const text = rows.join("\r\n").replace(/,/g, "\t");
+    const text = invokeUnparse(rows, "tsv");
     copy(text, {
       format: "text/plain",
     });
@@ -249,7 +249,7 @@ const ResultModal = (props) => {
     }, 1000);
   };
 
-  const handleExportCsvTsv = async (isCsv) => {
+  const handleExportCsvTsv = async (extension) => {
     const d = await executeQuery(
       props.route,
       props.ids,
@@ -266,7 +266,7 @@ const ResultModal = (props) => {
       results
     );
     const h = heading.map((v) => v.label);
-    isCsv ? exportCSV([h, ...rows]) : exportTSV([h, ...rows]);
+    exportCsvTsv([h, ...rows], extension);
   };
 
   const handleClipboardURL = () => {
@@ -395,7 +395,7 @@ const ResultModal = (props) => {
                   <p className="modal__heading">Action</p>
                   <div className="action__inner">
                     <button
-                      onClick={() => handleExportCsvTsv(true)}
+                      onClick={() => handleExportCsvTsv("csv")}
                       className="button_icon"
                     >
                       <svg
@@ -415,7 +415,7 @@ const ResultModal = (props) => {
                       Download as CSV
                     </button>
                     <button
-                      onClick={() => handleExportCsvTsv(false)}
+                      onClick={() => handleExportCsvTsv("tsv")}
                       className="button_icon"
                     >
                       <svg
