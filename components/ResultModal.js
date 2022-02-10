@@ -366,7 +366,21 @@ const ResultModal = (props) => {
                               : null,
                           }}
                         >
+                          {i !== 0 && (
+                            <span id={`converted${i}`} className="total">
+                              {props.convertedCount[i].converted >= 0
+                                ? props.convertedCount[i].converted
+                                : "too many"}
+                            </span>
+                          )}
                           <span className="path_label__inner">{v.label}</span>
+                          {i !== props.tableData.heading.length - 1 && (
+                            <span id={`total${i}`} className="total">
+                              {props.convertedCount[i].total >= 0
+                                ? props.convertedCount[i].total
+                                : "too many"}
+                            </span>
+                          )}
                         </div>
                       </div>
                     ))}
