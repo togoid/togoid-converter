@@ -1,30 +1,16 @@
 import React, { useState, useEffect } from "react";
 import copy from "copy-to-clipboard";
-import { saveAs } from "file-saver";
-import { executeQuery, exportCSV } from "../lib/util";
+import { executeQuery, exportCsvTsv, invokeUnparse } from "../lib/util";
 import { categories } from "../lib/setting";
 
 const ResultModal = (props) => {
   const [copied, setCopied] = useState(false);
   const [urlCopied, setUrlCopied] = useState(false);
-  const [showAllFailed, setShowAllFailed] = useState(false);
-  const [previewMode, setPreviewMode] = useState("All");
+  const [previewMode, setPreviewMode] = useState("All converted IDs");
   const [modTable, setModTable] = useState(null);
-  const [notConvertedIds, setNotConvertedIds] = useState([]);
   const [lineMode, setLineMode] = useState(
     Array(props.tableData.heading.length).fill("ID")
   );
-
-  useEffect(() => {
-    const ids = [
-      ...new Set(
-        props.tableData.rows
-          .filter((v) => v[v.length - 1] === null)
-          .map((w) => w[0])
-      ),
-    ];
-    setNotConvertedIds(ids);
-  }, []);
 
   useEffect(() => {
     const result = formatPreviewTable(
@@ -34,13 +20,18 @@ const ResultModal = (props) => {
     setModTable(result);
   }, [previewMode, lineMode]);
 
-  const previewModeList = ["All", "Origin and targets", "Target", "Verbose"];
+  const previewModeList = [
+    "All converted IDs",
+    "Source and target IDs",
+    "Target IDs",
+    "All including unconverted IDs",
+  ];
   const getInclude = () => {
     const includeObj = {
-      All: "all",
-      "Origin and targets": "pair",
-      Target: "target",
-      Verbose: "verbose",
+      "All converted IDs": "all",
+      "Source and target IDs": "pair",
+      "Target IDs": "target",
+      "All including unconverted IDs": "verbose",
     };
     return includeObj[previewMode];
   };
@@ -53,7 +44,7 @@ const ResultModal = (props) => {
 
   const formatPreviewTable = (tableHeading, tableRows) => {
     const table = { heading: [], rows: [], url: [] };
-    if (previewMode === "All") {
+    if (previewMode === "All converted IDs") {
       // all
       const subPrefixList = tableHeading.map((v, i) => {
         // 表示モード増やすとき用
@@ -73,7 +64,7 @@ const ResultModal = (props) => {
       table.heading = tableHeading;
       table.rows = rows;
       table.url = url;
-    } else if (previewMode === "Origin and targets") {
+    } else if (previewMode === "Source and target IDs") {
       // origin and targets
       const subPrefixList = [
         lineMode[0] === "ID"
@@ -103,7 +94,7 @@ const ResultModal = (props) => {
       }
       table.rows = rows;
       table.url = url;
-    } else if (previewMode === "Target") {
+    } else if (previewMode === "Target IDs") {
       // target
       const subPrefixList = [
         lineMode[tableHeading.length - 1] === "ID"
@@ -126,7 +117,7 @@ const ResultModal = (props) => {
       }
       table.rows = rows;
       table.url = url;
-    } else if (previewMode === "Verbose") {
+    } else if (previewMode === "All including unconverted IDs") {
       // verbose
       const subPrefixList = tableHeading.map((v, i) => {
         // 表示モード増やすとき用
@@ -153,7 +144,7 @@ const ResultModal = (props) => {
 
   const formatExportTable = (tableHeading, tableRows) => {
     const exportTable = { heading: [], rows: [] };
-    if (previewMode === "All") {
+    if (previewMode === "All converted IDs") {
       // all
       const subPrefixList = tableHeading.map((v, i) => {
         // 表示モード増やすとき用
@@ -167,7 +158,7 @@ const ResultModal = (props) => {
       exportTable.rows = tableRows
         .filter((v) => v[v.length - 1] !== null)
         .map((v) => v.map((w, j) => [subPrefixList[j] + w]));
-    } else if (previewMode === "Origin and targets") {
+    } else if (previewMode === "Source and target IDs") {
       // origin and targets
       const subPrefixList = [
         lineMode[0] === "ID"
@@ -197,7 +188,7 @@ const ResultModal = (props) => {
             )
         ),
       ].map(JSON.parse);
-    } else if (previewMode === "Target") {
+    } else if (previewMode === "Target IDs") {
       // target
       const subPrefixList = [
         lineMode[tableHeading.length - 1] === "ID"
@@ -216,7 +207,7 @@ const ResultModal = (props) => {
             )
         ),
       ].map((w) => [w]);
-    } else if (previewMode === "Verbose") {
+    } else if (previewMode === "All including unconverted IDs") {
       // verbose
       const subPrefixList = tableHeading.map((v, i) => {
         // 表示モード増やすとき用
@@ -246,9 +237,9 @@ const ResultModal = (props) => {
     );
 
     const results =
-      previewMode !== "Target" ? d.results : d.results.map((v) => [v]);
+      previewMode !== "Target IDs" ? d.results : d.results.map((v) => [v]);
     const { rows } = formatExportTable(props.tableData.heading, results);
-    const text = rows.join("\r\n");
+    const text = invokeUnparse(rows, "tsv");
     copy(text, {
       format: "text/plain",
     });
@@ -258,7 +249,7 @@ const ResultModal = (props) => {
     }, 1000);
   };
 
-  const handleExportCSV = async () => {
+  const handleExportCsvTsv = async (extension) => {
     const d = await executeQuery(
       props.route,
       props.ids,
@@ -269,34 +260,13 @@ const ResultModal = (props) => {
     );
 
     const results =
-      previewMode !== "Target" ? d.results : d.results.map((v) => [v]);
+      previewMode !== "Target IDs" ? d.results : d.results.map((v) => [v]);
     const { heading, rows } = formatExportTable(
       props.tableData.heading,
       results
     );
     const h = heading.map((v) => v.label);
-    exportCSV([h, ...rows]);
-  };
-
-  const handleExportTEXT = async () => {
-    const d = await executeQuery(
-      props.route,
-      props.ids,
-      getInclude(),
-      10000,
-      false,
-      false
-    );
-
-    const results =
-      previewMode !== "Target" ? d.results : d.results.map((v) => [v]);
-    const { rows } = formatExportTable(props.tableData.heading, results);
-
-    const text = rows.join("\r\n");
-    const blob = new Blob([text], {
-      type: "text/plain;charset=utf-8",
-    });
-    saveAs(blob, "ids.txt");
+    exportCsvTsv([h, ...rows], extension);
   };
 
   const handleClipboardURL = () => {
@@ -364,51 +334,58 @@ const ResultModal = (props) => {
 
           <div className="modal__top">
             <div className="item_wrapper">
-              {(() => {
-                if (notConvertedIds.length) {
-                  const limit = showAllFailed ? 10000 : 3;
-                  return (
-                    <span className="non_forwarded">
-                      {`IDs that were not converted: ${notConvertedIds
-                        .filter((_, i) => i < limit)
-                        .join(", ")} `}
-                      {!showAllFailed && (
-                        <a
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setShowAllFailed(true);
-                          }}
-                        >
-                          ...more
-                        </a>
-                      )}
-                    </span>
-                  );
-                }
-              })()}
-
               {props.tableData && props.tableData.rows.length > 0 && (
                 <div className="include">
-                  <p className="modal__heading">Include</p>
+                  <p className="modal__heading">Report</p>
                   <div className="include__inner">
-                    {previewModeList.map((v, i) => (
-                      <div className="radio" key={i}>
-                        <input
-                          id={i}
-                          key={v}
-                          value={v}
-                          name="include"
-                          type="radio"
-                          className="radio__input"
-                          checked={v === previewMode}
-                          onChange={() => setPreviewMode(v)}
-                        />
-                        <label htmlFor={i} className="radio__label">
-                          {v}
-                        </label>
-                      </div>
-                    ))}
+                    {previewModeList.map((v, i) => {
+                      if (i !== previewModeList.length - 1) {
+                        return (
+                          <div className="radio" key={i}>
+                            <input
+                              id={i}
+                              key={v}
+                              value={v}
+                              name="include"
+                              type="radio"
+                              className="radio__input"
+                              checked={v === previewMode}
+                              onChange={() => setPreviewMode(v)}
+                            />
+                            <label htmlFor={i} className="radio__label">
+                              {v}
+                            </label>
+                          </div>
+                        );
+                      }
+                    })}
+                  </div>
+                  <div className="include__inner">
+                    <div className="radio" key={previewModeList.length - 1}>
+                      <input
+                        id={previewModeList.length - 1}
+                        key={previewModeList[previewModeList.length - 1]}
+                        value={previewModeList[previewModeList.length - 1]}
+                        name="include"
+                        type="radio"
+                        className="radio__input"
+                        checked={
+                          previewModeList[previewModeList.length - 1] ===
+                          previewMode
+                        }
+                        onChange={() =>
+                          setPreviewMode(
+                            previewModeList[previewModeList.length - 1]
+                          )
+                        }
+                      />
+                      <label
+                        htmlFor={previewModeList.length - 1}
+                        className="radio__label"
+                      >
+                        {previewModeList[previewModeList.length - 1]}
+                      </label>
+                    </div>
                   </div>
                 </div>
               )}
@@ -418,29 +395,44 @@ const ResultModal = (props) => {
                   <p className="modal__heading">Action</p>
                   <div className="action__inner">
                     <button
-                      onClick={handleClipboardURL}
+                      onClick={() => handleExportCsvTsv("csv")}
                       className="button_icon"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width="12"
-                        height="13.895"
-                        viewBox="0 0 12 13.895"
+                        width="11.497"
+                        height="13.961"
+                        viewBox="0 0 11.497 13.961"
                         className="button_icon__icon"
                       >
                         <path
-                          d="M12.737,13.632H5.789V4.789h6.947m0-1.263H5.789A1.263,1.263,0,0,0,4.526,4.789v8.842a1.263,1.263,0,0,0,1.263,1.263h6.947A1.263,1.263,0,0,0,14,13.632V4.789a1.263,1.263,0,0,0-1.263-1.263M10.842,1H3.263A1.263,1.263,0,0,0,2,2.263v8.842H3.263V2.263h7.579Z"
-                          transform="translate(-2 -1)"
+                          id="download"
+                          d="M5,16.961H16.5V15.319H5M16.5,7.927H13.212V3H8.285V7.927H5l5.749,5.749Z"
+                          transform="translate(-5 -3)"
                           fill="#fff"
                         />
                       </svg>
-                      {urlCopied ? (
-                        <span>
-                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copied.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </span>
-                      ) : (
-                        <span>Copy API URL</span>
-                      )}
+                      Download as CSV
+                    </button>
+                    <button
+                      onClick={() => handleExportCsvTsv("tsv")}
+                      className="button_icon"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="11.497"
+                        height="13.961"
+                        viewBox="0 0 11.497 13.961"
+                        className="button_icon__icon"
+                      >
+                        <path
+                          id="download"
+                          d="M5,16.961H16.5V15.319H5M16.5,7.927H13.212V3H8.285V7.927H5l5.749,5.749Z"
+                          transform="translate(-5 -3)"
+                          fill="#fff"
+                        />
+                      </svg>
+                      Download as TSV
                     </button>
                     <button
                       onClick={handleClipboardCopy}
@@ -468,39 +460,30 @@ const ResultModal = (props) => {
                         <span>Copy to clipboard</span>
                       )}
                     </button>
-                    <button onClick={handleExportCSV} className="button_icon">
+                    <button
+                      onClick={handleClipboardURL}
+                      className="button_icon"
+                    >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width="11.497"
-                        height="13.961"
-                        viewBox="0 0 11.497 13.961"
+                        width="12"
+                        height="13.895"
+                        viewBox="0 0 12 13.895"
                         className="button_icon__icon"
                       >
                         <path
-                          id="download"
-                          d="M5,16.961H16.5V15.319H5M16.5,7.927H13.212V3H8.285V7.927H5l5.749,5.749Z"
-                          transform="translate(-5 -3)"
+                          d="M12.737,13.632H5.789V4.789h6.947m0-1.263H5.789A1.263,1.263,0,0,0,4.526,4.789v8.842a1.263,1.263,0,0,0,1.263,1.263h6.947A1.263,1.263,0,0,0,14,13.632V4.789a1.263,1.263,0,0,0-1.263-1.263M10.842,1H3.263A1.263,1.263,0,0,0,2,2.263v8.842H3.263V2.263h7.579Z"
+                          transform="translate(-2 -1)"
                           fill="#fff"
                         />
                       </svg>
-                      Download as CSV
-                    </button>
-                    <button onClick={handleExportTEXT} className="button_icon">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="11.497"
-                        height="13.961"
-                        viewBox="0 0 11.497 13.961"
-                        className="button_icon__icon"
-                      >
-                        <path
-                          id="download"
-                          d="M5,16.961H16.5V15.319H5M16.5,7.927H13.212V3H8.285V7.927H5l5.749,5.749Z"
-                          transform="translate(-5 -3)"
-                          fill="#fff"
-                        />
-                      </svg>
-                      Download as text
+                      {urlCopied ? (
+                        <span>
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copied.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </span>
+                      ) : (
+                        <span>Copy API URL</span>
+                      )}
                     </button>
                   </div>
                 </div>
@@ -508,47 +491,9 @@ const ResultModal = (props) => {
             </div>
             {modTable && modTable.rows.length > 0 && (
               <div>
-                {(() => {
-                  if (props.total > 100) {
-                    if (previewMode === "All") {
-                      return (
-                        <p className="showing">
-                          <span className="showing__text">Showing</span>
-                          <span className="showing__result">
-                            {modTable.rows.length}/{props.total}
-                          </span>
-                        </p>
-                      );
-                    } else {
-                      return (
-                        <p className="showing">
-                          <span className="showing__text">Showing</span>
-                          <span className="showing__result">
-                            {modTable.rows.length}/N results
-                          </span>
-                        </p>
-                      );
-                    }
-                  } else if (previewMode === "Verbose") {
-                    return (
-                      <p className="showing">
-                        <span className="showing__text">Showing</span>
-                        <span className="showing__result">
-                          {modTable.rows.length}/{props.total}
-                        </span>
-                      </p>
-                    );
-                  } else {
-                    return (
-                      <p className="showing">
-                        <span className="showing__text">Showing</span>
-                        <span className="showing__result">
-                          {modTable.rows.length}/{modTable.rows.length}{" "}
-                        </span>
-                      </p>
-                    );
-                  }
-                })()}
+                <p className="showing">
+                  <span className="showing__text">Preview</span>
+                </p>
               </div>
             )}
           </div>
@@ -559,8 +504,8 @@ const ResultModal = (props) => {
                   modTable.heading.length > 0 &&
                   modTable.heading.map((v, i) => {
                     const lineNum =
-                      (i === 0 && previewMode === "Target") ||
-                      (i === 1 && previewMode === "Origin and targets")
+                      (i === 0 && previewMode === "Target IDs") ||
+                      (i === 1 && previewMode === "Source and target IDs")
                         ? lineMode.length - 1
                         : i;
                     return (
