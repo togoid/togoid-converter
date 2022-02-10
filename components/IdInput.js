@@ -93,7 +93,7 @@ const IdInput = (props) => {
       <div className="input_area__bottom">
         <div className="input_area__bottom__links">
           <p className="input_area__bottom__square">Examples:</p>
-          {/* eslint-disable-next-line */}
+          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid*/}
           <a
             href="#"
             onClick={(e) => {
@@ -104,7 +104,7 @@ const IdInput = (props) => {
           >
             Refseq RNA
           </a>
-          {/* eslint-disable-next-line */}
+          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid*/}
           <a
             href="#"
             onClick={(e) => {
@@ -115,7 +115,7 @@ const IdInput = (props) => {
           >
             Ensembl gene
           </a>
-          {/* eslint-disable-next-line */}
+          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid*/}
           <a
             href="#"
             onClick={(e) => {
