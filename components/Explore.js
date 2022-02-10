@@ -31,10 +31,6 @@ const Explore = (props) => {
     return r;
   };
 
-  const handleReset = () => {
-    props.restartExplore();
-  };
-
   const handleIdDownload = async (database, routeIndex) => {
     const r = selectDatabase(database, routeIndex).slice(0, routeIndex + 1);
     const d = await executeQuery(r, props.ids, "target", 10000, false, false);
@@ -84,25 +80,6 @@ const Explore = (props) => {
     <div className="explore">
       <div className="drawing_area">
         <div className="panel">
-          {props.databaseNodesList && props.databaseNodesList.length > 0 && (
-            <div className="panel__button">
-              <div className="switch_button">
-                <input
-                  type="checkbox"
-                  onChange={handleKeepRoute}
-                  checked={Boolean(props.isKeepRouteChecked)}
-                  id="keepRoot"
-                  className="switch_button__input"
-                />
-                <label htmlFor="keepRoot" className="label">
-                  <span className="text">Try keeping route</span>
-                </label>
-              </div>
-              <button onClick={handleReset} className="button_clear">
-                Clear
-              </button>
-            </div>
-          )}
           <div className="panel__inner">
             <div className="explore">
               <ArrowArea arrows={props.candidatePaths}>
@@ -130,14 +107,6 @@ const Explore = (props) => {
                           </div>
                         )}
                         <div className="item_wrapper" key={2}>
-                          {i === 0 && (
-                            <React.Fragment>
-                              <p className="item_first_heading">Convert from</p>
-                              <p className="item_first_count_heading">
-                                Matched
-                              </p>
-                            </React.Fragment>
-                          )}
                           <ul
                             className={
                               i === 0 ? "result_list first" : "result_list"

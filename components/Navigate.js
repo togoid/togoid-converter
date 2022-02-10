@@ -36,10 +36,6 @@ const Navigate = (props) => {
     return r;
   };
 
-  const handleReset = () => {
-    props.restartExplore();
-  };
-
   const handleIdDownload = async (database, routeIndex, j) => {
     const r = selectDatabaseModal(routeIndex, j);
     const d = await executeQuery(r, props.ids, "target", 10000, false, false);
@@ -89,13 +85,6 @@ const Navigate = (props) => {
     <div className="explore navigate">
       <div className="drawing_area">
         <div className="panel">
-          {props.databaseNodesList && props.databaseNodesList.length > 0 && (
-            <div className="panel__button">
-              <button onClick={handleReset} className="button_clear">
-                Clear
-              </button>
-            </div>
-          )}
           <div className="panel__inner">
             <div className="explore">
               <ArrowArea arrows={props.candidatePaths}>
@@ -127,11 +116,6 @@ const Navigate = (props) => {
                         <div className="item_wrapper" key={2}>
                           {i === 0 ? (
                             <div>
-                              <React.Fragment>
-                                <p className="item_first_heading">
-                                  Convert from
-                                </p>
-                              </React.Fragment>
                               <ul className="result_list first">
                                 {nodes.map((v, j) => {
                                   const isActionButtonVisible =
