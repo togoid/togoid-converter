@@ -22,7 +22,7 @@ const TabWrapper = (props) => (
         props.activeTab === "DATABASE" ? "button_tab active" : "button_tab"
       }
     >
-      DATABASES
+      DATASETS
     </button>
     <button
       onClick={() => props.changeIndexTab("DOCUMENTS")}
