@@ -66,7 +66,7 @@ const IdInput = (props) => {
           )}
         </div>
         <div className="input">
-          <input type="submit" value="SUBMIT" className="button_large" />
+          <input type="submit" value="Submit" className="button_large" />
           <input
             className="button_small"
             type="button"
