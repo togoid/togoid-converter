@@ -24,9 +24,7 @@ const Explore = (props) => {
     const r = props.route.slice(0, i);
     r[i] = database;
     props.setRoute(r);
-    if (props.isKeepRouteChecked) {
-      props.setPreviousRoute(r);
-    }
+    props.setPreviousRoute(r);
     return r;
   };
 
@@ -66,15 +64,6 @@ const Explore = (props) => {
 
   const handleActionButtonVisibility = (i, j) => {
     setVisibleActionButtonIndex([i, j]);
-  };
-
-  const handleKeepRoute = (e) => {
-    props.setIsKeepRouteChecked(e.target.checked);
-    if (e.target.checked) {
-      props.setPreviousRoute(props.route);
-    } else {
-      props.setPreviousRoute([]);
-    }
   };
 
   return (
