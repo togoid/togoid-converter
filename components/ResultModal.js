@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import copy from "copy-to-clipboard";
 import { executeQuery, exportCsvTsv, invokeUnparse } from "../lib/util";
 import { categories } from "../lib/setting";
+import { ArrowArea } from "react-arrow-master";
 
 const ResultModal = (props) => {
   const [copied, setCopied] = useState(false);
@@ -11,6 +12,91 @@ const ResultModal = (props) => {
   const [lineMode, setLineMode] = useState(
     Array(props.tableData.heading.length).fill("ID")
   );
+  const [routePath, setRoutePath] = useState();
+
+  useEffect(() => {
+    const routePathList = props.tableData.heading.flatMap((v, i) => {
+      if (i === 0) {
+        return {
+          from: {
+            id: `label-${i}`,
+            posX: "right",
+            posY: "middle",
+          },
+          to: {
+            id: `link-${i + 1}`,
+            posX: "left",
+            posY: "middle",
+          },
+          style: {
+            color: "#1A8091",
+            head: "default",
+            arrow: "smooth",
+            width: 1.5,
+          },
+        };
+      } else if (i === props.tableData.heading.length - 1) {
+        return {
+          from: {
+            id: `link-${i}`,
+            posX: "right",
+            posY: "middle",
+          },
+          to: {
+            id: `label-${i}`,
+            posX: "left",
+            posY: "middle",
+          },
+          style: {
+            color: "#1A8091",
+            head: "default",
+            arrow: "smooth",
+            width: 1.5,
+          },
+        };
+      } else {
+        return [
+          {
+            from: {
+              id: `link-${i}`,
+              posX: "right",
+              posY: "middle",
+            },
+            to: {
+              id: `label-${i}`,
+              posX: "left",
+              posY: "middle",
+            },
+            style: {
+              color: "#1A8091",
+              head: "default",
+              arrow: "smooth",
+              width: 1.5,
+            },
+          },
+          {
+            from: {
+              id: `label-${i}`,
+              posX: "right",
+              posY: "middle",
+            },
+            to: {
+              id: `link-${i + 1}`,
+              posX: "left",
+              posY: "middle",
+            },
+            style: {
+              color: "#1A8091",
+              head: "default",
+              arrow: "smooth",
+              width: 1.5,
+            },
+          },
+        ];
+      }
+    });
+    setRoutePath(routePathList);
+  }, []);
 
   useEffect(() => {
     const result = formatPreviewTable(
@@ -308,26 +394,31 @@ const ResultModal = (props) => {
             <p className="modal__heading">Route</p>
             <div className="modal__path__frame">
               <div className="modal__path__frame__inner">
-                {props.tableData.heading.map((v, i) => (
-                  <div className="modal__path__frame__item" key={i}>
-                    {i !== 0 && (
-                      <div className="path_label white">
-                        {props.route[i].link}
+                <ArrowArea arrows={routePath}>
+                  <div className="modal__path__frame__inner">
+                    {props.tableData.heading.map((v, i) => (
+                      <div className="modal__path__frame__item" key={i}>
+                        {i !== 0 && (
+                          <div className="path_label white" id={`link-${i}`}>
+                            {props.route[i].link}
+                          </div>
+                        )}
+                        <div
+                          key={i}
+                          className="path_label green"
+                          id={`label-${i}`}
+                          style={{
+                            backgroundColor: categories[v.category]
+                              ? categories[v.category].color
+                              : null,
+                          }}
+                        >
+                          <span className="path_label__inner">{v.label}</span>
+                        </div>
                       </div>
-                    )}
-                    <div
-                      key={i}
-                      className="path_label green"
-                      style={{
-                        backgroundColor: categories[v.category]
-                          ? categories[v.category].color
-                          : null,
-                      }}
-                    >
-                      <span className="path_label__inner">{v.label}</span>
-                    </div>
+                    ))}
                   </div>
-                ))}
+                </ArrowArea>
               </div>
             </div>
           </div>
