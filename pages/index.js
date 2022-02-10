@@ -265,29 +265,23 @@ const Home = () => {
     executeExamples(topExamples[key].join("\n"), key);
   };
 
+  // Examplesをクリックした際の検索
   const executeExamples = (idTexts, key) => {
     changeIndexTab("EXPLORE");
     setIdTexts(idTexts);
 
-    // previousRouteがある時はtryKeepRouteを実行し、falseの時は残りの処理を実行
-    if (!previousRoute.length || !tryKeepRoute(idTexts)) {
-      const startRoute = handleIdTextsSubmit(idTexts).find(
-        (ele) => ele.name === key
-      );
-      setRoute([startRoute]);
-    }
-  };
-
-  const tryKeepRoute = (idTexts) => {
-    const checkIndex = handleIdTextsSubmit(idTexts).findIndex(
-      (element) => element.name === previousRoute[0].name
-    );
-    if (checkIndex !== -1) {
+    const findDatabaseList = handleIdTextsSubmit(idTexts);
+    if (
+      previousRoute.length &&
+      findDatabaseList.find((v) => v.name === previousRoute[0].name)
+    ) {
+      // keepRouteを使用する
       setRoute([previousRoute[0]]);
       setIsUseKeepRoute(true);
-      return true;
+    } else {
+      // Examplesで選択したものは必ず見つかる前提
+      setRoute([findDatabaseList.find((v) => v.name === key)]);
     }
-    return false;
   };
 
   const lookupRoute = async (target) => {
@@ -689,7 +683,6 @@ const Home = () => {
           previousRoute={previousRoute}
           setPreviousRoute={setPreviousRoute}
           dbCatalogue={dbCatalogue}
-          tryKeepRoute={tryKeepRoute}
           restartExplore={restartExplore}
         />
         <div className="drawing_area">
