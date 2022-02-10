@@ -2,14 +2,13 @@ import React, { useState, useEffect } from "react";
 import { saveAs } from "file-saver";
 import ResultModal from "../components/ResultModal";
 import InformationModal from "../components/InformationModal";
-import { executeQuery } from "../lib/util";
+import { executeQuery, invokeUnparse } from "../lib/util";
 import { ArrowArea } from "react-arrow-master";
 import { categories } from "../lib/setting";
 
 const Explore = (props) => {
   const [modalVisibility, setModalVisibility] = useState(false);
   const [tableData, setTableData] = useState({ heading: [], rows: [] });
-  const [total, setTotal] = useState(0);
   const [informationModal, setInformationModal] = useState(false);
   const [database, setDatabase] = useState(null);
   const [visibleActionButtonIndex, setVisibleActionButtonIndex] = useState([
@@ -36,11 +35,14 @@ const Explore = (props) => {
     const d = await executeQuery(r, props.ids, "target", 10000, false, false);
     const prefix = props.dbCatalogue[database.name].prefix.split("/").slice(-1);
 
-    const text = d.results.map((result) => prefix + result).join("\r\n");
+    const text = invokeUnparse(
+      d.results.map((result) => [prefix + result]),
+      "tsv"
+    );
     const blob = new Blob([text], {
-      type: "text/plain;charset=utf-8",
+      type: "text/tsv;charset=utf-8",
     });
-    saveAs(blob, "ids.txt");
+    saveAs(blob, "ids.tsv");
   };
 
   const showModal = async (database, routeIndex) => {
@@ -51,7 +53,6 @@ const Explore = (props) => {
     const d = await executeQuery(r, props.ids, "verbose", 100, false, false);
     const rows = d.results.map((v) => v.slice(0, routeIndex + 1));
 
-    setTotal(database.total);
     setTableData({ heading, rows });
   };
 
@@ -283,7 +284,6 @@ const Explore = (props) => {
                       route={props.route}
                       ids={props.ids}
                       tableData={tableData}
-                      total={total}
                       setModalVisibility={setModalVisibility}
                       dbCatalogue={props.dbCatalogue}
                     />
