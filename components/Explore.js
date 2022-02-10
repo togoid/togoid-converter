@@ -15,6 +15,7 @@ const Explore = (props) => {
     null,
     null,
   ]);
+  const [convertedCount, setConvertedCount] = useState([]);
 
   useEffect(() => {
     if (tableData.heading.length > 0) setModalVisibility(true);
@@ -52,6 +53,10 @@ const Explore = (props) => {
     const rows = d.results.map((v) => v.slice(0, routeIndex + 1));
 
     setTableData({ heading, rows });
+    const counts = r.map((v) => {
+      return { converted: v?.converted, total: v?.total };
+    });
+    setConvertedCount(counts);
   };
 
   const showInformationModal = (v) => {
@@ -275,6 +280,7 @@ const Explore = (props) => {
                       tableData={tableData}
                       setModalVisibility={setModalVisibility}
                       dbCatalogue={props.dbCatalogue}
+                      convertedCount={convertedCount}
                     />
                   )}
                 </div>
