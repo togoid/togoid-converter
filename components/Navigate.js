@@ -101,6 +101,13 @@ const Navigate = (props) => {
                                       </p>
                                     </li>
                                   );
+                                } else {
+                                  return (
+                                    <li
+                                      key={j}
+                                      className="label_list__item__null"
+                                    ></li>
+                                  );
                                 }
                               })}
                             </ul>
