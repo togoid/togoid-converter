@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import copy from "copy-to-clipboard";
 import { executeQuery, exportCsvTsv, invokeUnparse } from "../lib/util";
 import { categories } from "../lib/setting";
+import { ArrowArea } from "react-arrow-master";
 
 const ResultModal = (props) => {
   const [copied, setCopied] = useState(false);
@@ -11,6 +12,23 @@ const ResultModal = (props) => {
   const [lineMode, setLineMode] = useState(
     Array(props.tableData.heading.length).fill("ID")
   );
+  const [routePath, setRoutePath] = useState();
+
+  useEffect(() => {
+    const routePathList = props.tableData.heading.flatMap((v, i) => {
+      if (i === 0) {
+        return getResultPathStyle(`label-${i}`, `link-${i + 1}`, "none");
+      } else if (i === props.tableData.heading.length - 1) {
+        return getResultPathStyle(`link-${i}`, `label-${i}`, "default");
+      } else {
+        return [
+          getResultPathStyle(`link-${i}`, `label-${i}`, "default"),
+          getResultPathStyle(`label-${i}`, `link-${i + 1}`, "none"),
+        ];
+      }
+    });
+    setRoutePath(routePathList);
+  }, []);
 
   useEffect(() => {
     const result = formatPreviewTable(
@@ -282,6 +300,27 @@ const ResultModal = (props) => {
     }, 1000);
   };
 
+  const getResultPathStyle = (from, to, head) => {
+    return {
+      from: {
+        id: from,
+        posX: "right",
+        posY: "middle",
+      },
+      to: {
+        id: to,
+        posX: "left",
+        posY: "middle",
+      },
+      style: {
+        color: "#1A8091",
+        head: head,
+        arrow: "smooth",
+        width: 1.5,
+      },
+    };
+  };
+
   return (
     <div className="modal" onClick={() => props.setModalVisibility(false)}>
       <div
@@ -308,26 +347,45 @@ const ResultModal = (props) => {
             <p className="modal__heading">Route</p>
             <div className="modal__path__frame">
               <div className="modal__path__frame__inner">
-                {props.tableData.heading.map((v, i) => (
-                  <div className="modal__path__frame__item" key={i}>
-                    {i !== 0 && (
-                      <div className="path_label white">
-                        {props.route[i].link}
+                <ArrowArea arrows={routePath}>
+                  <div className="modal__path__frame__inner">
+                    {props.tableData.heading.map((v, i) => (
+                      <div className="modal__path__frame__item" key={i}>
+                        {i !== 0 && (
+                          <div className="path_label white" id={`link-${i}`}>
+                            {props.route[i].link}
+                          </div>
+                        )}
+                        <div
+                          key={i}
+                          className="path_label green"
+                          id={`label-${i}`}
+                          style={{
+                            backgroundColor: categories[v.category]
+                              ? categories[v.category].color
+                              : null,
+                          }}
+                        >
+                          {i !== 0 && (
+                            <span id={`converted${i}`} className="total">
+                              {props.convertedCount[i].converted >= 0
+                                ? props.convertedCount[i].converted
+                                : "too many"}
+                            </span>
+                          )}
+                          <span className="path_label__inner">{v.label}</span>
+                          {i !== props.tableData.heading.length - 1 && (
+                            <span id={`total${i}`} className="total">
+                              {props.convertedCount[i].total >= 0
+                                ? props.convertedCount[i].total
+                                : "too many"}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    )}
-                    <div
-                      key={i}
-                      className="path_label green"
-                      style={{
-                        backgroundColor: categories[v.category]
-                          ? categories[v.category].color
-                          : null,
-                      }}
-                    >
-                      <span className="path_label__inner">{v.label}</span>
-                    </div>
+                    ))}
                   </div>
-                ))}
+                </ArrowArea>
               </div>
             </div>
           </div>
