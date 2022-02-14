@@ -122,6 +122,11 @@
             &.first {
               margin: 0 0 0 20px;
             }
+            .radio {
+              .dropdown {
+                margin: 0 0 0 12px;
+              }
+            }
             &__item {
               position: relative;
               display: flex;
