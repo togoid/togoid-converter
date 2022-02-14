@@ -5,11 +5,14 @@
 .st3{fill:#444444;}
 
 .path_label {
-  display: inline-block;
-  width: 150px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 150px;
   font-size: 1.2rem;
   color: #ffffff;
-  line-height: 38px;
+  padding: 4px 8px;
+  //line-height: 38px;
   text-align: center;
   border-radius: 5px;
   border: 1px solid transparent;
@@ -30,6 +33,7 @@
   &__inner {
     position: relative;
     display: block;
+    margin: 0 20px;
     .icon {
       position: absolute;
       top: 7px;
