@@ -105,7 +105,7 @@ const Navigate = (props) => {
                                   return (
                                     <li
                                       key={j}
-                                      className="label_list__item__null"
+                                      className="label_list__item"
                                     ></li>
                                   );
                                 }
