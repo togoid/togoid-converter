@@ -137,7 +137,9 @@
             &__item {
               position: relative;
               display: flex;
+              justify-content: space-between;
               align-items: center;
+              height: 16px;
               font-size: 1.2rem;
               margin: 12px 0 40px;
               &.hover {
@@ -146,12 +148,10 @@
               &__inner {
                 position: relative;
                 display: inline-block;
-                align-items: center;
-                justify-content: space-between;
                 min-width: 150px;
                 font-family: Oswald;
-                text-align: center;
                 padding: 0 6px;
+                text-align: center;
                 line-height: 16px;
                 border-radius: 8px;
                 background-color: $white;
