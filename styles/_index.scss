@@ -139,11 +139,13 @@
               display: flex;
               justify-content: space-between;
               align-items: center;
-              height: 16px;
               font-size: 1.2rem;
               margin: 12px 0 40px;
               &.hover {
                 background: rgba(0, 0, 0, 0.8);
+              }
+              &.null {
+                height: 16px;
               }
               &__inner {
                 position: relative;
@@ -155,9 +157,6 @@
                 line-height: 16px;
                 border-radius: 8px;
                 background-color: $white;
-              }
-              &__null {
-                margin: 120px 0 0 0;
               }
             }
           }
