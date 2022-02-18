@@ -223,11 +223,7 @@ const Databases = (props) => {
                           {props.dbCatalogue[key].label}
                         </span>
                       </h3>
-                      {Object.prototype.hasOwnProperty.call(
-                        props.dbDesc,
-                        key
-                      ) &&
-                        props.dbDesc[key] &&
+                      {props.dbDesc[key] &&
                         props.dbDesc[key][`description_${language}`] && (
                           <div className="description">
                             <p>
@@ -292,11 +288,7 @@ const Databases = (props) => {
                           <dt>CATEGORY</dt>
                           <dd>{props.dbCatalogue[key].category}</dd>
                         </div>
-                        {Object.prototype.hasOwnProperty.call(
-                          props.dbDesc,
-                          key
-                        ) &&
-                          props.dbDesc[key] &&
+                        {props.dbDesc[key] &&
                           props.dbDesc[key][`organization_${language}`] && (
                             <div className="data__wrapper">
                               <dt>ORGANIZATION</dt>
