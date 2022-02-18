@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { saveAs } from "file-saver";
 import ResultModal from "../components/ResultModal";
 import InformationModal from "../components/InformationModal";
-import { executeQuery, invokeUnparse } from "../lib/util";
+import { executeQuery, exportCsvTsv } from "../lib/util";
 import { ArrowArea } from "react-arrow-master";
 import { categories } from "../lib/setting";
 
@@ -41,14 +40,11 @@ const Navigate = (props) => {
     const d = await executeQuery(r, props.ids, "target", 10000, false, false);
     const prefix = props.dbCatalogue[database.name].prefix.split("/").slice(-1);
 
-    const text = invokeUnparse(
+    exportCsvTsv(
       d.results.map((result) => [prefix + result]),
-      "tsv"
+      "tsv",
+      "ids.tsv"
     );
-    const blob = new Blob([text], {
-      type: "text/tsv;charset=utf-8",
-    });
-    saveAs(blob, "ids.tsv");
   };
 
   const showModal = async (database, routeIndex, j) => {
