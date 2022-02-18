@@ -87,7 +87,9 @@ const Databases = (props) => {
                         backgroundColor: "#53C666",
                       }}
                     />
-                    <span className="color__label">Gene, Transcript, Ortholog, Probe</span>
+                    <span className="color__label">
+                      Gene, Transcript, Ortholog, Probe
+                    </span>
                   </span>
                   <span className="color">
                     <span
@@ -114,7 +116,9 @@ const Databases = (props) => {
                         backgroundColor: "#C65381",
                       }}
                     />
-                    <span className="color__label">Interaction, Pathway, Reaction</span>
+                    <span className="color__label">
+                      Interaction, Pathway, Reaction
+                    </span>
                   </span>
                   <span className="color">
                     <span
@@ -168,7 +172,10 @@ const Databases = (props) => {
                         backgroundColor: "#696969",
                       }}
                     />
-                    <span className="color__label">Analysis, Experiment, Project, Literature, Sample, SequenceRun, Submission, Function</span>
+                    <span className="color__label">
+                      Analysis, Experiment, Project, Literature, Sample,
+                      SequenceRun, Submission, Function
+                    </span>
                   </span>
                 </section>
               </section>
