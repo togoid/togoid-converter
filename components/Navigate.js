@@ -65,11 +65,8 @@ const Navigate = (props) => {
   };
 
   const showInformationModal = (v) => {
-    const dbName = Object.keys(props.dbCatalogue).filter(
-      (dataset) => dataset === v.name
-    );
     setInformationModal(true);
-    setDatabase(dbName[0]);
+    setDatabase(v.name);
   };
 
   const handleActionButtonVisibility = (i, j) => {
