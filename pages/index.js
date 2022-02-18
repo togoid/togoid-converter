@@ -25,7 +25,7 @@ const Home = () => {
     const fetchApi = async () => {
       const promises = await Promise.all([
         axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/dataset`),
-        axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/database`),
+        axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/relation`),
         axios.get(
           `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/descriptions`
         ),
