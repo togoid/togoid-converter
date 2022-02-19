@@ -1,8 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { categories } from "../lib/setting";
 
 const Databases = (props) => {
   const [language, setLanguage] = useState("en");
+  const [nameIndex, setNameIndex] = useState([]);
+
+  useEffect(() => {
+    // Dataset Name Index のリストを作成
+    const labelIndexList = Array.from(
+      new Set(
+        Object.keys(props.dbCatalogue)
+          .filter((key) =>
+            Object.keys(props.dbConfig).find((k) => k.split("-").includes(key))
+          )
+          .map((v) => v.slice(0, 1).toUpperCase())
+      )
+    );
+
+    setNameIndex(labelIndexList);
+  }, []);
 
   const clickExamples = (examples, key) => {
     props.executeExamples(examples.join("\n"), key);
@@ -51,29 +67,11 @@ const Databases = (props) => {
                 <section className="database__index__names">
                   <h3 className="database__index__title">Dataset Name Index</h3>
                   <section className="database__index__links">
-                    {(() => {
-                      const labelIndex = [];
-                      return Object.keys(props.dbCatalogue).map((key, i) => {
-                        const keyInitial = props.dbCatalogue[key].label
-                          .slice(0, 1)
-                          .toUpperCase();
-                        if (
-                          Object.keys(props.dbConfig).find(
-                            (k) =>
-                              (k.split("-").indexOf(key) === 0 ||
-                                k.split("-").indexOf(key) === 1) &&
-                              !labelIndex.includes(keyInitial)
-                          )
-                        ) {
-                          labelIndex.push(keyInitial);
-                          return (
-                            <a href={"/#" + keyInitial} key={i}>
-                              {keyInitial + " "}
-                            </a>
-                          );
-                        }
-                      });
-                    })()}
+                    {nameIndex.map((v, i) => (
+                      <a href={"/#" + v} key={i}>
+                        {v + " "}
+                      </a>
+                    ))}
                   </section>
                 </section>
               </section>
@@ -87,7 +85,9 @@ const Databases = (props) => {
                         backgroundColor: "#53C666",
                       }}
                     />
-                    <span className="color__label">Gene, Transcript, Ortholog, Probe</span>
+                    <span className="color__label">
+                      Gene, Transcript, Ortholog, Probe
+                    </span>
                   </span>
                   <span className="color">
                     <span
@@ -114,7 +114,9 @@ const Databases = (props) => {
                         backgroundColor: "#C65381",
                       }}
                     />
-                    <span className="color__label">Interaction, Pathway, Reaction</span>
+                    <span className="color__label">
+                      Interaction, Pathway, Reaction
+                    </span>
                   </span>
                   <span className="color">
                     <span
@@ -168,7 +170,10 @@ const Databases = (props) => {
                         backgroundColor: "#696969",
                       }}
                     />
-                    <span className="color__label">Analysis, Experiment, Project, Literature, Sample, SequenceRun, Submission, Function</span>
+                    <span className="color__label">
+                      Analysis, Experiment, Project, Literature, Sample,
+                      SequenceRun, Submission, Function
+                    </span>
                   </span>
                 </section>
               </section>
@@ -216,10 +221,7 @@ const Databases = (props) => {
                           {props.dbCatalogue[key].label}
                         </span>
                       </h3>
-                      {Object.prototype.hasOwnProperty.call(
-                        props.dbDesc,
-                        key
-                      ) &&
+                      {props.dbDesc[key] &&
                         props.dbDesc[key][`description_${language}`] && (
                           <div className="description">
                             <p>
@@ -284,10 +286,7 @@ const Databases = (props) => {
                           <dt>CATEGORY</dt>
                           <dd>{props.dbCatalogue[key].category}</dd>
                         </div>
-                        {Object.prototype.hasOwnProperty.call(
-                          props.dbDesc,
-                          key
-                        ) &&
+                        {props.dbDesc[key] &&
                           props.dbDesc[key][`organization_${language}`] && (
                             <div className="data__wrapper">
                               <dt>ORGANIZATION</dt>
