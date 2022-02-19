@@ -1,18 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { categories } from "../lib/setting";
 
 const InformationModal = (props) => {
   const [language, setLanguage] = useState("en");
+  const [linkToLabel, setLinkToLabel] = useState([]);
+
+  useEffect(() => {
+    // LINK TO のリストを作成する
+    const labels = Array.from(
+      new Set(
+        Object.keys(props.dbConfig)
+          .filter((key) => key.split("-").includes(props.database))
+          .map((v) => {
+            const names = v.split("-");
+            return names.indexOf(props.database) === 0 ? names[1] : names[0];
+          })
+      )
+    );
+
+    setLinkToLabel(labels);
+  }, []);
 
   const hideInformationModal = () => {
     props.setInformationModal(false);
   };
 
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div
       className="modal modal--through"
       onClick={() => hideInformationModal()}
     >
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
       <div
         className="modal__inner modal__inner--through"
         onClick={(e) => {
@@ -78,54 +97,33 @@ const InformationModal = (props) => {
               </div>
             )}
         </p>
-        {(() => {
-          const labels = Array.from(
-            new Set(
-              Object.keys(props.dbConfig).map((k) => {
-                const names = k.split("-");
-                if (
-                  names.indexOf(props.database) === 0 ||
-                  names.indexOf(props.database) === 1
-                ) {
-                  return names.indexOf(props.database) === 0
-                    ? names[1]
-                    : names[0];
-                }
-              })
-            )
-          ).filter((v) => v);
 
-          if (labels.length) {
-            return (
-              <div className="modal--through__buttons path">
-                <div className="path_label small white">LINK TO</div>
-                <svg className="arrow" viewBox="0 0 24 24">
-                  <path
-                    fill="currentColor"
-                    d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
-                  />
-                </svg>
-                <div className="path_children">
-                  {labels.map((l, i) => (
-                    <div
-                      className="path_label small green"
-                      style={{
-                        backgroundColor: categories[
-                          props.dbCatalogue[l].category
-                        ]
-                          ? categories[props.dbCatalogue[l].category].color
-                          : null,
-                      }}
-                      key={i}
-                    >
-                      {props.dbCatalogue[l].label}
-                    </div>
-                  ))}
+        {linkToLabel.length && (
+          <div className="modal--through__buttons path">
+            <div className="path_label small white">LINK TO</div>
+            <svg className="arrow" viewBox="0 0 24 24">
+              <path
+                fill="currentColor"
+                d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
+              />
+            </svg>
+            <div className="path_children">
+              {linkToLabel.map((v, i) => (
+                <div
+                  className="path_label small green"
+                  style={{
+                    backgroundColor: categories[props.dbCatalogue[v].category]
+                      ? categories[props.dbCatalogue[v].category].color
+                      : null,
+                  }}
+                  key={i}
+                >
+                  {props.dbCatalogue[v].label}
                 </div>
-              </div>
-            );
-          }
-        })()}
+              ))}
+            </div>
+          </div>
+        )}
 
         <dl className="modal--through__data_list">
           <div className="modal--through__data_list__item">
