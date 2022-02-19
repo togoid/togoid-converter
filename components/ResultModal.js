@@ -284,7 +284,7 @@ const ResultModal = (props) => {
       results
     );
     const h = heading.map((v) => v.label);
-    exportCsvTsv([h, ...rows], extension);
+    exportCsvTsv([h, ...rows], extension, `result.${extension}`);
   };
 
   const handleClipboardURL = () => {
