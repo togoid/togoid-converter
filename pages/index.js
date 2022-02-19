@@ -576,13 +576,24 @@ const Home = () => {
         }
       } else if (i === 1) {
         nodes.forEach((v, j) => {
-          candidatePaths.push(
-            ...mergePathStyle(
-              `from${0}-${route[0].name}`,
-              `to${i}-${j}`,
-              j === offsetRoute
-            )
-          );
+          if (v === null) {
+            candidatePaths.push(
+              getPathStyle(
+                `from${0}-${route[0].name}`,
+                `to${i}-${j}`,
+                j === offsetRoute,
+                "none"
+              )
+            );
+          } else {
+            candidatePaths.push(
+              ...mergePathStyle(
+                `from${0}-${route[0].name}`,
+                `to${i}-${j}`,
+                j === offsetRoute
+              )
+            );
+          }
         });
       } else if (i === nodesList.length - 1) {
         nodes.forEach((v, j) => {
