@@ -1,8 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { categories } from "../lib/setting";
 
 const Databases = (props) => {
   const [language, setLanguage] = useState("en");
+  const [nameIndex, setNameIndex] = useState([]);
+
+  useEffect(() => {
+    // Dataset Name Index のリストを作成
+    const labelIndexList = Array.from(
+      new Set(
+        Object.keys(props.dbCatalogue)
+          .filter((key) =>
+            Object.keys(props.dbConfig).find((k) => k.split("-").includes(key))
+          )
+          .map((v) => v.slice(0, 1).toUpperCase())
+      )
+    );
+
+    setNameIndex(labelIndexList);
+  }, []);
 
   const clickExamples = (examples, key) => {
     props.executeExamples(examples.join("\n"), key);
@@ -51,29 +67,11 @@ const Databases = (props) => {
                 <section className="database__index__names">
                   <h3 className="database__index__title">Dataset Name Index</h3>
                   <section className="database__index__links">
-                    {(() => {
-                      const labelIndex = [];
-                      return Object.keys(props.dbCatalogue).map((key, i) => {
-                        const keyInitial = props.dbCatalogue[key].label
-                          .slice(0, 1)
-                          .toUpperCase();
-                        if (
-                          Object.keys(props.dbConfig).find(
-                            (k) =>
-                              (k.split("-").indexOf(key) === 0 ||
-                                k.split("-").indexOf(key) === 1) &&
-                              !labelIndex.includes(keyInitial)
-                          )
-                        ) {
-                          labelIndex.push(keyInitial);
-                          return (
-                            <a href={"/#" + keyInitial} key={i}>
-                              {keyInitial + " "}
-                            </a>
-                          );
-                        }
-                      });
-                    })()}
+                    {nameIndex.map((v, i) => (
+                      <a href={"/#" + v} key={i}>
+                        {v + " "}
+                      </a>
+                    ))}
                   </section>
                 </section>
               </section>
