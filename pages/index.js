@@ -113,8 +113,6 @@ const Home = () => {
             candidates.push({
               name,
               category: dbCatalogue[name].category,
-              total: 1,
-              converted: 1,
               source: 1,
               target: 1,
               link: dbConfig[`${r.name}-${name}`].link.forward.label,
@@ -132,8 +130,6 @@ const Home = () => {
             candidates.push({
               name,
               category: dbCatalogue[name].category,
-              total: 1,
-              converted: 1,
               source: 1,
               target: 1,
               link: dbConfig[`${name}-${r.name}`].link.reverse.label,
@@ -318,8 +314,6 @@ const Home = () => {
               firstCandidates.push({
                 name,
                 category: dbCatalogue[name].category,
-                total: 1,
-                converted: 1,
                 link: dbConfig[k].link.forward.label,
               });
             }
@@ -327,8 +321,6 @@ const Home = () => {
             firstCandidatesTemp.push({
               name,
               category: dbCatalogue[name].category,
-              total: -2,
-              converted: 1,
               link: dbConfig[k].link.forward.label,
             });
           }
@@ -342,8 +334,6 @@ const Home = () => {
               firstCandidates.push({
                 name,
                 category: dbCatalogue[name].category,
-                total: 1,
-                converted: 1,
                 link: dbConfig[k].link.reverse.label,
               });
             }
@@ -351,8 +341,6 @@ const Home = () => {
             firstCandidatesTemp.push({
               name,
               category: dbCatalogue[name].category,
-              total: -2,
-              converted: 1,
               link: dbConfig[k].link.reverse.label,
             });
           }
@@ -380,8 +368,6 @@ const Home = () => {
                   {
                     name,
                     category: dbCatalogue[name].category,
-                    total: 1,
-                    converted: 1,
                     link: dbConfig[k].link.forward.label,
                   },
                 ]);
@@ -396,8 +382,6 @@ const Home = () => {
                 {
                   name,
                   category: dbCatalogue[name].category,
-                  total: -2,
-                  converted: 1,
                   link: dbConfig[k].link.forward.label,
                 },
               ]);
@@ -418,8 +402,6 @@ const Home = () => {
                   {
                     name,
                     category: dbCatalogue[name].category,
-                    total: 1,
-                    converted: 1,
                     link: dbConfig[k].link.reverse.label,
                   },
                 ]);
@@ -434,8 +416,6 @@ const Home = () => {
                 {
                   name,
                   category: dbCatalogue[name].category,
-                  total: -2,
-                  converted: 1,
                   link: dbConfig[k].link.reverse.label,
                 },
               ]);
@@ -475,8 +455,6 @@ const Home = () => {
                   {
                     name,
                     category: dbCatalogue[name].category,
-                    total: 1,
-                    converted: 1,
                     link: dbConfig[k].link.forward.label,
                   },
                 ]);
@@ -502,8 +480,6 @@ const Home = () => {
                   {
                     name,
                     category: dbCatalogue[name].category,
-                    total: 1,
-                    converted: 1,
                     link: dbConfig[k].link.reverse.label,
                   },
                 ]);
@@ -514,11 +490,11 @@ const Home = () => {
       });
     });
 
-    const Candidates = firstCandidates.length
+    const candidates = firstCandidates.length
       ? [...[firstCandidates], ...secondCandidates, ...thirdCandidates]
       : [...secondCandidates, ...thirdCandidates];
 
-    const t = await getTotal(Candidates);
+    const t = await getTotal(candidates);
 
     const u = t.map((v) => {
       if (v.length === 1) {
@@ -544,38 +520,39 @@ const Home = () => {
 
   const getTotal = async (candidates) => {
     NProgress.start();
-    const promises = candidates.map((v) => {
-      const r = route.slice().concat(v);
-      return new Promise(function (resolve) {
-        // エラーになった変換でもnullを返してresolve
-        return executeQuery(r, ids, "all", 10000, "only", true)
-          .then((v) => {
-            NProgress.inc(1 / candidates.length);
-            resolve(v);
-          })
-          .catch(() => resolve(null));
-      });
-    });
+    const result = await Promise.all(
+      candidates.map(async (v) => {
+        const r = route.slice().concat(v);
 
-    const nodesList = await Promise.all(promises).then((values) => {
-      NProgress.done();
-      // 先端の変換候補を追加
-      return candidates
-        .map((v, i) => {
-          if (!values[i]) {
-            v[v.length - 1].total = -1;
-            v[0].converted = -1;
-          } else if (values[i].total) {
-            v[v.length - 1].total = values[i].total;
-            v[0].converted = values[i].converted;
-          } else {
-            v[v.length - 1].total = 0;
-            v[0].converted = 0;
-          }
+        // 変換結果を取得
+        const convert = await executeQuery(
+          r,
+          ids,
+          "target",
+          10000,
+          true,
+          true
+        ).catch(() => null);
+        NProgress.inc(1 / candidates.length);
+        if (convert === null) {
+          v[0].source = -1;
+          v[v.length - 1].target = -1;
           return v;
-        })
-        .filter((w) => w[w.length - 1].total > 0);
-    });
+        }
+
+        const uniqueCount = Array.from(new Set(convert.results)).length;
+        if (uniqueCount === 0) {
+          v[0].source = -1;
+          v[v.length - 1].target = 0;
+        } else {
+          v[0].source = -1;
+          v[v.length - 1].target = uniqueCount;
+        }
+        return v;
+      })
+    );
+    const nodesList = result.filter((v) => v[v.length - 1].target > 0);
+    NProgress.done();
     return nodesList;
   };
 
