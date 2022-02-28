@@ -143,56 +143,59 @@ const Home = () => {
         }
       }
     });
+
     NProgress.start();
-    const promises = candidates.map(async (v) => {
-      const r = [routeTemp[routeTemp.length - 1], v];
-      const ids = routeTemp[routeTemp.length - 1].results;
+    nodesList[routeTemp.length] = await Promise.all(
+      candidates.map(async (v) => {
+        const r = [routeTemp[routeTemp.length - 1], v];
+        const ids = routeTemp[routeTemp.length - 1].results;
+        const _v = Object.assign({}, v);
 
-      const convert = await executeQuery(
-        r,
-        ids,
-        "target",
-        10000,
-        true,
-        true
-      ).catch(() => null);
-      NProgress.inc(1 / candidates.length);
-      if (convert === null) {
-        return null;
-      }
-
-      const uniqueCount = Array.from(new Set(convert.results)).length;
-      if (uniqueCount < 10000) {
-        const path = `${r[0].name}-${r[1].name}`;
-        const count = await executeCountQuery(path, ids).catch(() => null);
-        if (count !== null) {
-          convert.source = count.source;
-          convert.target = count.target;
+        // 変換結果を取得
+        const convert = await executeQuery(
+          r,
+          ids,
+          "target",
+          10000,
+          true,
+          true
+        ).catch(() => null);
+        NProgress.inc(1 / candidates.length);
+        if (convert === null) {
+          _v.total = -1;
+          _v.converted = -1;
+          _v.source = -1;
+          _v.target = -1;
+          return _v;
         }
-      }
-      return convert;
-    });
 
-    const values = await Promise.all(promises);
+        _v.results = Array.from(new Set(convert.results));
+        const uniqueCount = _v.results.length;
+        if (uniqueCount === 0) {
+          _v.total = 0;
+          _v.converted = 0;
+          _v.source = 0;
+          _v.target = 0;
+        } else if (uniqueCount < 10000) {
+          const path = `${r[0].name}-${r[1].name}`;
+          // 変換結果が0より多く10000未満の時は個数を取得する
+          const count = await executeCountQuery(path, ids).catch(() => null);
+          if (count !== null) {
+            _v.total = convert.total;
+            _v.converted = convert.converted;
+            _v.source = count.source;
+            _v.target = count.target;
+          }
+        } else {
+          _v.total = -1;
+          _v.converted = -1;
+          _v.source = -1;
+          _v.target = -1;
+        }
+        return _v;
+      })
+    );
     NProgress.done();
-    // 先端の変換候補を追加
-    nodesList[routeTemp.length] = candidates.map((v, i) => {
-      console.log(values[i]);
-      const _v = Object.assign({}, v);
-      if (!values[i]) {
-        _v.total = -1;
-        _v.converted = -1;
-      } else if (values[i].total) {
-        _v.total = values[i].total;
-        _v.converted = values[i].converted;
-        _v.results = Array.from(new Set(values[i].results));
-      } else {
-        _v.total = 0;
-        _v.converted = 0;
-      }
-
-      return _v;
-    });
     setDatabaseNodesList(nodesList);
 
     const candidatePaths = [];
