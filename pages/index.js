@@ -172,8 +172,8 @@ const Home = () => {
             _v.target = count.target;
           }
         } else {
-          _v.source = -1;
-          _v.target = -1;
+          _v.source = -2;
+          _v.target = -2;
         }
         return _v;
       })
@@ -309,6 +309,8 @@ const Home = () => {
               firstCandidates.push({
                 name,
                 category: dbCatalogue[name].category,
+                source: -3,
+                target: -3,
                 link: dbConfig[k].link.forward.label,
               });
             }
@@ -316,6 +318,8 @@ const Home = () => {
             firstCandidatesTemp.push({
               name,
               category: dbCatalogue[name].category,
+              source: -3,
+              target: -3,
               link: dbConfig[k].link.forward.label,
             });
           }
@@ -329,6 +333,8 @@ const Home = () => {
               firstCandidates.push({
                 name,
                 category: dbCatalogue[name].category,
+                source: -3,
+                target: -3,
                 link: dbConfig[k].link.reverse.label,
               });
             }
@@ -336,6 +342,8 @@ const Home = () => {
             firstCandidatesTemp.push({
               name,
               category: dbCatalogue[name].category,
+              source: -3,
+              target: -3,
               link: dbConfig[k].link.reverse.label,
             });
           }
@@ -363,6 +371,8 @@ const Home = () => {
                   {
                     name,
                     category: dbCatalogue[name].category,
+                    source: -3,
+                    target: -3,
                     link: dbConfig[k].link.forward.label,
                   },
                 ]);
@@ -377,6 +387,8 @@ const Home = () => {
                 {
                   name,
                   category: dbCatalogue[name].category,
+                  source: -3,
+                  target: -3,
                   link: dbConfig[k].link.forward.label,
                 },
               ]);
@@ -397,6 +409,8 @@ const Home = () => {
                   {
                     name,
                     category: dbCatalogue[name].category,
+                    source: -3,
+                    target: -3,
                     link: dbConfig[k].link.reverse.label,
                   },
                 ]);
@@ -411,6 +425,8 @@ const Home = () => {
                 {
                   name,
                   category: dbCatalogue[name].category,
+                  source: -3,
+                  target: -3,
                   link: dbConfig[k].link.reverse.label,
                 },
               ]);
@@ -450,6 +466,8 @@ const Home = () => {
                   {
                     name,
                     category: dbCatalogue[name].category,
+                    source: -3,
+                    target: -3,
                     link: dbConfig[k].link.forward.label,
                   },
                 ]);
@@ -475,6 +493,8 @@ const Home = () => {
                   {
                     name,
                     category: dbCatalogue[name].category,
+                    source: -3,
+                    target: -3,
                     link: dbConfig[k].link.reverse.label,
                   },
                 ]);
@@ -525,23 +545,24 @@ const Home = () => {
         );
         NProgress.inc(1 / candidates.length);
         if (convert === null) {
-          v[0].source = -1;
           v[v.length - 1].target = -1;
           return v;
         }
 
         const uniqueCount = Array.from(new Set(convert.results)).length;
         if (uniqueCount === 0) {
-          v[0].source = -1;
           v[v.length - 1].target = 0;
-        } else {
-          v[0].source = -1;
+        } else if (uniqueCount < 10000) {
           v[v.length - 1].target = uniqueCount;
+        } else {
+          v[v.length - 1].target = -2;
         }
         return v;
       })
     );
-    const nodesList = result.filter((v) => v[v.length - 1].target > 0);
+    const nodesList = result.filter(
+      (v) => v[v.length - 1].target !== -1 && v[v.length - 1].target !== 0
+    );
     NProgress.done();
     return nodesList;
   };

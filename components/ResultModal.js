@@ -15,6 +15,7 @@ const ResultModal = (props) => {
   const [routePath, setRoutePath] = useState();
 
   useEffect(() => {
+    console.log(props.convertedCount);
     const routePathList = props.tableData.heading.flatMap((v, i) => {
       if (i === 0) {
         return getResultPathStyle(`label-${i}`, `link-${i + 1}`, "none");
@@ -352,7 +353,7 @@ const ResultModal = (props) => {
                               : null,
                           }}
                         >
-                          {i !== 0 && (
+                          {i !== 0 && props.convertedCount[i].source !== -3 && (
                             <span id={`converted${i}`} className="total">
                               {props.convertedCount[i].source >= 0
                                 ? props.convertedCount[i].source
@@ -360,13 +361,14 @@ const ResultModal = (props) => {
                             </span>
                           )}
                           <span className="path_label__inner">{v.label}</span>
-                          {i !== props.tableData.heading.length - 1 && (
-                            <span id={`total${i}`} className="total">
-                              {props.convertedCount[i].target >= 0
-                                ? props.convertedCount[i].target
-                                : "too many"}
-                            </span>
-                          )}
+                          {i !== props.tableData.heading.length - 1 &&
+                            props.convertedCount[i].target !== -3 && (
+                              <span id={`total${i}`} className="total">
+                                {props.convertedCount[i].target >= 0
+                                  ? props.convertedCount[i].target
+                                  : "too many"}
+                              </span>
+                            )}
                         </div>
                       </div>
                     ))}
