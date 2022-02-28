@@ -8,7 +8,12 @@ import IdInput from "../components/IdInput";
 import Documents from "../components/Documents";
 import TabWrapper from "../components/TabWrapper";
 import Navigate from "../components/Navigate";
-import { executeQuery, getPathStyle, mergePathStyle } from "../lib/util";
+import {
+  executeQuery,
+  executeCountQuery,
+  getPathStyle,
+  mergePathStyle,
+} from "../lib/util";
 import { topExamples } from "../lib/examples";
 
 const Home = () => {
@@ -110,6 +115,8 @@ const Home = () => {
               category: dbCatalogue[name].category,
               total: 1,
               converted: 1,
+              source: 1,
+              target: 1,
               link: dbConfig[`${r.name}-${name}`].link.forward.label,
               results: [],
             });
@@ -127,6 +134,8 @@ const Home = () => {
               category: dbCatalogue[name].category,
               total: 1,
               converted: 1,
+              source: 1,
+              target: 1,
               link: dbConfig[`${name}-${r.name}`].link.reverse.label,
               results: [],
             });
@@ -138,12 +147,29 @@ const Home = () => {
     const promises = candidates.map((v) => {
       const r = [routeTemp[routeTemp.length - 1], v];
       const ids = routeTemp[routeTemp.length - 1].results;
-      return new Promise(function (resolve) {
+      return new Promise((resolve) => {
         // エラーになった変換でもnullを返してresolve
         return executeQuery(r, ids, "target", 10000, true, true)
           .then((v) => {
             NProgress.inc(1 / candidates.length);
-            resolve(v);
+            const uniqueCount = Array.from(new Set(v.results)).length;
+            if (uniqueCount < 10000) {
+              resolve(
+                new Promise((innerResolve) => {
+                  const path = `${r[0].name}-${r[1].name}`;
+                  executeCountQuery(path, ids)
+                    .then((w) => {
+                      const _v = Object.assign({}, v);
+                      _v.source = w.source;
+                      _v.target = w.target;
+                      innerResolve(_v);
+                    })
+                    .catch(() => innerResolve(v));
+                })
+              );
+            } else {
+              resolve(v);
+            }
           })
           .catch(() => resolve(null));
       });
