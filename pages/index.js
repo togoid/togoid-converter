@@ -149,42 +149,42 @@ const Home = () => {
       });
     });
 
-    await Promise.all(promises).then((values) => {
-      NProgress.done();
-      // 先端の変換候補を追加
-      nodesList[routeTemp.length] = candidates.map((v, i) => {
-        const _v = Object.assign({}, v);
-        if (!values[i]) {
-          _v.total = -1;
-          _v.converted = -1;
-        } else if (values[i].total) {
-          _v.total = values[i].total;
-          _v.converted = values[i].converted;
-          _v.results = Array.from(new Set(values[i].results));
-        } else {
-          _v.total = 0;
-          _v.converted = 0;
-        }
+    const values = await Promise.all(promises);
+    NProgress.done();
+    // 先端の変換候補を追加
+    nodesList[routeTemp.length] = candidates.map((v, i) => {
+      console.log(values[i]);
+      const _v = Object.assign({}, v);
+      if (!values[i]) {
+        _v.total = -1;
+        _v.converted = -1;
+      } else if (values[i].total) {
+        _v.total = values[i].total;
+        _v.converted = values[i].converted;
+        _v.results = Array.from(new Set(values[i].results));
+      } else {
+        _v.total = 0;
+        _v.converted = 0;
+      }
 
-        return _v;
-      });
-      setDatabaseNodesList(nodesList);
-
-      const candidatePaths = [];
-      nodesList.forEach((nodes, i) => {
-        if (i === 0) return;
-        nodes.forEach((v) => {
-          candidatePaths.push(
-            ...mergePathStyle(
-              `from${i - 1}-${route[i - 1].name}`,
-              `to${i}-${v.name}`,
-              route[i] && route[i].name === v.name
-            )
-          );
-        });
-      });
-      setCandidatePaths(candidatePaths);
+      return _v;
     });
+    setDatabaseNodesList(nodesList);
+
+    const candidatePaths = [];
+    nodesList.forEach((nodes, i) => {
+      if (i === 0) return;
+      nodes.forEach((v) => {
+        candidatePaths.push(
+          ...mergePathStyle(
+            `from${i - 1}-${route[i - 1].name}`,
+            `to${i}-${v.name}`,
+            route[i] && route[i].name === v.name
+          )
+        );
+      });
+    });
+    setCandidatePaths(candidatePaths);
   };
 
   /**
