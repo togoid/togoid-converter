@@ -50,7 +50,7 @@ const Explore = (props) => {
 
     setTableData({ heading, rows });
     const counts = r.map((v) => {
-      return { converted: v?.converted, total: v?.total };
+      return { source: v?.source, target: v?.target };
     });
     setConvertedCount(counts);
   };
@@ -120,7 +120,7 @@ const Explore = (props) => {
                                     <div
                                       id={`to${i}-${v.name}`}
                                       className={`radio green ${
-                                        i === 0 || v.total > 0
+                                        i === 0 || v.target > 0
                                           ? null
                                           : "not_found"
                                       }`}
@@ -135,7 +135,7 @@ const Explore = (props) => {
                                             props.route[i].name === v.name
                                         )}
                                         onChange={() => selectDatabase(v, i)}
-                                        disabled={i > 0 && !v.total}
+                                        disabled={i > 0 && !v.target}
                                       />
                                       <label
                                         htmlFor={`result${i}-${j}`}
@@ -165,8 +165,8 @@ const Explore = (props) => {
                                               id={`converted${i}-${v.name}`}
                                               className="total"
                                             >
-                                              {v.converted >= 0
-                                                ? v.converted
+                                              {v.source >= 0
+                                                ? v.source
                                                 : "too many"}
                                             </span>
                                           ) : (
@@ -181,15 +181,15 @@ const Explore = (props) => {
                                             id={`total${i}-${v.name}`}
                                             className="total"
                                           >
-                                            {v.total >= 0
-                                              ? v.total
+                                            {v.target >= 0
+                                              ? v.target
                                               : "too many"}
                                           </span>
                                         </p>
                                       </label>
                                       {isActionButtonVisible && (
                                         <div className="action_icons">
-                                          {i > 0 && v.total > 0 && (
+                                          {i > 0 && v.target > 0 && (
                                             <button
                                               onClick={() => showModal(v, i)}
                                               className="action_icons__item"
@@ -207,7 +207,7 @@ const Explore = (props) => {
                                             </button>
                                           )}
 
-                                          {i > 0 && v.total > 0 && (
+                                          {i > 0 && v.target > 0 && (
                                             <button
                                               onClick={() =>
                                                 handleIdDownload(v, i)
