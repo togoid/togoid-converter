@@ -148,14 +148,9 @@ const Home = () => {
         const _v = Object.assign({}, v);
 
         // 変換結果を取得
-        const convert = await executeQuery(
-          r,
-          ids,
-          "target",
-          10000,
-          true,
-          true
-        ).catch(() => null);
+        const convert = await executeQuery(r, ids, "target", 10000).catch(
+          () => null
+        );
         NProgress.inc(1 / candidates.length);
         if (convert === null) {
           _v.source = -1;
@@ -525,14 +520,9 @@ const Home = () => {
         const r = route.slice().concat(v);
 
         // 変換結果を取得
-        const convert = await executeQuery(
-          r,
-          ids,
-          "target",
-          10000,
-          true,
-          true
-        ).catch(() => null);
+        const convert = await executeQuery(r, ids, "target", 10000).catch(
+          () => null
+        );
         NProgress.inc(1 / candidates.length);
         if (convert === null) {
           v[0].source = -1;

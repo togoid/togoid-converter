@@ -37,7 +37,7 @@ const Navigate = (props) => {
 
   const handleIdDownload = async (database, routeIndex, j) => {
     const r = selectDatabaseModal(routeIndex, j);
-    const d = await executeQuery(r, props.ids, "target", 10000, false, false);
+    const d = await executeQuery(r, props.ids, "target", 10000);
     const prefix = props.dbCatalogue[database.name].prefix.split("/").slice(-1);
 
     exportCsvTsv(
@@ -50,7 +50,7 @@ const Navigate = (props) => {
   const showModal = async (database, routeIndex, j) => {
     const r = selectDatabaseModal(routeIndex, j);
     const heading = r.map((v) => props.dbCatalogue[v.name]);
-    const d = await executeQuery(r, props.ids, "verbose", 100, false, false);
+    const d = await executeQuery(r, props.ids, "verbose", 100);
     const rows = d.results;
     setTableData({ heading, rows });
 
