@@ -144,35 +144,33 @@ const Home = () => {
       }
     });
     NProgress.start();
-    const promises = candidates.map((v) => {
+    const promises = candidates.map(async (v) => {
       const r = [routeTemp[routeTemp.length - 1], v];
       const ids = routeTemp[routeTemp.length - 1].results;
-      return new Promise((resolve) => {
-        // エラーになった変換でもnullを返してresolve
-        return executeQuery(r, ids, "target", 10000, true, true)
-          .then((v) => {
-            NProgress.inc(1 / candidates.length);
-            const uniqueCount = Array.from(new Set(v.results)).length;
-            if (uniqueCount < 10000) {
-              resolve(
-                new Promise((innerResolve) => {
-                  const path = `${r[0].name}-${r[1].name}`;
-                  executeCountQuery(path, ids)
-                    .then((w) => {
-                      const _v = Object.assign({}, v);
-                      _v.source = w.source;
-                      _v.target = w.target;
-                      innerResolve(_v);
-                    })
-                    .catch(() => innerResolve(v));
-                })
-              );
-            } else {
-              resolve(v);
-            }
-          })
-          .catch(() => resolve(null));
-      });
+
+      const convert = await executeQuery(
+        r,
+        ids,
+        "target",
+        10000,
+        true,
+        true
+      ).catch(() => null);
+      NProgress.inc(1 / candidates.length);
+      if (convert === null) {
+        return null;
+      }
+
+      const uniqueCount = Array.from(new Set(convert.results)).length;
+      if (uniqueCount < 10000) {
+        const path = `${r[0].name}-${r[1].name}`;
+        const count = await executeCountQuery(path, ids).catch(() => null);
+        if (count !== null) {
+          convert.source = count.source;
+          convert.target = count.target;
+        }
+      }
+      return convert;
     });
 
     const values = await Promise.all(promises);
