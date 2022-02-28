@@ -73,7 +73,7 @@ const Home = () => {
               const v = databaseNodesList[i + 1].find(
                 (element) => element.name === previousRoute[i + 1].name
               );
-              if (v === undefined || v.total === 0) {
+              if (v === undefined || v.target === 0) {
                 break;
               }
               r.push(previousRoute[i + 1]);
@@ -162,8 +162,6 @@ const Home = () => {
         ).catch(() => null);
         NProgress.inc(1 / candidates.length);
         if (convert === null) {
-          _v.total = -1;
-          _v.converted = -1;
           _v.source = -1;
           _v.target = -1;
           return _v;
@@ -172,8 +170,6 @@ const Home = () => {
         _v.results = Array.from(new Set(convert.results));
         const uniqueCount = _v.results.length;
         if (uniqueCount === 0) {
-          _v.total = 0;
-          _v.converted = 0;
           _v.source = 0;
           _v.target = 0;
         } else if (uniqueCount < 10000) {
@@ -181,14 +177,10 @@ const Home = () => {
           // 変換結果が0より多く10000未満の時は個数を取得する
           const count = await executeCountQuery(path, ids).catch(() => null);
           if (count !== null) {
-            _v.total = convert.total;
-            _v.converted = convert.converted;
             _v.source = count.source;
             _v.target = count.target;
           }
         } else {
-          _v.total = -1;
-          _v.converted = -1;
           _v.source = -1;
           _v.target = -1;
         }
@@ -235,11 +227,11 @@ const Home = () => {
             candidates.push({
               name: k,
               category: dbCatalogue[k].category,
-              total: 1,
+              target: 1,
               results: [id],
             });
           } else {
-            candidates[index].total += 1;
+            candidates[index].target += 1;
             candidates[index].results.push(id);
           }
         }
