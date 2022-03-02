@@ -15,7 +15,6 @@ const ResultModal = (props) => {
   const [routePath, setRoutePath] = useState();
 
   useEffect(() => {
-    console.log(props.convertedCount);
     const routePathList = props.tableData.heading.flatMap((v, i) => {
       if (i === 0) {
         return getResultPathStyle(`label-${i}`, `link-${i + 1}`, "none");
