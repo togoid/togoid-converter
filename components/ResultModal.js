@@ -245,14 +245,7 @@ const ResultModal = (props) => {
 
   const handleClipboardCopy = async (e) => {
     e.preventDefault();
-    const d = await executeQuery(
-      props.route,
-      props.ids,
-      getInclude(),
-      10000,
-      false,
-      false
-    );
+    const d = await executeQuery(props.route, props.ids, getInclude(), 10000);
 
     const results =
       previewMode !== "Target IDs" ? d.results : d.results.map((v) => [v]);
@@ -268,14 +261,7 @@ const ResultModal = (props) => {
   };
 
   const handleExportCsvTsv = async (extension) => {
-    const d = await executeQuery(
-      props.route,
-      props.ids,
-      getInclude(),
-      10000,
-      false,
-      false
-    );
+    const d = await executeQuery(props.route, props.ids, getInclude(), 10000);
 
     const results =
       previewMode !== "Target IDs" ? d.results : d.results.map((v) => [v]);
@@ -366,21 +352,22 @@ const ResultModal = (props) => {
                               : null,
                           }}
                         >
-                          {i !== 0 && (
+                          {i !== 0 && props.convertedCount[i].source !== -3 && (
                             <span id={`converted${i}`} className="total">
-                              {props.convertedCount[i].converted >= 0
-                                ? props.convertedCount[i].converted
+                              {props.convertedCount[i].source >= 0
+                                ? props.convertedCount[i].source
                                 : "too many"}
                             </span>
                           )}
                           <span className="path_label__inner">{v.label}</span>
-                          {i !== props.tableData.heading.length - 1 && (
-                            <span id={`total${i}`} className="total">
-                              {props.convertedCount[i].total >= 0
-                                ? props.convertedCount[i].total
-                                : "too many"}
-                            </span>
-                          )}
+                          {i !== props.tableData.heading.length - 1 &&
+                            props.convertedCount[i].target !== -3 && (
+                              <span id={`total${i}`} className="total">
+                                {props.convertedCount[i].target >= 0
+                                  ? props.convertedCount[i].target
+                                  : "too many"}
+                              </span>
+                            )}
                         </div>
                       </div>
                     ))}

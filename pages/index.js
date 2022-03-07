@@ -8,7 +8,12 @@ import IdInput from "../components/IdInput";
 import Documents from "../components/Documents";
 import TabWrapper from "../components/TabWrapper";
 import Navigate from "../components/Navigate";
-import { executeQuery, getPathStyle, mergePathStyle } from "../lib/util";
+import {
+  executeQuery,
+  executeCountQuery,
+  getPathStyle,
+  mergePathStyle,
+} from "../lib/util";
 import { topExamples } from "../lib/examples";
 
 const Home = () => {
@@ -68,7 +73,7 @@ const Home = () => {
               const v = databaseNodesList[i + 1].find(
                 (element) => element.name === previousRoute[i + 1].name
               );
-              if (v === undefined || v.total === 0) {
+              if (v === undefined || v.target === 0) {
                 break;
               }
               r.push(previousRoute[i + 1]);
@@ -108,8 +113,8 @@ const Home = () => {
             candidates.push({
               name,
               category: dbCatalogue[name].category,
-              total: 1,
-              converted: 1,
+              source: 1,
+              target: 1,
               link: dbConfig[`${r.name}-${name}`].link.forward.label,
               results: [],
             });
@@ -125,8 +130,8 @@ const Home = () => {
             candidates.push({
               name,
               category: dbCatalogue[name].category,
-              total: 1,
-              converted: 1,
+              source: 1,
+              target: 1,
               link: dbConfig[`${name}-${r.name}`].link.reverse.label,
               results: [],
             });
@@ -134,57 +139,62 @@ const Home = () => {
         }
       }
     });
-    NProgress.start();
-    const promises = candidates.map((v) => {
-      const r = [routeTemp[routeTemp.length - 1], v];
-      const ids = routeTemp[routeTemp.length - 1].results;
-      return new Promise(function (resolve) {
-        // エラーになった変換でもnullを返してresolve
-        return executeQuery(r, ids, "target", 10000, true, true)
-          .then((v) => {
-            NProgress.inc(1 / candidates.length);
-            resolve(v);
-          })
-          .catch(() => resolve(null));
-      });
-    });
 
-    await Promise.all(promises).then((values) => {
-      NProgress.done();
-      // 先端の変換候補を追加
-      nodesList[routeTemp.length] = candidates.map((v, i) => {
+    NProgress.start();
+    nodesList[routeTemp.length] = await Promise.all(
+      candidates.map(async (v) => {
+        const r = [routeTemp[routeTemp.length - 1], v];
+        const ids = routeTemp[routeTemp.length - 1].results;
         const _v = Object.assign({}, v);
-        if (!values[i]) {
-          _v.total = -1;
-          _v.converted = -1;
-        } else if (values[i].total) {
-          _v.total = values[i].total;
-          _v.converted = values[i].converted;
-          _v.results = Array.from(new Set(values[i].results));
-        } else {
-          _v.total = 0;
-          _v.converted = 0;
+
+        // 変換結果を取得
+        const convert = await executeQuery(r, ids, "target", 10000).catch(
+          () => null
+        );
+        NProgress.inc(1 / candidates.length);
+        if (convert === null) {
+          _v.source = -1;
+          _v.target = -1;
+          return _v;
         }
 
+        _v.results = Array.from(new Set(convert.results));
+        const uniqueCount = _v.results.length;
+        if (uniqueCount === 0) {
+          _v.source = 0;
+          _v.target = 0;
+        } else if (uniqueCount < 10000) {
+          const path = `${r[0].name}-${r[1].name}`;
+          // 変換結果が0より多く10000未満の時は個数を取得する
+          const count = await executeCountQuery(path, ids).catch(() => null);
+          if (count !== null) {
+            _v.source = count.source;
+            _v.target = count.target;
+          }
+        } else {
+          _v.source = -2;
+          _v.target = -2;
+        }
         return _v;
-      });
-      setDatabaseNodesList(nodesList);
+      })
+    );
+    NProgress.done();
+    setDatabaseNodesList(nodesList);
 
-      const candidatePaths = [];
-      nodesList.forEach((nodes, i) => {
-        if (i === 0) return;
-        nodes.forEach((v) => {
-          candidatePaths.push(
-            ...mergePathStyle(
-              `from${i - 1}-${route[i - 1].name}`,
-              `to${i}-${v.name}`,
-              route[i] && route[i].name === v.name
-            )
-          );
-        });
+    const candidatePaths = [];
+    nodesList.forEach((nodes, i) => {
+      if (i === 0) return;
+      nodes.forEach((v) => {
+        candidatePaths.push(
+          ...mergePathStyle(
+            `from${i - 1}-${route[i - 1].name}`,
+            `to${i}-${v.name}`,
+            route[i] && route[i].name === v.name
+          )
+        );
       });
-      setCandidatePaths(candidatePaths);
     });
+    setCandidatePaths(candidatePaths);
   };
 
   /**
@@ -208,11 +218,11 @@ const Home = () => {
             candidates.push({
               name: k,
               category: dbCatalogue[k].category,
-              total: 1,
+              target: 1,
               results: [id],
             });
           } else {
-            candidates[index].total += 1;
+            candidates[index].target += 1;
             candidates[index].results.push(id);
           }
         }
@@ -221,8 +231,8 @@ const Home = () => {
     if (candidates.length > 0) {
       setDatabaseNodesList([candidates]);
       setRoute([]);
-      return candidates;
     }
+    return candidates;
   };
 
   const clearExplore = () => {
@@ -299,8 +309,8 @@ const Home = () => {
               firstCandidates.push({
                 name,
                 category: dbCatalogue[name].category,
-                total: 1,
-                converted: 1,
+                source: -3,
+                target: -3,
                 link: dbConfig[k].link.forward.label,
               });
             }
@@ -308,8 +318,8 @@ const Home = () => {
             firstCandidatesTemp.push({
               name,
               category: dbCatalogue[name].category,
-              total: -2,
-              converted: 1,
+              source: -3,
+              target: -3,
               link: dbConfig[k].link.forward.label,
             });
           }
@@ -323,8 +333,8 @@ const Home = () => {
               firstCandidates.push({
                 name,
                 category: dbCatalogue[name].category,
-                total: 1,
-                converted: 1,
+                source: -3,
+                target: -3,
                 link: dbConfig[k].link.reverse.label,
               });
             }
@@ -332,8 +342,8 @@ const Home = () => {
             firstCandidatesTemp.push({
               name,
               category: dbCatalogue[name].category,
-              total: -2,
-              converted: 1,
+              source: -3,
+              target: -3,
               link: dbConfig[k].link.reverse.label,
             });
           }
@@ -361,8 +371,8 @@ const Home = () => {
                   {
                     name,
                     category: dbCatalogue[name].category,
-                    total: 1,
-                    converted: 1,
+                    source: -3,
+                    target: -3,
                     link: dbConfig[k].link.forward.label,
                   },
                 ]);
@@ -377,8 +387,8 @@ const Home = () => {
                 {
                   name,
                   category: dbCatalogue[name].category,
-                  total: -2,
-                  converted: 1,
+                  source: -3,
+                  target: -3,
                   link: dbConfig[k].link.forward.label,
                 },
               ]);
@@ -399,8 +409,8 @@ const Home = () => {
                   {
                     name,
                     category: dbCatalogue[name].category,
-                    total: 1,
-                    converted: 1,
+                    source: -3,
+                    target: -3,
                     link: dbConfig[k].link.reverse.label,
                   },
                 ]);
@@ -415,8 +425,8 @@ const Home = () => {
                 {
                   name,
                   category: dbCatalogue[name].category,
-                  total: -2,
-                  converted: 1,
+                  source: -3,
+                  target: -3,
                   link: dbConfig[k].link.reverse.label,
                 },
               ]);
@@ -456,8 +466,8 @@ const Home = () => {
                   {
                     name,
                     category: dbCatalogue[name].category,
-                    total: 1,
-                    converted: 1,
+                    source: -3,
+                    target: -3,
                     link: dbConfig[k].link.forward.label,
                   },
                 ]);
@@ -483,8 +493,8 @@ const Home = () => {
                   {
                     name,
                     category: dbCatalogue[name].category,
-                    total: 1,
-                    converted: 1,
+                    source: -3,
+                    target: -3,
                     link: dbConfig[k].link.reverse.label,
                   },
                 ]);
@@ -495,11 +505,11 @@ const Home = () => {
       });
     });
 
-    const Candidates = firstCandidates.length
+    const candidates = firstCandidates.length
       ? [...[firstCandidates], ...secondCandidates, ...thirdCandidates]
       : [...secondCandidates, ...thirdCandidates];
 
-    const t = await getTotal(Candidates);
+    const t = await getTotal(candidates);
 
     const u = t.map((v) => {
       if (v.length === 1) {
@@ -525,38 +535,35 @@ const Home = () => {
 
   const getTotal = async (candidates) => {
     NProgress.start();
-    const promises = candidates.map((v) => {
-      const r = route.slice().concat(v);
-      return new Promise(function (resolve) {
-        // エラーになった変換でもnullを返してresolve
-        return executeQuery(r, ids, "all", 10000, "only", true)
-          .then((v) => {
-            NProgress.inc(1 / candidates.length);
-            resolve(v);
-          })
-          .catch(() => resolve(null));
-      });
-    });
+    const result = await Promise.all(
+      candidates.map(async (v) => {
+        const r = route.slice().concat(v);
 
-    const nodesList = await Promise.all(promises).then((values) => {
-      NProgress.done();
-      // 先端の変換候補を追加
-      return candidates
-        .map((v, i) => {
-          if (!values[i]) {
-            v[v.length - 1].total = -1;
-            v[0].converted = -1;
-          } else if (values[i].total) {
-            v[v.length - 1].total = values[i].total;
-            v[0].converted = values[i].converted;
-          } else {
-            v[v.length - 1].total = 0;
-            v[0].converted = 0;
-          }
+        // 変換結果を取得
+        const convert = await executeQuery(r, ids, "target", 10000).catch(
+          () => null
+        );
+        NProgress.inc(1 / candidates.length);
+        if (convert === null) {
+          v[v.length - 1].target = -1;
           return v;
-        })
-        .filter((w) => w[w.length - 1].total > 0);
-    });
+        }
+
+        const uniqueCount = Array.from(new Set(convert.results)).length;
+        if (uniqueCount === 0) {
+          v[v.length - 1].target = 0;
+        } else if (uniqueCount < 10000) {
+          v[v.length - 1].target = uniqueCount;
+        } else {
+          v[v.length - 1].target = -2;
+        }
+        return v;
+      })
+    );
+    const nodesList = result.filter(
+      (v) => v[v.length - 1].target !== -1 && v[v.length - 1].target !== 0
+    );
+    NProgress.done();
     return nodesList;
   };
 

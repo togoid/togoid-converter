@@ -37,7 +37,7 @@ const Navigate = (props) => {
 
   const handleIdDownload = async (database, routeIndex, j) => {
     const r = selectDatabaseModal(routeIndex, j);
-    const d = await executeQuery(r, props.ids, "target", 10000, false, false);
+    const d = await executeQuery(r, props.ids, "target", 10000);
     const prefix = props.dbCatalogue[database.name].prefix.split("/").slice(-1);
 
     exportCsvTsv(
@@ -50,12 +50,12 @@ const Navigate = (props) => {
   const showModal = async (database, routeIndex, j) => {
     const r = selectDatabaseModal(routeIndex, j);
     const heading = r.map((v) => props.dbCatalogue[v.name]);
-    const d = await executeQuery(r, props.ids, "verbose", 100, false, false);
+    const d = await executeQuery(r, props.ids, "verbose", 100);
     const rows = d.results;
     setTableData({ heading, rows });
 
     const counts = r.map((v) => {
-      return { converted: v?.converted, total: v?.total };
+      return { source: v?.source, target: v?.target };
     });
     setConvertedCount(counts);
   };
@@ -184,7 +184,7 @@ const Navigate = (props) => {
                                               id={`total${i}-${v.name}`}
                                               className="total"
                                             >
-                                              {v.total}
+                                              {v.target}
                                             </span>
                                           </p>
                                         </label>
@@ -276,20 +276,9 @@ const Navigate = (props) => {
                                                   : "#ffffff",
                                               }}
                                             >
-                                              {i === 1 ? (
-                                                <span
-                                                  id={`converted${i}-${v.name}-${j}`}
-                                                  className="total"
-                                                >
-                                                  {v.converted >= 0
-                                                    ? v.converted
-                                                    : "too many"}
-                                                </span>
-                                              ) : (
-                                                <span
-                                                  id={`converted${i}-${v.name}-${j}`}
-                                                ></span>
-                                              )}
+                                              <span
+                                                id={`converted${i}-${v.name}-${j}`}
+                                              ></span>
                                               <span className="text">
                                                 {
                                                   props.dbCatalogue[v.name]
@@ -303,7 +292,7 @@ const Navigate = (props) => {
                                                   id={`total${i}-${v.name}-${j}`}
                                                   className="total"
                                                 >
-                                                  {v.total}
+                                                  {v.target}
                                                 </span>
                                               ) : (
                                                 <span
