@@ -118,7 +118,7 @@
           display: flex;
           flex-direction: column;
           .result_list {
-            margin: 55px 0 0 30px;
+            margin: 0 0 0 30px;
             &.first {
               margin: 0 0 0 20px;
             }
@@ -138,14 +138,14 @@
             }
           }
           .label_list {
-            margin: 55px 0 0 80px;
+            margin: 0 0 0 80px;
             &__item {
               position: relative;
               display: flex;
               justify-content: space-between;
               align-items: center;
               font-size: 1.2rem;
-              margin: 12px 0 40px;
+              margin: 12px 0 39px;
               &.hover {
                 background: rgba(0, 0, 0, 0.8);
               }
@@ -184,7 +184,7 @@
           font-size: 1.2rem;
           color: $gray07;
           padding: 0 14px;
-          line-height: 23px;
+          line-height: 22px;
           border-radius: 12px;
           text-align: center;
           box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
@@ -223,6 +223,23 @@
     }
   }
 
+  .navigate {
+    .drawing_area {
+      .panel {
+        .drawing {
+          .item_wrapper {
+            .result_list {
+              min-height: 55px;
+              &.dropdown_wrap {
+                margin: 0 0 0 110px;
+              }
+            }
+          }
+        }
+      }
+    }
+
+  }
   .database {
     padding: 31px 0 0;
     background: $gray03;

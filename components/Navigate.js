@@ -373,7 +373,7 @@ const Navigate = (props) => {
                     (props.databaseNodesList[1] &&
                       props.databaseNodesList[1].length === 0)) && (
                     <div className="item_wrapper">
-                      <ul className="result_list">
+                      <ul className="result_list dropdown_wrap">
                         <div id={`nodeOther`} className={`radio green`}>
                           <select
                             className="dropdown"
