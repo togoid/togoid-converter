@@ -231,8 +231,8 @@ const Home = () => {
     if (candidates.length > 0) {
       setDatabaseNodesList([candidates]);
       setRoute([]);
-      return candidates;
     }
+    return candidates;
   };
 
   const clearExplore = () => {
