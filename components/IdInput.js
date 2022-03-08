@@ -5,14 +5,19 @@ const IdInput = (props) => {
     if (e) e.preventDefault();
 
     const findDatabaseList = props.handleIdTextsSubmit(props.idTexts);
-    if (
-      props.previousRoute.length &&
-      findDatabaseList.find((v) => v.name === props.previousRoute[0].name)
-    ) {
-      // keepRouteを使用する
-      props.setRoute([props.previousRoute[0]]);
-      props.setIsUseKeepRoute(true);
-    } else if (findDatabaseList.length === 1) {
+    if (props.previousRoute.length) {
+      const firstRoute = findDatabaseList.find(
+        (v) => v.name === props.previousRoute[0].name
+      );
+      if (firstRoute) {
+        // keepRouteを使用する
+        props.setRoute([firstRoute]);
+        props.setIsUseKeepRoute(true);
+        return;
+      }
+    }
+
+    if (findDatabaseList.length === 1) {
       // listが1件の時は自動で選択する
       props.setRoute(findDatabaseList);
     }
