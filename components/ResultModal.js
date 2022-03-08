@@ -360,14 +360,13 @@ const ResultModal = (props) => {
                             </span>
                           )}
                           <span className="path_label__inner">{v.label}</span>
-                          {i !== props.tableData.heading.length - 1 &&
-                            props.convertedCount[i].target !== -3 && (
-                              <span id={`total${i}`} className="total">
-                                {props.convertedCount[i].target >= 0
-                                  ? props.convertedCount[i].target
-                                  : "too many"}
-                              </span>
-                            )}
+                          {props.convertedCount[i].target !== -3 && (
+                            <span id={`total${i}`} className="total">
+                              {props.convertedCount[i].target >= 0
+                                ? props.convertedCount[i].target
+                                : "too many"}
+                            </span>
+                          )}
                         </div>
                       </div>
                     ))}
