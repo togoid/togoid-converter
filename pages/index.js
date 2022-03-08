@@ -702,6 +702,7 @@ const Home = () => {
           setPreviousRoute={setPreviousRoute}
           dbCatalogue={dbCatalogue}
           restartExplore={restartExplore}
+          setIsUseKeepRoute={setIsUseKeepRoute}
         />
         <div className="drawing_area">
           <TabWrapper activeTab={activeTab} changeIndexTab={changeIndexTab} />
