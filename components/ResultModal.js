@@ -44,14 +44,14 @@ const ResultModal = (props) => {
     "Target IDs",
     "All including unconverted IDs",
   ];
-  const getInclude = () => {
-    const includeObj = {
+  const getReport = () => {
+    const reportObj = {
       "All converted IDs": "all",
       "Source and target IDs": "pair",
       "Target IDs": "target",
       "All including unconverted IDs": "verbose",
     };
-    return includeObj[previewMode];
+    return reportObj[previewMode];
   };
 
   const handleMenu = (e) => {
@@ -245,7 +245,7 @@ const ResultModal = (props) => {
 
   const handleClipboardCopy = async (e) => {
     e.preventDefault();
-    const d = await executeQuery(props.route, props.ids, getInclude(), 10000);
+    const d = await executeQuery(props.route, props.ids, getReport(), 10000);
 
     const results =
       previewMode !== "Target IDs" ? d.results : d.results.map((v) => [v]);
@@ -261,7 +261,7 @@ const ResultModal = (props) => {
   };
 
   const handleExportCsvTsv = async (extension) => {
-    const d = await executeQuery(props.route, props.ids, getInclude(), 10000);
+    const d = await executeQuery(props.route, props.ids, getReport(), 10000);
 
     const results =
       previewMode !== "Target IDs" ? d.results : d.results.map((v) => [v]);
@@ -274,9 +274,9 @@ const ResultModal = (props) => {
   };
 
   const handleClipboardURL = () => {
-    const include = getInclude();
+    const report = getReport();
     const routeName = props.route.map((v) => v.name).join();
-    const text = `https://api.togoid.dbcls.jp/convert?ids=${props.ids}&route=${routeName}&include=${include}&format=csv`;
+    const text = `https://api.togoid.dbcls.jp/convert?ids=${props.ids}&route=${routeName}&report=${report}&format=csv`;
     copy(text, {
       format: "text/plain",
     });
@@ -380,9 +380,9 @@ const ResultModal = (props) => {
           <div className="modal__top">
             <div className="item_wrapper">
               {props.tableData && props.tableData.rows.length > 0 && (
-                <div className="include">
+                <div className="report">
                   <p className="modal__heading">Report</p>
-                  <div className="include__inner">
+                  <div className="report__inner">
                     {previewModeList.map((v, i) => {
                       if (i !== previewModeList.length - 1) {
                         return (
@@ -391,7 +391,7 @@ const ResultModal = (props) => {
                               id={i}
                               key={v}
                               value={v}
-                              name="include"
+                              name="report"
                               type="radio"
                               className="radio__input"
                               checked={v === previewMode}
@@ -405,13 +405,13 @@ const ResultModal = (props) => {
                       }
                     })}
                   </div>
-                  <div className="include__inner">
+                  <div className="report__inner">
                     <div className="radio" key={previewModeList.length - 1}>
                       <input
                         id={previewModeList.length - 1}
                         key={previewModeList[previewModeList.length - 1]}
                         value={previewModeList[previewModeList.length - 1]}
-                        name="include"
+                        name="report"
                         type="radio"
                         className="radio__input"
                         checked={

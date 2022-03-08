@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
   title: Togo ID API
-  version: 1.0.0
+  version: 2.0.0
 host: api.togoid.dbcls.jp
 schemes:
   - https
@@ -9,6 +9,7 @@ produces:
   - application/json
 tags:
 - name: "convert"
+- name: "count"
 - name: "config"
 paths:
   /convert:
@@ -39,15 +40,16 @@ paths:
           type: integer
           default: 0
           description: Number of starts to return results
-        - name: include
+        - name: report
           in: query
           type: string
           enum:
             - all
             - pair
             - target
+            - verbose
           default: target
-          description: "Whether to include the conversion path in the result. 'all': All IDs of route (ex: uniprot_id, xxx_id, yyy_id, mondo_id), 'pair': Source and target IDs (ex: uniprot_id, mondo_id), 'target': Target IDs only (ex: mondo_id)"
+          description: "Whether to include the conversion path in the result. 'all': All IDs of route (ex: uniprot_id, xxx_id, yyy_id, mondo_id), 'pair': Source and target IDs (ex: uniprot_id, mondo_id), 'target': Target IDs only (ex: mondo_id), 'verbose': All including unconveted IDs"
         - name: format
           in: query
           type: string
@@ -57,11 +59,6 @@ paths:
           - json
           default: tsv
           description: Output format of results
-        - name: total
-          in: query
-          type: string
-          default: true
-          description: Whether to include total
       responses:
         200:
           description: "successful operation"
@@ -86,9 +83,6 @@ paths:
                 example: 
                   - "hgnc"
                   - "ensembl_gene"
-              total:
-                type: "integer"
-                example: 10
               result:
                 type: "string"
                 example:
@@ -104,59 +98,157 @@ paths:
                   - "ENSG00000284140"
         400:
           description: Bad request
-          
-  /config/dataset:
+
+  /count/{src}-{dst}:
     get:
       tags: 
-        - "config"
-      summary: Get dataset config
-      operationId: getDataset
+        - "count"
+      summary: Count IDs 
+      operationId: countId
       parameters:
-        - name: name
-          in: query
+        - name: src
+          in: path
           type: string
           description: A key from https://github.com/dbcls/togoid-config/blob/main/config/dataset.yaml
-          required: false
+          required: true
+        - name: dst
+          in: path
+          type: string
+          description: A key from https://github.com/dbcls/togoid-config/blob/main/config/dataset.yaml
+          required: true
+        - name: ids
+          in: query
+          type: string
+          description: List IDs separated by commas
+          required: true
       responses:
         200:
           description: "successful operation"
           schema:
             type: "object"
             properties:
-              label:
+              source:
                 type: "string"
-                example: "UniProt"
-              catalog:
+                example: 2
+              target:
                 type: "string"
-                example: "nbdc00221"
-              category:
-                type: "string"
-                example: "Protein"
-              regex:
-                type: "string"
-                example: "^(?:(?<id>[A-NR-Z][0-9](?:[A-Z][A-Z0-9][A-Z0-9][0-9]){1,2})|(?<id2>[OPQ][0-9][A-Z0-9][A-Z0-9][A-Z0-9][0-9])(?:\\.\\d+)?)$"  
-              prefix:
-                  type: "string"
-                  example: "http://purl.uniprot.org/uniprot/"
+                example: 2
+
+        400:
+          description: Bad request
+
+  /config/dataset:
+    get:
+      tags: 
+        - "config"
+      summary: Get all dataset config
+      operationId: getAllDataset
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            properties:
+              affy_probeset:
+                properties:
+                  catalog:
+                    type: "string"
+                    example: "FIXME"
+                  category:
+                    type: "string"
+                    example: "Probe"
+                  examples:
+                    type: "array"
+                    items:
+                      type: "array"
+                      items:
+                        type: "string"
+                        example:
+                          - "1553582_a_at"
+                          - "211531_x_at"
+                          - "202573_at"
+                          - "201640_x_at"
+                          - "205117_at"
+                          - "201017_at"
+                          - "205099_s_at"
+                          - "200614_at"
+                          - "201895_at"
+                          - "202666_s_at"
+                  label:
+                    type: "string"
+                    example: "Affymetrix probeset"
+                  prefix:
+                    type: "string"
+                    example: "http://identifiers.org/affy.probeset/"
+                  regex:
+                    type: "string"
+                    example: "^(?<id>\\d{3,}(?:_[a-z])?_at)$"  
 
         400:
           description: Bad request
           
-  /config/database:
+  /config/dataset/{name}:
     get:
       tags: 
         - "config"
-      summary: Get database config
-      operationId: getDatabase
+      summary: Get selected dataset config
+      operationId: getDataset
       parameters:
-        - name: src
-          in: query
+        - name: name
+          in: path
           type: string
           description: A key from https://github.com/dbcls/togoid-config/blob/main/config/dataset.yaml
-        - name: dst
-          in: query
-          type: string
-          description: A key from https://github.com/dbcls/togoid-config/blob/main/config/dataset.yaml
+          required: true
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            properties:
+              affy_probeset:
+                properties:
+                  catalog:
+                    type: "string"
+                    example: "FIXME"
+                  category:
+                    type: "string"
+                    example: "Probe"
+                  examples:
+                    type: "array"
+                    items:
+                      type: "array"
+                      items:
+                        type: "string"
+                        example:
+                          - "1553582_a_at"
+                          - "211531_x_at"
+                          - "202573_at"
+                          - "201640_x_at"
+                          - "205117_at"
+                          - "201017_at"
+                          - "205099_s_at"
+                          - "200614_at"
+                          - "201895_at"
+                          - "202666_s_at"
+                  label:
+                    type: "string"
+                    example: "Affymetrix probeset"
+                  prefix:
+                    type: "string"
+                    example: "http://identifiers.org/affy.probeset/"
+                  regex:
+                    type: "string"
+                    example: "^(?<id>\\d{3,}(?:_[a-z])?_at)$"  
+
+        400:
+          description: Bad request
+
+  /config/relation:
+    get:
+      tags: 
+        - "config"
+      summary: Get all database relation
+      operationId: getAllRelation
       responses:
         200:
           description: "successful operation"
@@ -166,48 +258,94 @@ paths:
               link:
                 type: "object"
                 properties: 
-                  file: 
-                    type: "string"
-                    example: "pair.tsv"
                   forward: 
                     type: "object"
                     properties:
-                      namespace:
-                        type: "string"
-                        example: "rdfs"
                       label:
                         type: "string"
-                        example: "seeAlso"
-                      prefix:
-                        type: "string"
-                        example: "http://www.w3.org/2000/01/rdf-schema#"
-                      predicate:
-                        type: "string"
-                        example: "seeAlso"
+                        example: "detects"
                   reverse: 
                     type: "object"
                     properties:
-                      namespace:
-                        type: "string"
-                        example: "rdfs"
                       label:
                         type: "string"
-                        example: "seeAlso"
-                      prefix:
-                        type: "string"
-                        example: "http://www.w3.org/2000/01/rdf-schema#"
-                      predicate:
-                        type: "string"
-                        example: "seeAlso"  
-              update:
+                        example: "is target of"
+
+        400:
+          description: Bad request
+
+  /config/relation/{src}-{dst}:
+    get:
+      tags: 
+        - "config"
+      summary: Get selected database relation
+      operationId: getRelation
+      parameters:
+        - name: src
+          in: path
+          type: string
+          description: A key from https://github.com/dbcls/togoid-config/blob/main/config/dataset.yaml
+          required: true
+        - name: dst
+          in: path
+          type: string
+          description: A key from https://github.com/dbcls/togoid-config/blob/main/config/dataset.yaml
+          required: true
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            properties:
+              link:
                 type: "object"
                 properties: 
-                  frequency: 
+                  forward: 
+                    type: "object"
+                    properties:
+                      label:
+                        type: "string"
+                        example: "detects"
+                  reverse: 
+                    type: "object"
+                    properties:
+                      label:
+                        type: "string"
+                        example: "is target of"
+
+        400:
+          description: Bad request
+
+  /config/descriptions:
+    get:
+      tags: 
+        - "config"
+      summary: Get database description
+      operationId: getDescription
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            properties:
+              kegg_compound:
+                type: "object"
+                properties: 
+                  description_en: 
                     type: "string"
-                    example: "Monthly"
-                  method: 
+                    example: "KEGG COMPOUND is a database of biologically relevant compounds, including chemical structures and associated information for compounds in the KEGG database such as small molecules, biopolymers, and other related substances. The site also has a collection of links to other relevant KEGG resources such as GLYCAN."
+                  description_ja: 
                     type: "string"
-                    example: "sparql_thread.pl -t 10"
+                    example: "KEGG COMPOUNDは、小分子、生体高分子、および生体関連化学物質のデータベースです。 各エントリーはC番号とよばれるアクセッション番号で識別され、化学構造や関連する生体反応、パスウエイ、他のデータベースとのリンク情報が含まれています。"
+                  name: 
+                    type: "string"
+                    example: "KEGG COMPOUND"
+                  organization_en: 
+                    type: "string"
+                    example: "Kyoto University Institute for Chemical Research Bioinformatics Center"
+                  organization_ja: 
+                    type: "string"
+                    example: "京都大学　化学研究所　附属バイオインフォマティクスセンター"
 
         400:
           description: Bad request
