@@ -29,17 +29,6 @@ paths:
           type: string
           description: List keys separated by commas from https://github.com/dbcls/togoid-config/blob/main/config/dataset.yaml
           required: true
-        - name: limit
-          in: query
-          type: integer
-          default: 10000
-          maximum: 10000
-          description: Number of results returned
-        - name: offset
-          in: query
-          type: integer
-          default: 0
-          description: Number of starts to return results
         - name: report
           in: query
           type: string
@@ -59,6 +48,17 @@ paths:
           - json
           default: tsv
           description: Output format of results
+        - name: limit
+          in: query
+          type: integer
+          default: 10000
+          maximum: 10000
+          description: Number of results returned
+        - name: offset
+          in: query
+          type: integer
+          default: 0
+          description: Number of starts to return results
       responses:
         200:
           description: "successful operation"
@@ -99,19 +99,19 @@ paths:
         400:
           description: Bad request
 
-  /count/{src}-{dst}:
+  /count/{source}-{target}:
     get:
       tags: 
         - "count"
       summary: Count IDs 
       operationId: countId
       parameters:
-        - name: src
+        - name: source
           in: path
           type: string
           description: A key from https://github.com/dbcls/togoid-config/blob/main/config/dataset.yaml
           required: true
-        - name: dst
+        - name: target
           in: path
           type: string
           description: A key from https://github.com/dbcls/togoid-config/blob/main/config/dataset.yaml
@@ -187,14 +187,14 @@ paths:
         400:
           description: Bad request
           
-  /config/dataset/{name}:
+  /config/dataset/{dataset}:
     get:
       tags: 
         - "config"
       summary: Get selected dataset config
       operationId: getDataset
       parameters:
-        - name: name
+        - name: dataset
           in: path
           type: string
           description: A key from https://github.com/dbcls/togoid-config/blob/main/config/dataset.yaml
@@ -274,19 +274,19 @@ paths:
         400:
           description: Bad request
 
-  /config/relation/{src}-{dst}:
+  /config/relation/{source}-{target}:
     get:
       tags: 
         - "config"
       summary: Get selected database relation
       operationId: getRelation
       parameters:
-        - name: src
+        - name: source
           in: path
           type: string
           description: A key from https://github.com/dbcls/togoid-config/blob/main/config/dataset.yaml
           required: true
-        - name: dst
+        - name: target
           in: path
           type: string
           description: A key from https://github.com/dbcls/togoid-config/blob/main/config/dataset.yaml
