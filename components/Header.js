@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Script from "next/script";
 
 const Header = () => (
   <div>
@@ -66,18 +67,17 @@ const Header = () => (
       <meta name="msapplication-TileColor" content="#ffffff" />
       <meta name="msapplication-TileImage" content="/ms-icon-144x144.png" />
       <meta name="theme-color" content="#ffffff" />
-      <script
-        type="text/javascript"
-        src="https://dbcls.rois.ac.jp/DBCLS-common-header-footer/v2/script/common-header-and-footer.js"
-        id="common-header-and-footer__script"
-        data-show-footer="true"
-        data-show-footer-license="true"
-        data-show-footer-links="true"
-        data-width="auto"
-        data-color="mono"
-        data-license-type="none"
-      ></script>
     </Head>
+    <Script
+      src="https://dbcls.rois.ac.jp/DBCLS-common-header-footer/v2/script/common-header-and-footer.js"
+      id="common-header-and-footer__script"
+      data-show-footer="true"
+      data-show-footer-license="true"
+      data-show-footer-links="true"
+      data-width="auto"
+      data-color="mono"
+      data-license-type="none"
+    />
     <header className="header">
       <h1 className="header__title">
         <a href="/">
