@@ -76,7 +76,7 @@ const Home = () => {
               if (v === undefined || v.target === 0) {
                 break;
               }
-              r.push(previousRoute[i + 1]);
+              r.push(v);
             }
           }
           setRoute(r);
@@ -702,6 +702,7 @@ const Home = () => {
           setPreviousRoute={setPreviousRoute}
           dbCatalogue={dbCatalogue}
           restartExplore={restartExplore}
+          setIsUseKeepRoute={setIsUseKeepRoute}
         />
         <div className="drawing_area">
           <TabWrapper activeTab={activeTab} changeIndexTab={changeIndexTab} />
