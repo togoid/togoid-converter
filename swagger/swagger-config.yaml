@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: Togo ID API
   version: 2.0.0
-host: api.togoid.dbcls.jp
+host: api.togoid.dbcls.jp.il3c.com
 schemes:
   - https
 produces:
@@ -22,12 +22,12 @@ paths:
         - name: ids
           in: query
           type: string
-          description: List IDs separated by commas
+          description: A comma-separated list of source IDs.
           required: true
         - name: route
           in: query
           type: string
-          description: List keys separated by commas from https://github.com/dbcls/togoid-config/blob/main/config/dataset.yaml
+          description: A comma-separated list of datasets, starts with the source dataset and ends with the target dataset.
           required: true
         - name: report
           in: query
@@ -36,9 +36,9 @@ paths:
             - all
             - pair
             - target
-            - verbose
+            - full
           default: target
-          description: "Whether to include the conversion path in the result. 'all': All IDs of route (ex: uniprot_id, xxx_id, yyy_id, mondo_id), 'pair': Source and target IDs (ex: uniprot_id, mondo_id), 'target': Target IDs only (ex: mondo_id), 'verbose': All including unconveted IDs"
+          description: "The output type can be selected from the following: 'target' (includes target IDs only), 'pair' (includes source and target IDs), 'all' (all converted IDs including source, target, and intermediate IDs of the route), or 'full' (all IDs including unconverted IDs)."
         - name: format
           in: query
           type: string
@@ -46,19 +46,19 @@ paths:
           - csv
           - tsv
           - json
-          default: tsv
-          description: Output format of results
+          default: json
+          description: The output format can be selected from 'tsv', 'csv', or 'json'.
         - name: limit
           in: query
           type: integer
           default: 10000
           maximum: 10000
-          description: Number of results returned
+          description: The maximum number of results to be returned.
         - name: offset
           in: query
           type: integer
           default: 0
-          description: Number of starts to return results
+          description: The position to start after the specified number of results.
       responses:
         200:
           description: "successful operation"
