@@ -49,7 +49,7 @@ const ResultModal = (props) => {
       "All converted IDs": "all",
       "Source and target IDs": "pair",
       "Target IDs": "target",
-      "All including unconverted IDs": "verbose",
+      "All including unconverted IDs": "full",
     };
     return reportObj[previewMode];
   };
@@ -136,7 +136,7 @@ const ResultModal = (props) => {
       table.rows = rows;
       table.url = url;
     } else if (previewMode === "All including unconverted IDs") {
-      // verbose
+      // full
       const subPrefixList = tableHeading.map((v, i) => {
         // 表示モード増やすとき用
         if (lineMode[i] === "ID") {
@@ -226,7 +226,7 @@ const ResultModal = (props) => {
         ),
       ].map((w) => [w]);
     } else if (previewMode === "All including unconverted IDs") {
-      // verbose
+      // full
       const subPrefixList = tableHeading.map((v, i) => {
         // 表示モード増やすとき用
         if (lineMode[i] === "ID") {
