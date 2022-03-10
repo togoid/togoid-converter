@@ -50,7 +50,7 @@ const Navigate = (props) => {
   const showModal = async (database, routeIndex, j) => {
     const r = selectDatabaseModal(routeIndex, j);
     const heading = r.map((v) => props.dbCatalogue[v.name]);
-    const d = await executeQuery(r, props.ids, "verbose", 100);
+    const d = await executeQuery(r, props.ids, "full", 100);
     const rows = d.results;
     setTableData({ heading, rows });
 

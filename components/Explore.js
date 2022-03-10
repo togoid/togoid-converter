@@ -45,7 +45,7 @@ const Explore = (props) => {
     const heading = r
       .filter((v, i) => i <= routeIndex)
       .map((v) => props.dbCatalogue[v.name]);
-    const d = await executeQuery(r, props.ids, "verbose", 100);
+    const d = await executeQuery(r, props.ids, "full", 100);
     const rows = d.results.map((v) => v.slice(0, routeIndex + 1));
 
     setTableData({ heading, rows });
