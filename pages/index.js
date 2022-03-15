@@ -113,8 +113,8 @@ const Home = () => {
             candidates.push({
               name,
               category: dbCatalogue[name].category,
-              source: 1,
-              target: 1,
+              source: 0,
+              target: 0,
               link: dbConfig[`${r.name}-${name}`].link.forward.label,
               results: [],
             });
@@ -130,8 +130,8 @@ const Home = () => {
             candidates.push({
               name,
               category: dbCatalogue[name].category,
-              source: 1,
-              target: 1,
+              source: 0,
+              target: 0,
               link: dbConfig[`${name}-${r.name}`].link.reverse.label,
               results: [],
             });
@@ -171,6 +171,8 @@ const Home = () => {
               _v.target = count.target;
             }
           } else {
+            // targetが0のままでは変換が0個と同じ扱いになってしまうため1以上にしておく
+            _v.target = 1;
             _v.message = `${_v.results.length}+`;
           }
         } else {
