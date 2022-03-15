@@ -55,7 +55,8 @@ const Navigate = (props) => {
     setTableData({ heading, rows });
 
     const counts = r.map((v) => {
-      return { source: v?.source, target: v?.target };
+      const target = v.message ? v.message : v?.target;
+      return { target: target };
     });
     setConvertedCount(counts);
   };
@@ -292,7 +293,9 @@ const Navigate = (props) => {
                                                   id={`total${i}-${v.name}-${j}`}
                                                   className="total"
                                                 >
-                                                  {v.target}
+                                                  {v.message
+                                                    ? v.message
+                                                    : v.target}
                                                 </span>
                                               ) : (
                                                 <span
