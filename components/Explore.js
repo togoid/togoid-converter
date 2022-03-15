@@ -126,9 +126,7 @@ const Explore = (props) => {
                                     <div
                                       id={`to${i}-${v.name}`}
                                       className={`radio green ${
-                                        i === 0 ||
-                                        (v.target > 0 &&
-                                          (!v.message || v.message !== "ERROR"))
+                                        i === 0 || v.target > 0
                                           ? null
                                           : "not_found"
                                       }`}
@@ -143,10 +141,7 @@ const Explore = (props) => {
                                             props.route[i].name === v.name
                                         )}
                                         onChange={() => selectDatabase(v, i)}
-                                        disabled={
-                                          i > 0 &&
-                                          (!v.target || v.message === "ERROR")
-                                        }
+                                        disabled={i > 0 && !v.target}
                                       />
                                       <label
                                         htmlFor={`result${i}-${j}`}
