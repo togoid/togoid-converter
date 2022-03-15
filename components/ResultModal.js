@@ -352,19 +352,19 @@ const ResultModal = (props) => {
                               : null,
                           }}
                         >
-                          {i !== 0 && props.convertedCount[i].source !== -3 && (
-                            <span id={`converted${i}`} className="total">
-                              {props.convertedCount[i].source >= 0
-                                ? props.convertedCount[i].source
-                                : "too many"}
-                            </span>
-                          )}
+                          {i !== 0 &&
+                            props.convertedCount[i].source !== -3 &&
+                            !props.convertedCount[i].message && (
+                              <span id={`converted${i}`} className="total">
+                                {props.convertedCount[i].source}
+                              </span>
+                            )}
                           <span className="path_label__inner">{v.label}</span>
                           {props.convertedCount[i].target !== -3 && (
                             <span id={`total${i}`} className="total">
-                              {props.convertedCount[i].target >= 0
-                                ? props.convertedCount[i].target
-                                : "too many"}
+                              {props.convertedCount[i].message
+                                ? props.convertedCount[i].message
+                                : props.convertedCount[i].target}
                             </span>
                           )}
                         </div>
