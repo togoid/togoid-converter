@@ -292,7 +292,9 @@ const Navigate = (props) => {
                                                   id={`total${i}-${v.name}-${j}`}
                                                   className="total"
                                                 >
-                                                  {v.target}
+                                                  {v.target < 10000
+                                                    ? v.target
+                                                    : `${v.target}+`}
                                                 </span>
                                               ) : (
                                                 <span
