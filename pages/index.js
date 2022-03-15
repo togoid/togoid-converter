@@ -152,28 +152,30 @@ const Home = () => {
           () => null
         );
         NProgress.inc(1 / candidates.length);
+
         if (convert === null) {
-          _v.source = -1;
-          _v.target = -1;
+          _v.message = "ERROR";
           return _v;
         }
 
-        _v.results = Array.from(new Set(convert.results));
-        const uniqueCount = _v.results.length;
-        if (uniqueCount === 0) {
-          _v.source = 0;
-          _v.target = 0;
-        } else if (uniqueCount < 10000) {
-          const path = `${r[0].name}-${r[1].name}`;
-          // 変換結果が0より多く10000未満の時は個数を取得する
-          const count = await executeCountQuery(path, ids).catch(() => null);
-          if (count !== null) {
-            _v.source = count.source;
-            _v.target = count.target;
+        _v.results = convert.results;
+        if (_v.results.length) {
+          if (_v.results.length < 10000) {
+            const path = `${r[0].name}-${r[1].name}`;
+            // 変換結果が0より多く10000未満の時は個数を取得する
+            const count = await executeCountQuery(path, ids).catch(() => null);
+            if (count === null) {
+              _v.message = "ERROR";
+            } else {
+              _v.source = count.source;
+              _v.target = count.target;
+            }
+          } else {
+            _v.message = `${_v.results.length}+`;
           }
         } else {
-          _v.source = -2;
-          _v.target = -2;
+          _v.source = 0;
+          _v.target = 0;
         }
         return _v;
       })

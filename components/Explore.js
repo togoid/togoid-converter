@@ -120,7 +120,9 @@ const Explore = (props) => {
                                     <div
                                       id={`to${i}-${v.name}`}
                                       className={`radio green ${
-                                        i === 0 || v.target > 0
+                                        i === 0 ||
+                                        (v.target > 0 &&
+                                          (!v.message || v.message !== "ERROR"))
                                           ? null
                                           : "not_found"
                                       }`}
@@ -135,7 +137,10 @@ const Explore = (props) => {
                                             props.route[i].name === v.name
                                         )}
                                         onChange={() => selectDatabase(v, i)}
-                                        disabled={i > 0 && !v.target}
+                                        disabled={
+                                          i > 0 &&
+                                          (!v.target || v.message === "ERROR")
+                                        }
                                       />
                                       <label
                                         htmlFor={`result${i}-${j}`}
@@ -165,9 +170,11 @@ const Explore = (props) => {
                                               id={`converted${i}-${v.name}`}
                                               className="total"
                                             >
-                                              {v.source >= 0
-                                                ? v.source
-                                                : "too many"}
+                                              {v.message
+                                                ? v.message === "ERROR"
+                                                  ? v.message
+                                                  : "unknown"
+                                                : v.source}
                                             </span>
                                           ) : (
                                             <span
@@ -181,9 +188,7 @@ const Explore = (props) => {
                                             id={`total${i}-${v.name}`}
                                             className="total"
                                           >
-                                            {v.target >= 0
-                                              ? v.target
-                                              : "too many"}
+                                            {v.message ? v.message : v.target}
                                           </span>
                                         </p>
                                       </label>
