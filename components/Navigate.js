@@ -55,9 +55,8 @@ const Navigate = (props) => {
     setTableData({ heading, rows });
 
     const counts = r.map((v) => {
-      const source = v?.source;
-      const target = v.message ? v.message : v.target;
-      return { source: source, target: target };
+      const target = v.message ? v.message : v?.target;
+      return { target: target };
     });
     setConvertedCount(counts);
   };

@@ -311,8 +311,6 @@ const Home = () => {
               firstCandidates.push({
                 name,
                 category: dbCatalogue[name].category,
-                source: -3,
-                target: -3,
                 link: dbConfig[k].link.forward.label,
               });
             }
@@ -320,8 +318,6 @@ const Home = () => {
             firstCandidatesTemp.push({
               name,
               category: dbCatalogue[name].category,
-              source: -3,
-              target: -3,
               link: dbConfig[k].link.forward.label,
             });
           }
@@ -335,8 +331,6 @@ const Home = () => {
               firstCandidates.push({
                 name,
                 category: dbCatalogue[name].category,
-                source: -3,
-                target: -3,
                 link: dbConfig[k].link.reverse.label,
               });
             }
@@ -344,8 +338,6 @@ const Home = () => {
             firstCandidatesTemp.push({
               name,
               category: dbCatalogue[name].category,
-              source: -3,
-              target: -3,
               link: dbConfig[k].link.reverse.label,
             });
           }
@@ -373,8 +365,6 @@ const Home = () => {
                   {
                     name,
                     category: dbCatalogue[name].category,
-                    source: -3,
-                    target: -3,
                     link: dbConfig[k].link.forward.label,
                   },
                 ]);
@@ -389,8 +379,6 @@ const Home = () => {
                 {
                   name,
                   category: dbCatalogue[name].category,
-                  source: -3,
-                  target: -3,
                   link: dbConfig[k].link.forward.label,
                 },
               ]);
@@ -411,8 +399,6 @@ const Home = () => {
                   {
                     name,
                     category: dbCatalogue[name].category,
-                    source: -3,
-                    target: -3,
                     link: dbConfig[k].link.reverse.label,
                   },
                 ]);
@@ -427,8 +413,6 @@ const Home = () => {
                 {
                   name,
                   category: dbCatalogue[name].category,
-                  source: -3,
-                  target: -3,
                   link: dbConfig[k].link.reverse.label,
                 },
               ]);
@@ -468,8 +452,6 @@ const Home = () => {
                   {
                     name,
                     category: dbCatalogue[name].category,
-                    source: -3,
-                    target: -3,
                     link: dbConfig[k].link.forward.label,
                   },
                 ]);
@@ -495,8 +477,6 @@ const Home = () => {
                   {
                     name,
                     category: dbCatalogue[name].category,
-                    source: -3,
-                    target: -3,
                     link: dbConfig[k].link.reverse.label,
                   },
                 ]);
