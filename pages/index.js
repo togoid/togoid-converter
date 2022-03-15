@@ -545,10 +545,20 @@ const Home = () => {
         );
         NProgress.inc(1 / candidates.length);
 
-        if (convert !== null && convert.results.length) {
-          v[v.length - 1].target = convert.results.length;
+        if (convert === null) {
+          // 変換に失敗したとき
+          v[v.length - 1].message = "ERROR";
+          return v;
+        } else if (convert.results.length) {
+          // 変換に成功して結果が存在するとき 10000未満かどうかで分ける
+          if (convert.results.length < 10000) {
+            v[v.length - 1].target = convert.results.length;
+          } else {
+            v[v.length - 1].message = `${convert.results.length}+`;
+          }
           return v;
         } else {
+          // 変換結果が空のとき
           return null;
         }
       })
