@@ -544,25 +544,16 @@ const Home = () => {
           () => null
         );
         NProgress.inc(1 / candidates.length);
-        if (convert === null) {
-          v[v.length - 1].target = -1;
-          return v;
-        }
 
-        const uniqueCount = Array.from(new Set(convert.results)).length;
-        if (uniqueCount === 0) {
-          v[v.length - 1].target = 0;
-        } else if (uniqueCount < 10000) {
-          v[v.length - 1].target = uniqueCount;
+        if (convert !== null && convert.results.length) {
+          v[v.length - 1].target = convert.results.length;
+          return v;
         } else {
-          v[v.length - 1].target = -2;
+          return null;
         }
-        return v;
       })
     );
-    const nodesList = result.filter(
-      (v) => v[v.length - 1].target !== -1 && v[v.length - 1].target !== 0
-    );
+    const nodesList = result.filter((v) => v);
     NProgress.done();
     return nodesList;
   };
