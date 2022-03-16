@@ -113,8 +113,8 @@ const Home = () => {
             candidates.push({
               name,
               category: dbCatalogue[name].category,
-              source: 1,
-              target: 1,
+              source: 0,
+              target: 0,
               link: dbConfig[`${r.name}-${name}`].link.forward.label,
               results: [],
             });
@@ -130,8 +130,8 @@ const Home = () => {
             candidates.push({
               name,
               category: dbCatalogue[name].category,
-              source: 1,
-              target: 1,
+              source: 0,
+              target: 0,
               link: dbConfig[`${name}-${r.name}`].link.reverse.label,
               results: [],
             });
@@ -152,28 +152,32 @@ const Home = () => {
           () => null
         );
         NProgress.inc(1 / candidates.length);
+
         if (convert === null) {
-          _v.source = -1;
-          _v.target = -1;
+          _v.message = "ERROR";
           return _v;
         }
 
-        _v.results = Array.from(new Set(convert.results));
-        const uniqueCount = _v.results.length;
-        if (uniqueCount === 0) {
-          _v.source = 0;
-          _v.target = 0;
-        } else if (uniqueCount < 10000) {
-          const path = `${r[0].name}-${r[1].name}`;
-          // 変換結果が0より多く10000未満の時は個数を取得する
-          const count = await executeCountQuery(path, ids).catch(() => null);
-          if (count !== null) {
-            _v.source = count.source;
-            _v.target = count.target;
+        _v.results = convert.results;
+        if (_v.results.length) {
+          if (_v.results.length < 10000) {
+            const path = `${r[0].name}-${r[1].name}`;
+            // 変換結果が0より多く10000未満の時は個数を取得する
+            const count = await executeCountQuery(path, ids).catch(() => null);
+            if (count === null) {
+              _v.message = "ERROR";
+            } else {
+              _v.source = count.source;
+              _v.target = count.target;
+            }
+          } else {
+            // targetが0のままでは変換が0個と同じ扱いになってしまうため1以上にしておく
+            _v.target = 1;
+            _v.message = `${_v.results.length}+`;
           }
         } else {
-          _v.source = -2;
-          _v.target = -2;
+          _v.source = 0;
+          _v.target = 0;
         }
         return _v;
       })
@@ -309,8 +313,6 @@ const Home = () => {
               firstCandidates.push({
                 name,
                 category: dbCatalogue[name].category,
-                source: -3,
-                target: -3,
                 link: dbConfig[k].link.forward.label,
               });
             }
@@ -318,8 +320,6 @@ const Home = () => {
             firstCandidatesTemp.push({
               name,
               category: dbCatalogue[name].category,
-              source: -3,
-              target: -3,
               link: dbConfig[k].link.forward.label,
             });
           }
@@ -333,8 +333,6 @@ const Home = () => {
               firstCandidates.push({
                 name,
                 category: dbCatalogue[name].category,
-                source: -3,
-                target: -3,
                 link: dbConfig[k].link.reverse.label,
               });
             }
@@ -342,8 +340,6 @@ const Home = () => {
             firstCandidatesTemp.push({
               name,
               category: dbCatalogue[name].category,
-              source: -3,
-              target: -3,
               link: dbConfig[k].link.reverse.label,
             });
           }
@@ -371,8 +367,6 @@ const Home = () => {
                   {
                     name,
                     category: dbCatalogue[name].category,
-                    source: -3,
-                    target: -3,
                     link: dbConfig[k].link.forward.label,
                   },
                 ]);
@@ -387,8 +381,6 @@ const Home = () => {
                 {
                   name,
                   category: dbCatalogue[name].category,
-                  source: -3,
-                  target: -3,
                   link: dbConfig[k].link.forward.label,
                 },
               ]);
@@ -409,8 +401,6 @@ const Home = () => {
                   {
                     name,
                     category: dbCatalogue[name].category,
-                    source: -3,
-                    target: -3,
                     link: dbConfig[k].link.reverse.label,
                   },
                 ]);
@@ -425,8 +415,6 @@ const Home = () => {
                 {
                   name,
                   category: dbCatalogue[name].category,
-                  source: -3,
-                  target: -3,
                   link: dbConfig[k].link.reverse.label,
                 },
               ]);
@@ -466,8 +454,6 @@ const Home = () => {
                   {
                     name,
                     category: dbCatalogue[name].category,
-                    source: -3,
-                    target: -3,
                     link: dbConfig[k].link.forward.label,
                   },
                 ]);
@@ -493,8 +479,6 @@ const Home = () => {
                   {
                     name,
                     category: dbCatalogue[name].category,
-                    source: -3,
-                    target: -3,
                     link: dbConfig[k].link.reverse.label,
                   },
                 ]);
@@ -544,25 +528,26 @@ const Home = () => {
           () => null
         );
         NProgress.inc(1 / candidates.length);
-        if (convert === null) {
-          v[v.length - 1].target = -1;
-          return v;
-        }
 
-        const uniqueCount = Array.from(new Set(convert.results)).length;
-        if (uniqueCount === 0) {
-          v[v.length - 1].target = 0;
-        } else if (uniqueCount < 10000) {
-          v[v.length - 1].target = uniqueCount;
+        if (convert === null) {
+          // 変換に失敗したとき
+          v[v.length - 1].message = "ERROR";
+          return v;
+        } else if (convert.results.length) {
+          // 変換に成功して結果が存在するとき 10000未満かどうかで分ける
+          if (convert.results.length < 10000) {
+            v[v.length - 1].target = convert.results.length;
+          } else {
+            v[v.length - 1].message = `${convert.results.length}+`;
+          }
+          return v;
         } else {
-          v[v.length - 1].target = -2;
+          // 変換結果が空のとき
+          return null;
         }
-        return v;
       })
     );
-    const nodesList = result.filter(
-      (v) => v[v.length - 1].target !== -1 && v[v.length - 1].target !== 0
-    );
+    const nodesList = result.filter((v) => v);
     NProgress.done();
     return nodesList;
   };

@@ -50,7 +50,13 @@ const Explore = (props) => {
 
     setTableData({ heading, rows });
     const counts = r.map((v) => {
-      return { source: v?.source, target: v?.target };
+      const source = v.message
+        ? v.message === "ERROR"
+          ? v.message
+          : "unknown"
+        : v.source;
+      const target = v.message ? v.message : v.target;
+      return { source: source, target: target };
     });
     setConvertedCount(counts);
   };
@@ -165,9 +171,11 @@ const Explore = (props) => {
                                               id={`converted${i}-${v.name}`}
                                               className="total"
                                             >
-                                              {v.source >= 0
-                                                ? v.source
-                                                : "too many"}
+                                              {v.message
+                                                ? v.message === "ERROR"
+                                                  ? v.message
+                                                  : "unknown"
+                                                : v.source}
                                             </span>
                                           ) : (
                                             <span
@@ -181,9 +189,7 @@ const Explore = (props) => {
                                             id={`total${i}-${v.name}`}
                                             className="total"
                                           >
-                                            {v.target >= 0
-                                              ? v.target
-                                              : "too many"}
+                                            {v.message ? v.message : v.target}
                                           </span>
                                         </p>
                                       </label>
