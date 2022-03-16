@@ -53,7 +53,7 @@ const Explore = (props) => {
       const source = v.message
         ? v.message === "ERROR"
           ? v.message
-          : "unknown"
+          : "-"
         : v.source;
       const target = v.message ? v.message : v.target;
       return { source: source, target: target };
@@ -174,7 +174,7 @@ const Explore = (props) => {
                                               {v.message
                                                 ? v.message === "ERROR"
                                                   ? v.message
-                                                  : "unknown"
+                                                  : "-"
                                                 : v.source}
                                             </span>
                                           ) : (
