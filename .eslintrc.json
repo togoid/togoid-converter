@@ -8,15 +8,12 @@
     "plugin:import/warnings",
     "plugin:jsx-a11y/recommended",
     "plugin:react-hooks/recommended",
-    "prettier",
-    "next"
+    "prettier"
   ],
   "rules": {
     "react/prop-types": "off",
     "prettier/prettier": "error",
-    "react/react-in-jsx-scope": "off",   
-    "react/no-unescaped-entities": "off",
-    "@next/next/no-page-custom-font": "off"
+    "react/react-in-jsx-scope": "off" 
   },
   "env": {
     "browser": true,
