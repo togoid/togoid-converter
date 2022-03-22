@@ -1,4 +1,3 @@
-import Head from "next/head";
 import React, { useState, useEffect } from "react";
 import NProgress from "nprogress";
 import axios from "axios";
@@ -7,19 +6,30 @@ import Explore from "../components/Explore";
 import Databases from "../components/Databases";
 import IdInput from "../components/IdInput";
 import Documents from "../components/Documents";
-import { executeQuery } from "../lib/util";
+import TabWrapper from "../components/TabWrapper";
+import Navigate from "../components/Navigate";
+import {
+  executeQuery,
+  executeCountQuery,
+  getPathStyle,
+  mergePathStyle,
+} from "../lib/util";
+import { topExamples } from "../lib/examples";
 
 const Home = () => {
   const [ids, setIds] = useState([]);
   const [activeTab, setActiveTab] = useState("EXPLORE");
   const [databaseNodesList, setDatabaseNodesList] = useState([]);
   const [route, setRoute] = useState([]);
-  const [routePaths, setRoutePaths] = useState([]);
+  const [previousRoute, setPreviousRoute] = useState([]);
+  const [isUseKeepRoute, setIsUseKeepRoute] = useState(false);
   const [candidatePaths, setCandidatePaths] = useState([]);
   const [idTexts, setIdTexts] = useState("");
   const [dbCatalogue, setDbCatalogue] = useState([]);
   const [dbConfig, setDbConfig] = useState([]);
   const [dbDesc, setDbDesc] = useState([]);
+  const [offsetRoute, setOffsetRoute] = useState(null);
+  const [previousSearchTab, setPreviousSearchTab] = useState("EXPLORE");
 
   useEffect(() => {
     const fetchApi = async () => {
@@ -39,144 +49,157 @@ const Home = () => {
 
   useEffect(() => {
     if (route.length > 0) {
-      const abortController = new AbortController();
-      const nodesList = databaseNodesList.slice(0, route.length);
-      const r = route[route.length - 1];
-      const candidates = [];
-      Object.keys(dbConfig).forEach((k) => {
-        if (!candidates.find((v) => v.name === r.name)) {
-          if (k.split("-").shift() === r.name) {
-            const name = k.split("-")[1];
-            if (
-              !candidates.find((v) => v.name === name) &&
-              !route.find((w) => w.name === name)
-            ) {
-              // 順方向の変換
-              candidates.push({
-                name,
-                category: dbCatalogue[name].category,
-                total: 1,
-                ids: [],
-              });
-            }
-          } else if (
-            dbConfig[k].link.reverse &&
-            k.split("-").pop() === r.name
-          ) {
-            // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
-            const name = k.split("-")[0];
-            if (
-              !candidates.find((v) => v.name === name) &&
-              !route.find((w) => w.name === name)
-            ) {
-              // 逆方向の変換
-              candidates.push({
-                name,
-                category: dbCatalogue[name].category,
-                total: 1,
-                ids: [],
-              });
-            }
-          }
-        }
-      });
-      NProgress.start();
-      const promises = candidates.map((v) => {
-        const r = route.slice();
-        r.push(v);
-        return new Promise(function (resolve) {
-          // エラーになった変換でもnullを返してresolve
-          return executeQuery(r, ids, "all")
-            .then((v) => {
-              NProgress.inc(1 / candidates.length);
-              resolve(v);
-            })
-            .catch(() => resolve(null));
-        });
-      });
-
-      Promise.all(promises).then((values) => {
-        NProgress.done();
-        // 先端の変換候補を追加
-        nodesList[route.length] = candidates.map((v, i) => {
-          const _v = Object.assign({}, v);
-          if (!values[i]) {
-            _v.total = -1;
-          } else if (values[i].total) {
-            _v.total = values[i].total;
+      const convertFunc = async () => {
+        const abortController = new AbortController();
+        if (activeTab === "NAVIGATE") {
+          if (route.length === 1) {
+            setDatabaseNodesList([databaseNodesList[0]]);
+            setCandidatePaths([
+              getPathStyle(
+                `from${0}-${route[0].name}`,
+                `nodeOther`,
+                false,
+                "default"
+              ),
+            ]);
           } else {
-            _v.total = 0;
+            createNavigatePath(databaseNodesList);
           }
-
-          return _v;
-        });
-        setDatabaseNodesList(nodesList);
-
-        const candidatePaths = [];
-        nodesList.forEach((nodes, i) => {
-          if (i === 0) return;
-          nodes.forEach((v) => {
-            if (route[i] && route[i].name === v.name) return;
-            candidatePaths.push({
-              from: {
-                id: `total${i - 1}-${route[i - 1].name}`,
-                posX: "right",
-                posY: "middle",
-              },
-              to: {
-                id: `node${i}-${v.name}`,
-                posX: "left",
-                posY: "middle",
-              },
-              style: {
-                color: "#dddddd",
-                head: "none",
-                arrow: "smooth",
-                width: 1.5,
-              },
-            });
-          });
-        });
-        setCandidatePaths(candidatePaths);
-
-        const routePaths = [];
-        route.forEach((v, i) => {
-          if (route[i + 1]) {
-            routePaths.push({
-              from: {
-                id: `total${i}-${v.name}`,
-                posX: "right",
-                posY: "middle",
-              },
-              to: {
-                id: `node${i + 1}-${route[i + 1].name}`,
-                posX: "left",
-                posY: "middle",
-              },
-              style: {
-                color: "#1A8091",
-                head: "none",
-                arrow: "smooth",
-                width: 2,
-              },
-            });
+        } else if (isUseKeepRoute) {
+          const r = route;
+          for (let i = 0; i < previousRoute.length; i++) {
+            await createNodesList(r);
+            if (i < previousRoute.length - 1) {
+              const v = databaseNodesList[i + 1].find(
+                (element) => element.name === previousRoute[i + 1].name
+              );
+              if (v === undefined || v.target === 0) {
+                break;
+              }
+              r.push(v);
+            }
           }
-        });
-        setRoutePaths(routePaths);
-      });
+          setRoute(r);
+          setIsUseKeepRoute(false);
+        } else {
+          await createNodesList(route);
+        }
 
-      return () => {
-        abortController.abort();
+        return () => {
+          abortController.abort();
+        };
       };
+
+      convertFunc();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route]);
 
-  useEffect(() => {
-    if (idTexts === "") {
-      clearExplore();
-    }
-  }, [idTexts]);
+  const createNodesList = async (routeTemp) => {
+    const nodesList = isUseKeepRoute
+      ? databaseNodesList
+      : databaseNodesList.slice(0, routeTemp.length);
+    const r = routeTemp[routeTemp.length - 1];
+    const candidates = [];
+    Object.keys(dbConfig).forEach((k) => {
+      if (!candidates.find((v) => v.name === r.name)) {
+        if (k.split("-").shift() === r.name) {
+          const name = k.split("-")[1];
+          if (
+            !candidates.find((v) => v.name === name) &&
+            !routeTemp.find((w) => w.name === name)
+          ) {
+            // 順方向の変換
+            candidates.push({
+              name,
+              category: dbCatalogue[name].category,
+              source: 0,
+              target: 0,
+              link: dbConfig[`${r.name}-${name}`].link.forward.label,
+              results: [],
+            });
+          }
+        } else if (dbConfig[k].link.reverse && k.split("-").pop() === r.name) {
+          // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
+          const name = k.split("-")[0];
+          if (
+            !candidates.find((v) => v.name === name) &&
+            !routeTemp.find((w) => w.name === name)
+          ) {
+            // 逆方向の変換
+            candidates.push({
+              name,
+              category: dbCatalogue[name].category,
+              source: 0,
+              target: 0,
+              link: dbConfig[`${name}-${r.name}`].link.reverse.label,
+              results: [],
+            });
+          }
+        }
+      }
+    });
+
+    NProgress.start();
+    nodesList[routeTemp.length] = await Promise.all(
+      candidates.map(async (v) => {
+        const r = [routeTemp[routeTemp.length - 1], v];
+        const ids = routeTemp[routeTemp.length - 1].results;
+        const _v = Object.assign({}, v);
+
+        // 変換結果を取得
+        const convert = await executeQuery(r, ids, "target", 10000).catch(
+          () => null
+        );
+        NProgress.inc(1 / candidates.length);
+
+        if (convert === null) {
+          _v.message = "ERROR";
+          return _v;
+        }
+
+        _v.results = convert.results;
+        if (_v.results.length) {
+          if (_v.results.length < 10000) {
+            const path = `${r[0].name}-${r[1].name}`;
+            // 変換結果が0より多く10000未満の時は個数を取得する
+            const count = await executeCountQuery(path, ids).catch(() => null);
+            if (count === null) {
+              _v.message = "ERROR";
+            } else {
+              _v.source = count.source;
+              _v.target = count.target;
+            }
+          } else {
+            // targetが0のままでは変換が0個と同じ扱いになってしまうため1以上にしておく
+            _v.target = 1;
+            _v.message = `${_v.results.length}+`;
+          }
+        } else {
+          _v.source = 0;
+          _v.target = 0;
+        }
+        return _v;
+      })
+    );
+    NProgress.done();
+    setDatabaseNodesList(nodesList);
+
+    const candidatePaths = [];
+    nodesList.forEach((nodes, i) => {
+      if (i === 0) return;
+      nodes.forEach((v) => {
+        candidatePaths.push(
+          ...mergePathStyle(
+            `from${i - 1}-${route[i - 1].name}`,
+            `to${i}-${v.name}`,
+            route[i] && route[i].name === v.name
+          )
+        );
+      });
+    });
+    setCandidatePaths(candidatePaths);
+  };
 
   /**
    * idsに入力されたIDまたはIDリストをidPatternsから正規表現で検索
@@ -199,25 +222,21 @@ const Home = () => {
             candidates.push({
               name: k,
               category: dbCatalogue[k].category,
-              total: 1,
-              ids: [id],
+              target: 1,
+              results: [id],
             });
           } else {
-            candidates[index].total += 1;
-            candidates[index].ids.push(id);
+            candidates[index].target += 1;
+            candidates[index].results.push(id);
           }
         }
       });
     });
     if (candidates.length > 0) {
-      const databases = candidates.map((v) => {
-        v.ids = v.ids.map((id) => ({ to: id }));
-        return v;
-      });
-      setDatabaseNodesList([databases]);
+      setDatabaseNodesList([candidates]);
       setRoute([]);
-      return databases;
     }
+    return candidates;
   };
 
   const clearExplore = () => {
@@ -227,7 +246,20 @@ const Home = () => {
 
   const restartExplore = () => {
     setDatabaseNodesList(databaseNodesList.slice(0, 1));
-    setRoute([]);
+
+    if (activeTab === "NAVIGATE") {
+      setRoute(route.slice(0, 1));
+      setCandidatePaths([
+        getPathStyle(
+          `from${0}-${route[0].name}`,
+          `nodeOther`,
+          false,
+          "default"
+        ),
+      ]);
+    } else {
+      setRoute([]);
+    }
   };
 
   const handleIdTextsSubmit = (t) => {
@@ -244,188 +276,447 @@ const Home = () => {
   };
 
   const handleTopExamples = (key) => {
-    const examples = {
-      refseq_rna: [
-        "NM_001354870",
-        "NM_002467",
-        "NM_001173531",
-        "NM_001285986",
-        "NM_001285987",
-        "NM_002701",
-        "NM_203289",
-        "NM_003106",
-        "NM_001314052",
-        "NM_004235",
-      ],
-      ensembl_gene: [
-        "ENSG00000136997",
-        "ENSG00000204531",
-        "ENSG00000181449",
-        "ENSG00000136826",
-      ],
-      uniprot: [
-        "P01106",
-        "Q01860",
-        "M1S623",
-        "D2IYK3",
-        "F2Z381",
-        "P48431",
-        "A0A0U3FYV6",
-        "O43474",
-      ],
-    };
-    executeExamples(examples[key].join("\n"), key);
+    executeExamples(topExamples[key].join("\n"), key);
   };
+
+  // Examplesをクリックした際の検索
   const executeExamples = (idTexts, key) => {
-    setActiveTab("EXPLORE");
+    changeIndexTab("EXPLORE");
     setIdTexts(idTexts);
-    const startRoute = handleIdTextsSubmit(idTexts).find(
-      (ele) => ele.name === key
+
+    const findDatabaseList = handleIdTextsSubmit(idTexts);
+    if (
+      previousRoute.length &&
+      findDatabaseList.find((v) => v.name === previousRoute[0].name)
+    ) {
+      // keepRouteを使用する
+      setRoute([previousRoute[0]]);
+      setIsUseKeepRoute(true);
+    } else {
+      // Examplesで選択したものは必ず見つかる前提
+      setRoute([findDatabaseList.find((v) => v.name === key)]);
+    }
+  };
+
+  const lookupRoute = async (target) => {
+    const r = route[route.length - 1];
+    const firstCandidates = [];
+    const firstCandidatesTemp = [];
+
+    Object.keys(dbConfig).forEach((k) => {
+      const keySplit = k.split("-");
+      if (keySplit[0] === r.name) {
+        const name = keySplit[1];
+        if (!route.find((w) => w.name === name)) {
+          if (name === target) {
+            if (!firstCandidates.length) {
+              firstCandidates.push({
+                name,
+                category: dbCatalogue[name].category,
+                link: dbConfig[k].link.forward.label,
+              });
+            }
+          } else if (!firstCandidatesTemp.find((v) => v.name === name)) {
+            firstCandidatesTemp.push({
+              name,
+              category: dbCatalogue[name].category,
+              link: dbConfig[k].link.forward.label,
+            });
+          }
+        }
+      } else if (dbConfig[k].link.reverse && keySplit[1] === r.name) {
+        // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
+        const name = keySplit[0];
+        if (!route.find((w) => w.name === name)) {
+          if (name === target) {
+            if (!firstCandidates.length) {
+              firstCandidates.push({
+                name,
+                category: dbCatalogue[name].category,
+                link: dbConfig[k].link.reverse.label,
+              });
+            }
+          } else if (!firstCandidatesTemp.find((v) => v.name === name)) {
+            firstCandidatesTemp.push({
+              name,
+              category: dbCatalogue[name].category,
+              link: dbConfig[k].link.reverse.label,
+            });
+          }
+        }
+      }
+    });
+
+    const secondCandidates = [];
+    const secondCandidatesTemp = [];
+
+    firstCandidatesTemp.forEach((r) => {
+      Object.keys(dbConfig).forEach((k) => {
+        const keySplit = k.split("-");
+        if (keySplit[0] === r.name) {
+          const name = keySplit[1];
+          if (!route.find((w) => w.name === name)) {
+            if (name === target) {
+              if (
+                !secondCandidates.find(
+                  (v) => v[0].name === r.name && v[1].name === name
+                )
+              ) {
+                secondCandidates.push([
+                  r,
+                  {
+                    name,
+                    category: dbCatalogue[name].category,
+                    link: dbConfig[k].link.forward.label,
+                  },
+                ]);
+              }
+            } else if (
+              !secondCandidatesTemp.find(
+                (v) => v[0].name === r.name && v[1].name === name
+              )
+            ) {
+              secondCandidatesTemp.push([
+                r,
+                {
+                  name,
+                  category: dbCatalogue[name].category,
+                  link: dbConfig[k].link.forward.label,
+                },
+              ]);
+            }
+          }
+        } else if (dbConfig[k].link.reverse && keySplit[1] === r.name) {
+          // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
+          const name = keySplit[0];
+          if (!route.find((w) => w.name === name)) {
+            if (name === target) {
+              if (
+                !secondCandidates.find(
+                  (v) => v[0].name === r.name && v[1].name === name
+                )
+              ) {
+                secondCandidates.push([
+                  r,
+                  {
+                    name,
+                    category: dbCatalogue[name].category,
+                    link: dbConfig[k].link.reverse.label,
+                  },
+                ]);
+              }
+            } else if (
+              !secondCandidatesTemp.find(
+                (v) => v[0].name === r.name && v[1].name === name
+              )
+            ) {
+              secondCandidatesTemp.push([
+                r,
+                {
+                  name,
+                  category: dbCatalogue[name].category,
+                  link: dbConfig[k].link.reverse.label,
+                },
+              ]);
+            }
+          }
+        }
+      });
+    });
+
+    if (
+      !firstCandidates.length &&
+      !secondCandidates.length &&
+      !secondCandidatesTemp.length
+    ) {
+      return;
+    }
+
+    const thirdCandidates = [];
+    secondCandidatesTemp.forEach((r) => {
+      Object.keys(dbConfig).forEach((k) => {
+        const keySplit = k.split("-");
+        if (keySplit[0] === r[1].name) {
+          const name = keySplit[1];
+          if (!route.find((w) => w.name === name)) {
+            if (name === target) {
+              if (
+                !thirdCandidates.find(
+                  (v) =>
+                    v[0].name === r[0].name &&
+                    v[1].name === r[1].name &&
+                    v[2].name === name
+                )
+              ) {
+                thirdCandidates.push([
+                  r[0],
+                  r[1],
+                  {
+                    name,
+                    category: dbCatalogue[name].category,
+                    link: dbConfig[k].link.forward.label,
+                  },
+                ]);
+              }
+            }
+          }
+        } else if (dbConfig[k].link.reverse && keySplit[1] === r[1].name) {
+          // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
+          const name = keySplit[0];
+          if (!route.find((w) => w.name === name)) {
+            if (name === target) {
+              if (
+                !thirdCandidates.find(
+                  (v) =>
+                    v[0].name === r[0].name &&
+                    v[1].name === r[1].name &&
+                    v[2].name === name
+                )
+              ) {
+                thirdCandidates.push([
+                  r[0],
+                  r[1],
+                  {
+                    name,
+                    category: dbCatalogue[name].category,
+                    link: dbConfig[k].link.reverse.label,
+                  },
+                ]);
+              }
+            }
+          }
+        }
+      });
+    });
+
+    const candidates = firstCandidates.length
+      ? [...[firstCandidates], ...secondCandidates, ...thirdCandidates]
+      : [...secondCandidates, ...thirdCandidates];
+
+    const t = await getTotal(candidates);
+
+    const u = t.map((v) => {
+      if (v.length === 1) {
+        return [null, null, v[0]];
+      } else if (v.length === 2) {
+        return [v[0], null, v[1]];
+      } else {
+        return v;
+      }
+    });
+
+    const nodesList = [
+      databaseNodesList[0],
+      u.map((v) => v[0]),
+      u.map((v) => v[1]),
+      u.map((v) => v[2]),
+    ].filter((v) => v.length);
+
+    await setDatabaseNodesList(nodesList);
+
+    createNavigatePath(nodesList);
+  };
+
+  const getTotal = async (candidates) => {
+    NProgress.start();
+    const result = await Promise.all(
+      candidates.map(async (v) => {
+        const r = route.slice().concat(v);
+
+        // 変換結果を取得
+        const convert = await executeQuery(r, ids, "target", 10000).catch(
+          () => null
+        );
+        NProgress.inc(1 / candidates.length);
+
+        if (convert === null) {
+          // 変換に失敗したとき
+          v[v.length - 1].message = "ERROR";
+          return v;
+        } else if (convert.results.length) {
+          // 変換に成功して結果が存在するとき 10000未満かどうかで分ける
+          if (convert.results.length < 10000) {
+            v[v.length - 1].target = convert.results.length;
+          } else {
+            v[v.length - 1].message = `${convert.results.length}+`;
+          }
+          return v;
+        } else {
+          // 変換結果が空のとき
+          return null;
+        }
+      })
     );
-    setRoute([startRoute]);
+    const nodesList = result.filter((v) => v);
+    NProgress.done();
+    return nodesList;
+  };
+
+  const createNavigatePath = (nodesList) => {
+    const candidatePaths = [];
+    nodesList.forEach((nodes, i) => {
+      if (i === 0) {
+        if (nodesList.length === 1) {
+          candidatePaths.push(
+            getPathStyle(
+              `from${0}-${route[0].name}`,
+              `nodeOther`,
+              false,
+              "default"
+            )
+          );
+        }
+      } else if (i === 1) {
+        nodes.forEach((v, j) => {
+          if (v === null) {
+            candidatePaths.push(
+              getPathStyle(
+                `from${0}-${route[0].name}`,
+                `to${i}-${j}`,
+                j === offsetRoute,
+                "none"
+              )
+            );
+          } else {
+            candidatePaths.push(
+              ...mergePathStyle(
+                `from${0}-${route[0].name}`,
+                `to${i}-${j}`,
+                j === offsetRoute
+              )
+            );
+          }
+        });
+      } else if (i === nodesList.length - 1) {
+        nodes.forEach((v, j) => {
+          if (nodesList[i - 2][j] === null) {
+            candidatePaths.push(
+              {
+                from: {
+                  id: `to${i - 2}-${j}`,
+                  posX: "left",
+                  posY: "middle",
+                },
+                to: {
+                  id: `label${i}-${j}`,
+                  posX: "left",
+                  posY: "middle",
+                },
+                style:
+                  j === offsetRoute
+                    ? {
+                        color: "#1A8091",
+                        head: "none",
+                        arrow: "smooth",
+                        width: 2,
+                      }
+                    : {
+                        color: "#dddddd",
+                        head: "none",
+                        arrow: "smooth",
+                        width: 1.5,
+                      },
+              },
+              getPathStyle(
+                `label${i}-${j}`,
+                `to${i}-${j}`,
+                j === offsetRoute,
+                "default"
+              )
+            );
+          } else if (nodesList[i - 1][j] === null) {
+            candidatePaths.push(
+              ...mergePathStyle(
+                `to${i - 2}-${j}`,
+                `to${i}-${j}`,
+                j === offsetRoute
+              )
+            );
+          } else {
+            candidatePaths.push(
+              ...mergePathStyle(
+                `to${i - 1}-${j}`,
+                `to${i}-${j}`,
+                j === offsetRoute
+              )
+            );
+          }
+        });
+      } else {
+        nodes.forEach((v, j) => {
+          if (v === null) return;
+          else {
+            candidatePaths.push(
+              ...mergePathStyle(
+                `to${i - 1}-${j}`,
+                `to${i}-${j}`,
+                j === offsetRoute
+              )
+            );
+          }
+        });
+      }
+    });
+    setCandidatePaths(candidatePaths);
+  };
+
+  const changeIndexTab = (name) => {
+    if (
+      (previousSearchTab === "NAVIGATE" && name === "EXPLORE") ||
+      (previousSearchTab === "EXPLORE" && name === "NAVIGATE")
+    ) {
+      setRoute(route.slice(0, 1));
+      setDatabaseNodesList(databaseNodesList.slice(0, 1));
+      setPreviousSearchTab(name);
+    }
+    setActiveTab(name);
   };
 
   return (
     <div className="home">
-      <Head>
-        <title>TogoID</title>
-        <link rel="icon" href="/favicon.ico" />
-        <meta
-          property="og:image"
-          content="https://togoid.dbcls.jp/images/ogp.png"
-        />
-        <link
-          rel="apple-touch-icon"
-          sizes="57x57"
-          href="/apple-icon-57x57.png"
-        />
-        <link
-          rel="apple-touch-icon"
-          sizes="60x60"
-          href="/apple-icon-60x60.png"
-        />
-        <link
-          rel="apple-touch-icon"
-          sizes="72x72"
-          href="/apple-icon-72x72.png"
-        />
-        <link
-          rel="apple-touch-icon"
-          sizes="76x76"
-          href="/apple-icon-76x76.png"
-        />
-        <link
-          rel="apple-touch-icon"
-          sizes="114x114"
-          href="/apple-icon-114x114.png"
-        />
-        <link
-          rel="apple-touch-icon"
-          sizes="120x120"
-          href="/apple-icon-120x120.png"
-        />
-        <link
-          rel="apple-touch-icon"
-          sizes="144x144"
-          href="/apple-icon-144x144.png"
-        />
-        <link
-          rel="apple-touch-icon"
-          sizes="152x152"
-          href="/apple-icon-152x152.png"
-        />
-        <link
-          rel="apple-touch-icon"
-          sizes="180x180"
-          href="/apple-icon-180x180.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="192x192"
-          href="/android-icon-192x192.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="32x32"
-          href="/favicon-32x32.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="96x96"
-          href="/favicon-96x96.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="16x16"
-          href="/favicon-16x16.png"
-        />
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="msapplication-TileColor" content="#ffffff" />
-        <meta name="msapplication-TileImage" content="/ms-icon-144x144.png" />
-        <meta name="theme-color" content="#ffffff" />
-        <script
-          type="text/javascript"
-          src="https://dbcls.rois.ac.jp/DBCLS-common-header-footer/v2/script/common-header-and-footer.js"
-          id="common-header-and-footer__script"
-          data-show-footer="true"
-          data-show-footer-license="true"
-          data-show-footer-links="true"
-          data-width="auto"
-          data-color="mono"
-          data-license-type="none"
-        ></script>
-      </Head>
       <Header />
       <main className="main">
         <IdInput
-          handleSubmit={handleIdTextsSubmit}
+          handleIdTextsSubmit={handleIdTextsSubmit}
           setIdTexts={setIdTexts}
           idTexts={idTexts}
           handleTopExamples={handleTopExamples}
+          route={route}
+          setRoute={setRoute}
+          previousRoute={previousRoute}
+          setPreviousRoute={setPreviousRoute}
+          dbCatalogue={dbCatalogue}
+          restartExplore={restartExplore}
+          setIsUseKeepRoute={setIsUseKeepRoute}
         />
         <div className="drawing_area">
-          <div className="tab_wrapper">
-            <button
-              onClick={() => setActiveTab("EXPLORE")}
-              className={
-                activeTab === "EXPLORE" ? "button_tab active" : "button_tab"
-              }
-            >
-              EXPLORE
-            </button>
-            <button
-              onClick={() => setActiveTab("DATABASE")}
-              className={
-                activeTab === "DATABASE" ? "button_tab active" : "button_tab"
-              }
-            >
-              DATABASES
-            </button>
-            <button
-              onClick={() => setActiveTab("DOCUMENTS")}
-              className={
-                activeTab === "DOCUMENTS" ? "button_tab active" : "button_tab"
-              }
-            >
-              DOCUMENTS
-            </button>
-          </div>
-          {activeTab === "EXPLORE" && (
-            <Explore
+          <TabWrapper activeTab={activeTab} changeIndexTab={changeIndexTab} />
+          {activeTab === "NAVIGATE" && (
+            <Navigate
               databaseNodesList={databaseNodesList}
-              routePaths={routePaths}
               candidatePaths={candidatePaths}
               route={route}
               setRoute={setRoute}
-              restartExplore={restartExplore}
               ids={ids}
               dbCatalogue={dbCatalogue}
               dbConfig={dbConfig}
               dbDesc={dbDesc}
+              lookupRoute={lookupRoute}
+              offsetRoute={offsetRoute}
+              setOffsetRoute={setOffsetRoute}
+            />
+          )}
+          {activeTab === "EXPLORE" && (
+            <Explore
+              databaseNodesList={databaseNodesList}
+              candidatePaths={candidatePaths}
+              route={route}
+              setRoute={setRoute}
+              ids={ids}
+              dbCatalogue={dbCatalogue}
+              dbConfig={dbConfig}
+              dbDesc={dbDesc}
+              setPreviousRoute={setPreviousRoute}
             />
           )}
           {activeTab === "DATABASE" && (

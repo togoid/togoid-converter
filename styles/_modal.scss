@@ -45,8 +45,9 @@
 
     &__title {
       font-family: Oswald;
-      font-size: 1.8rem;
+      font-size: 2.4rem;
       margin: 0 0 18px;
+      text-align: center;
     }
 
     &__buttons {
@@ -103,7 +104,7 @@
     position: relative;
     width: 76%;
     max-height: 80vh;
-    padding: 85px 0 80px;
+    padding: 22px 0 80px;
     margin: 10vh auto;
     border-radius: 10px;
     background: $white;
@@ -116,6 +117,7 @@
       border-radius: 5px;
     }
   }
+
   &__scroll_area {
     height: 100%;
     max-height: calc(80vh - 165px);
@@ -124,8 +126,8 @@
   }
   &__close {
     position: absolute;
-    top: 36px;
-    right: 21px;
+    top: 27px;
+    right: 16px;
     display: block;
     width: 34px;
     height: 34px;
@@ -137,8 +139,9 @@
   }
 
   &__heading {
-    font-size: 1.8rem;
-    margin: 0 0 5px;
+    font-family: Oswald;
+    font-size: 1.6rem;
+    margin: 0 0 12px;
     color: $gray07;
   }
   .title {
@@ -155,21 +158,41 @@
       background: $gray03;
       &__inner {
         display: flex;
+        flex-wrap: nowrap;
         align-items: center;
         .path_label {
           & + .path_label {
             position: relative;
-            margin: 0 0 0 15px;
-            &:before {
+            margin: 0 0 0 40px;
+            &::before {
               position: absolute;
               top: 50%;
-              left: -15px;
+              left: -40px;
               content: '';
               display: inline-block;
-              width: 15px;
+              width: 40px;
               height: 1px;
-              background: $gray06;
+              background: $blue01;
             }
+          }
+        }
+      }
+      &__item {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        & + .modal__path__frame__item {
+          position: relative;
+          margin: 0 0 0 40px;
+          &::before {
+            position: absolute;
+            top: 50%;
+            left: -40px;
+            content: '';
+            display: inline-block;
+            width: 40px;
+            height: 1px;
+            background: $blue01;
           }
         }
       }
@@ -179,27 +202,13 @@
   &__top {
     margin: 0 0 15px;
 
-    .export_button {
-      position: relative;
-      display: flex;
-      justify-content: flex-end;
-      .child_menu {
-        position: absolute;
-        top: calc(100% + 9px);
-        right: 0;
-        border-radius: 5px;
-        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
-        background: $blue05;
-        &__item {
-          display: block;
-          width: 100%;
-          font-size: 1.4rem;
-          color: $gray07;
-          padding: 10px 14px;
-          text-align: left;
-          border: none;
-          border-bottom: 1px solid $blue06;
-          background: none;
+    .report,
+    .action {
+      margin: 0 0 27px;
+      &__inner {
+        display: flex;
+        .radio {
+          margin: 0 24px 0 0;
         }
       }
     }
@@ -214,15 +223,41 @@
     }
   }
 
-  .non_forwarded {
-    margin-bottom: 10px;
-  }
-
   .showing {
-    margin-top: 10px;
+    font-family: Oswald;
+    &__text,
+    &__result {
+      display: inline-block;
+    }
+    &__text {
+      font-size: 1.6rem;
+    }
+    &__result {
+      font-size: 1.2rem;
+      margin: 0 0 0 8px;
+    }
   }
   .table {
     margin: 0 0 40px;
+    thead {
+      th {
+        height: auto;
+        padding: 8px 26px;
+        .select {
+          width: 90px;
+          height: 22px;
+          font-family: Oswald;
+          padding: 0 9px;
+          border-radius: 5px;
+          border-color: $gray04;
+          &__label {
+            display: block;
+            font-size: 1rem;
+            margin: 0 0 5px;
+          }
+        }
+      }
+    }
     .buttons {
       display: flex;
       li {

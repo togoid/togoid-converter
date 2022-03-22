@@ -5,32 +5,34 @@
 .st3{fill:#444444;}
 
 .path_label {
-  display: inline-block;
-  width: 150px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 150px;
   font-size: 1.2rem;
   color: #ffffff;
-  line-height: 38px;
+  padding: 4px 8px;
+  //line-height: 38px;
   text-align: center;
   border-radius: 5px;
   border: 1px solid transparent;
   &.green {
     background: $green01;
   }
-  //&.purple {
-  //  background: $purple01;
-  //}
-  //&.orange {
-  //  background: $orange01;
-  //}
   &.white {
-    border-color: $gray06;
+    width: auto;
+    font-size: 1.2rem;
+    color: $gray07;
+    padding: 0 6px;
+    line-height: 17px;
+    border: none;
     background: $white;
-    color: $textColor02;
   }
 
   &__inner {
     position: relative;
     display: block;
+    margin: 0 20px;
     .icon {
       position: absolute;
       top: 7px;
@@ -63,11 +65,13 @@
 
 .select_lang {
   display: flex;
-  margin: 0 0 40px;
+  margin: 0 0 18px;
   .radio {
     margin: 0 24px 0 0;
     &__label {
+      font-family: Oswald;
       cursor: pointer;
     }
   }
 }
+

@@ -1,8 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { categories } from "../lib/setting";
 
 const Databases = (props) => {
   const [language, setLanguage] = useState("en");
+  const [nameIndex, setNameIndex] = useState([]);
+
+  useEffect(() => {
+    // Dataset Name Index のリストを作成
+    const labelIndexList = Array.from(
+      new Set(
+        Object.keys(props.dbCatalogue)
+          .filter((key) =>
+            Object.keys(props.dbConfig).find((k) => k.split("-").includes(key))
+          )
+          .map((v) => v.slice(0, 1).toUpperCase())
+      )
+    );
+
+    setNameIndex(labelIndexList);
+  }, []);
 
   const clickExamples = (examples, key) => {
     props.executeExamples(examples.join("\n"), key);
@@ -47,32 +63,120 @@ const Databases = (props) => {
                 </div>
               </div>
 
-              <div className="database__index">
-                <h3>Dataset Name Index</h3>
-                {(() => {
-                  const labelIndex = [];
-                  return Object.keys(props.dbCatalogue).map((key, i) => {
-                    const keyInitial = props.dbCatalogue[key].label
-                      .slice(0, 1)
-                      .toUpperCase();
-                    if (
-                      Object.keys(props.dbConfig).find(
-                        (k) =>
-                          (k.split("-").indexOf(key) === 0 ||
-                            k.split("-").indexOf(key) === 1) &&
-                          !labelIndex.includes(keyInitial)
-                      )
-                    ) {
-                      labelIndex.push(keyInitial);
-                      return (
-                        <a href={"/#" + keyInitial} key={i}>
-                          {keyInitial + " "}
-                        </a>
-                      );
-                    }
-                  });
-                })()}
-              </div>
+              <section className="database__index">
+                <section className="database__index__names">
+                  <h3 className="database__index__title">Dataset Name Index</h3>
+                  <section className="database__index__links">
+                    {nameIndex.map((v, i) => (
+                      <a href={"/#" + v} key={i}>
+                        {v + " "}
+                      </a>
+                    ))}
+                  </section>
+                </section>
+              </section>
+              <section className="database__index color">
+                <h3 className="database__index__title">Color Legend</h3>
+                <section className="database__index__colors">
+                  <span className="color">
+                    <span
+                      className="color__square"
+                      style={{
+                        backgroundColor: "#53C666",
+                      }}
+                    />
+                    <span className="color__label">
+                      Gene, Transcript, Ortholog, Probe
+                    </span>
+                  </span>
+                  <span className="color">
+                    <span
+                      className="color__square"
+                      style={{
+                        backgroundColor: "#A2C653",
+                      }}
+                    />
+                    <span className="color__label">Protein, Domain</span>
+                  </span>
+                  <span className="color">
+                    <span
+                      className="color__square"
+                      style={{
+                        backgroundColor: "#C68753",
+                      }}
+                    />
+                    <span className="color__label">Structure</span>
+                  </span>
+                  <span className="color">
+                    <span
+                      className="color__square"
+                      style={{
+                        backgroundColor: "#C65381",
+                      }}
+                    />
+                    <span className="color__label">
+                      Interaction, Pathway, Reaction
+                    </span>
+                  </span>
+                  <span className="color">
+                    <span
+                      className="color__square"
+                      style={{
+                        backgroundColor: "#A853C6",
+                      }}
+                    />
+                    <span className="color__label">Compound</span>
+                  </span>
+                  <span className="color">
+                    <span
+                      className="color__square"
+                      style={{
+                        backgroundColor: "#673AA6",
+                      }}
+                    />
+                    <span className="color__label">Glycan</span>
+                  </span>
+                  <span className="color">
+                    <span
+                      className="color__square"
+                      style={{
+                        backgroundColor: "#5361C6",
+                      }}
+                    />
+                    <span className="color__label">Disease</span>
+                  </span>
+                  <span className="color">
+                    <span
+                      className="color__square"
+                      style={{
+                        backgroundColor: "#53C3C6",
+                      }}
+                    />
+                    <span className="color__label">Variant</span>
+                  </span>
+                  <span className="color">
+                    <span
+                      className="color__square"
+                      style={{
+                        backgroundColor: "#006400",
+                      }}
+                    />
+                    <span className="color__label">Taxonomy</span>
+                  </span>
+                  <span className="color">
+                    <span
+                      className="color__square"
+                      style={{
+                        backgroundColor: "#696969",
+                      }}
+                    />
+                    <span className="color__label">
+                      Analysis, Experiment, Project, Literature, Sample,
+                      SequenceRun, Submission, Function
+                    </span>
+                  </span>
+                </section>
+              </section>
 
               {Object.keys(props.dbCatalogue).map((key) => {
                 const labels = Array.from(
@@ -103,6 +207,7 @@ const Databases = (props) => {
                         id={props.dbCatalogue[key].label.replace(/\s/g, "")}
                       >
                         <span
+                          className="title__square"
                           style={{
                             backgroundColor: categories[
                               props.dbCatalogue[key].category
@@ -111,15 +216,12 @@ const Databases = (props) => {
                                   .color
                               : null,
                           }}
-                        >
+                        />
+                        <span className="title__text">
                           {props.dbCatalogue[key].label}
                         </span>
                       </h3>
-                      {Object.prototype.hasOwnProperty.call(
-                        props.dbDesc,
-                        key
-                      ) &&
-                        props.dbDesc[key] &&
+                      {props.dbDesc[key] &&
                         props.dbDesc[key][`description_${language}`] && (
                           <div className="description">
                             <p>
@@ -184,11 +286,7 @@ const Databases = (props) => {
                           <dt>CATEGORY</dt>
                           <dd>{props.dbCatalogue[key].category}</dd>
                         </div>
-                        {Object.prototype.hasOwnProperty.call(
-                          props.dbDesc,
-                          key
-                        ) &&
-                          props.dbDesc[key] &&
+                        {props.dbDesc[key] &&
                           props.dbDesc[key][`organization_${language}`] && (
                             <div className="data__wrapper">
                               <dt>ORGANIZATION</dt>
@@ -203,6 +301,7 @@ const Databases = (props) => {
                             <dd>
                               {props.dbCatalogue[key].examples.map(
                                 (example, i) => {
+                                  /* eslint-disable */
                                   return (
                                     <li key={i}>
                                       <a
@@ -216,6 +315,7 @@ const Databases = (props) => {
                                       </a>
                                     </li>
                                   );
+                                  /* eslint-enable */
                                 }
                               )}
                             </dd>

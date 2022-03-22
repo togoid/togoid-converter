@@ -3,7 +3,24 @@ import React from "react";
 const IdInput = (props) => {
   const handleSubmit = (e) => {
     if (e) e.preventDefault();
-    props.handleSubmit(props.idTexts);
+
+    const findDatabaseList = props.handleIdTextsSubmit(props.idTexts);
+    if (props.previousRoute.length) {
+      const firstRoute = findDatabaseList.find(
+        (v) => v.name === props.previousRoute[0].name
+      );
+      if (firstRoute) {
+        // keepRouteを使用する
+        props.setRoute([firstRoute]);
+        props.setIsUseKeepRoute(true);
+        return;
+      }
+    }
+
+    if (findDatabaseList.length === 1) {
+      // listが1件の時は自動で選択する
+      props.setRoute(findDatabaseList);
+    }
   };
 
   const handleKeyDown = (e) => {
@@ -24,13 +41,17 @@ const IdInput = (props) => {
 
     reader.onload = () => {
       props.setIdTexts(reader.result);
-      props.handleSubmit(reader.result);
+      props.handleIdTextsSubmit(reader.result);
     };
     reader.onerror = () => {
       console.log(reader.error);
     };
 
     e.target.value = "";
+  };
+
+  const handleReset = () => {
+    props.restartExplore();
   };
 
   return (
@@ -54,7 +75,7 @@ const IdInput = (props) => {
           )}
         </div>
         <div className="input">
-          <input type="submit" value="SUBMIT" className="button_large" />
+          <input type="submit" value="Submit" className="button_large" />
           <input
             className="button_small"
             type="button"
@@ -69,12 +90,19 @@ const IdInput = (props) => {
             style={{ display: "none" }}
             onChange={readTextFile}
           />
+          <input
+            className="button_small"
+            type="button"
+            value="Reset"
+            onClick={handleReset}
+          />
         </div>
       </form>
-      <div className="input_area__bottom">
 
+      <div className="input_area__bottom">
         <div className="input_area__bottom__links">
           <p className="input_area__bottom__square">Examples:</p>
+          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid*/}
           <a
             href="#"
             onClick={(e) => {
@@ -85,6 +113,7 @@ const IdInput = (props) => {
           >
             Refseq RNA
           </a>
+          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid*/}
           <a
             href="#"
             onClick={(e) => {
@@ -95,6 +124,7 @@ const IdInput = (props) => {
           >
             Ensembl gene
           </a>
+          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid*/}
           <a
             href="#"
             onClick={(e) => {

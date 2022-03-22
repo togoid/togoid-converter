@@ -1,4 +1,11 @@
 @charset "UTF-8";
+.dropdown {
+  height: 40px;
+  padding: 0 15px;
+  border-radius: 5px;
+  border: 1px solid $textColor01;
+  background: url("../public/images/icon_select.png") no-repeat calc(100% - 19px) center/ 12px 6px;
+}
 
 .radio {
   &__label {
@@ -51,7 +58,7 @@
 
 .button_large {
   width: 120px;
-  height: 70px;
+  height: 40px;
   cursor: pointer;
   font-size: 1.2rem;
   color: $white;
@@ -108,17 +115,6 @@
   }
 }
 
-.button_clear {
-  width: 90px;
-  height: 27px;
-  font-size: 1.4rem;
-  color: $white;
-  text-align: center;
-  border-radius: 5px;
-  border: none;
-  background: $blue01;
-}
-
 .button_pull_down {
   font-size: 1.4rem;
   color: $gray05;
@@ -173,13 +169,14 @@
   height: 40px;
   font-size: 1.4rem;
   color: $white;
-  padding: 0 24px 0 16px;
+  padding: 0 13px;
+  margin-right: 12px;
   border-radius: 5px;
   border: none;
   background: $blue01;
   &__icon {
-    width: 24px;
-    margin: 0 8px 0 0;
+    width: 12px;
+    margin: 0 6px 0 0;
     path {
       fill: $white;
     }
@@ -202,7 +199,7 @@
   }
   &.white {
     border: 1px solid $gray06;
-    background: $white;
+    background-color: $white;
   }
 }
 
@@ -210,7 +207,8 @@
   position: relative;
 
   select {
-    margin: 0 0 0 10px;
+    width: 100%;
+    margin: 0;
   }
 
   .select {
@@ -219,10 +217,9 @@
 
   &__large_label {
     display: inline-block;
-    width: 200px;
+    width: 300px;
     font-size: 1.2rem;
     color: $textColor02;
-    margin: 0 0 0 35px;
     line-height: 24px;
     text-align: center;
     border-radius: 5px;
@@ -239,7 +236,7 @@
     &:before {
       position: absolute;
       top: 50%;
-      left: 0;
+      right: -30px;
       display: inline-block;
       content: '';
       width: 18px;
@@ -247,12 +244,25 @@
       transform: translateY(-50%);
       border-radius: 50%;
       border: 1px solid $gray01;
+      background: $white;
     }
+
+    .dummy {
+      position: absolute;
+      top: 11px;
+      right: -30px;
+      display: block;
+      width: 18px;
+      height: 18px;
+    }
+
     &__inner {
       position: relative;
-      display: block;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       text-align: left;
-      padding: 8px 15px;
+      padding: 8px 7px;
       color: #ffffff;
       .icon {
         position: absolute;
@@ -262,6 +272,12 @@
         height: 26px;
         overflow: hidden;
         border-radius: 50%;
+      }
+    }
+
+    &.no_radio{
+      &:before {
+        display: none;
       }
     }
   }
@@ -288,7 +304,7 @@
         &:after {
           position: absolute;
           top: 50%;
-          left: 3px;
+          right: -27px;
           content: '';
           display: inline-block;
           width: 14px;
@@ -299,6 +315,11 @@
         }
       }
     }
+  }
+
+  &__label {
+    color: $gray07;
+    cursor: pointer;
   }
   &__three_dots {
     position: absolute;
@@ -394,3 +415,4 @@
     border: 1px solid $gray06;
   }
 }
+

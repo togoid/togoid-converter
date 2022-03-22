@@ -26,7 +26,7 @@
       &__input {
         position: relative;
         width: 330px;
-        height: 110px;
+        height: 120px;
       }
     }
     &__bottom {
@@ -83,18 +83,6 @@
       }
       background: $gray03;
 
-      &__button {
-        display: flex;
-        justify-content: flex-end;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 0 20px;
-        text-align: right;
-        .button_pull_down__wrapper {
-          margin: 0 0 0 auto;
-        }
-      }
-
       &__inner {
         padding: 0 calc((100vw - 1200px) /2) 60px;
         margin: 0 auto;
@@ -126,38 +114,18 @@
         display: flex;
         align-items: flex-start;
         margin: 0 13px 0 0;
-        .item_first_heading {
-          width: 196px;
-          font-family: Oswald;
-          font-weight: 700;
-          color: $gray04;
-          margin: 0 0 29px 56px;
-          text-align: center;
-          line-height: 24px;
-          border-radius: 5px;
-          border: 1px solid $gray01;
-        }
-        .item_first_count_heading {
-          position: absolute  ;
-          top: 2px;
-          left: 195px;
-          width: 55px;
-          font-family: Oswald;
-          color: $gray04;
-          background-color: #ffffff;
-          margin: 0 0 29px 60px;
-          text-align: center;
-          line-height: 20px;
-          border-radius: 13px;
-          border: 1px solid $gray01;
-        }
         .item_wrapper {
           display: flex;
           flex-direction: column;
           .result_list {
-            margin: 55px 0 0 70px;
+            margin: 0 0 0 30px;
             &.first {
               margin: 0 0 0 20px;
+            }
+            .radio {
+              .dropdown {
+                margin: 0 0 0 12px;
+              }
             }
             &__item {
               position: relative;
@@ -166,6 +134,33 @@
               margin: 0 0 15px;
               &.hover {
                 background: rgba(0, 0, 0, 0.8);
+              }
+            }
+          }
+          .label_list {
+            margin: 0 0 0 80px;
+            &__item {
+              position: relative;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              font-size: 1.2rem;
+              margin: 12px 0 39px;
+              &.hover {
+                background: rgba(0, 0, 0, 0.8);
+              }
+              &.null {
+                height: 16px;
+              }
+              &__inner {
+                position: relative;
+                display: inline-block;
+                min-width: 150px;
+                padding: 0 6px;
+                text-align: center;
+                line-height: 16px;
+                border-radius: 8px;
+                background-color: $white;
               }
             }
           }
@@ -179,31 +174,45 @@
           }
         }
 
+        .text {
+          margin: 0 7px;
+        }
+
         .total {
           font-family: Oswald;
           font-size: 1.2rem;
           color: $gray07;
+          min-width: 40px;
           padding: 0 14px;
-          margin: 0 0 0 7px;
-          line-height: 14px;
-          border-radius: 8px;
+          line-height: 22px;
+          border-radius: 12px;
           text-align: center;
-          border: 1px solid $gray01;
+          box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+          border: 1px solid $blue02;
           background: $white;
         }
 
         .action_icons {
-          align-items: center;
           position: absolute;
-          right: 5px;
-          top: 3px;
+          right: 0;
+          top: 0;
+          display: flex;
+          justify-content: space-around;
+          width: 300px;
+          height: 40px;
           z-index: 10;
+          align-items: center;
+          border-radius: 5px;
+          background: rgba(0, 0, 0, 0.8);
           &__item {
-            width: 28px;
-            height: 20px;
-            margin: 8px 23px 0 6px;
+            width: 24px;
+            height: 24px;
             border: none;
+            border-radius: 50%;
             background: none;
+            &:hover {
+              background: $purple01;
+            }
             svg {
               max-width: 14px;
               max-height: 14px;
@@ -214,6 +223,23 @@
     }
   }
 
+  .navigate {
+    .drawing_area {
+      .panel {
+        .drawing {
+          .item_wrapper {
+            .result_list {
+              min-height: 55px;
+              &.dropdown_wrap {
+                margin: 0 0 0 110px;
+              }
+            }
+          }
+        }
+      }
+    }
+
+  }
   .database {
     padding: 31px 0 0;
     background: $gray03;
@@ -230,17 +256,57 @@
       margin: 0 auto;
     }
     &__index {
-      padding-bottom: 20px;
-      border-bottom: 1px solid $gray06;
-      h3 {
-        font-size: 1.6rem;
-        margin-bottom: 5px;
+      padding: 11px 20px 17px;
+      margin: 0 0 15px;
+      border-radius: 10px;
+      background: $white;
+      &.color {
+        padding: 11px 20px 0;
       }
-      a {
-        color: $gray04;
-        text-decoration: underline;
-        font-weight: bold;
-        margin-right: 10px;
+      &__colors {
+        display: flex;
+        flex-wrap: wrap;
+        .color {
+          margin: 0 22px 13px 0;
+          &__square,
+          &__label {
+            display: inline-block;
+            vertical-align: middle;
+          }
+
+          &__square {
+            width: 18px;
+            height: 18px;
+            margin: 0 5px 0 0;
+            border-radius: 5px;
+            background: $green01;
+          }
+
+          &__label {
+            font-family: Oswald;
+            font-size: 1.6rem;
+          }
+        }
+      }
+
+      &__title {
+        font-family: Oswald;
+        font-size: 1.6rem;
+        margin: 0 0 9px;
+      }
+      &__links {
+        display: flex;
+        a {
+          font-family: Oswald;
+          font-size: 1.6rem;
+          font-weight: 100;
+          color: $gray07;
+          text-decoration: underline;
+          margin: 0 5px 0 0;
+          &:last-child {
+            margin: 0;
+          }
+        }
       }
     }
     &__item {
@@ -251,15 +317,23 @@
         border-bottom: none;
       }
       .title {
-        margin: -40px 0 19px;
-        padding-top: 40px;
-        font-size: 1.8rem;
-        span {
-          background-color: $gray04;
+        margin: 0 0 19px;
+        &__square,
+        &__text {
+          display: inline-block;
+          vertical-align: middle;
+        }
+
+        &__square {
+          width: 18px;
+          height: 18px;
+          margin: 0 6px 0 0;
           border-radius: 5px;
-          color: $white;
-          padding: 3px 14px 5px;
-          border: 1px solid transparent;
+          background: $gray01;
+        }
+
+        &__text {
+          font-size: 1.8rem;
         }
         .icon {
           width: 26px;
