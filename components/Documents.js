@@ -7,7 +7,7 @@ const Documents = () => {
 
   useEffect(() => {
     fetch(
-      `https://raw.githubusercontent.com/dbcls/togoid-config/docs/docs/help${
+      `https://raw.githubusercontent.com/dbcls/togoid-config/production/docs/help${
         language === "en" ? "" : "_ja"
       }.md`
     )
