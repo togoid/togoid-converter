@@ -1,5 +1,11 @@
 # togo-id-converter
 
+## Set env
+```bash
+cp .env.sample .env
+# Rewrite environment variables of .env
+```
+
 ## Development
 run the development server:
 
