@@ -1,9 +1,12 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useState, useEffect } from "react";
 import { categories } from "../lib/setting";
 
 const Databases = (props) => {
   const [language, setLanguage] = useState("en");
   const [nameIndex, setNameIndex] = useState([]);
+  const [datasetObj, setDatasetObj] = useState({});
 
   useEffect(() => {
     // Dataset Name Index のリストを作成
@@ -18,7 +21,24 @@ const Databases = (props) => {
     );
 
     setNameIndex(labelIndexList);
+
+    setDatasetObj(props.dbCatalogue);
   }, []);
+
+  const handleCategoryFilter = (input) => {
+    const filterDataset = Object.entries(props.dbCatalogue).reduce(
+      (pre, [key, value]) => {
+        return value.category === input ? { ...pre, [key]: value } : pre;
+      },
+      {}
+    );
+
+    setDatasetObj(filterDataset);
+  };
+
+  const handleResetfilter = () => {
+    setDatasetObj(props.dbCatalogue);
+  };
 
   const clickExamples = (examples, key) => {
     props.executeExamples(examples.join("\n"), key);
@@ -77,6 +97,7 @@ const Databases = (props) => {
               </section>
               <section className="database__index color">
                 <h3 className="database__index__title">Color Legend</h3>
+                <button onClick={handleResetfilter}>Reset</button>
                 <section className="database__index__colors">
                   <span className="color">
                     <span
@@ -86,7 +107,21 @@ const Databases = (props) => {
                       }}
                     />
                     <span className="color__label">
-                      Gene, Transcript, Ortholog, Probe
+                      <span onClick={() => handleCategoryFilter("Gene")}>
+                        Gene
+                      </span>
+                      ,{" "}
+                      <span onClick={() => handleCategoryFilter("Transcript")}>
+                        Transcript
+                      </span>
+                      ,{" "}
+                      <span onClick={() => handleCategoryFilter("Ortholog")}>
+                        Ortholog
+                      </span>
+                      ,{" "}
+                      <span onClick={() => handleCategoryFilter("Probe")}>
+                        Probe
+                      </span>
                     </span>
                   </span>
                   <span className="color">
@@ -96,7 +131,15 @@ const Databases = (props) => {
                         backgroundColor: "#A2C653",
                       }}
                     />
-                    <span className="color__label">Protein, Domain</span>
+                    <span className="color__label">
+                      <span onClick={() => handleCategoryFilter("Protein")}>
+                        Protein
+                      </span>
+                      ,{" "}
+                      <span onClick={() => handleCategoryFilter("Domain")}>
+                        Domain
+                      </span>
+                    </span>
                   </span>
                   <span className="color">
                     <span
@@ -105,7 +148,11 @@ const Databases = (props) => {
                         backgroundColor: "#C68753",
                       }}
                     />
-                    <span className="color__label">Structure</span>
+                    <span className="color__label">
+                      <span onClick={() => handleCategoryFilter("Structure")}>
+                        Structure
+                      </span>
+                    </span>
                   </span>
                   <span className="color">
                     <span
@@ -115,7 +162,17 @@ const Databases = (props) => {
                       }}
                     />
                     <span className="color__label">
-                      Interaction, Pathway, Reaction
+                      <span onClick={() => handleCategoryFilter("Interaction")}>
+                        Interaction
+                      </span>
+                      ,{" "}
+                      <span onClick={() => handleCategoryFilter("Pathway")}>
+                        Pathway
+                      </span>
+                      ,{" "}
+                      <span onClick={() => handleCategoryFilter("Reaction")}>
+                        Reaction
+                      </span>
                     </span>
                   </span>
                   <span className="color">
@@ -125,7 +182,11 @@ const Databases = (props) => {
                         backgroundColor: "#A853C6",
                       }}
                     />
-                    <span className="color__label">Compound</span>
+                    <span className="color__label">
+                      <span onClick={() => handleCategoryFilter("Compound")}>
+                        Compound
+                      </span>
+                    </span>
                   </span>
                   <span className="color">
                     <span
@@ -134,7 +195,11 @@ const Databases = (props) => {
                         backgroundColor: "#673AA6",
                       }}
                     />
-                    <span className="color__label">Glycan</span>
+                    <span className="color__label">
+                      <span onClick={() => handleCategoryFilter("Glycan")}>
+                        Glycan
+                      </span>
+                    </span>
                   </span>
                   <span className="color">
                     <span
@@ -143,7 +208,11 @@ const Databases = (props) => {
                         backgroundColor: "#5361C6",
                       }}
                     />
-                    <span className="color__label">Disease</span>
+                    <span className="color__label">
+                      <span onClick={() => handleCategoryFilter("Disease")}>
+                        Disease
+                      </span>
+                    </span>
                   </span>
                   <span className="color">
                     <span
@@ -152,7 +221,11 @@ const Databases = (props) => {
                         backgroundColor: "#53C3C6",
                       }}
                     />
-                    <span className="color__label">Variant</span>
+                    <span className="color__label">
+                      <span onClick={() => handleCategoryFilter("Variant")}>
+                        Variant
+                      </span>
+                    </span>
                   </span>
                   <span className="color">
                     <span
@@ -161,7 +234,11 @@ const Databases = (props) => {
                         backgroundColor: "#006400",
                       }}
                     />
-                    <span className="color__label">Taxonomy</span>
+                    <span className="color__label">
+                      <span onClick={() => handleCategoryFilter("Taxonomy")}>
+                        Taxonomy
+                      </span>
+                    </span>
                   </span>
                   <span className="color">
                     <span
@@ -171,14 +248,43 @@ const Databases = (props) => {
                       }}
                     />
                     <span className="color__label">
-                      Analysis, Experiment, Project, Literature, Sample,
-                      SequenceRun, Submission, Function
+                      <span onClick={() => handleCategoryFilter("Analysis")}>
+                        Analysis
+                      </span>
+                      ,{" "}
+                      <span onClick={() => handleCategoryFilter("Experiment")}>
+                        Experiment
+                      </span>
+                      ,{" "}
+                      <span onClick={() => handleCategoryFilter("Project")}>
+                        Project
+                      </span>
+                      ,{" "}
+                      <span onClick={() => handleCategoryFilter("Literature")}>
+                        Literature
+                      </span>
+                      ,{" "}
+                      <span onClick={() => handleCategoryFilter("Sample")}>
+                        Sample
+                      </span>
+                      ,{" "}
+                      <span onClick={() => handleCategoryFilter("SequenceRun")}>
+                        SequenceRun
+                      </span>
+                      ,{" "}
+                      <span onClick={() => handleCategoryFilter("Submission")}>
+                        Submission
+                      </span>
+                      ,{" "}
+                      <span onClick={() => handleCategoryFilter("Function")}>
+                        Function
+                      </span>
                     </span>
                   </span>
                 </section>
               </section>
 
-              {Object.keys(props.dbCatalogue).map((key) => {
+              {Object.keys(datasetObj).map((key) => {
                 const labels = Array.from(
                   new Set(
                     Object.keys(props.dbConfig).map((k) => {
