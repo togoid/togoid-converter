@@ -9,10 +9,15 @@ const Databases = (props) => {
   const [datasetObj, setDatasetObj] = useState({});
 
   useEffect(() => {
+    createNameIndexList(props.dbCatalogue);
+    setDatasetObj(props.dbCatalogue);
+  }, []);
+
+  const createNameIndexList = (dataset) => {
     // Dataset Name Index のリストを作成
     const labelIndexList = Array.from(
       new Set(
-        Object.keys(props.dbCatalogue)
+        Object.keys(dataset)
           .filter((key) =>
             Object.keys(props.dbConfig).find((k) => k.split("-").includes(key))
           )
@@ -21,9 +26,7 @@ const Databases = (props) => {
     );
 
     setNameIndex(labelIndexList);
-
-    setDatasetObj(props.dbCatalogue);
-  }, []);
+  };
 
   const handleCategoryFilter = (input) => {
     const filterDataset = Object.entries(props.dbCatalogue).reduce(
@@ -33,6 +36,7 @@ const Databases = (props) => {
       {}
     );
 
+    createNameIndexList(filterDataset);
     setDatasetObj(filterDataset);
   };
 
