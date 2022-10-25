@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useState, useEffect } from "react";
@@ -6,42 +7,55 @@ import { categories } from "../lib/setting";
 const Databases = (props) => {
   const [language, setLanguage] = useState("en");
   const [nameIndex, setNameIndex] = useState([]);
-  const [datasetObj, setDatasetObj] = useState({});
+  const [datasetHaveLinkObj, setDatasetHaveLinkObj] = useState({});
+  const [datasetFilterObj, setDatasetFilterObj] = useState({});
 
   useEffect(() => {
-    createNameIndexList(props.dbCatalogue);
-    setDatasetObj(props.dbCatalogue);
+    const fastFilterDataset = Object.entries(props.dbCatalogue).reduce(
+      (prev, [key, value]) => {
+        const linkTo = [
+          ...new Set(
+            Object.keys(props.dbConfig).map((k) => {
+              const names = k.split("-");
+              if (names.indexOf(key) === 0 || names.indexOf(key) === 1) {
+                return names.indexOf(key) === 0 ? names[1] : names[0];
+              }
+            })
+          ),
+        ].filter((v) => v);
+
+        return linkTo.length ? { ...prev, [key]: { ...value, linkTo } } : prev;
+      },
+      {}
+    );
+
+    setDatasetHaveLinkObj(fastFilterDataset);
+    createNameIndexList(fastFilterDataset);
+    setDatasetFilterObj(fastFilterDataset);
   }, []);
 
   const createNameIndexList = (dataset) => {
     // Dataset Name Index のリストを作成
-    const labelIndexList = Array.from(
-      new Set(
-        Object.keys(dataset)
-          .filter((key) =>
-            Object.keys(props.dbConfig).find((k) => k.split("-").includes(key))
-          )
-          .map((v) => v.slice(0, 1).toUpperCase())
-      )
-    );
-
-    setNameIndex(labelIndexList);
+    setNameIndex([
+      ...new Set(Object.keys(dataset).map((v) => v.slice(0, 1).toUpperCase())),
+    ]);
   };
 
   const handleCategoryFilter = (input) => {
-    const filterDataset = Object.entries(props.dbCatalogue).reduce(
-      (pre, [key, value]) => {
-        return value.category === input ? { ...pre, [key]: value } : pre;
+    const filterDataset = Object.entries(datasetHaveLinkObj).reduce(
+      (prev, [key, value]) => {
+        return value.category === input ? { ...prev, [key]: value } : prev;
       },
       {}
     );
 
     createNameIndexList(filterDataset);
-    setDatasetObj(filterDataset);
+    setDatasetFilterObj(filterDataset);
   };
 
   const handleResetfilter = () => {
-    setDatasetObj(props.dbCatalogue);
+    createNameIndexList(datasetHaveLinkObj);
+    setDatasetFilterObj(datasetHaveLinkObj);
   };
 
   const clickExamples = (examples, key) => {
@@ -288,154 +302,124 @@ const Databases = (props) => {
                 </section>
               </section>
 
-              {Object.keys(datasetObj).map((key) => {
-                const labels = Array.from(
-                  new Set(
-                    Object.keys(props.dbConfig).map((k) => {
-                      const names = k.split("-");
-                      if (
-                        names.indexOf(key) === 0 ||
-                        names.indexOf(key) === 1
-                      ) {
-                        return names.indexOf(key) === 0 ? names[1] : names[0];
-                      }
-                    })
-                  )
-                ).filter((v) => v);
-
-                if (labels.length) {
-                  return (
-                    <article
-                      className="database__item"
-                      key={key}
-                      id={props.dbCatalogue[key].label
-                        .slice(0, 1)
-                        .toUpperCase()}
-                    >
-                      <h3
-                        className="title"
-                        id={props.dbCatalogue[key].label.replace(/\s/g, "")}
-                      >
-                        <span
-                          className="title__square"
-                          style={{
-                            backgroundColor: categories[
-                              props.dbCatalogue[key].category
-                            ]
-                              ? categories[props.dbCatalogue[key].category]
-                                  .color
-                              : null,
-                          }}
-                        />
-                        <span className="title__text">
-                          {props.dbCatalogue[key].label}
-                        </span>
-                      </h3>
-                      {props.dbDesc[key] &&
-                        props.dbDesc[key][`description_${language}`] && (
-                          <div className="description">
-                            <p>
-                              {props.dbDesc[key][`description_${language}`]}
-                            </p>
-                            <p>
-                              Cited from{" "}
-                              <a
-                                href={`https://integbio.jp/dbcatalog/record/${props.dbCatalogue[key].catalog}`}
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                Integbio Database Catalog
-                              </a>
-                            </p>
-                          </div>
-                        )}
-                      <div className="path">
-                        <div className="path_label small white">LINK TO</div>
-                        <svg className="icon" viewBox="0 0 24 24">
-                          <path
-                            fill="currentColor"
-                            d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
-                          />
-                        </svg>
-                        <div className="path__children">
-                          {labels.map((l, i) =>
-                            props.dbCatalogue[l] ? (
-                              <a
-                                href={
-                                  "/#" +
-                                  props.dbCatalogue[l].label.replace(/\s/g, "")
-                                }
-                                key={i}
-                              >
-                                <div
-                                  className="path_label small green"
-                                  style={{
-                                    backgroundColor: categories[
-                                      props.dbCatalogue[l].category
-                                    ]
-                                      ? categories[
-                                          props.dbCatalogue[l].category
-                                        ].color
-                                      : null,
-                                  }}
-                                  key={i}
-                                >
-                                  {props.dbCatalogue[l].label}
-                                </div>
-                              </a>
-                            ) : null
-                          )}
-                        </div>
+              {Object.keys(datasetFilterObj).map((key) => (
+                <article
+                  className="database__item"
+                  key={key}
+                  id={props.dbCatalogue[key].label.slice(0, 1).toUpperCase()}
+                >
+                  <h3
+                    className="title"
+                    id={props.dbCatalogue[key].label.replace(/\s/g, "")}
+                  >
+                    <span
+                      className="title__square"
+                      style={{
+                        backgroundColor: categories[
+                          props.dbCatalogue[key].category
+                        ]
+                          ? categories[props.dbCatalogue[key].category].color
+                          : null,
+                      }}
+                    />
+                    <span className="title__text">
+                      {props.dbCatalogue[key].label}
+                    </span>
+                  </h3>
+                  {props.dbDesc[key] &&
+                    props.dbDesc[key][`description_${language}`] && (
+                      <div className="description">
+                        <p>{props.dbDesc[key][`description_${language}`]}</p>
+                        <p>
+                          Cited from{" "}
+                          <a
+                            href={`https://integbio.jp/dbcatalog/record/${props.dbCatalogue[key].catalog}`}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            Integbio Database Catalog
+                          </a>
+                        </p>
                       </div>
-                      <dl className="data">
-                        <div className="data__wrapper">
-                          <dt>PREFIX</dt>
-                          <dd>{props.dbCatalogue[key].prefix}</dd>
-                        </div>
-                        <div className="data__wrapper">
-                          <dt>CATEGORY</dt>
-                          <dd>{props.dbCatalogue[key].category}</dd>
-                        </div>
-                        {props.dbDesc[key] &&
-                          props.dbDesc[key][`organization_${language}`] && (
-                            <div className="data__wrapper">
-                              <dt>ORGANIZATION</dt>
-                              <dd>
-                                {props.dbDesc[key][`organization_${language}`]}
-                              </dd>
+                    )}
+                  <div className="path">
+                    <div className="path_label small white">LINK TO</div>
+                    <svg className="icon" viewBox="0 0 24 24">
+                      <path
+                        fill="currentColor"
+                        d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z"
+                      />
+                    </svg>
+                    <div className="path__children">
+                      {datasetFilterObj[key].linkTo.map((l, i) =>
+                        props.dbCatalogue[l] ? (
+                          <a
+                            href={
+                              "/#" +
+                              props.dbCatalogue[l].label.replace(/\s/g, "")
+                            }
+                            key={i}
+                          >
+                            <div
+                              className="path_label small green"
+                              style={{
+                                backgroundColor: categories[
+                                  props.dbCatalogue[l].category
+                                ]
+                                  ? categories[props.dbCatalogue[l].category]
+                                      .color
+                                  : null,
+                              }}
+                              key={i}
+                            >
+                              {props.dbCatalogue[l].label}
                             </div>
-                          )}
-                        {props.dbCatalogue[key].examples && (
-                          <div className="data__wrapper">
-                            <dt>EXAMPLES</dt>
-                            <dd>
-                              {props.dbCatalogue[key].examples.map(
-                                (example, i) => {
-                                  /* eslint-disable */
-                                  return (
-                                    <li key={i}>
-                                      <a
-                                        href="#"
-                                        onClick={(e) => {
-                                          e.preventDefault();
-                                          clickExamples(example, key);
-                                        }}
-                                      >
-                                        {example.join(", ")}
-                                      </a>
-                                    </li>
-                                  );
-                                  /* eslint-enable */
-                                }
-                              )}
-                            </dd>
-                          </div>
-                        )}
-                      </dl>
-                    </article>
-                  );
-                }
-              })}
+                          </a>
+                        ) : null
+                      )}
+                    </div>
+                  </div>
+                  <dl className="data">
+                    <div className="data__wrapper">
+                      <dt>PREFIX</dt>
+                      <dd>{props.dbCatalogue[key].prefix}</dd>
+                    </div>
+                    <div className="data__wrapper">
+                      <dt>CATEGORY</dt>
+                      <dd>{props.dbCatalogue[key].category}</dd>
+                    </div>
+                    {props.dbDesc[key] &&
+                      props.dbDesc[key][`organization_${language}`] && (
+                        <div className="data__wrapper">
+                          <dt>ORGANIZATION</dt>
+                          <dd>
+                            {props.dbDesc[key][`organization_${language}`]}
+                          </dd>
+                        </div>
+                      )}
+                    {props.dbCatalogue[key].examples && (
+                      <div className="data__wrapper">
+                        <dt>EXAMPLES</dt>
+                        <dd>
+                          {props.dbCatalogue[key].examples.map((example, i) => (
+                            <li key={i}>
+                              <a
+                                href="#"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  clickExamples(example, key);
+                                }}
+                              >
+                                {example.join(", ")}
+                              </a>
+                            </li>
+                          ))}
+                        </dd>
+                      </div>
+                    )}
+                  </dl>
+                </article>
+              ))}
             </div>
           </div>
         </div>
