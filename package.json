@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build && next export && webpack",
     "start": "next start",
+    "lint": "next lint",
     "swagger": "webpack"
   },
   "dependencies": {
@@ -29,13 +30,13 @@
     "webpack-cli": "^4.10.0"
   },
   "devDependencies": {
-    "babel-eslint": "^10.1.0",
     "css-loader": "^2.1.1",
-    "eslint": "^7.32.0",
+    "eslint": "^8.26.0",
+    "eslint-config-next": "^13.0.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jsx-a11y": "^6.6.1",
-    "eslint-plugin-prettier": "^3.4.1",
+    "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.31.10",
     "eslint-plugin-react-hooks": "^4.6.0",
     "json-loader": "^0.5.7",
