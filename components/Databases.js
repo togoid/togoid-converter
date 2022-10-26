@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useState, useEffect } from "react";
-import { categories } from "../lib/setting";
+import { categories, colorLegendList } from "../lib/setting";
 
 const Databases = (props) => {
   const [language, setLanguage] = useState("en");
@@ -113,192 +113,34 @@ const Databases = (props) => {
                   </section>
                 </section>
               </section>
+
               <section className="database__index color">
                 <h3 className="database__index__title">Color Legend</h3>
                 <button onClick={handleResetfilter}>Reset</button>
                 <section className="database__index__colors">
-                  <span className="color">
-                    <span
-                      className="color__square"
-                      style={{
-                        backgroundColor: "#53C666",
-                      }}
-                    />
-                    <span className="color__label">
-                      <span onClick={() => handleCategoryFilter("Gene")}>
-                        Gene
-                      </span>
-                      ,{" "}
-                      <span onClick={() => handleCategoryFilter("Transcript")}>
-                        Transcript
-                      </span>
-                      ,{" "}
-                      <span onClick={() => handleCategoryFilter("Ortholog")}>
-                        Ortholog
-                      </span>
-                      ,{" "}
-                      <span onClick={() => handleCategoryFilter("Probe")}>
-                        Probe
+                  {colorLegendList.map((v, i) => (
+                    <span key={i} className="color">
+                      <span
+                        className="color__square"
+                        style={{
+                          backgroundColor: v.color,
+                        }}
+                      />
+                      <span className="color__label">
+                        {v.categoryList.map((v2, i2) => (
+                          <span key={i2}>
+                            {i2 > 0 && ", "}
+                            <span
+                              style={{ cursor: "pointer" }}
+                              onClick={() => handleCategoryFilter(v2)}
+                            >
+                              {v2}
+                            </span>
+                          </span>
+                        ))}
                       </span>
                     </span>
-                  </span>
-                  <span className="color">
-                    <span
-                      className="color__square"
-                      style={{
-                        backgroundColor: "#A2C653",
-                      }}
-                    />
-                    <span className="color__label">
-                      <span onClick={() => handleCategoryFilter("Protein")}>
-                        Protein
-                      </span>
-                      ,{" "}
-                      <span onClick={() => handleCategoryFilter("Domain")}>
-                        Domain
-                      </span>
-                    </span>
-                  </span>
-                  <span className="color">
-                    <span
-                      className="color__square"
-                      style={{
-                        backgroundColor: "#C68753",
-                      }}
-                    />
-                    <span className="color__label">
-                      <span onClick={() => handleCategoryFilter("Structure")}>
-                        Structure
-                      </span>
-                    </span>
-                  </span>
-                  <span className="color">
-                    <span
-                      className="color__square"
-                      style={{
-                        backgroundColor: "#C65381",
-                      }}
-                    />
-                    <span className="color__label">
-                      <span onClick={() => handleCategoryFilter("Interaction")}>
-                        Interaction
-                      </span>
-                      ,{" "}
-                      <span onClick={() => handleCategoryFilter("Pathway")}>
-                        Pathway
-                      </span>
-                      ,{" "}
-                      <span onClick={() => handleCategoryFilter("Reaction")}>
-                        Reaction
-                      </span>
-                    </span>
-                  </span>
-                  <span className="color">
-                    <span
-                      className="color__square"
-                      style={{
-                        backgroundColor: "#A853C6",
-                      }}
-                    />
-                    <span className="color__label">
-                      <span onClick={() => handleCategoryFilter("Compound")}>
-                        Compound
-                      </span>
-                    </span>
-                  </span>
-                  <span className="color">
-                    <span
-                      className="color__square"
-                      style={{
-                        backgroundColor: "#673AA6",
-                      }}
-                    />
-                    <span className="color__label">
-                      <span onClick={() => handleCategoryFilter("Glycan")}>
-                        Glycan
-                      </span>
-                    </span>
-                  </span>
-                  <span className="color">
-                    <span
-                      className="color__square"
-                      style={{
-                        backgroundColor: "#5361C6",
-                      }}
-                    />
-                    <span className="color__label">
-                      <span onClick={() => handleCategoryFilter("Disease")}>
-                        Disease
-                      </span>
-                    </span>
-                  </span>
-                  <span className="color">
-                    <span
-                      className="color__square"
-                      style={{
-                        backgroundColor: "#53C3C6",
-                      }}
-                    />
-                    <span className="color__label">
-                      <span onClick={() => handleCategoryFilter("Variant")}>
-                        Variant
-                      </span>
-                    </span>
-                  </span>
-                  <span className="color">
-                    <span
-                      className="color__square"
-                      style={{
-                        backgroundColor: "#006400",
-                      }}
-                    />
-                    <span className="color__label">
-                      <span onClick={() => handleCategoryFilter("Taxonomy")}>
-                        Taxonomy
-                      </span>
-                    </span>
-                  </span>
-                  <span className="color">
-                    <span
-                      className="color__square"
-                      style={{
-                        backgroundColor: "#696969",
-                      }}
-                    />
-                    <span className="color__label">
-                      <span onClick={() => handleCategoryFilter("Analysis")}>
-                        Analysis
-                      </span>
-                      ,{" "}
-                      <span onClick={() => handleCategoryFilter("Experiment")}>
-                        Experiment
-                      </span>
-                      ,{" "}
-                      <span onClick={() => handleCategoryFilter("Project")}>
-                        Project
-                      </span>
-                      ,{" "}
-                      <span onClick={() => handleCategoryFilter("Literature")}>
-                        Literature
-                      </span>
-                      ,{" "}
-                      <span onClick={() => handleCategoryFilter("Sample")}>
-                        Sample
-                      </span>
-                      ,{" "}
-                      <span onClick={() => handleCategoryFilter("SequenceRun")}>
-                        SequenceRun
-                      </span>
-                      ,{" "}
-                      <span onClick={() => handleCategoryFilter("Submission")}>
-                        Submission
-                      </span>
-                      ,{" "}
-                      <span onClick={() => handleCategoryFilter("Function")}>
-                        Function
-                      </span>
-                    </span>
-                  </span>
+                  ))}
                 </section>
               </section>
 
