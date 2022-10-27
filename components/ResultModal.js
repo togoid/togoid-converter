@@ -5,10 +5,18 @@ import { categories } from "../lib/setting";
 import { ArrowArea } from "react-arrow-master";
 import { printf } from "fast-printf";
 
+// 定数
+const previewModeList = new Map([
+  ["all", "All converted IDs"],
+  ["pair", "Source and target IDs"],
+  ["target", "Target IDs"],
+  ["full", "All including unconverted IDs"],
+]);
+
 const ResultModal = (props) => {
   const [copied, setCopied] = useState(false);
   const [urlCopied, setUrlCopied] = useState(false);
-  const [previewMode, setPreviewMode] = useState("All converted IDs");
+  const [previewMode, setPreviewMode] = useState("all");
   const [lineMode, setLineMode] = useState(
     Array(props.tableData.heading.length).fill("")
   );
@@ -50,11 +58,11 @@ const ResultModal = (props) => {
   }, [previewMode]);
 
   const editTable = (table) => {
-    if (previewMode === "All converted IDs") {
+    if (previewMode === "all") {
       // all
       const rows = table.rows.filter((v) => v[v.length - 1].url);
       return { heading: table.heading, rows };
-    } else if (previewMode === "Source and target IDs") {
+    } else if (previewMode === "pair") {
       // origin and targets
       // 重複は消す
       return {
@@ -71,7 +79,7 @@ const ResultModal = (props) => {
               ) === i
           ),
       };
-    } else if (previewMode === "Target IDs") {
+    } else if (previewMode === "target") {
       // target
       // 重複は消す
       return {
@@ -83,32 +91,16 @@ const ResultModal = (props) => {
             (v, i, self) => self.findIndex((w) => w[0].url === v[0].url) === i
           ),
       };
-    } else if (previewMode === "All including unconverted IDs") {
+    } else if (previewMode === "full") {
       // full
       return table;
     }
   };
 
-  const previewModeList = [
-    "All converted IDs",
-    "Source and target IDs",
-    "Target IDs",
-    "All including unconverted IDs",
-  ];
-  const getReport = () => {
-    const reportObj = {
-      "All converted IDs": "all",
-      "Source and target IDs": "pair",
-      "Target IDs": "target",
-      "All including unconverted IDs": "full",
-    };
-    return reportObj[previewMode];
-  };
-
   const handleMenu = (e) => {
     const newLineMode = lineMode.slice();
     newLineMode[e.target.id] = e.target.value;
-    console.log(newLineMode);
+
     setLineMode(newLineMode);
   };
 
@@ -166,10 +158,10 @@ const ResultModal = (props) => {
 
   const handleClipboardCopy = async (e) => {
     e.preventDefault();
-    const d = await executeQuery(props.route, props.ids, getReport(), 10000);
+    const d = await executeQuery(props.route, props.ids, previewMode, 10000);
 
     const results =
-      previewMode !== "Target IDs" ? d.results : d.results.map((v) => [v]);
+      previewMode !== "target" ? d.results : d.results.map((v) => [v]);
 
     const table = createExportTable(props.tableData.heading, results);
     const { heading, rows } = editTable(table);
@@ -188,10 +180,10 @@ const ResultModal = (props) => {
   };
 
   const handleExportCsvTsv = async (extension) => {
-    const d = await executeQuery(props.route, props.ids, getReport(), 10000);
+    const d = await executeQuery(props.route, props.ids, previewMode, 10000);
 
     const results =
-      previewMode !== "Target IDs" ? d.results : d.results.map((v) => [v]);
+      previewMode !== "target" ? d.results : d.results.map((v) => [v]);
     const table = createExportTable(props.tableData.heading, results);
     const { heading, rows } = editTable(table);
     const h = heading.map((v) => v.label);
@@ -203,9 +195,8 @@ const ResultModal = (props) => {
   };
 
   const handleClipboardURL = () => {
-    const report = getReport();
     const routeName = props.route.map((v) => v.name).join();
-    const text = `https://api.togoid.dbcls.jp/convert?ids=${props.ids}&route=${routeName}&report=${report}&format=csv`;
+    const text = `https://api.togoid.dbcls.jp/convert?ids=${props.ids}&route=${routeName}&report=${previewMode}&format=csv`;
     copy(text, {
       format: "text/plain",
     });
@@ -309,22 +300,22 @@ const ResultModal = (props) => {
                 <div className="report">
                   <p className="modal__heading">Report</p>
                   <div className="report__inner">
-                    {previewModeList.map((v, i) => {
-                      if (i !== previewModeList.length - 1) {
+                    {[...previewModeList].map(([key, value], i) => {
+                      if (i !== previewModeList.size - 1) {
                         return (
                           <div className="radio" key={i}>
                             <input
                               id={i}
-                              key={v}
-                              value={v}
+                              key={i}
+                              value={key}
                               name="report"
                               type="radio"
                               className="radio__input"
-                              checked={v === previewMode}
-                              onChange={() => setPreviewMode(v)}
+                              checked={previewMode === key}
+                              onChange={() => setPreviewMode(key)}
                             />
                             <label htmlFor={i} className="radio__label">
-                              {v}
+                              {value}
                             </label>
                           </div>
                         );
@@ -332,29 +323,22 @@ const ResultModal = (props) => {
                     })}
                   </div>
                   <div className="report__inner">
-                    <div className="radio" key={previewModeList.length - 1}>
+                    <div className="radio" key={previewModeList.size - 1}>
                       <input
-                        id={previewModeList.length - 1}
-                        key={previewModeList[previewModeList.length - 1]}
-                        value={previewModeList[previewModeList.length - 1]}
+                        id={previewModeList.size - 1}
+                        key={previewModeList.size - 1}
+                        value="full"
                         name="report"
                         type="radio"
                         className="radio__input"
-                        checked={
-                          previewModeList[previewModeList.length - 1] ===
-                          previewMode
-                        }
-                        onChange={() =>
-                          setPreviewMode(
-                            previewModeList[previewModeList.length - 1]
-                          )
-                        }
+                        checked={previewMode === "full"}
+                        onChange={() => setPreviewMode("full")}
                       />
                       <label
-                        htmlFor={previewModeList.length - 1}
+                        htmlFor={previewModeList.size - 1}
                         className="radio__label"
                       >
-                        {previewModeList[previewModeList.length - 1]}
+                        {previewModeList.get("full")}
                       </label>
                     </div>
                   </div>
@@ -478,7 +462,7 @@ const ResultModal = (props) => {
                       <th key={i}>
                         <fieldset>
                           <label htmlFor={i} className="select__label">
-                            {v.label}{" "}
+                            {v.label}
                           </label>
                           <select
                             id={i}
