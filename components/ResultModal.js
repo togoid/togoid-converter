@@ -39,12 +39,14 @@ const ResultModal = (props) => {
     setBaseTable(table);
 
     setFilterTable(editTable(table));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (baseTable?.rows) {
       setFilterTable(editTable(baseTable));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [previewMode]);
 
   const editTable = (table) => {
@@ -235,7 +237,9 @@ const ResultModal = (props) => {
   };
 
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div className="modal" onClick={() => props.setModalVisibility(false)}>
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
       <div
         className="modal__inner"
         onClick={(e) => {
