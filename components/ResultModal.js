@@ -135,25 +135,60 @@ const ResultModal = (props) => {
   };
 
   const createExportTable = (tableHeading, tableRows) => {
-    const table = { heading: [], rows: [] };
+    if (previewMode === "all") {
+      // all
+      const rows = tableRows.map((v) =>
+        v.map((w, i) => [
+          lineMode[i] === "url"
+            ? tableHeading[i].prefix + w
+            : printf(lineMode[i], w),
+        ])
+      );
 
-    table.rows = tableRows.map((v) => {
-      return v.map((w, i) => {
-        const formatIdObj = {};
+      return { heading: tableHeading, rows };
+    } else if (previewMode === "pair") {
+      // origin and targets
+      // 重複は消す
+      return {
+        heading: [tableHeading[0], tableHeading[tableHeading.length - 1]],
+        rows: tableRows.map((v) => [
+          [
+            lineMode[0] === "url"
+              ? tableHeading[0].prefix + v[0]
+              : printf(lineMode[0], v[0]),
+          ],
+          [
+            lineMode[tableHeading.length - 1] === "url"
+              ? tableHeading[tableHeading.length - 1].prefix + v[v.length - 1]
+              : printf(lineMode[tableHeading.length - 1], v[v.length - 1]),
+          ],
+        ]),
+      };
+    } else if (previewMode === "target") {
+      // target
+      // 重複は消す
+      return {
+        heading: [tableHeading[tableHeading.length - 1]],
+        rows: tableRows.map((v) => [
+          lineMode[tableHeading.length - 1] === "url"
+            ? tableHeading[tableHeading.length - 1].prefix + v[v.length - 1]
+            : printf(lineMode[tableHeading.length - 1], v[v.length - 1]),
+        ]),
+      };
+    } else if (previewMode === "full") {
+      // full
+      const rows = tableRows.map((v) =>
+        v.map((w, i) => [
+          w
+            ? lineMode[i] === "url"
+              ? tableHeading[i].prefix + w
+              : printf(lineMode[i], w)
+            : null,
+        ])
+      );
 
-        prefixList[i].forEach((x) => {
-          formatIdObj[x] = w ? printf(x, w) : null;
-        });
-        // urlも作成する
-        formatIdObj["url"] = w ? tableHeading[i].prefix + w : null;
-
-        return formatIdObj;
-      });
-    });
-
-    table.heading = tableHeading;
-
-    return table;
+      return { heading: tableHeading, rows };
+    }
   };
 
   const handleClipboardCopy = async (e) => {
@@ -163,12 +198,8 @@ const ResultModal = (props) => {
     const results =
       previewMode !== "target" ? d.results : d.results.map((v) => [v]);
 
-    const table = createExportTable(props.tableData.heading, results);
-    const { heading, rows } = editTable(table);
-    const text = invokeUnparse(
-      rows.map((v) => v.map((w, i) => [w[lineMode[heading[i].index]]])),
-      "tsv"
-    );
+    const { rows } = createExportTable(props.tableData.heading, results);
+    const text = invokeUnparse(rows, "tsv");
 
     copy(text, {
       format: "text/plain",
@@ -184,14 +215,12 @@ const ResultModal = (props) => {
 
     const results =
       previewMode !== "target" ? d.results : d.results.map((v) => [v]);
-    const table = createExportTable(props.tableData.heading, results);
-    const { heading, rows } = editTable(table);
-    const h = heading.map((v) => v.label);
-    exportCsvTsv(
-      [h, ...rows.map((v) => v.map((w, i) => [w[lineMode[heading[i].index]]]))],
-      extension,
-      `result.${extension}`
+    const { heading, rows } = createExportTable(
+      props.tableData.heading,
+      results
     );
+    const h = heading.map((v) => v.label);
+    exportCsvTsv([h, ...rows], extension, `result.${extension}`);
   };
 
   const handleClipboardURL = () => {
@@ -465,7 +494,7 @@ const ResultModal = (props) => {
                             {v.label}
                           </label>
                           <select
-                            id={i}
+                            id={v.index}
                             className="select white"
                             onChange={(e) => handleMenu(e)}
                             value={lineMode[v.index]}
