@@ -329,27 +329,25 @@ const ResultModal = (props) => {
                 <div className="report">
                   <p className="modal__heading">Report</p>
                   <div className="report__inner">
-                    {[...previewModeList].map(([key, value], i) => {
-                      if (i !== previewModeList.size - 1) {
-                        return (
-                          <div className="radio" key={i}>
-                            <input
-                              id={i}
-                              key={i}
-                              value={key}
-                              name="report"
-                              type="radio"
-                              className="radio__input"
-                              checked={previewMode === key}
-                              onChange={() => setPreviewMode(key)}
-                            />
-                            <label htmlFor={i} className="radio__label">
-                              {value}
-                            </label>
-                          </div>
-                        );
-                      }
-                    })}
+                    {[...previewModeList]
+                      .filter(([key]) => key !== "full")
+                      .map(([key, value], i) => (
+                        <div className="radio" key={i}>
+                          <input
+                            id={i}
+                            key={i}
+                            value={key}
+                            name="report"
+                            type="radio"
+                            className="radio__input"
+                            checked={previewMode === key}
+                            onChange={() => setPreviewMode(key)}
+                          />
+                          <label htmlFor={i} className="radio__label">
+                            {value}
+                          </label>
+                        </div>
+                      ))}
                   </div>
                   <div className="report__inner">
                     <div className="radio" key={previewModeList.size - 1}>
