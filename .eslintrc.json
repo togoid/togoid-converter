@@ -1,6 +1,5 @@
 {
   "root": true,
-  "parser": "babel-eslint",
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
@@ -8,6 +7,7 @@
     "plugin:import/warnings",
     "plugin:jsx-a11y/recommended",
     "plugin:react-hooks/recommended",
+    "next",
     "prettier"
   ],
   "rules": {
@@ -22,7 +22,7 @@
     "node": true
   },
   "parserOptions": {
-    "ecmaVersion": 2018,
+    "ecmaVersion": "latest",
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
@@ -33,5 +33,5 @@
       "version": "detect"
     }
   },
-  "plugins": ["react-hooks", "react", "prettier"]
+  "plugins": ["prettier"]
 }
