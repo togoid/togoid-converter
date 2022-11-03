@@ -1,6 +1,6 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const CleanWebpackPlugin = require("clean-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 const outputPath = path.resolve(__dirname, "out/apidoc");
 
@@ -16,7 +16,7 @@ module.exports = {
     rules: [
       {
         test: /\.yaml$/,
-        use: [{ loader: "json-loader" }, { loader: "yaml-loader" }],
+        use: [{ loader: "yaml-loader" }],
       },
       {
         test: /\.css$/,
@@ -25,7 +25,7 @@ module.exports = {
     ],
   },
   plugins: [
-    new CleanWebpackPlugin([outputPath]),
+    new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       template: "swagger/index.html",
     }),
