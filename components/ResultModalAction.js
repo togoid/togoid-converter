@@ -16,7 +16,7 @@ const ResultModalAction = (props) => {
   const [urlCopied, setUrlCopied] = useState(false);
   const [previewMode, setPreviewMode] = useState("all");
   const [lineMode, setLineMode] = useState(
-    Array(props.tableData.heading.length).fill("")
+    Array(props.tableData.heading.length).fill("id")
   );
   const [baseTable, setBaseTable] = useState();
   const [filterTable, setFilterTable] = useState();
@@ -52,20 +52,22 @@ const ResultModalAction = (props) => {
 
     const subPrefixList = tableHeading.map((v, i) => {
       v["index"] = i;
-      // formatがあれば使う なければ"prefixから取り出した値%s"で返す
-      return v.format ?? [v.prefix.slice(v.prefix.lastIndexOf("/") + 1) + "%s"];
+      // formatがあれば使う なければ空配列で返す
+      return v.format ?? [];
     });
     setPrefixList(subPrefixList);
-    setLineMode(subPrefixList.map((v) => v[0]));
 
     table.rows = tableRows.map((v) => {
       return v.map((w, i) => {
         const formatIdObj = {};
 
+        // prefixがある場合
         subPrefixList[i].forEach((x) => {
           formatIdObj[x] = w ? printf(x, w) : null;
         });
-        // urlも作成する
+
+        // idとurlは必ず作成する
+        formatIdObj["id"] = w ?? null;
         formatIdObj["url"] = w ? tableHeading[i].prefix + w : null;
 
         return formatIdObj;
@@ -121,56 +123,57 @@ const ResultModalAction = (props) => {
     if (previewMode === "all") {
       // all
       const rows = tableRows.map((v) =>
-        v.map((w, i) => [
-          lineMode[i] === "url"
-            ? tableHeading[i].prefix + w
-            : printf(lineMode[i], w),
-        ])
+        v.map((w, i) => [joinPrefix(w, lineMode[i], tableHeading[i].prefix)])
       );
 
       return { heading: tableHeading, rows };
     } else if (previewMode === "pair") {
       // origin and targets
-      // 重複は消す
       return {
         heading: [tableHeading[0], tableHeading[tableHeading.length - 1]],
         rows: tableRows.map((v) => [
+          [joinPrefix(v[0], lineMode[0], tableHeading[0].prefix)],
           [
-            lineMode[0] === "url"
-              ? tableHeading[0].prefix + v[0]
-              : printf(lineMode[0], v[0]),
-          ],
-          [
-            lineMode[tableHeading.length - 1] === "url"
-              ? tableHeading[tableHeading.length - 1].prefix + v[v.length - 1]
-              : printf(lineMode[tableHeading.length - 1], v[v.length - 1]),
+            joinPrefix(
+              v[v.length - 1],
+              lineMode[lineMode.length - 1],
+              tableHeading[tableHeading.length - 1].prefix
+            ),
           ],
         ]),
       };
     } else if (previewMode === "target") {
       // target
-      // 重複は消す
       return {
         heading: [tableHeading[tableHeading.length - 1]],
         rows: tableRows.map((v) => [
-          lineMode[tableHeading.length - 1] === "url"
-            ? tableHeading[tableHeading.length - 1].prefix + v[v.length - 1]
-            : printf(lineMode[tableHeading.length - 1], v[v.length - 1]),
+          joinPrefix(
+            v[v.length - 1],
+            lineMode[lineMode.length - 1],
+            tableHeading[tableHeading.length - 1].prefix
+          ),
         ]),
       };
     } else if (previewMode === "full") {
       // full
       const rows = tableRows.map((v) =>
         v.map((w, i) => [
-          w
-            ? lineMode[i] === "url"
-              ? tableHeading[i].prefix + w
-              : printf(lineMode[i], w)
-            : null,
+          w ? joinPrefix(w, lineMode[i], tableHeading[i].prefix) : null,
         ])
       );
 
       return { heading: tableHeading, rows };
+    }
+  };
+
+  const joinPrefix = (id, mode, prefix) => {
+    // nullチェックが必要な場合は関数に渡す前にチェックすること
+    if (mode === "id") {
+      return id;
+    } else if (mode === "url") {
+      return prefix + id;
+    } else {
+      return printf(mode, id);
     }
   };
 
@@ -388,6 +391,7 @@ const ResultModalAction = (props) => {
                         onChange={(e) => handleSelectPrefix(e)}
                         value={lineMode[v.index]}
                       >
+                        <option value="id">IDs</option>
                         {prefixList[v.index].map((w) => (
                           <option key={w} value={w}>
                             Prefix ({w})
