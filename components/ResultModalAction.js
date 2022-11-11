@@ -391,13 +391,13 @@ const ResultModalAction = (props) => {
                         onChange={(e) => handleSelectPrefix(e)}
                         value={lineMode[v.index]}
                       >
-                        <option value="id">IDs</option>
+                        <option value="id">ID</option>
                         {prefixList[v.index].map((w) => (
                           <option key={w} value={w}>
-                            Prefix ({w})
+                            ID ({w})
                           </option>
                         ))}
-                        <option value="url">URLs</option>
+                        <option value="url">URL</option>
                       </select>
                     </fieldset>
                   </th>
