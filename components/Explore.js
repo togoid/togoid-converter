@@ -98,12 +98,10 @@ const Explore = (props) => {
           return n * 1;
         }
       });
-    } else if (mode === "count") {
-      if (i === 0) {
-        nodesListCopy[i].sort((a, b) => (a.target - b.target) * n);
-      } else {
-        nodesListCopy[i].sort((a, b) => (a.source - b.source) * n);
-      }
+    } else if (mode === "sourceCount") {
+      nodesListCopy[i].sort((a, b) => (a.source - b.source) * n);
+    } else if (mode === "targetCount") {
+      nodesListCopy[i].sort((a, b) => (a.target - b.target) * n);
     }
     setNodesList(nodesListCopy);
   };
@@ -143,18 +141,40 @@ const Explore = (props) => {
                         <button onClick={() => sortNode("category", "asc", i)}>
                           category asc
                         </button>
-                        <button onClick={() => sortNode("count", "asc", i)}>
-                          count asc
-                        </button>
+                        {i !== 0 && (
+                          <>
+                            <button
+                              onClick={() => sortNode("sourceCount", "asc", i)}
+                            >
+                              source count asc
+                            </button>
+                            <button
+                              onClick={() => sortNode("targetCount", "asc", i)}
+                            >
+                              target count asc
+                            </button>
+                          </>
+                        )}
                         <button onClick={() => sortNode("name", "desc", i)}>
                           name desc
                         </button>
                         <button onClick={() => sortNode("category", "desc", i)}>
                           category desc
                         </button>
-                        <button onClick={() => sortNode("count", "desc", i)}>
-                          count desc
-                        </button>
+                        {i !== 0 && (
+                          <>
+                            <button
+                              onClick={() => sortNode("sourceCount", "desc", i)}
+                            >
+                              source count desc
+                            </button>
+                            <button
+                              onClick={() => sortNode("targetCount", "desc", i)}
+                            >
+                              target count desc
+                            </button>
+                          </>
+                        )}
                         <ul
                           className={
                             i === 0 ? "result_list first" : "result_list"
