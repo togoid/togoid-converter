@@ -53,7 +53,11 @@ const ResultModalAction = (props) => {
     const subPrefixList = tableHeading.map((v, i) => {
       v["index"] = i;
       // formatがあれば使う なければ空配列で返す
-      return v.format ?? [];
+      return v.format
+        ? v.format.map((v) => {
+            return { label: v.replace("%s", ""), value: v };
+          })
+        : [];
     });
     setPrefixList(subPrefixList);
 
@@ -63,7 +67,7 @@ const ResultModalAction = (props) => {
 
         // prefixがある場合
         subPrefixList[i].forEach((x) => {
-          formatIdObj[x] = w ? printf(x, w) : null;
+          formatIdObj[x.value] = w ? printf(x.value, w) : null;
         });
 
         // idとurlは必ず作成する
@@ -393,8 +397,8 @@ const ResultModalAction = (props) => {
                       >
                         <option value="id">ID</option>
                         {prefixList[v.index].map((w) => (
-                          <option key={w} value={w}>
-                            ID ({w})
+                          <option key={w.label} value={w.value}>
+                            ID ({w.label})
                           </option>
                         ))}
                         <option value="url">URL</option>
