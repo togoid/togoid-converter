@@ -40,6 +40,8 @@ const Explore = (props) => {
             props.dbCatalogue[a.name].label > props.dbCatalogue[b.name].label
           ) {
             return 1;
+          } else {
+            return 0;
           }
         });
 
