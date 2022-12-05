@@ -15,14 +15,43 @@ const Explore = (props) => {
     null,
   ]);
   const [convertedCount, setConvertedCount] = useState([]);
-  const [nodesList, setNodesList] = useState(props.databaseNodesList ?? []);
+  const [nodesList, setNodesList] = useState([]);
+  const [sortModeOrderList, setSortModeOrderList] = useState([]);
 
   useEffect(() => {
     if (tableData.heading.length > 0) setModalVisibility(true);
   }, [tableData]);
 
   useEffect(() => {
-    setNodesList(props.databaseNodesList ?? []);
+    // 直前の状態と比較して変化していればnameとascでソートする
+    const sortNodes = [];
+    const sortModeOrders = [];
+    props.databaseNodesList.forEach((v, i) => {
+      if (v === nodesList[i]) {
+        sortNodes.push(v);
+        sortModeOrders.push(sortModeOrderList[i]);
+      } else {
+        const sorted = v.sort((a, b) => {
+          if (
+            props.dbCatalogue[a.name].label < props.dbCatalogue[b.name].label
+          ) {
+            return -1;
+          } else if (
+            props.dbCatalogue[a.name].label > props.dbCatalogue[b.name].label
+          ) {
+            return 1;
+          } else {
+            return 0;
+          }
+        });
+
+        sortNodes.push(sorted);
+        sortModeOrders.push({ mode: "name", order: "asc" });
+      }
+    });
+    setNodesList(sortNodes);
+    setSortModeOrderList(sortModeOrders);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.databaseNodesList]);
 
   const selectDatabase = (database, i) => {
@@ -104,6 +133,13 @@ const Explore = (props) => {
       nodesListCopy[i].sort((a, b) => (a.target - b.target) * n);
     }
     setNodesList(nodesListCopy);
+
+    const sortModeOrderListCopy = sortModeOrderList.slice();
+    sortModeOrderListCopy[i] = {
+      mode,
+      order,
+    };
+    setSortModeOrderList(sortModeOrderListCopy);
   };
 
   return (
@@ -135,46 +171,41 @@ const Explore = (props) => {
                         </div>
                       )}
                       <div className="item_wrapper" key={2}>
-                        <button onClick={() => sortNode("name", "asc", i)}>
-                          name asc
+                        <select
+                          className="select white"
+                          onChange={(e) =>
+                            sortNode(
+                              e.target.value,
+                              sortModeOrderList[i].order,
+                              i
+                            )
+                          }
+                          value={sortModeOrderList[i].mode}
+                        >
+                          <option value="name">Name</option>
+                          <option value="category">Category</option>
+                          {i !== 0 && (
+                            <>
+                              <option value="sourceCount">Source Count</option>
+                              <option value="targetCount">Target Count</option>
+                            </>
+                          )}
+                        </select>
+                        <button
+                          onClick={() =>
+                            sortNode(sortModeOrderList[i].mode, "asc", i)
+                          }
+                        >
+                          ↑
                         </button>
-                        <button onClick={() => sortNode("category", "asc", i)}>
-                          category asc
+                        <button
+                          onClick={() =>
+                            sortNode(sortModeOrderList[i].mode, "desc", i)
+                          }
+                        >
+                          ↓
                         </button>
-                        {i !== 0 && (
-                          <>
-                            <button
-                              onClick={() => sortNode("sourceCount", "asc", i)}
-                            >
-                              source count asc
-                            </button>
-                            <button
-                              onClick={() => sortNode("targetCount", "asc", i)}
-                            >
-                              target count asc
-                            </button>
-                          </>
-                        )}
-                        <button onClick={() => sortNode("name", "desc", i)}>
-                          name desc
-                        </button>
-                        <button onClick={() => sortNode("category", "desc", i)}>
-                          category desc
-                        </button>
-                        {i !== 0 && (
-                          <>
-                            <button
-                              onClick={() => sortNode("sourceCount", "desc", i)}
-                            >
-                              source count desc
-                            </button>
-                            <button
-                              onClick={() => sortNode("targetCount", "desc", i)}
-                            >
-                              target count desc
-                            </button>
-                          </>
-                        )}
+
                         <ul
                           className={
                             i === 0 ? "result_list first" : "result_list"
