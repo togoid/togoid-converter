@@ -202,7 +202,7 @@
     background: $green01;
   }
   &.white {
-    border: none;
+    border: 1px solid $gray06;
     background-color: $white;
   }
 }

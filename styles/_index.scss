@@ -131,9 +131,10 @@
             margin: 0 0 0 5px;
             overflow: hidden;
             border-radius: 5px;
+            border: 1px solid $gray06;
             &__button {
               width: 22px;
-              height: 11px;
+              height: 10px;
               border: none;
               background-color: $white;
               background-repeat: no-repeat;
