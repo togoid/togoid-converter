@@ -171,40 +171,53 @@ const Explore = (props) => {
                         </div>
                       )}
                       <div className="item_wrapper" key={2}>
-                        <select
-                          className="select white"
-                          onChange={(e) =>
-                            sortNode(
-                              e.target.value,
-                              sortModeOrderList[i].order,
-                              i
-                            )
+                        <div
+                          className={
+                            i === 0
+                              ? "item_wrapper__buttons first"
+                              : "item_wrapper__buttons"
                           }
-                          value={sortModeOrderList[i].mode}
+                          key={1}
                         >
-                          <option value="name">Name</option>
-                          <option value="category">Category</option>
-                          {i !== 0 && (
-                            <>
-                              <option value="sourceCount">Source Count</option>
-                              <option value="targetCount">Target Count</option>
-                            </>
-                          )}
-                        </select>
-                        <button
-                          onClick={() =>
-                            sortNode(sortModeOrderList[i].mode, "asc", i)
-                          }
-                        >
-                          ↑
-                        </button>
-                        <button
-                          onClick={() =>
-                            sortNode(sortModeOrderList[i].mode, "desc", i)
-                          }
-                        >
-                          ↓
-                        </button>
+                          <select
+                            className="select white"
+                            onChange={(e) =>
+                              sortNode(
+                                e.target.value,
+                                sortModeOrderList[i].order,
+                                i
+                              )
+                            }
+                            value={sortModeOrderList[i].mode}
+                          >
+                            <option value="name">Name</option>
+                            <option value="category">Category</option>
+                            {i !== 0 && (
+                              <>
+                                <option value="sourceCount">
+                                  Source Count
+                                </option>
+                                <option value="targetCount">
+                                  Target Count
+                                </option>
+                              </>
+                            )}
+                          </select>
+                          <div className="sort">
+                            <button
+                              onClick={() =>
+                                sortNode(sortModeOrderList[i].mode, "asc", i)
+                              }
+                              className="sort__button asc"
+                            />
+                            <button
+                              onClick={() =>
+                                sortNode(sortModeOrderList[i].mode, "desc", i)
+                              }
+                              className="sort__button desc"
+                            />
+                          </div>
+                        </div>
 
                         <ul
                           className={

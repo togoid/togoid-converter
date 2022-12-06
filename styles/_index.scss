@@ -117,6 +117,36 @@
         .item_wrapper {
           display: flex;
           flex-direction: column;
+          &__buttons {
+            display: flex;
+            align-items: center;
+            margin: 0 0 16px 30px;
+            &.first {
+              margin: 0 0 16px 20px;
+            }
+          }
+          .sort {
+            display: flex;
+            flex-direction: column;
+            margin: 0 0 0 5px;
+            overflow: hidden;
+            border-radius: 5px;
+            &__button {
+              width: 22px;
+              height: 11px;
+              border: none;
+              background-color: $white;
+              background-repeat: no-repeat;
+              background-position: center;
+              background-size: 9px auto;
+              &.asc {
+                background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 5"><path d="M4.5,0,9,5H0Z" fill="%23249eb3" /></svg>');
+              }
+              &.desc {
+                background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 5"><path d="M4.5,5,9,0H0Z" fill="%23C4C4C4" /></svg>');
+              }
+            }
+          }
           .result_list {
             margin: 0 0 0 30px;
             &.first {
