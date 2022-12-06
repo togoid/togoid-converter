@@ -114,32 +114,39 @@ const Databases = (props) => {
                 </section>
               </section>
 
-              <section className="database__index color">
+              <section className="database__index">
                 <h3 className="database__index__title">Color Legend</h3>
                 <button onClick={handleResetfilter}>Reset</button>
                 <section className="database__index__colors">
                   {colorLegendList.map((v, i) => (
-                    <span key={i} className="color">
-                      <span
-                        className="color__square"
-                        style={{
-                          backgroundColor: v.color,
-                        }}
+                    <div key={i} className="color">
+                      <input
+                        type="radio"
+                        id={v.color}
+                        name="color"
+                        className="color__input"
                       />
-                      <span className="color__label">
+                      <label htmlFor={v.color} className="label">
+                        <span
+                          className="square"
+                          style={{
+                            backgroundColor: v.color,
+                          }}
+                        />
                         {v.categoryList.map((v2, i2) => (
                           <span key={i2}>
                             {i2 > 0 && ", "}
                             <span
                               style={{ cursor: "pointer" }}
                               onClick={() => handleCategoryFilter(v2)}
+                              className="text"
                             >
                               {v2}
                             </span>
                           </span>
                         ))}
-                      </span>
-                    </span>
+                      </label>
+                    </div>
                   ))}
                 </section>
               </section>
