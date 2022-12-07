@@ -64,7 +64,7 @@ const Explore = (props) => {
 
   const handleIdDownload = async (database, routeIndex) => {
     const r = selectDatabase(database, routeIndex).slice(0, routeIndex + 1);
-    const d = await executeQuery(r, props.ids, "target", 10000);
+    const d = await executeQuery(r, props.ids, "target");
     const prefix = props.dbCatalogue[database.name].prefix.split("/").slice(-1);
 
     exportCsvTsv(

@@ -37,7 +37,7 @@ const Navigate = (props) => {
 
   const handleIdDownload = async (database, routeIndex, j) => {
     const r = selectDatabaseModal(routeIndex, j);
-    const d = await executeQuery(r, props.ids, "target", 10000);
+    const d = await executeQuery(r, props.ids, "target");
     const prefix = props.dbCatalogue[database.name].prefix.split("/").slice(-1);
 
     exportCsvTsv(
@@ -156,11 +156,12 @@ const Navigate = (props) => {
                                             opacity: isActionButtonVisible
                                               ? 0.7
                                               : 1,
-                                            backgroundColor: isActionButtonVisible
-                                              ? "#000000"
-                                              : categories[v.category]
-                                              ? categories[v.category].color
-                                              : null,
+                                            backgroundColor:
+                                              isActionButtonVisible
+                                                ? "#000000"
+                                                : categories[v.category]
+                                                ? categories[v.category].color
+                                                : null,
                                           }}
                                         >
                                           <div
@@ -258,11 +259,12 @@ const Navigate = (props) => {
                                               opacity: isActionButtonVisible
                                                 ? 0.7
                                                 : 1,
-                                              backgroundColor: isActionButtonVisible
-                                                ? "#000000"
-                                                : categories[v.category]
-                                                ? categories[v.category].color
-                                                : null,
+                                              backgroundColor:
+                                                isActionButtonVisible
+                                                  ? "#000000"
+                                                  : categories[v.category]
+                                                  ? categories[v.category].color
+                                                  : null,
                                             }}
                                           >
                                             <div
