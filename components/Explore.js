@@ -179,6 +179,7 @@ const Explore = (props) => {
                           }
                           key={1}
                         >
+                          <div>Sort by</div>
                           <select
                             className="select white"
                             onChange={(e) =>
