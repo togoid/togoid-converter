@@ -366,6 +366,16 @@ const ResultModalAction = (props) => {
                   )}
                 </button>
               </div>
+              {props.lastTargetCount === "10000+" && (
+                <div>
+                  <div>
+                    Warning : There is a lot of data and errors may occur
+                  </div>
+                  <div>
+                    Please consider using the API limit and offset functions
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
