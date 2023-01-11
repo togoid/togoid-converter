@@ -116,6 +116,9 @@ const ResultModal = (props) => {
             route={props.route}
             ids={props.ids}
             tableData={props.tableData}
+            lastTargetCount={
+              props.convertedCount[props.convertedCount.length - 1].target
+            }
           />
         </div>
       </div>
