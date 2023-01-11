@@ -179,6 +179,7 @@ const Explore = (props) => {
                           }
                           key={1}
                         >
+                          <div>Sort by</div>
                           <select
                             className="select white"
                             onChange={(e) =>
@@ -195,10 +196,10 @@ const Explore = (props) => {
                             {i !== 0 && (
                               <>
                                 <option value="sourceCount">
-                                  Source Count
+                                  Source count
                                 </option>
                                 <option value="targetCount">
-                                  Target Count
+                                  Target count
                                 </option>
                               </>
                             )}
