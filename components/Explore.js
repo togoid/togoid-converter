@@ -154,7 +154,7 @@ const Explore = (props) => {
                     <React.Fragment key={i}>
                       {i !== 0 && (
                         <div className="item_wrapper" key={1}>
-                          <ul className="label_list" key={2}>
+                          <ul className="label_list with_sort" key={2}>
                             {nodes.map((v, j) => {
                               return (
                                 <li key={j} className="label_list__item">
@@ -179,7 +179,7 @@ const Explore = (props) => {
                           }
                           key={1}
                         >
-                          <div>Sort by</div>
+                          <label className="sort__label">Sort by</label>
                           <select
                             className="select white"
                             onChange={(e) =>
