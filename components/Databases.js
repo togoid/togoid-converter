@@ -2,6 +2,8 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useState, useEffect } from "react";
+import { useAtomValue } from "jotai";
+import { dbStatisticObjAtom } from "../atoms/initAtom";
 import { categories, colorLegendList } from "../lib/setting";
 
 const Databases = (props) => {
@@ -10,21 +12,38 @@ const Databases = (props) => {
   const [datasetHaveLinkObj, setDatasetHaveLinkObj] = useState({});
   const [datasetFilterObj, setDatasetFilterObj] = useState({});
 
+  const dbStatisticObj = useAtomValue(dbStatisticObjAtom);
+
   useEffect(() => {
     const fastFilterDataset = Object.entries(props.dbCatalogue).reduce(
       (prev, [key, value]) => {
-        const linkTo = [
-          ...new Set(
-            Object.keys(props.dbConfig).map((k) => {
-              const names = k.split("-");
-              if (names.indexOf(key) === 0 || names.indexOf(key) === 1) {
-                return names.indexOf(key) === 0 ? names[1] : names[0];
-              }
-            })
-          ),
-        ].filter((v) => v);
+        const linkTo = new Set(
+          Object.keys(props.dbConfig).map((k) => {
+            const names = k.split("-");
+            if (names.indexOf(key) === 0 || names.indexOf(key) === 1) {
+              return names.indexOf(key) === 0 ? names[1] : names[0];
+            }
+          })
+        );
+        linkTo.delete(undefined);
 
-        return linkTo.length ? { ...prev, [key]: { ...value, linkTo } } : prev;
+        if (!linkTo.size) {
+          return prev;
+        }
+
+        let count = "";
+        let lastUpdatedAt = "";
+        Object.entries(dbStatisticObj).forEach(([k2, v2]) => {
+          if (k2.split("-")[0] === key) {
+            count += `${k2} : ${v2.count}, `;
+            lastUpdatedAt += `${k2} : ${v2.last_updated_at}, `;
+          }
+        });
+
+        return {
+          ...prev,
+          [key]: { ...value, linkTo: [...linkTo], count, lastUpdatedAt },
+        }; // linkToはSetからArrayに変換しておく
       },
       {}
     );
@@ -246,6 +265,18 @@ const Databases = (props) => {
                           </dd>
                         </div>
                       )}
+                    {datasetFilterObj[key].count && (
+                      <div className="data__wrapper">
+                        <dt>COUNT</dt>
+                        <dd>{datasetFilterObj[key].count}</dd>
+                      </div>
+                    )}
+                    {datasetFilterObj[key].lastUpdatedAt && (
+                      <div className="data__wrapper">
+                        <dt>LAST UPDATED AT</dt>
+                        <dd>{datasetFilterObj[key].lastUpdatedAt}</dd>
+                      </div>
+                    )}
                     {props.dbCatalogue[key].examples && (
                       <div className="data__wrapper">
                         <dt>EXAMPLES</dt>

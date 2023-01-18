@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import NProgress from "nprogress";
 import axios from "axios";
+import { useSetAtom } from "jotai";
+import { dbStatisticObjAtom } from "../atoms/initAtom";
 import Header from "../components/Header";
 import Explore from "../components/Explore";
 import Databases from "../components/Databases";
@@ -31,6 +33,8 @@ const Home = () => {
   const [offsetRoute, setOffsetRoute] = useState(null);
   const [previousSearchTab, setPreviousSearchTab] = useState("EXPLORE");
 
+  const setDbStatisticObj = useSetAtom(dbStatisticObjAtom);
+
   useEffect(() => {
     const fetchApi = async () => {
       const promises = await Promise.all([
@@ -39,10 +43,12 @@ const Home = () => {
         axios.get(
           `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/descriptions`
         ),
+        axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/statistics`),
       ]);
       setDbCatalogue(promises[0].data);
       setDbConfig(promises[1].data);
       setDbDesc(promises[2].data);
+      setDbStatisticObj(promises[3].data);
     };
     fetchApi();
   }, []);
