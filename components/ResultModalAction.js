@@ -183,7 +183,11 @@ const ResultModalAction = (props) => {
 
   const handleClipboardCopy = async (e) => {
     e.preventDefault();
-    const d = await executeQuery(props.route, props.ids, previewMode);
+    const d = await executeQuery({
+      route: props.route,
+      ids: props.ids,
+      report: previewMode,
+    });
 
     const results =
       previewMode !== "target" ? d.results : d.results.map((v) => [v]);
@@ -201,7 +205,11 @@ const ResultModalAction = (props) => {
   };
 
   const handleExportCsvTsv = async (extension) => {
-    const d = await executeQuery(props.route, props.ids, previewMode);
+    const d = await executeQuery({
+      route: props.route,
+      ids: props.ids,
+      report: previewMode,
+    });
 
     const results =
       previewMode !== "target" ? d.results : d.results.map((v) => [v]);

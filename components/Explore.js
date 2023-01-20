@@ -64,7 +64,12 @@ const Explore = (props) => {
 
   const handleIdDownload = async (database, routeIndex) => {
     const r = selectDatabase(database, routeIndex).slice(0, routeIndex + 1);
-    const d = await executeQuery(r, props.ids, "target");
+    const d = await executeQuery({
+      route: r,
+      ids: props.ids,
+      report: "target",
+    });
+
     const prefix = props.dbCatalogue[database.name].prefix.split("/").slice(-1);
 
     exportCsvTsv(
@@ -79,7 +84,13 @@ const Explore = (props) => {
     const heading = r
       .filter((v, i) => i <= routeIndex)
       .map((v) => props.dbCatalogue[v.name]);
-    const d = await executeQuery(r, props.ids, "full", 100);
+    const d = await executeQuery({
+      route: r,
+      ids: props.ids,
+      report: "full",
+      limit: 100,
+    });
+
     const rows = d.results.map((v) => v.slice(0, routeIndex + 1));
 
     setTableData({ heading, rows });
