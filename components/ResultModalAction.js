@@ -181,8 +181,7 @@ const ResultModalAction = (props) => {
     }
   };
 
-  const handleClipboardCopy = async (e) => {
-    e.preventDefault();
+  const handleClipboardCopy = async () => {
     const d = await executeQuery({
       route: props.route,
       ids: props.ids,
@@ -344,9 +343,7 @@ const ResultModalAction = (props) => {
                   </svg>
 
                   {copied ? (
-                    <span>
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copied.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
+                    <span>Copied.</span>
                   ) : (
                     <span>Copy to clipboard</span>
                   )}
@@ -365,13 +362,7 @@ const ResultModalAction = (props) => {
                       fill="#fff"
                     />
                   </svg>
-                  {urlCopied ? (
-                    <span>
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copied.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                  ) : (
-                    <span>Copy API URL</span>
-                  )}
+                  {urlCopied ? <span>Copied.</span> : <span>Copy API URL</span>}
                 </button>
               </div>
               {props.lastTargetCount === "10000+" && (
