@@ -17,6 +17,23 @@ import {
   mergePathStyle,
 } from "../lib/util";
 import { topExamples } from "../lib/examples";
+import useSWR from "swr";
+
+const configFetcher = async () => {
+  const res = await Promise.all([
+    axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/dataset`),
+    axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/relation`),
+    axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/descriptions`),
+    axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/statistics`),
+  ]);
+
+  return {
+    dbCatalogue: res[0].data,
+    dbConfig: res[1].data,
+    dbDesc: res[2].data,
+    dbStatistics: res[3].data,
+  };
+};
 
 const Home = () => {
   const [ids, setIds] = useState([]);
@@ -27,31 +44,25 @@ const Home = () => {
   const [isUseKeepRoute, setIsUseKeepRoute] = useState(false);
   const [candidatePaths, setCandidatePaths] = useState([]);
   const [idTexts, setIdTexts] = useState("");
-  const [dbCatalogue, setDbCatalogue] = useState([]);
-  const [dbConfig, setDbConfig] = useState([]);
-  const [dbDesc, setDbDesc] = useState([]);
   const [offsetRoute, setOffsetRoute] = useState(null);
   const [previousSearchTab, setPreviousSearchTab] = useState("EXPLORE");
 
   const setDbStatisticObj = useSetAtom(dbStatisticObjAtom);
 
-  useEffect(() => {
-    const fetchApi = async () => {
-      const promises = await Promise.all([
-        axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/dataset`),
-        axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/relation`),
-        axios.get(
-          `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/descriptions`
-        ),
-        axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/statistics`),
-      ]);
-      setDbCatalogue(promises[0].data);
-      setDbConfig(promises[1].data);
-      setDbDesc(promises[2].data);
-      setDbStatisticObj(promises[3].data);
-    };
-    fetchApi();
-  }, []);
+  const {
+    data: { dbCatalogue, dbConfig, dbDesc, dbStatistic },
+  } = useSWR("config", configFetcher, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    fallbackData: {
+      dbCatalogue: {},
+      dbConfig: {},
+      dbDesc: {},
+      dbStatistic: {},
+    },
+  });
+
+  setDbStatisticObj(dbStatistic);
 
   useEffect(() => {
     if (route.length > 0) {
