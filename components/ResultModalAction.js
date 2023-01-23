@@ -171,20 +171,28 @@ const ResultModalAction = (props) => {
 
   const joinPrefix = (id, mode, prefix) => {
     // nullチェックが必要な場合は関数に渡す前にチェックすること
+    // reducedの際の処理を共通化させるためにsplitする
     if (mode === "id") {
       return id;
     } else if (mode === "url") {
-      return prefix + id;
+      return id
+        .split(" ")
+        .map((v) => prefix + v)
+        .join(" ");
     } else {
-      return printf(mode, id);
+      return id
+        .split(" ")
+        .map((v) => printf(mode, v))
+        .join(" ");
     }
   };
 
-  const copyClipboard = async () => {
+  const copyClipboard = async (isReduced) => {
     const d = await executeQuery({
       route: props.route,
       ids: props.ids,
       report: previewMode,
+      reduced: isReduced,
     });
 
     const results =
@@ -198,11 +206,12 @@ const ResultModalAction = (props) => {
     });
   };
 
-  const handleExportCsvTsv = async (extension) => {
+  const handleExportCsvTsv = async (extension, isReduced) => {
     const d = await executeQuery({
       route: props.route,
       ids: props.ids,
       report: previewMode,
+      reduced: isReduced,
     });
 
     const results =
@@ -215,9 +224,13 @@ const ResultModalAction = (props) => {
     exportCsvTsv([h, ...rows], extension, `result.${extension}`);
   };
 
-  const copyClipboardURL = () => {
+  const copyClipboardURL = (isReduced) => {
     const routeName = props.route.map((v) => v.name).join();
-    const text = `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert?ids=${props.ids}&route=${routeName}&report=${previewMode}&format=csv`;
+    const text = `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert?ids=${
+      props.ids
+    }&route=${routeName}&report=${previewMode}${
+      isReduced ? "&reduced=1" : ""
+    }&format=csv`;
     copy(text, {
       format: "text/plain",
     });
@@ -323,6 +336,60 @@ const ResultModalAction = (props) => {
                 </ResultModalClipboardButton>
                 <ResultModalClipboardButton copyFunction={copyClipboardURL}>
                   Copy API URL
+                </ResultModalClipboardButton>
+              </div>
+              <div className="action__inner">
+                <button
+                  onClick={() => handleExportCsvTsv("csv", true)}
+                  className="button_icon"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="11.497"
+                    height="13.961"
+                    viewBox="0 0 11.497 13.961"
+                    className="button_icon__icon"
+                  >
+                    <path
+                      id="download"
+                      d="M5,16.961H16.5V15.319H5M16.5,7.927H13.212V3H8.285V7.927H5l5.749,5.749Z"
+                      transform="translate(-5 -3)"
+                      fill="#fff"
+                    />
+                  </svg>
+                  Download as reduced CSV
+                </button>
+                <button
+                  onClick={() => handleExportCsvTsv("tsv", true)}
+                  className="button_icon"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="11.497"
+                    height="13.961"
+                    viewBox="0 0 11.497 13.961"
+                    className="button_icon__icon"
+                  >
+                    <path
+                      id="download"
+                      d="M5,16.961H16.5V15.319H5M16.5,7.927H13.212V3H8.285V7.927H5l5.749,5.749Z"
+                      transform="translate(-5 -3)"
+                      fill="#fff"
+                    />
+                  </svg>
+                  Download as reduced TSV
+                </button>
+                <ResultModalClipboardButton
+                  copyFunction={copyClipboard}
+                  isReduced={true}
+                >
+                  Copy reduced to clipboard
+                </ResultModalClipboardButton>
+                <ResultModalClipboardButton
+                  copyFunction={copyClipboardURL}
+                  isReduced={true}
+                >
+                  Copy reduced API URL
                 </ResultModalClipboardButton>
               </div>
               {props.lastTargetCount === "10000+" && (

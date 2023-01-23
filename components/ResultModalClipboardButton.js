@@ -2,13 +2,13 @@
 import React, { useState } from "react";
 
 /**
- * @param {{children: string, copyFunction: Function}} props
+ * @param {{children: string, copyFunction: Function, isReduced?: boolean}} props
  */
 const ResultModalClipboardButton = (props) => {
   const [isShowCopied, setIsShowCopied] = useState(false);
 
   const handleClipboardButton = async () => {
-    await props.copyFunction();
+    await props.copyFunction(props.isReduced);
 
     setIsShowCopied(true);
     setTimeout(() => {
