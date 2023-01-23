@@ -2,8 +2,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useState, useEffect } from "react";
-import { useAtomValue } from "jotai";
-import { dbStatisticObjAtom } from "../atoms/initAtom";
+import useConfig from "../hooks/useConfig";
 import { categories, colorLegendList } from "../lib/setting";
 
 const Databases = (props) => {
@@ -12,13 +11,18 @@ const Databases = (props) => {
   const [datasetHaveLinkObj, setDatasetHaveLinkObj] = useState({});
   const [datasetFilterObj, setDatasetFilterObj] = useState({});
 
-  const dbStatisticObj = useAtomValue(dbStatisticObjAtom);
+  const {
+    datasetConfig: dbCatalogue,
+    relationConfig: dbConfig,
+    descriptionConfig: dbDesc,
+    statisticConfig,
+  } = useConfig();
 
   useEffect(() => {
-    const fastFilterDataset = Object.entries(props.dbCatalogue).reduce(
+    const fastFilterDataset = Object.entries(dbCatalogue).reduce(
       (prev, [key, value]) => {
         const linkTo = new Set(
-          Object.keys(props.dbConfig).map((k) => {
+          Object.keys(dbConfig).map((k) => {
             const names = k.split("-");
             if (names.indexOf(key) === 0 || names.indexOf(key) === 1) {
               return names.indexOf(key) === 0 ? names[1] : names[0];
@@ -33,7 +37,7 @@ const Databases = (props) => {
 
         let count = "";
         let lastUpdatedAt = "";
-        Object.entries(dbStatisticObj).forEach(([k2, v2]) => {
+        Object.entries(statisticConfig).forEach(([k2, v2]) => {
           if (k2.split("-")[0] === key) {
             count += `${k2} : ${v2.count}, `;
             lastUpdatedAt += `${k2} : ${v2.last_updated_at}, `;
@@ -51,6 +55,7 @@ const Databases = (props) => {
     setDatasetHaveLinkObj(fastFilterDataset);
     createNameIndexList(fastFilterDataset);
     setDatasetFilterObj(fastFilterDataset);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const createNameIndexList = (dataset) => {
@@ -174,42 +179,39 @@ const Databases = (props) => {
                 <article
                   className="database__item"
                   key={key}
-                  id={props.dbCatalogue[key].label.slice(0, 1).toUpperCase()}
+                  id={dbCatalogue[key].label.slice(0, 1).toUpperCase()}
                 >
                   <h3
                     className="title"
-                    id={props.dbCatalogue[key].label.replace(/\s/g, "")}
+                    id={dbCatalogue[key].label.replace(/\s/g, "")}
                   >
                     <span
                       className="title__square"
                       style={{
-                        backgroundColor: categories[
-                          props.dbCatalogue[key].category
-                        ]
-                          ? categories[props.dbCatalogue[key].category].color
+                        backgroundColor: categories[dbCatalogue[key].category]
+                          ? categories[dbCatalogue[key].category].color
                           : null,
                       }}
                     />
                     <span className="title__text">
-                      {props.dbCatalogue[key].label}
+                      {dbCatalogue[key].label}
                     </span>
                   </h3>
-                  {props.dbDesc[key] &&
-                    props.dbDesc[key][`description_${language}`] && (
-                      <div className="description">
-                        <p>{props.dbDesc[key][`description_${language}`]}</p>
-                        <p>
-                          Cited from{" "}
-                          <a
-                            href={`https://integbio.jp/dbcatalog/record/${props.dbCatalogue[key].catalog}`}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            Integbio Database Catalog
-                          </a>
-                        </p>
-                      </div>
-                    )}
+                  {dbDesc[key] && dbDesc[key][`description_${language}`] && (
+                    <div className="description">
+                      <p>{dbDesc[key][`description_${language}`]}</p>
+                      <p>
+                        Cited from{" "}
+                        <a
+                          href={`https://integbio.jp/dbcatalog/record/${dbCatalogue[key].catalog}`}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          Integbio Database Catalog
+                        </a>
+                      </p>
+                    </div>
+                  )}
                   <div className="path">
                     <div className="path_label small white">LINK TO</div>
                     <svg className="icon" viewBox="0 0 24 24">
@@ -220,11 +222,10 @@ const Databases = (props) => {
                     </svg>
                     <div className="path__children">
                       {datasetFilterObj[key].linkTo.map((l, i) =>
-                        props.dbCatalogue[l] ? (
+                        dbCatalogue[l] ? (
                           <a
                             href={
-                              "/#" +
-                              props.dbCatalogue[l].label.replace(/\s/g, "")
+                              "/#" + dbCatalogue[l].label.replace(/\s/g, "")
                             }
                             key={i}
                           >
@@ -232,15 +233,14 @@ const Databases = (props) => {
                               className="path_label small green"
                               style={{
                                 backgroundColor: categories[
-                                  props.dbCatalogue[l].category
+                                  dbCatalogue[l].category
                                 ]
-                                  ? categories[props.dbCatalogue[l].category]
-                                      .color
+                                  ? categories[dbCatalogue[l].category].color
                                   : null,
                               }}
                               key={i}
                             >
-                              {props.dbCatalogue[l].label}
+                              {dbCatalogue[l].label}
                             </div>
                           </a>
                         ) : null
@@ -250,21 +250,18 @@ const Databases = (props) => {
                   <dl className="data">
                     <div className="data__wrapper">
                       <dt>PREFIX</dt>
-                      <dd>{props.dbCatalogue[key].prefix}</dd>
+                      <dd>{dbCatalogue[key].prefix}</dd>
                     </div>
                     <div className="data__wrapper">
                       <dt>CATEGORY</dt>
-                      <dd>{props.dbCatalogue[key].category}</dd>
+                      <dd>{dbCatalogue[key].category}</dd>
                     </div>
-                    {props.dbDesc[key] &&
-                      props.dbDesc[key][`organization_${language}`] && (
-                        <div className="data__wrapper">
-                          <dt>ORGANIZATION</dt>
-                          <dd>
-                            {props.dbDesc[key][`organization_${language}`]}
-                          </dd>
-                        </div>
-                      )}
+                    {dbDesc[key] && dbDesc[key][`organization_${language}`] && (
+                      <div className="data__wrapper">
+                        <dt>ORGANIZATION</dt>
+                        <dd>{dbDesc[key][`organization_${language}`]}</dd>
+                      </div>
+                    )}
                     {datasetFilterObj[key].count && (
                       <div className="data__wrapper">
                         <dt>COUNT</dt>
@@ -277,11 +274,11 @@ const Databases = (props) => {
                         <dd>{datasetFilterObj[key].lastUpdatedAt}</dd>
                       </div>
                     )}
-                    {props.dbCatalogue[key].examples && (
+                    {dbCatalogue[key].examples && (
                       <div className="data__wrapper">
                         <dt>EXAMPLES</dt>
                         <dd>
-                          {props.dbCatalogue[key].examples.map((example, i) => (
+                          {dbCatalogue[key].examples.map((example, i) => (
                             <li key={i}>
                               <a
                                 href="#"

@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import NProgress from "nprogress";
-import axios from "axios";
-import { useSetAtom } from "jotai";
-import { dbStatisticObjAtom } from "../atoms/initAtom";
+import useConfig from "../hooks/useConfig";
 import Header from "../components/Header";
 import Explore from "../components/Explore";
 import Databases from "../components/Databases";
@@ -17,23 +15,6 @@ import {
   mergePathStyle,
 } from "../lib/util";
 import { topExamples } from "../lib/examples";
-import useSWR from "swr";
-
-const configFetcher = async () => {
-  const res = await Promise.all([
-    axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/dataset`),
-    axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/relation`),
-    axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/descriptions`),
-    axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/statistics`),
-  ]);
-
-  return {
-    dbCatalogue: res[0].data,
-    dbConfig: res[1].data,
-    dbDesc: res[2].data,
-    dbStatistics: res[3].data,
-  };
-};
 
 const Home = () => {
   const [ids, setIds] = useState([]);
@@ -47,22 +28,11 @@ const Home = () => {
   const [offsetRoute, setOffsetRoute] = useState(null);
   const [previousSearchTab, setPreviousSearchTab] = useState("EXPLORE");
 
-  const setDbStatisticObj = useSetAtom(dbStatisticObjAtom);
-
   const {
-    data: { dbCatalogue, dbConfig, dbDesc, dbStatistic },
-  } = useSWR("config", configFetcher, {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-    fallbackData: {
-      dbCatalogue: {},
-      dbConfig: {},
-      dbDesc: {},
-      dbStatistic: {},
-    },
-  });
-
-  setDbStatisticObj(dbStatistic);
+    datasetConfig: dbCatalogue,
+    relationConfig: dbConfig,
+    descriptionConfig: dbDesc,
+  } = useConfig(true);
 
   useEffect(() => {
     if (route.length > 0) {
@@ -737,12 +707,7 @@ const Home = () => {
             />
           )}
           {activeTab === "DATABASE" && (
-            <Databases
-              executeExamples={executeExamples}
-              dbCatalogue={dbCatalogue}
-              dbConfig={dbConfig}
-              dbDesc={dbDesc}
-            />
+            <Databases executeExamples={executeExamples} />
           )}
           {activeTab === "DOCUMENTS" && <Documents />}
         </div>
