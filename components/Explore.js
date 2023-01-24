@@ -224,7 +224,7 @@ const Explore = (props) => {
                           className={
                             i === 0 ? "result_list first" : "result_list"
                           }
-                          key={1}
+                          key={2}
                         >
                           {nodes.map((v, j) => {
                             const isActionButtonVisible =
