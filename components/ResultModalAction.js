@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import copy from "copy-to-clipboard";
 import { executeQuery, exportCsvTsv, invokeUnparse } from "../lib/util";
 import { printf } from "fast-printf";
+import ResultModalClipboardButton from "./ResultModalClipboardButton";
 
 // 定数
 const previewModeList = new Map([
@@ -12,8 +13,6 @@ const previewModeList = new Map([
 ]);
 
 const ResultModalAction = (props) => {
-  const [copied, setCopied] = useState(false);
-  const [urlCopied, setUrlCopied] = useState(false);
   const [previewMode, setPreviewMode] = useState("all");
   const [lineMode, setLineMode] = useState(
     Array(props.tableData.heading.length).fill("id")
@@ -172,18 +171,29 @@ const ResultModalAction = (props) => {
 
   const joinPrefix = (id, mode, prefix) => {
     // nullチェックが必要な場合は関数に渡す前にチェックすること
+    // reducedの際の処理を共通化させるためにsplitする
     if (mode === "id") {
       return id;
     } else if (mode === "url") {
-      return prefix + id;
+      return id
+        .split(" ")
+        .map((v) => prefix + v)
+        .join(" ");
     } else {
-      return printf(mode, id);
+      return id
+        .split(" ")
+        .map((v) => printf(mode, v))
+        .join(" ");
     }
   };
 
-  const handleClipboardCopy = async (e) => {
-    e.preventDefault();
-    const d = await executeQuery(props.route, props.ids, previewMode);
+  const copyClipboard = async (isReduced) => {
+    const d = await executeQuery({
+      route: props.route,
+      ids: props.ids,
+      report: previewMode,
+      reduced: isReduced,
+    });
 
     const results =
       previewMode !== "target" ? d.results : d.results.map((v) => [v]);
@@ -194,14 +204,15 @@ const ResultModalAction = (props) => {
     copy(text, {
       format: "text/plain",
     });
-    setCopied(true);
-    setTimeout(() => {
-      setCopied(false);
-    }, 1000);
   };
 
-  const handleExportCsvTsv = async (extension) => {
-    const d = await executeQuery(props.route, props.ids, previewMode);
+  const handleExportCsvTsv = async (extension, isReduced) => {
+    const d = await executeQuery({
+      route: props.route,
+      ids: props.ids,
+      report: previewMode,
+      reduced: isReduced,
+    });
 
     const results =
       previewMode !== "target" ? d.results : d.results.map((v) => [v]);
@@ -213,16 +224,16 @@ const ResultModalAction = (props) => {
     exportCsvTsv([h, ...rows], extension, `result.${extension}`);
   };
 
-  const handleClipboardURL = () => {
+  const copyClipboardURL = (isReduced) => {
     const routeName = props.route.map((v) => v.name).join();
-    const text = `https://api.togoid.dbcls.jp/convert?ids=${props.ids}&route=${routeName}&report=${previewMode}&format=csv`;
+    const text = `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert?ids=${
+      props.ids
+    }&route=${routeName}&report=${previewMode}${
+      isReduced ? "&reduced=1" : ""
+    }&format=csv`;
     copy(text, {
       format: "text/plain",
     });
-    setUrlCopied(true);
-    setTimeout(() => {
-      setUrlCopied(false);
-    }, 1000);
   };
 
   return (
@@ -320,51 +331,66 @@ const ResultModalAction = (props) => {
                   </svg>
                   Download as TSV
                 </button>
-                <button onClick={handleClipboardCopy} className="button_icon">
+                <ResultModalClipboardButton copyFunction={copyClipboard}>
+                  Copy to clipboard
+                </ResultModalClipboardButton>
+                <ResultModalClipboardButton copyFunction={copyClipboardURL}>
+                  Copy API URL
+                </ResultModalClipboardButton>
+              </div>
+              <div className="action__inner">
+                <button
+                  onClick={() => handleExportCsvTsv("csv", true)}
+                  className="button_icon"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="12"
-                    height="13.895"
-                    viewBox="0 0 12 13.895"
+                    width="11.497"
+                    height="13.961"
+                    viewBox="0 0 11.497 13.961"
                     className="button_icon__icon"
                   >
                     <path
-                      d="M12.737,13.632H5.789V4.789h6.947m0-1.263H5.789A1.263,1.263,0,0,0,4.526,4.789v8.842a1.263,1.263,0,0,0,1.263,1.263h6.947A1.263,1.263,0,0,0,14,13.632V4.789a1.263,1.263,0,0,0-1.263-1.263M10.842,1H3.263A1.263,1.263,0,0,0,2,2.263v8.842H3.263V2.263h7.579Z"
-                      transform="translate(-2 -1)"
+                      id="download"
+                      d="M5,16.961H16.5V15.319H5M16.5,7.927H13.212V3H8.285V7.927H5l5.749,5.749Z"
+                      transform="translate(-5 -3)"
                       fill="#fff"
                     />
                   </svg>
-
-                  {copied ? (
-                    <span>
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copied.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                  ) : (
-                    <span>Copy to clipboard</span>
-                  )}
+                  Download as reduced CSV
                 </button>
-                <button onClick={handleClipboardURL} className="button_icon">
+                <button
+                  onClick={() => handleExportCsvTsv("tsv", true)}
+                  className="button_icon"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="12"
-                    height="13.895"
-                    viewBox="0 0 12 13.895"
+                    width="11.497"
+                    height="13.961"
+                    viewBox="0 0 11.497 13.961"
                     className="button_icon__icon"
                   >
                     <path
-                      d="M12.737,13.632H5.789V4.789h6.947m0-1.263H5.789A1.263,1.263,0,0,0,4.526,4.789v8.842a1.263,1.263,0,0,0,1.263,1.263h6.947A1.263,1.263,0,0,0,14,13.632V4.789a1.263,1.263,0,0,0-1.263-1.263M10.842,1H3.263A1.263,1.263,0,0,0,2,2.263v8.842H3.263V2.263h7.579Z"
-                      transform="translate(-2 -1)"
+                      id="download"
+                      d="M5,16.961H16.5V15.319H5M16.5,7.927H13.212V3H8.285V7.927H5l5.749,5.749Z"
+                      transform="translate(-5 -3)"
                       fill="#fff"
                     />
                   </svg>
-                  {urlCopied ? (
-                    <span>
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copied.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                  ) : (
-                    <span>Copy API URL</span>
-                  )}
+                  Download as reduced TSV
                 </button>
+                <ResultModalClipboardButton
+                  copyFunction={copyClipboard}
+                  isReduced={true}
+                >
+                  Copy reduced to clipboard
+                </ResultModalClipboardButton>
+                <ResultModalClipboardButton
+                  copyFunction={copyClipboardURL}
+                  isReduced={true}
+                >
+                  Copy reduced API URL
+                </ResultModalClipboardButton>
               </div>
               {props.lastTargetCount === "10000+" && (
                 <div>
