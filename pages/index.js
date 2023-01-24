@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import NProgress from "nprogress";
-import axios from "axios";
+import useConfig from "../hooks/useConfig";
 import Header from "../components/Header";
 import Explore from "../components/Explore";
 import Databases from "../components/Databases";
@@ -25,27 +25,14 @@ const Home = () => {
   const [isUseKeepRoute, setIsUseKeepRoute] = useState(false);
   const [candidatePaths, setCandidatePaths] = useState([]);
   const [idTexts, setIdTexts] = useState("");
-  const [dbCatalogue, setDbCatalogue] = useState([]);
-  const [dbConfig, setDbConfig] = useState([]);
-  const [dbDesc, setDbDesc] = useState([]);
   const [offsetRoute, setOffsetRoute] = useState(null);
   const [previousSearchTab, setPreviousSearchTab] = useState("EXPLORE");
 
-  useEffect(() => {
-    const fetchApi = async () => {
-      const promises = await Promise.all([
-        axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/dataset`),
-        axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/relation`),
-        axios.get(
-          `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/descriptions`
-        ),
-      ]);
-      setDbCatalogue(promises[0].data);
-      setDbConfig(promises[1].data);
-      setDbDesc(promises[2].data);
-    };
-    fetchApi();
-  }, []);
+  const {
+    datasetConfig: dbCatalogue,
+    relationConfig: dbConfig,
+    descriptionConfig: dbDesc,
+  } = useConfig(true);
 
   useEffect(() => {
     if (route.length > 0) {
@@ -720,12 +707,7 @@ const Home = () => {
             />
           )}
           {activeTab === "DATABASE" && (
-            <Databases
-              executeExamples={executeExamples}
-              dbCatalogue={dbCatalogue}
-              dbConfig={dbConfig}
-              dbDesc={dbDesc}
-            />
+            <Databases executeExamples={executeExamples} />
           )}
           {activeTab === "DOCUMENTS" && <Documents />}
         </div>
