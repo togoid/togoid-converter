@@ -423,9 +423,6 @@ const Navigate = (props) => {
                     <InformationModal
                       setInformationModal={setInformationModal}
                       database={database}
-                      dbCatalogue={props.dbCatalogue}
-                      dbConfig={props.dbConfig}
-                      dbDesc={props.dbDesc}
                     />
                   )}
 
