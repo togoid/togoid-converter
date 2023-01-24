@@ -6,19 +6,15 @@ import useConfig from "../hooks/useConfig";
 import { categories, colorLegendList } from "../lib/setting";
 
 const Databases = (props) => {
+  const { datasetConfig, descriptionConfig } = useConfig();
+
   const [language, setLanguage] = useState("en");
   const [nameIndex, setNameIndex] = useState([]);
-  const [datasetHaveLinkObj, setDatasetHaveLinkObj] = useState({});
-  const [datasetFilterObj, setDatasetFilterObj] = useState({});
-
-  const { datasetConfig: dbCatalogue, descriptionConfig: dbDesc } = useConfig();
+  const [datasetFilterObj, setDatasetFilterObj] = useState(datasetConfig);
 
   useEffect(() => {
-    setDatasetHaveLinkObj(dbCatalogue);
-    createNameIndexList(dbCatalogue);
-    setDatasetFilterObj(dbCatalogue);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    createNameIndexList(datasetFilterObj);
+  }, [datasetFilterObj]);
 
   const createNameIndexList = (dataset) => {
     // Dataset Name Index のリストを作成
@@ -28,20 +24,18 @@ const Databases = (props) => {
   };
 
   const handleCategoryFilter = (input) => {
-    const filterDataset = Object.entries(datasetHaveLinkObj).reduce(
+    const filterDataset = Object.entries(datasetConfig).reduce(
       (prev, [key, value]) => {
         return value.category === input ? { ...prev, [key]: value } : prev;
       },
       {}
     );
 
-    createNameIndexList(filterDataset);
     setDatasetFilterObj(filterDataset);
   };
 
   const handleResetfilter = () => {
-    createNameIndexList(datasetHaveLinkObj);
-    setDatasetFilterObj(datasetHaveLinkObj);
+    setDatasetFilterObj(datasetConfig);
   };
 
   const clickExamples = (examples, key) => {
@@ -141,39 +135,42 @@ const Databases = (props) => {
                 <article
                   className="database__item"
                   key={key}
-                  id={dbCatalogue[key].label.slice(0, 1).toUpperCase()}
+                  id={datasetConfig[key].label.slice(0, 1).toUpperCase()}
                 >
                   <h3
                     className="title"
-                    id={dbCatalogue[key].label.replace(/\s/g, "")}
+                    id={datasetConfig[key].label.replace(/\s/g, "")}
                   >
                     <span
                       className="title__square"
                       style={{
-                        backgroundColor: categories[dbCatalogue[key].category]
-                          ? categories[dbCatalogue[key].category].color
+                        backgroundColor: categories[datasetConfig[key].category]
+                          ? categories[datasetConfig[key].category].color
                           : null,
                       }}
                     />
                     <span className="title__text">
-                      {dbCatalogue[key].label}
+                      {datasetConfig[key].label}
                     </span>
                   </h3>
-                  {dbDesc[key] && dbDesc[key][`description_${language}`] && (
-                    <div className="description">
-                      <p>{dbDesc[key][`description_${language}`]}</p>
-                      <p>
-                        Cited from{" "}
-                        <a
-                          href={`https://integbio.jp/dbcatalog/record/${dbCatalogue[key].catalog}`}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          Integbio Database Catalog
-                        </a>
-                      </p>
-                    </div>
-                  )}
+                  {descriptionConfig[key] &&
+                    descriptionConfig[key][`description_${language}`] && (
+                      <div className="description">
+                        <p>
+                          {descriptionConfig[key][`description_${language}`]}
+                        </p>
+                        <p>
+                          Cited from{" "}
+                          <a
+                            href={`https://integbio.jp/dbcatalog/record/${datasetConfig[key].catalog}`}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            Integbio Database Catalog
+                          </a>
+                        </p>
+                      </div>
+                    )}
                   <div className="path">
                     <div className="path_label small white">LINK TO</div>
                     <svg className="icon" viewBox="0 0 24 24">
@@ -184,10 +181,10 @@ const Databases = (props) => {
                     </svg>
                     <div className="path__children">
                       {[...datasetFilterObj[key].linkTo].map(([l, count], i) =>
-                        dbCatalogue[l] ? (
+                        datasetConfig[l] ? (
                           <a
                             href={
-                              "/#" + dbCatalogue[l].label.replace(/\s/g, "")
+                              "/#" + datasetConfig[l].label.replace(/\s/g, "")
                             }
                             key={i}
                           >
@@ -195,14 +192,14 @@ const Databases = (props) => {
                               className="path_label small green"
                               style={{
                                 backgroundColor: categories[
-                                  dbCatalogue[l].category
+                                  datasetConfig[l].category
                                 ]
-                                  ? categories[dbCatalogue[l].category].color
+                                  ? categories[datasetConfig[l].category].color
                                   : null,
                               }}
                               key={i}
                             >
-                              {dbCatalogue[l].label}
+                              {datasetConfig[l].label}
                               <span>{count}</span>
                             </div>
                           </a>
@@ -213,18 +210,21 @@ const Databases = (props) => {
                   <dl className="data">
                     <div className="data__wrapper">
                       <dt>PREFIX</dt>
-                      <dd>{dbCatalogue[key].prefix}</dd>
+                      <dd>{datasetConfig[key].prefix}</dd>
                     </div>
                     <div className="data__wrapper">
                       <dt>CATEGORY</dt>
-                      <dd>{dbCatalogue[key].category}</dd>
+                      <dd>{datasetConfig[key].category}</dd>
                     </div>
-                    {dbDesc[key] && dbDesc[key][`organization_${language}`] && (
-                      <div className="data__wrapper">
-                        <dt>ORGANIZATION</dt>
-                        <dd>{dbDesc[key][`organization_${language}`]}</dd>
-                      </div>
-                    )}
+                    {descriptionConfig[key] &&
+                      descriptionConfig[key][`organization_${language}`] && (
+                        <div className="data__wrapper">
+                          <dt>ORGANIZATION</dt>
+                          <dd>
+                            {descriptionConfig[key][`organization_${language}`]}
+                          </dd>
+                        </div>
+                      )}
                     {datasetFilterObj[key].count && (
                       <div className="data__wrapper">
                         <dt>COUNT</dt>
@@ -237,11 +237,11 @@ const Databases = (props) => {
                         <dd>{datasetFilterObj[key].lastUpdatedAt}</dd>
                       </div>
                     )}
-                    {dbCatalogue[key].examples && (
+                    {datasetConfig[key].examples && (
                       <div className="data__wrapper">
                         <dt>EXAMPLES</dt>
                         <dd>
-                          {dbCatalogue[key].examples.map((example, i) => (
+                          {datasetConfig[key].examples.map((example, i) => (
                             <li key={i}>
                               <a
                                 href="#"
