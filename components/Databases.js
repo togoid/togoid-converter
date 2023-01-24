@@ -11,50 +11,12 @@ const Databases = (props) => {
   const [datasetHaveLinkObj, setDatasetHaveLinkObj] = useState({});
   const [datasetFilterObj, setDatasetFilterObj] = useState({});
 
-  const {
-    datasetConfig: dbCatalogue,
-    relationConfig: dbConfig,
-    descriptionConfig: dbDesc,
-    statisticConfig,
-  } = useConfig();
+  const { datasetConfig: dbCatalogue, descriptionConfig: dbDesc } = useConfig();
 
   useEffect(() => {
-    const fastFilterDataset = Object.entries(dbCatalogue).reduce(
-      (prev, [key, value]) => {
-        const linkTo = new Set(
-          Object.keys(dbConfig).map((k) => {
-            const names = k.split("-");
-            if (names.indexOf(key) === 0 || names.indexOf(key) === 1) {
-              return names.indexOf(key) === 0 ? names[1] : names[0];
-            }
-          })
-        );
-        linkTo.delete(undefined);
-
-        if (!linkTo.size) {
-          return prev;
-        }
-
-        let count = "";
-        let lastUpdatedAt = "";
-        Object.entries(statisticConfig).forEach(([k2, v2]) => {
-          if (k2.split("-")[0] === key) {
-            count += `${k2} : ${v2.count}, `;
-            lastUpdatedAt += `${k2} : ${v2.last_updated_at}, `;
-          }
-        });
-
-        return {
-          ...prev,
-          [key]: { ...value, linkTo: [...linkTo], count, lastUpdatedAt },
-        }; // linkToはSetからArrayに変換しておく
-      },
-      {}
-    );
-
-    setDatasetHaveLinkObj(fastFilterDataset);
-    createNameIndexList(fastFilterDataset);
-    setDatasetFilterObj(fastFilterDataset);
+    setDatasetHaveLinkObj(dbCatalogue);
+    createNameIndexList(dbCatalogue);
+    setDatasetFilterObj(dbCatalogue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -221,7 +183,7 @@ const Databases = (props) => {
                       />
                     </svg>
                     <div className="path__children">
-                      {datasetFilterObj[key].linkTo.map((l, i) =>
+                      {[...datasetFilterObj[key].linkTo].map(([l, count], i) =>
                         dbCatalogue[l] ? (
                           <a
                             href={
@@ -241,6 +203,7 @@ const Databases = (props) => {
                               key={i}
                             >
                               {dbCatalogue[l].label}
+                              <span>{count}</span>
                             </div>
                           </a>
                         ) : null
