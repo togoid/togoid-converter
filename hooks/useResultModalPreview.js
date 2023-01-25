@@ -32,19 +32,19 @@ const createCompactBaseTable = (tableHeading, tableRows, prefixList) => {
     return v.map((w, i) => {
       const formatIdObj = {};
 
-      const idSplitList = w ? w.split(" ") : null;
+      const idSplitList = w ? w.split(" ") : [];
       // prefixがある場合
       prefixList[i].forEach((x) => {
         formatIdObj[x.value] = w
-          ? idSplitList.map((y) => printf(x.value, y)).join(" ")
-          : null;
+          ? idSplitList.map((y) => printf(x.value, y))
+          : [];
       });
 
       // idとurlは必ず作成する
-      formatIdObj["id"] = w ?? null;
+      formatIdObj["id"] = idSplitList;
       formatIdObj["url"] = w
-        ? idSplitList.map((x) => tableHeading[i].prefix + x).join(" ")
-        : null;
+        ? idSplitList.map((x) => tableHeading[i].prefix + x)
+        : [];
 
       return formatIdObj;
     });

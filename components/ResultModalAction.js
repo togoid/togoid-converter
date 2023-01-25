@@ -358,16 +358,13 @@ const ResultModalAction = (props) => {
               <tr key={i}>
                 {data.map((d, j) => (
                   <td key={j}>
-                    {isCompact ? (
+                    {isCompact && previewMode !== "target" ? (
                       d.url &&
-                      d.url.split(" ").map((f, k) => (
+                      Array.isArray(d.url) &&
+                      d.url.map((f, k) => (
                         <React.Fragment key={k}>
                           <a href={f} target="_blank" rel="noreferrer">
-                            {
-                              d[lineMode[filterTable.heading[j].index]].split(
-                                " "
-                              )[k]
-                            }
+                            {d[lineMode[filterTable.heading[j].index]][k]}
                           </a>
                           <br />
                         </React.Fragment>
