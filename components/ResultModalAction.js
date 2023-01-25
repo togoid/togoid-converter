@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState } from "react";
 import copy from "copy-to-clipboard";
 import { executeQuery, exportCsvTsv, invokeUnparse } from "../lib/util";
 import { printf } from "fast-printf";
+import useResultModalPreview from "../hooks/useResultModalPreview";
 import ResultModalClipboardButton from "./ResultModalClipboardButton";
 
 // 定数
@@ -12,209 +13,26 @@ const previewModeList = new Map([
   ["full", "All including unconverted IDs"],
 ]);
 
-const createBaseTable = (tableHeading, tableRows) => {
-  const baseTable = { heading: [], rows: [] };
-
-  const prefixList = tableHeading.map((v, i) => {
-    v["index"] = i;
-    // formatがあれば使う なければ空配列で返す
-    return v.format
-      ? v.format.map((v) => {
-          return { label: v.replace("%s", ""), value: v };
-        })
-      : [];
-  });
-
-  baseTable.rows = tableRows.map((v) => {
-    return v.map((w, i) => {
-      const formatIdObj = {};
-
-      // prefixがある場合
-      prefixList[i].forEach((x) => {
-        formatIdObj[x.value] = w ? printf(x.value, w) : null;
-      });
-
-      // idとurlは必ず作成する
-      formatIdObj["id"] = w ?? null;
-      formatIdObj["url"] = w ? tableHeading[i].prefix + w : null;
-
-      return formatIdObj;
-    });
-  });
-
-  baseTable.heading = tableHeading;
-
-  return [baseTable, prefixList];
-};
-
 const ResultModalAction = (props) => {
-  const [baseTable, prefixList] = useMemo(
-    () => createBaseTable(props.tableData.heading, props.tableData.rows),
-    [props.tableData]
-  );
-
   const [previewMode, setPreviewMode] = useState("all");
   const [isCompact, setIsCompact] = useState(false);
   const [lineMode, setLineMode] = useState(
     Array(props.tableData.heading.length).fill("id")
   );
-  const [filterTable, setFilterTable] = useState(baseTable);
-  const [compactBaseTable, setCompactBaseTable] = useState();
-
-  useEffect(() => {
-    if (isCompact && !compactBaseTable) {
-      (async () => {
-        const d = await executeQuery({
-          route: props.route,
-          ids: props.ids,
-          report: "full",
-          limit: 100,
-          compact: true,
-        });
-        const table = createCompactBaseTable(
-          props.tableData.heading,
-          d.results
-        );
-        setCompactBaseTable(table);
-      })();
-    } else if (isCompact) {
-      if (compactBaseTable?.rows) {
-        setFilterTable(editCompactTable(compactBaseTable));
-      }
-    } else {
-      if (baseTable?.rows) {
-        setFilterTable(editTable(baseTable));
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isCompact]);
-
-  const createCompactBaseTable = (tableHeading, tableRows) => {
-    const baseTable = { heading: [], rows: [] };
-    baseTable.rows = tableRows.map((v) => {
-      return v.map((w, i) => {
-        const formatIdObj = {};
-
-        const idSplitList = w ? w.split(" ") : null;
-        // prefixがある場合
-        prefixList[i].forEach((x) => {
-          formatIdObj[x.value] = w
-            ? idSplitList.map((y) => printf(x.value, y)).join(" ")
-            : null;
-        });
-
-        // idとurlは必ず作成する
-        formatIdObj["id"] = w ?? null;
-        formatIdObj["url"] = w
-          ? idSplitList.map((x) => tableHeading[i].prefix + x).join(" ")
-          : null;
-
-        return formatIdObj;
-      });
-    });
-    baseTable.heading = tableHeading;
-
-    return baseTable;
-  };
-
-  useEffect(() => {
-    if (compactBaseTable?.rows) {
-      setFilterTable(editCompactTable(compactBaseTable));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [compactBaseTable]);
-
-  useEffect(() => {
-    if (isCompact) {
-      if (compactBaseTable?.rows) {
-        setFilterTable(editCompactTable(compactBaseTable));
-      }
-    } else {
-      if (baseTable?.rows) {
-        setFilterTable(editTable(baseTable));
-      }
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [previewMode]);
+  const { filterTable, prefixList } = useResultModalPreview(
+    props.tableData,
+    previewMode,
+    isCompact,
+    props.route,
+    props.ids
+  );
+  console.log("re");
 
   const handleSelectPrefix = (e) => {
     const newLineMode = lineMode.slice();
     newLineMode[e.target.id] = e.target.value;
 
     setLineMode(newLineMode);
-  };
-
-  const editTable = (table) => {
-    if (previewMode === "all") {
-      // all
-      const rows = table.rows.filter((v) => v[v.length - 1].url);
-      return { heading: table.heading, rows };
-    } else if (previewMode === "pair") {
-      // origin and targets
-      // 重複は消す
-      return {
-        heading: [table.heading[0], table.heading[table.heading.length - 1]],
-        rows: table.rows
-          .filter((v) => v[v.length - 1].url)
-          .map((v) => [v[0], v[v.length - 1]])
-          .filter(
-            (v, i, self) =>
-              self.findIndex(
-                (w) =>
-                  w[0].url === v[0].url &&
-                  w[w.length - 1].url === v[v.length - 1].url
-              ) === i
-          ),
-      };
-    } else if (previewMode === "target") {
-      // target
-      // 重複は消す
-      return {
-        heading: [table.heading[table.heading.length - 1]],
-        rows: table.rows
-          .filter((v) => v[v.length - 1].url)
-          .map((v) => [v[v.length - 1]])
-          .filter(
-            (v, i, self) => self.findIndex((w) => w[0].url === v[0].url) === i
-          ),
-      };
-    } else if (previewMode === "full") {
-      // full
-      return table;
-    }
-  };
-
-  const editCompactTable = (table) => {
-    if (previewMode === "all") {
-      // all
-      const rows = table.rows.filter((v) => v[v.length - 1].url);
-      return { heading: table.heading, rows };
-    } else if (previewMode === "pair") {
-      // origin and targets
-      // 重複は消す
-      return {
-        heading: [table.heading[0], table.heading[table.heading.length - 1]],
-        rows: table.rows
-          .filter((v) => v[v.length - 1].url)
-          .map((v) => [v[0], v[v.length - 1]]),
-      };
-    } else if (previewMode === "target") {
-      // target
-      // 重複は消す
-      return {
-        heading: [baseTable.heading[baseTable.heading.length - 1]],
-        rows: baseTable.rows
-          .filter((v) => v[v.length - 1].url)
-          .map((v) => [v[v.length - 1]])
-          .filter(
-            (v, i, self) => self.findIndex((w) => w[0].url === v[0].url) === i
-          ),
-      };
-    } else if (previewMode === "full") {
-      // full
-      return table;
-    }
   };
 
   const createExportTable = (tableHeading, tableRows) => {
