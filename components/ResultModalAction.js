@@ -59,6 +59,62 @@ const ResultModalAction = (props) => {
     Array(props.tableData.heading.length).fill("id")
   );
   const [filterTable, setFilterTable] = useState(baseTable);
+  const [compactBaseTable, setCompactBaseTable] = useState();
+
+  useEffect(() => {
+    if (isCompact && !compactBaseTable) {
+      (async () => {
+        const d = await executeQuery({
+          route: props.route,
+          ids: props.ids,
+          report: "full",
+          limit: 100,
+          compact: true,
+        });
+        const table = createCompactBaseTable(
+          props.tableData.heading,
+          d.results
+        );
+        setCompactBaseTable(table);
+      })();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCompact]);
+
+  const createCompactBaseTable = (tableHeading, tableRows) => {
+    const baseTable = { heading: [], rows: [] };
+    baseTable.rows = tableRows.map((v) => {
+      return v.map((w, i) => {
+        const formatIdObj = {};
+
+        const idSplitList = w ? w.split(" ") : null;
+        // prefixがある場合
+        prefixList[i].forEach((x) => {
+          formatIdObj[x.value] = w
+            ? idSplitList.map((y) => printf(x.value, y)).join(" ")
+            : null;
+        });
+
+        // idとurlは必ず作成する
+        formatIdObj["id"] = w ?? null;
+        formatIdObj["url"] = w
+          ? idSplitList.map((x) => tableHeading[i].prefix + x).join(" ")
+          : null;
+
+        return formatIdObj;
+      });
+    });
+    baseTable.heading = tableHeading;
+
+    return baseTable;
+  };
+
+  useEffect(() => {
+    if (compactBaseTable?.rows) {
+      setFilterTable(editTable(compactBaseTable));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [compactBaseTable]);
 
   useEffect(() => {
     if (baseTable?.rows) {
@@ -421,9 +477,25 @@ const ResultModalAction = (props) => {
               <tr key={i}>
                 {data.map((d, j) => (
                   <td key={j}>
-                    <a href={d.url} target="_blank" rel="noreferrer">
-                      {d[lineMode[filterTable.heading[j].index]]}
-                    </a>
+                    {isCompact ? (
+                      d.url &&
+                      d.url.split(" ").map((f, k) => (
+                        <React.Fragment key={k}>
+                          <a href={f} target="_blank" rel="noreferrer">
+                            {
+                              d[lineMode[filterTable.heading[j].index]].split(
+                                " "
+                              )[k]
+                            }
+                          </a>
+                          <br />
+                        </React.Fragment>
+                      ))
+                    ) : (
+                      <a href={d.url} target="_blank" rel="noreferrer">
+                        {d[lineMode[filterTable.heading[j].index]]}
+                      </a>
+                    )}
                   </td>
                 ))}
               </tr>
