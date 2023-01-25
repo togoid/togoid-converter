@@ -7,7 +7,7 @@ import { categories } from "../lib/setting";
 
 const Explore = (props) => {
   const [modalVisibility, setModalVisibility] = useState(false);
-  const [tableData, setTableData] = useState({ heading: [], rows: [] });
+  const [tableData, setTableData] = useState({ heading: [] });
   const [informationModal, setInformationModal] = useState(false);
   const [database, setDatabase] = useState(null);
   const [visibleActionButtonIndex, setVisibleActionButtonIndex] = useState([
@@ -84,16 +84,8 @@ const Explore = (props) => {
     const heading = r
       .filter((v, i) => i <= routeIndex)
       .map((v) => props.dbCatalogue[v.name]);
-    const d = await executeQuery({
-      route: r,
-      ids: props.ids,
-      report: "full",
-      limit: 100,
-    });
 
-    const rows = d.results.map((v) => v.slice(0, routeIndex + 1));
-
-    setTableData({ heading, rows });
+    setTableData({ heading });
     const counts = r.map((v) => {
       const source = v.message
         ? v.message === "ERROR"

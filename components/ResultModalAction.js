@@ -169,7 +169,7 @@ const ResultModalAction = (props) => {
     <>
       <div className="modal__top">
         <div className="item_wrapper">
-          {props.tableData && props.tableData.rows.length > 0 && (
+          {filterTable?.rows?.length && (
             <>
               <div className="report">
                 <p className="modal__heading">Report</p>
