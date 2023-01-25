@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import copy from "copy-to-clipboard";
 import { executeQuery, exportCsvTsv, invokeUnparse } from "../lib/util";
 import { printf } from "fast-printf";
@@ -12,26 +12,53 @@ const previewModeList = new Map([
   ["full", "All including unconverted IDs"],
 ]);
 
+const createBaseTable = (tableHeading, tableRows) => {
+  const baseTable = { heading: [], rows: [] };
+
+  const prefixList = tableHeading.map((v, i) => {
+    v["index"] = i;
+    // formatがあれば使う なければ空配列で返す
+    return v.format
+      ? v.format.map((v) => {
+          return { label: v.replace("%s", ""), value: v };
+        })
+      : [];
+  });
+
+  baseTable.rows = tableRows.map((v) => {
+    return v.map((w, i) => {
+      const formatIdObj = {};
+
+      // prefixがある場合
+      prefixList[i].forEach((x) => {
+        formatIdObj[x.value] = w ? printf(x.value, w) : null;
+      });
+
+      // idとurlは必ず作成する
+      formatIdObj["id"] = w ?? null;
+      formatIdObj["url"] = w ? tableHeading[i].prefix + w : null;
+
+      return formatIdObj;
+    });
+  });
+
+  baseTable.heading = tableHeading;
+
+  return [baseTable, prefixList];
+};
+
 const ResultModalAction = (props) => {
+  const [baseTable, prefixList] = useMemo(
+    () => createBaseTable(props.tableData.heading, props.tableData.rows),
+    [props.tableData]
+  );
+
   const [previewMode, setPreviewMode] = useState("all");
   const [isCompact, setIsCompact] = useState(false);
   const [lineMode, setLineMode] = useState(
     Array(props.tableData.heading.length).fill("id")
   );
-  const [baseTable, setBaseTable] = useState();
-  const [filterTable, setFilterTable] = useState();
-  const [prefixList, setPrefixList] = useState([]);
-
-  useEffect(() => {
-    const table = createBaseTable(
-      props.tableData.heading,
-      props.tableData.rows
-    );
-    setBaseTable(table);
-
-    setFilterTable(editTable(table));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const [filterTable, setFilterTable] = useState(baseTable);
 
   useEffect(() => {
     if (baseTable?.rows) {
@@ -45,42 +72,6 @@ const ResultModalAction = (props) => {
     newLineMode[e.target.id] = e.target.value;
 
     setLineMode(newLineMode);
-  };
-
-  const createBaseTable = (tableHeading, tableRows) => {
-    const table = { heading: [], rows: [] };
-
-    const subPrefixList = tableHeading.map((v, i) => {
-      v["index"] = i;
-      // formatがあれば使う なければ空配列で返す
-      return v.format
-        ? v.format.map((v) => {
-            return { label: v.replace("%s", ""), value: v };
-          })
-        : [];
-    });
-    setPrefixList(subPrefixList);
-
-    table.rows = tableRows.map((v) => {
-      return v.map((w, i) => {
-        const formatIdObj = {};
-
-        // prefixがある場合
-        subPrefixList[i].forEach((x) => {
-          formatIdObj[x.value] = w ? printf(x.value, w) : null;
-        });
-
-        // idとurlは必ず作成する
-        formatIdObj["id"] = w ?? null;
-        formatIdObj["url"] = w ? tableHeading[i].prefix + w : null;
-
-        return formatIdObj;
-      });
-    });
-
-    table.heading = tableHeading;
-
-    return table;
   };
 
   const editTable = (table) => {
