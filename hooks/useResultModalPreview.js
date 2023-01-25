@@ -1,5 +1,6 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { printf } from "fast-printf";
+import useSWRImmutable from "swr/immutable";
 import { executeQuery } from "../lib/util";
 
 const createBaseTable = (tableHeading, tableRows, prefixList) => {
@@ -22,6 +23,43 @@ const createBaseTable = (tableHeading, tableRows, prefixList) => {
     });
   });
   baseTable.heading = tableHeading;
+  return baseTable;
+};
+
+const createCompactBaseTable = (tableHeading, tableRows, prefixList) => {
+  const baseTable = { heading: [], rows: [] };
+  baseTable.rows = tableRows.map((v) => {
+    return v.map((w, i) => {
+      const formatIdObj = {};
+
+      const idSplitList = w ? w.split(" ") : null;
+      // prefixがある場合
+      prefixList[i].forEach((x) => {
+        formatIdObj[x.value] = w
+          ? idSplitList.map((y) => printf(x.value, y)).join(" ")
+          : null;
+      });
+
+      // idとurlは必ず作成する
+      formatIdObj["id"] = w ?? null;
+      formatIdObj["url"] = w
+        ? idSplitList.map((x) => tableHeading[i].prefix + x).join(" ")
+        : null;
+
+      return formatIdObj;
+    });
+  });
+  baseTable.heading = tableHeading;
+
+  return baseTable;
+};
+
+const fetcher = async (key) => {
+  const data = await executeQuery(key);
+
+  const baseTable = key.compact
+    ? createCompactBaseTable(key.tableHeading, data.results, key.prefixList)
+    : createBaseTable(key.tableHeading, data.results, key.prefixList);
 
   return baseTable;
 };
@@ -37,41 +75,45 @@ const useResultModalPreview = (
   ids,
   prefixList
 ) => {
-  const baseTable = useMemo(
-    () => createBaseTable(tableData.heading, tableData.rows, prefixList),
-    [tableData, prefixList]
+  const [filterTable, setFilterTable] = useState({});
+  const [expandedTable, setExpandedTable] = useState(null);
+
+  const { data: baseTable } = useSWRImmutable(
+    {
+      route: route,
+      ids: ids,
+      report: "full",
+      limit: 100,
+      compact: isCompact,
+      prefixList: prefixList,
+      tableHeading: tableData.heading,
+    },
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
   );
-  const [compactBaseTable, setCompactBaseTable] = useState();
-  const [filterTable, setFilterTable] = useState(baseTable);
 
   useEffect(() => {
-    if (!compactBaseTable) {
-      (async () => {
-        const d = await executeQuery({
-          route: route,
-          ids: ids,
-          report: "full",
-          limit: 100,
-          compact: true,
-        });
-        const table = createCompactBaseTable(tableData.heading, d.results);
-        setCompactBaseTable(table);
-      })();
-    } else if (isCompact) {
-      if (compactBaseTable?.rows) {
-        setFilterTable(editCompactTable(compactBaseTable));
+    if (isCompact) {
+      if (baseTable?.rows) {
+        setFilterTable(editCompactTable(baseTable));
       }
     } else {
       if (baseTable?.rows) {
         setFilterTable(editTable(baseTable));
+        if (!expandedTable) {
+          setExpandedTable(baseTable);
+        }
       }
     }
-  }, [isCompact, compactBaseTable]);
+  }, [baseTable]);
 
   useEffect(() => {
     if (isCompact) {
-      if (compactBaseTable?.rows) {
-        setFilterTable(editCompactTable(compactBaseTable));
+      if (baseTable?.rows) {
+        setFilterTable(editCompactTable(baseTable));
       }
     } else {
       if (baseTable?.rows) {
@@ -79,34 +121,6 @@ const useResultModalPreview = (
       }
     }
   }, [previewMode]);
-
-  const createCompactBaseTable = (tableHeading, tableRows) => {
-    const baseTable = { heading: [], rows: [] };
-    baseTable.rows = tableRows.map((v) => {
-      return v.map((w, i) => {
-        const formatIdObj = {};
-
-        const idSplitList = w ? w.split(" ") : null;
-        // prefixがある場合
-        prefixList[i].forEach((x) => {
-          formatIdObj[x.value] = w
-            ? idSplitList.map((y) => printf(x.value, y)).join(" ")
-            : null;
-        });
-
-        // idとurlは必ず作成する
-        formatIdObj["id"] = w ?? null;
-        formatIdObj["url"] = w
-          ? idSplitList.map((x) => tableHeading[i].prefix + x).join(" ")
-          : null;
-
-        return formatIdObj;
-      });
-    });
-    baseTable.heading = tableHeading;
-
-    return baseTable;
-  };
 
   const editTable = (table) => {
     if (previewMode === "all") {
@@ -166,8 +180,8 @@ const useResultModalPreview = (
       // target
       // 重複は消す
       return {
-        heading: [baseTable.heading[baseTable.heading.length - 1]],
-        rows: baseTable.rows
+        heading: [expandedTable.heading[expandedTable.heading.length - 1]],
+        rows: expandedTable.rows
           .filter((v) => v[v.length - 1].url)
           .map((v) => [v[v.length - 1]])
           .filter(
