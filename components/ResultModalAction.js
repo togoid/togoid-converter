@@ -77,6 +77,14 @@ const ResultModalAction = (props) => {
         );
         setCompactBaseTable(table);
       })();
+    } else if (isCompact) {
+      if (compactBaseTable?.rows) {
+        setFilterTable(editCompactTable(compactBaseTable));
+      }
+    } else {
+      if (baseTable?.rows) {
+        setFilterTable(editTable(baseTable));
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCompact]);
@@ -111,15 +119,22 @@ const ResultModalAction = (props) => {
 
   useEffect(() => {
     if (compactBaseTable?.rows) {
-      setFilterTable(editTable(compactBaseTable));
+      setFilterTable(editCompactTable(compactBaseTable));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [compactBaseTable]);
 
   useEffect(() => {
-    if (baseTable?.rows) {
-      setFilterTable(editTable(baseTable));
+    if (isCompact) {
+      if (compactBaseTable?.rows) {
+        setFilterTable(editCompactTable(compactBaseTable));
+      }
+    } else {
+      if (baseTable?.rows) {
+        setFilterTable(editTable(baseTable));
+      }
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [previewMode]);
 
@@ -158,6 +173,38 @@ const ResultModalAction = (props) => {
       return {
         heading: [table.heading[table.heading.length - 1]],
         rows: table.rows
+          .filter((v) => v[v.length - 1].url)
+          .map((v) => [v[v.length - 1]])
+          .filter(
+            (v, i, self) => self.findIndex((w) => w[0].url === v[0].url) === i
+          ),
+      };
+    } else if (previewMode === "full") {
+      // full
+      return table;
+    }
+  };
+
+  const editCompactTable = (table) => {
+    if (previewMode === "all") {
+      // all
+      const rows = table.rows.filter((v) => v[v.length - 1].url);
+      return { heading: table.heading, rows };
+    } else if (previewMode === "pair") {
+      // origin and targets
+      // 重複は消す
+      return {
+        heading: [table.heading[0], table.heading[table.heading.length - 1]],
+        rows: table.rows
+          .filter((v) => v[v.length - 1].url)
+          .map((v) => [v[0], v[v.length - 1]]),
+      };
+    } else if (previewMode === "target") {
+      // target
+      // 重複は消す
+      return {
+        heading: [baseTable.heading[baseTable.heading.length - 1]],
+        rows: baseTable.rows
           .filter((v) => v[v.length - 1].url)
           .map((v) => [v[v.length - 1]])
           .filter(
