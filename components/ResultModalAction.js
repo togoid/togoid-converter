@@ -14,7 +14,7 @@ const previewModeList = new Map([
 
 const ResultModalAction = (props) => {
   const [previewMode, setPreviewMode] = useState("all");
-  const [formatMode, setFormatMode] = useState("Expanded");
+  const [isCompact, setIsCompact] = useState(false);
   const [lineMode, setLineMode] = useState(
     Array(props.tableData.heading.length).fill("id")
   );
@@ -188,12 +188,12 @@ const ResultModalAction = (props) => {
     }
   };
 
-  const copyClipboard = async (isReduced) => {
+  const copyClipboard = async () => {
     const d = await executeQuery({
       route: props.route,
       ids: props.ids,
       report: previewMode,
-      reduced: isReduced,
+      compact: isCompact,
     });
 
     const results =
@@ -207,12 +207,12 @@ const ResultModalAction = (props) => {
     });
   };
 
-  const handleExportCsvTsv = async (extension, isReduced) => {
+  const handleExportCsvTsv = async (extension) => {
     const d = await executeQuery({
       route: props.route,
       ids: props.ids,
       report: previewMode,
-      reduced: isReduced,
+      compact: isCompact,
     });
 
     const results =
@@ -297,8 +297,8 @@ const ResultModalAction = (props) => {
                       name="format"
                       type="radio"
                       className="radio__input"
-                      checked={formatMode === "Expanded"}
-                      onChange={() => setFormatMode("Expanded")}
+                      checked={!isCompact}
+                      onChange={() => setIsCompact(false)}
                     />
                     <label htmlFor="expanded" className="radio__label">
                       Expanded
@@ -310,8 +310,8 @@ const ResultModalAction = (props) => {
                       name="format"
                       type="radio"
                       className="radio__input"
-                      checked={formatMode === "Compact"}
-                      onChange={() => setFormatMode("Compact")}
+                      checked={isCompact}
+                      onChange={() => setIsCompact(true)}
                     />
                     <label htmlFor="compact" className="radio__label">
                       Compact
@@ -368,60 +368,6 @@ const ResultModalAction = (props) => {
                   </ResultModalClipboardButton>
                   <ResultModalClipboardButton copyFunction={copyClipboardURL}>
                     Copy API URL
-                  </ResultModalClipboardButton>
-                </div>
-                <div className="action__inner">
-                  <button
-                    onClick={() => handleExportCsvTsv("csv", true)}
-                    className="button_icon"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="11.497"
-                      height="13.961"
-                      viewBox="0 0 11.497 13.961"
-                      className="button_icon__icon"
-                    >
-                      <path
-                        id="download"
-                        d="M5,16.961H16.5V15.319H5M16.5,7.927H13.212V3H8.285V7.927H5l5.749,5.749Z"
-                        transform="translate(-5 -3)"
-                        fill="#fff"
-                      />
-                    </svg>
-                    Download as reduced CSV
-                  </button>
-                  <button
-                    onClick={() => handleExportCsvTsv("tsv", true)}
-                    className="button_icon"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="11.497"
-                      height="13.961"
-                      viewBox="0 0 11.497 13.961"
-                      className="button_icon__icon"
-                    >
-                      <path
-                        id="download"
-                        d="M5,16.961H16.5V15.319H5M16.5,7.927H13.212V3H8.285V7.927H5l5.749,5.749Z"
-                        transform="translate(-5 -3)"
-                        fill="#fff"
-                      />
-                    </svg>
-                    Download as reduced TSV
-                  </button>
-                  <ResultModalClipboardButton
-                    copyFunction={copyClipboard}
-                    isReduced={true}
-                  >
-                    Copy reduced to clipboard
-                  </ResultModalClipboardButton>
-                  <ResultModalClipboardButton
-                    copyFunction={copyClipboardURL}
-                    isReduced={true}
-                  >
-                    Copy reduced API URL
                   </ResultModalClipboardButton>
                 </div>
                 {props.lastTargetCount === "10000+" && (
