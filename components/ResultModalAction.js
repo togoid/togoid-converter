@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import copy from "copy-to-clipboard";
 import { executeQuery, exportCsvTsv, invokeUnparse } from "../lib/util";
 import { printf } from "fast-printf";
@@ -13,20 +13,36 @@ const previewModeList = new Map([
   ["full", "All including unconverted IDs"],
 ]);
 
+const createPrefixList = (tableHeading) => {
+  return tableHeading.map((v, i) => {
+    v["index"] = i;
+    // formatがあれば使う なければ空配列で返す
+    return v.format
+      ? v.format.map((v) => {
+          return { label: v.replace("%s", ""), value: v };
+        })
+      : [];
+  });
+};
+
 const ResultModalAction = (props) => {
   const [previewMode, setPreviewMode] = useState("all");
   const [isCompact, setIsCompact] = useState(false);
   const [lineMode, setLineMode] = useState(
     Array(props.tableData.heading.length).fill("id")
   );
-  const { filterTable, prefixList } = useResultModalPreview(
+  const prefixList = useMemo(
+    () => createPrefixList(props.tableData.heading),
+    [props.tableData.heading]
+  );
+  const filterTable = useResultModalPreview(
     props.tableData,
     previewMode,
     isCompact,
     props.route,
-    props.ids
+    props.ids,
+    prefixList
   );
-  console.log("re");
 
   const handleSelectPrefix = (e) => {
     const newLineMode = lineMode.slice();

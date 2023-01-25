@@ -2,18 +2,8 @@ import { useState, useEffect, useMemo } from "react";
 import { printf } from "fast-printf";
 import { executeQuery } from "../lib/util";
 
-const createBaseTable = (tableHeading, tableRows) => {
+const createBaseTable = (tableHeading, tableRows, prefixList) => {
   const baseTable = { heading: [], rows: [] };
-
-  const prefixList = tableHeading.map((v, i) => {
-    v["index"] = i;
-    // formatがあれば使う なければ空配列で返す
-    return v.format
-      ? v.format.map((v) => {
-          return { label: v.replace("%s", ""), value: v };
-        })
-      : [];
-  });
 
   baseTable.rows = tableRows.map((v) => {
     return v.map((w, i) => {
@@ -31,10 +21,9 @@ const createBaseTable = (tableHeading, tableRows) => {
       return formatIdObj;
     });
   });
-
   baseTable.heading = tableHeading;
 
-  return { baseTable, prefixList };
+  return baseTable;
 };
 
 /**
@@ -45,11 +34,12 @@ const useResultModalPreview = (
   previewMode,
   isCompact,
   route,
-  ids
+  ids,
+  prefixList
 ) => {
-  const { baseTable, prefixList } = useMemo(
-    () => createBaseTable(tableData.heading, tableData.rows),
-    [tableData]
+  const baseTable = useMemo(
+    () => createBaseTable(tableData.heading, tableData.rows, prefixList),
+    [tableData, prefixList]
   );
   const [compactBaseTable, setCompactBaseTable] = useState();
   const [filterTable, setFilterTable] = useState(baseTable);
@@ -190,7 +180,7 @@ const useResultModalPreview = (
     }
   };
 
-  return { baseTable, filterTable, prefixList };
+  return filterTable;
 };
 
 export default useResultModalPreview;
