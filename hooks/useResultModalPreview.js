@@ -96,12 +96,10 @@ const useResultModalPreview = (
   );
 
   useEffect(() => {
-    if (isCompact) {
-      if (baseTable?.rows) {
+    if (baseTable?.rows) {
+      if (isCompact) {
         setFilterTable(editCompactTable(baseTable));
-      }
-    } else {
-      if (baseTable?.rows) {
+      } else {
         setFilterTable(editTable(baseTable));
         if (!expandedTable) {
           setExpandedTable(baseTable);
@@ -111,12 +109,10 @@ const useResultModalPreview = (
   }, [baseTable]);
 
   useEffect(() => {
-    if (isCompact) {
-      if (baseTable?.rows) {
+    if (baseTable?.rows) {
+      if (isCompact) {
         setFilterTable(editCompactTable(baseTable));
-      }
-    } else {
-      if (baseTable?.rows) {
+      } else {
         setFilterTable(editTable(baseTable));
       }
     }
