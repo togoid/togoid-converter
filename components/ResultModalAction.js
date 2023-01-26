@@ -36,11 +36,11 @@ const ResultModalAction = (props) => {
     [props.tableData.heading]
   );
   const filterTable = useResultModalPreview(
-    props.tableData.heading,
     previewMode,
     isCompact,
     props.route,
     props.ids,
+    props.tableData.heading,
     prefixList
   );
 

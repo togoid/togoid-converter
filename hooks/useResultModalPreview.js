@@ -1,3 +1,4 @@
+// @ts-check
 import { useState, useEffect } from "react";
 import { printf } from "fast-printf";
 import useSWRImmutable from "swr/immutable";
@@ -50,6 +51,11 @@ const createCompactBaseTable = (tableRows, tableHeading, prefixList) => {
   return baseTable;
 };
 
+/**
+ * @param {{route: object[], ids: string[], report: string, limit: number, compact: boolean}} key
+ * @param {array} tableHeading
+ * @param {array} prefixList
+ */
 const fetcher = async (key, tableHeading, prefixList) => {
   const data = await executeQuery(key);
 
@@ -59,18 +65,23 @@ const fetcher = async (key, tableHeading, prefixList) => {
 };
 
 /**
- *
+ * @param {string} previewMode
+ * @param {boolean} isCompact
+ * @param {array} route
+ * @param {array} ids
+ * @param {array} tableHeading
+ * @param {array} prefixList
  */
 const useResultModalPreview = (
-  tableHeading,
   previewMode,
   isCompact,
   route,
   ids,
+  tableHeading,
   prefixList
 ) => {
   const [filterTable, setFilterTable] = useState({});
-  const [expandedTable, setExpandedTable] = useState(null);
+  const [expandedTable, setExpandedTable] = useState(/** @type {array} */ ([]));
 
   const { data: baseTable } = useSWRImmutable(
     {
@@ -93,11 +104,12 @@ const useResultModalPreview = (
         setFilterTable(editCompactTable());
       } else {
         setFilterTable(editTable());
-        if (!expandedTable) {
+        if (!expandedTable.length) {
           setExpandedTable(baseTable);
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [baseTable]);
 
   useEffect(() => {
@@ -108,8 +120,12 @@ const useResultModalPreview = (
         setFilterTable(editTable());
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [previewMode]);
 
+  /**
+   * @return {{ heading: any[], rows: any[] }}
+   */
   const editTable = () => {
     if (previewMode === "all") {
       // all
@@ -148,8 +164,14 @@ const useResultModalPreview = (
       // full
       return { heading: tableHeading, rows: baseTable };
     }
+
+    // ここには来ない
+    return { heading: [], rows: [] };
   };
 
+  /**
+   * @return {{ heading: any[], rows: any[] }}
+   */
   const editCompactTable = () => {
     if (previewMode === "all") {
       // all
@@ -182,6 +204,9 @@ const useResultModalPreview = (
       // full
       return { heading: tableHeading, rows: baseTable };
     }
+
+    // ここには来ない
+    return { heading: [], rows: [] };
   };
 
   return filterTable;
