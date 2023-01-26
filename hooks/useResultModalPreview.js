@@ -54,12 +54,12 @@ const createCompactBaseTable = (tableHeading, tableRows, prefixList) => {
   return baseTable;
 };
 
-const fetcher = async (key) => {
+const fetcher = async (key, tableHeading, prefixList) => {
   const data = await executeQuery(key);
 
   const baseTable = key.compact
-    ? createCompactBaseTable(key.tableHeading, data.results, key.prefixList)
-    : createBaseTable(key.tableHeading, data.results, key.prefixList);
+    ? createCompactBaseTable(tableHeading, data.results, prefixList)
+    : createBaseTable(tableHeading, data.results, prefixList);
 
   return baseTable;
 };
@@ -68,7 +68,7 @@ const fetcher = async (key) => {
  *
  */
 const useResultModalPreview = (
-  tableData,
+  tableHeading,
   previewMode,
   isCompact,
   route,
@@ -85,10 +85,8 @@ const useResultModalPreview = (
       report: "full",
       limit: 100,
       compact: isCompact,
-      prefixList: prefixList,
-      tableHeading: tableData.heading,
     },
-    fetcher,
+    (key) => fetcher(key, tableHeading, prefixList),
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,

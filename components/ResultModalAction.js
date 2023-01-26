@@ -36,7 +36,7 @@ const ResultModalAction = (props) => {
     [props.tableData.heading]
   );
   const filterTable = useResultModalPreview(
-    props.tableData,
+    props.tableData.heading,
     previewMode,
     isCompact,
     props.route,
