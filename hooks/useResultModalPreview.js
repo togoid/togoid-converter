@@ -3,10 +3,8 @@ import { printf } from "fast-printf";
 import useSWRImmutable from "swr/immutable";
 import { executeQuery } from "../lib/util";
 
-const createBaseTable = (tableHeading, tableRows, prefixList) => {
-  const baseTable = { heading: [], rows: [] };
-
-  baseTable.rows = tableRows.map((v) => {
+const createBaseTable = (tableRows, tableHeading, prefixList) => {
+  const baseTable = tableRows.map((v) => {
     return v.map((w, i) => {
       const formatIdObj = {};
 
@@ -22,13 +20,12 @@ const createBaseTable = (tableHeading, tableRows, prefixList) => {
       return formatIdObj;
     });
   });
-  baseTable.heading = tableHeading;
+
   return baseTable;
 };
 
-const createCompactBaseTable = (tableHeading, tableRows, prefixList) => {
-  const baseTable = { heading: [], rows: [] };
-  baseTable.rows = tableRows.map((v) => {
+const createCompactBaseTable = (tableRows, tableHeading, prefixList) => {
+  const baseTable = tableRows.map((v) => {
     return v.map((w, i) => {
       const formatIdObj = {};
 
@@ -49,7 +46,6 @@ const createCompactBaseTable = (tableHeading, tableRows, prefixList) => {
       return formatIdObj;
     });
   });
-  baseTable.heading = tableHeading;
 
   return baseTable;
 };
@@ -57,11 +53,9 @@ const createCompactBaseTable = (tableHeading, tableRows, prefixList) => {
 const fetcher = async (key, tableHeading, prefixList) => {
   const data = await executeQuery(key);
 
-  const baseTable = key.compact
-    ? createCompactBaseTable(tableHeading, data.results, prefixList)
-    : createBaseTable(tableHeading, data.results, prefixList);
-
-  return baseTable;
+  return key.compact
+    ? createCompactBaseTable(data.results, tableHeading, prefixList)
+    : createBaseTable(data.results, tableHeading, prefixList);
 };
 
 /**
@@ -94,11 +88,11 @@ const useResultModalPreview = (
   );
 
   useEffect(() => {
-    if (baseTable?.rows) {
+    if (baseTable) {
       if (isCompact) {
-        setFilterTable(editCompactTable(baseTable));
+        setFilterTable(editCompactTable());
       } else {
-        setFilterTable(editTable(baseTable));
+        setFilterTable(editTable());
         if (!expandedTable) {
           setExpandedTable(baseTable);
         }
@@ -107,26 +101,26 @@ const useResultModalPreview = (
   }, [baseTable]);
 
   useEffect(() => {
-    if (baseTable?.rows) {
+    if (baseTable) {
       if (isCompact) {
-        setFilterTable(editCompactTable(baseTable));
+        setFilterTable(editCompactTable());
       } else {
-        setFilterTable(editTable(baseTable));
+        setFilterTable(editTable());
       }
     }
   }, [previewMode]);
 
-  const editTable = (table) => {
+  const editTable = () => {
     if (previewMode === "all") {
       // all
-      const rows = table.rows.filter((v) => v[v.length - 1].url);
-      return { heading: table.heading, rows };
+      const rows = baseTable.filter((v) => v[v.length - 1].url);
+      return { heading: tableHeading, rows };
     } else if (previewMode === "pair") {
       // origin and targets
       // 重複は消す
       return {
-        heading: [table.heading[0], table.heading[table.heading.length - 1]],
-        rows: table.rows
+        heading: [tableHeading[0], tableHeading[tableHeading.length - 1]],
+        rows: baseTable
           .filter((v) => v[v.length - 1].url)
           .map((v) => [v[0], v[v.length - 1]])
           .filter(
@@ -142,8 +136,8 @@ const useResultModalPreview = (
       // target
       // 重複は消す
       return {
-        heading: [table.heading[table.heading.length - 1]],
-        rows: table.rows
+        heading: [tableHeading[tableHeading.length - 1]],
+        rows: baseTable
           .filter((v) => v[v.length - 1].url)
           .map((v) => [v[v.length - 1]])
           .filter(
@@ -152,21 +146,21 @@ const useResultModalPreview = (
       };
     } else if (previewMode === "full") {
       // full
-      return table;
+      return { heading: tableHeading, rows: baseTable };
     }
   };
 
-  const editCompactTable = (table) => {
+  const editCompactTable = () => {
     if (previewMode === "all") {
       // all
-      const rows = table.rows.filter((v) => v[v.length - 1].url);
-      return { heading: table.heading, rows };
+      const rows = baseTable.filter((v) => v[v.length - 1].url);
+      return { heading: tableHeading, rows };
     } else if (previewMode === "pair") {
       // origin and targets
       // 重複は消す
       return {
-        heading: [table.heading[0], table.heading[table.heading.length - 1]],
-        rows: table.rows
+        heading: [tableHeading[0], tableHeading[tableHeading.length - 1]],
+        rows: baseTable
           .filter((v) => v[v.length - 1].url)
           .map((v) => [v[0], v[v.length - 1]]),
       };
@@ -174,8 +168,8 @@ const useResultModalPreview = (
       // target
       // 重複は消す
       return {
-        heading: [expandedTable.heading[expandedTable.heading.length - 1]],
-        rows: expandedTable.rows
+        heading: [tableHeading[tableHeading.length - 1]],
+        rows: expandedTable
           .filter((v) => v[v.length - 1].url)
           .map((v) => [v[v.length - 1]])
           .filter(
@@ -184,7 +178,7 @@ const useResultModalPreview = (
       };
     } else if (previewMode === "full") {
       // full
-      return table;
+      return { heading: tableHeading, rows: baseTable };
     }
   };
 
