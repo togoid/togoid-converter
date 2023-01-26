@@ -4,6 +4,7 @@ import InformationModal from "../components/InformationModal";
 import { executeQuery, exportCsvTsv } from "../lib/util";
 import { ArrowArea } from "react-arrow-master";
 import { categories } from "../lib/setting";
+import useConfig from "../hooks/useConfig";
 
 const Navigate = (props) => {
   const [modalVisibility, setModalVisibility] = useState(false);
@@ -15,6 +16,8 @@ const Navigate = (props) => {
     null,
   ]);
   const [convertedCount, setConvertedCount] = useState([]);
+
+  const { datasetConfig } = useConfig();
 
   useEffect(() => {
     if (tableData.heading.length > 0) setModalVisibility(true);
@@ -42,7 +45,7 @@ const Navigate = (props) => {
       ids: props.ids,
       report: "target",
     });
-    const prefix = props.dbCatalogue[database.name].prefix.split("/").slice(-1);
+    const prefix = datasetConfig[database.name].prefix.split("/").slice(-1);
 
     exportCsvTsv(
       d.results.map((result) => [prefix + result]),
@@ -53,7 +56,7 @@ const Navigate = (props) => {
 
   const showModal = async (database, routeIndex, j) => {
     const r = selectDatabaseModal(routeIndex, j);
-    const heading = r.map((v) => props.dbCatalogue[v.name]);
+    const heading = r.map((v) => datasetConfig[v.name]);
     const d = await executeQuery({
       route: r,
       ids: props.ids,
@@ -189,7 +192,7 @@ const Navigate = (props) => {
                                               id={`total${i}-${v.name}`}
                                             ></span>
                                             <span className="text">
-                                              {props.dbCatalogue[v.name].label}
+                                              {datasetConfig[v.name].label}
                                             </span>
                                             <span
                                               id={`total${i}-${v.name}`}
@@ -292,10 +295,7 @@ const Navigate = (props) => {
                                                 id={`converted${i}-${v.name}-${j}`}
                                               ></span>
                                               <span className="text">
-                                                {
-                                                  props.dbCatalogue[v.name]
-                                                    .label
-                                                }
+                                                {datasetConfig[v.name].label}
                                               </span>
                                               {i ===
                                               props.databaseNodesList.length -
@@ -396,11 +396,11 @@ const Navigate = (props) => {
                             }
                           >
                             <option>---</option>
-                            {Object.keys(props.dbCatalogue).map((key) => {
+                            {Object.keys(datasetConfig).map((key) => {
                               if (!props.route.find((v) => v.name === key)) {
                                 return (
                                   <option key={key} value={key}>
-                                    {props.dbCatalogue[key].label}
+                                    {datasetConfig[key].label}
                                   </option>
                                 );
                               }
@@ -424,7 +424,6 @@ const Navigate = (props) => {
                       ids={props.ids}
                       tableData={tableData}
                       setModalVisibility={setModalVisibility}
-                      dbCatalogue={props.dbCatalogue}
                       convertedCount={convertedCount}
                     />
                   )}

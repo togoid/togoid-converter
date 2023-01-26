@@ -687,7 +687,6 @@ const Home = () => {
               route={route}
               setRoute={setRoute}
               ids={ids}
-              dbCatalogue={dbCatalogue}
               lookupRoute={lookupRoute}
               offsetRoute={offsetRoute}
               setOffsetRoute={setOffsetRoute}
@@ -700,7 +699,6 @@ const Home = () => {
               route={route}
               setRoute={setRoute}
               ids={ids}
-              dbCatalogue={dbCatalogue}
               setPreviousRoute={setPreviousRoute}
             />
           )}
