@@ -153,15 +153,17 @@ const useResultModalPreview = (
   const editCompactTable = () => {
     if (previewMode === "all") {
       // all
-      const rows = baseTable.filter((v) => v[v.length - 1].url);
-      return { heading: tableHeading, rows };
+      return {
+        heading: tableHeading,
+        rows: baseTable.filter((v) => v[v.length - 1].url.length),
+      };
     } else if (previewMode === "pair") {
       // origin and targets
       // 重複は消す
       return {
         heading: [tableHeading[0], tableHeading[tableHeading.length - 1]],
         rows: baseTable
-          .filter((v) => v[v.length - 1].url)
+          .filter((v) => v[v.length - 1].url.length)
           .map((v) => [v[0], v[v.length - 1]]),
       };
     } else if (previewMode === "target") {
