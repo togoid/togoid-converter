@@ -353,41 +353,41 @@ const ResultModalAction = (props) => {
           </tr>
         </thead>
         <tbody>
-          {filterTable?.rows?.length > 0 ? (
-            filterTable.rows.map((data, i) => (
-              <tr key={i}>
-                {data.map((d, j) => (
-                  <td key={j}>
-                    {isCompact && previewMode !== "target" ? (
-                      d.url &&
-                      Array.isArray(d.url) &&
-                      d.url.map((f, k) => (
-                        <React.Fragment key={k}>
-                          <a href={f} target="_blank" rel="noreferrer">
-                            {d[lineMode[filterTable.heading[j].index]][k]}
-                          </a>
-                          <br />
-                        </React.Fragment>
-                      ))
-                    ) : (
-                      <a href={d.url} target="_blank" rel="noreferrer">
-                        {d[lineMode[filterTable.heading[j].index]]}
-                      </a>
-                    )}
+          {filterTable?.rows?.length > 0
+            ? filterTable.rows.map((data, i) => (
+                <tr key={i}>
+                  {data.map((d, j) => (
+                    <td key={j}>
+                      {isCompact && previewMode !== "target" ? (
+                        d.url &&
+                        Array.isArray(d.url) &&
+                        d.url.map((f, k) => (
+                          <React.Fragment key={k}>
+                            <a href={f} target="_blank" rel="noreferrer">
+                              {d[lineMode[filterTable.heading[j].index]][k]}
+                            </a>
+                            <br />
+                          </React.Fragment>
+                        ))
+                      ) : (
+                        <a href={d.url} target="_blank" rel="noreferrer">
+                          {d[lineMode[filterTable.heading[j].index]]}
+                        </a>
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))
+            : filterTable.heading && (
+                <tr>
+                  <td
+                    colSpan={props.tableData.heading.length}
+                    className="no_results"
+                  >
+                    No Results
                   </td>
-                ))}
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td
-                colSpan={props.tableData.heading.length}
-                className="no_results"
-              >
-                No Results
-              </td>
-            </tr>
-          )}
+                </tr>
+              )}
         </tbody>
       </table>
     </>
