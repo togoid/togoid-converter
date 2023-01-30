@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import useConfig from "../hooks/useConfig";
 import { categories, colorLegendList } from "../lib/setting";
 
@@ -9,19 +9,17 @@ const Databases = (props) => {
   const { datasetConfig, descriptionConfig } = useConfig();
 
   const [language, setLanguage] = useState("en");
-  const [nameIndex, setNameIndex] = useState([]);
   const [datasetFilterObj, setDatasetFilterObj] = useState(datasetConfig);
 
-  useEffect(() => {
-    createNameIndexList(datasetFilterObj);
-  }, [datasetFilterObj]);
-
-  const createNameIndexList = (dataset) => {
-    // Dataset Name Index のリストを作成
-    setNameIndex([
-      ...new Set(Object.keys(dataset).map((v) => v.slice(0, 1).toUpperCase())),
-    ]);
-  };
+  // Dataset Name Index のリストを作成
+  const nameIndex = useMemo(
+    () => [
+      ...new Set(
+        Object.keys(datasetFilterObj).map((v) => v.slice(0, 1).toUpperCase())
+      ),
+    ],
+    [datasetFilterObj]
+  );
 
   const handleCategoryFilter = (input) => {
     const filterDataset = Object.entries(datasetConfig).reduce(
