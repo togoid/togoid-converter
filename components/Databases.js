@@ -1,85 +1,39 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import useConfig from "../hooks/useConfig";
 import { categories, colorLegendList } from "../lib/setting";
 
 const Databases = (props) => {
+  const { datasetConfig, descriptionConfig } = useConfig();
+
   const [language, setLanguage] = useState("en");
-  const [nameIndex, setNameIndex] = useState([]);
-  const [datasetHaveLinkObj, setDatasetHaveLinkObj] = useState({});
-  const [datasetFilterObj, setDatasetFilterObj] = useState({});
+  const [datasetFilterObj, setDatasetFilterObj] = useState(datasetConfig);
 
-  const {
-    datasetConfig: dbCatalogue,
-    relationConfig: dbConfig,
-    descriptionConfig: dbDesc,
-    statisticConfig,
-  } = useConfig();
-
-  useEffect(() => {
-    const fastFilterDataset = Object.entries(dbCatalogue).reduce(
-      (prev, [key, value]) => {
-        const linkTo = new Set(
-          Object.keys(dbConfig).map((k) => {
-            const names = k.split("-");
-            if (names.indexOf(key) === 0 || names.indexOf(key) === 1) {
-              return names.indexOf(key) === 0 ? names[1] : names[0];
-            }
-          })
-        );
-        linkTo.delete(undefined);
-
-        if (!linkTo.size) {
-          return prev;
-        }
-
-        let count = "";
-        let lastUpdatedAt = "";
-        Object.entries(statisticConfig).forEach(([k2, v2]) => {
-          if (k2.split("-")[0] === key) {
-            count += `${k2} : ${v2.count}, `;
-            lastUpdatedAt += `${k2} : ${v2.last_updated_at}, `;
-          }
-        });
-
-        return {
-          ...prev,
-          [key]: { ...value, linkTo: [...linkTo], count, lastUpdatedAt },
-        }; // linkToはSetからArrayに変換しておく
-      },
-      {}
-    );
-
-    setDatasetHaveLinkObj(fastFilterDataset);
-    createNameIndexList(fastFilterDataset);
-    setDatasetFilterObj(fastFilterDataset);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const createNameIndexList = (dataset) => {
-    // Dataset Name Index のリストを作成
-    setNameIndex([
-      ...new Set(Object.keys(dataset).map((v) => v.slice(0, 1).toUpperCase())),
-    ]);
-  };
+  // Dataset Name Index のリストを作成
+  const nameIndex = useMemo(
+    () => [
+      ...new Set(
+        Object.keys(datasetFilterObj).map((v) => v.slice(0, 1).toUpperCase())
+      ),
+    ],
+    [datasetFilterObj]
+  );
 
   const handleCategoryFilter = (input) => {
-    const filterDataset = Object.entries(datasetHaveLinkObj).reduce(
+    const filterDataset = Object.entries(datasetConfig).reduce(
       (prev, [key, value]) => {
         return value.category === input ? { ...prev, [key]: value } : prev;
       },
       {}
     );
 
-    createNameIndexList(filterDataset);
     setDatasetFilterObj(filterDataset);
   };
 
   const handleResetfilter = () => {
-    createNameIndexList(datasetHaveLinkObj);
-    setDatasetFilterObj(datasetHaveLinkObj);
+    setDatasetFilterObj(datasetConfig);
   };
 
   const clickExamples = (examples, key) => {
@@ -140,7 +94,6 @@ const Databases = (props) => {
 
               <section className="database__index">
                 <h3 className="database__index__title">Color Legend</h3>
-                <button onClick={handleResetfilter}>Reset</button>
                 <section className="database__index__colors">
                   {colorLegendList.map((v, i) => (
                     <div key={i} className="color">
@@ -172,6 +125,9 @@ const Databases = (props) => {
                       </label>
                     </div>
                   ))}
+                  <button className="button_micro" onClick={handleResetfilter}>
+                    Reset
+                  </button>
                 </section>
               </section>
 
@@ -179,39 +135,42 @@ const Databases = (props) => {
                 <article
                   className="database__item"
                   key={key}
-                  id={dbCatalogue[key].label.slice(0, 1).toUpperCase()}
+                  id={datasetConfig[key].label.slice(0, 1).toUpperCase()}
                 >
                   <h3
                     className="title"
-                    id={dbCatalogue[key].label.replace(/\s/g, "")}
+                    id={datasetConfig[key].label.replace(/\s/g, "")}
                   >
                     <span
                       className="title__square"
                       style={{
-                        backgroundColor: categories[dbCatalogue[key].category]
-                          ? categories[dbCatalogue[key].category].color
+                        backgroundColor: categories[datasetConfig[key].category]
+                          ? categories[datasetConfig[key].category].color
                           : null,
                       }}
                     />
                     <span className="title__text">
-                      {dbCatalogue[key].label}
+                      {datasetConfig[key].label}
                     </span>
                   </h3>
-                  {dbDesc[key] && dbDesc[key][`description_${language}`] && (
-                    <div className="description">
-                      <p>{dbDesc[key][`description_${language}`]}</p>
-                      <p>
-                        Cited from{" "}
-                        <a
-                          href={`https://integbio.jp/dbcatalog/record/${dbCatalogue[key].catalog}`}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          Integbio Database Catalog
-                        </a>
-                      </p>
-                    </div>
-                  )}
+                  {descriptionConfig[key] &&
+                    descriptionConfig[key][`description_${language}`] && (
+                      <div className="description">
+                        <p>
+                          {descriptionConfig[key][`description_${language}`]}
+                        </p>
+                        <p>
+                          Cited from{" "}
+                          <a
+                            href={`https://integbio.jp/dbcatalog/record/${datasetConfig[key].catalog}`}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            Integbio Database Catalog
+                          </a>
+                        </p>
+                      </div>
+                    )}
                   <div className="path">
                     <div className="path_label small white">LINK TO</div>
                     <svg className="icon" viewBox="0 0 24 24">
@@ -221,11 +180,11 @@ const Databases = (props) => {
                       />
                     </svg>
                     <div className="path__children">
-                      {datasetFilterObj[key].linkTo.map((l, i) =>
-                        dbCatalogue[l] ? (
+                      {[...datasetFilterObj[key].linkTo].map(([l, count], i) =>
+                        datasetConfig[l] ? (
                           <a
                             href={
-                              "/#" + dbCatalogue[l].label.replace(/\s/g, "")
+                              "/#" + datasetConfig[l].label.replace(/\s/g, "")
                             }
                             key={i}
                           >
@@ -233,14 +192,15 @@ const Databases = (props) => {
                               className="path_label small green"
                               style={{
                                 backgroundColor: categories[
-                                  dbCatalogue[l].category
+                                  datasetConfig[l].category
                                 ]
-                                  ? categories[dbCatalogue[l].category].color
+                                  ? categories[datasetConfig[l].category].color
                                   : null,
                               }}
                               key={i}
                             >
-                              {dbCatalogue[l].label}
+                              {datasetConfig[l].label}
+                              <span className="total">{count}</span>
                             </div>
                           </a>
                         ) : null
@@ -250,18 +210,21 @@ const Databases = (props) => {
                   <dl className="data">
                     <div className="data__wrapper">
                       <dt>PREFIX</dt>
-                      <dd>{dbCatalogue[key].prefix}</dd>
+                      <dd>{datasetConfig[key].prefix}</dd>
                     </div>
                     <div className="data__wrapper">
                       <dt>CATEGORY</dt>
-                      <dd>{dbCatalogue[key].category}</dd>
+                      <dd>{datasetConfig[key].category}</dd>
                     </div>
-                    {dbDesc[key] && dbDesc[key][`organization_${language}`] && (
-                      <div className="data__wrapper">
-                        <dt>ORGANIZATION</dt>
-                        <dd>{dbDesc[key][`organization_${language}`]}</dd>
-                      </div>
-                    )}
+                    {descriptionConfig[key] &&
+                      descriptionConfig[key][`organization_${language}`] && (
+                        <div className="data__wrapper">
+                          <dt>ORGANIZATION</dt>
+                          <dd>
+                            {descriptionConfig[key][`organization_${language}`]}
+                          </dd>
+                        </div>
+                      )}
                     {datasetFilterObj[key].count && (
                       <div className="data__wrapper">
                         <dt>COUNT</dt>
@@ -274,11 +237,11 @@ const Databases = (props) => {
                         <dd>{datasetFilterObj[key].lastUpdatedAt}</dd>
                       </div>
                     )}
-                    {dbCatalogue[key].examples && (
+                    {datasetConfig[key].examples && (
                       <div className="data__wrapper">
                         <dt>EXAMPLES</dt>
                         <dd>
-                          {dbCatalogue[key].examples.map((example, i) => (
+                          {datasetConfig[key].examples.map((example, i) => (
                             <li key={i}>
                               <a
                                 href="#"

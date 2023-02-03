@@ -88,6 +88,17 @@
   }
 }
 
+.button_micro {
+  cursor: pointer;
+  margin-top: 10px;
+  font-size: 1.2rem;
+  color: $white;
+  border-radius: 6px;
+  padding: 4px 6px;
+  border: 1px solid $blue02;
+  background: $blue01 no-repeat padding-box;
+}
+
 .button_more {
   display: block;
   width: 350px;
