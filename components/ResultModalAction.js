@@ -153,12 +153,12 @@ const ResultModalAction = (props) => {
     exportCsvTsv([h, ...rows], extension, `result.${extension}`);
   };
 
-  const copyClipboardURL = (isReduced) => {
+  const copyClipboardURL = () => {
     const routeName = props.route.map((v) => v.name).join();
     const text = `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert?ids=${
       props.ids
     }&route=${routeName}&report=${previewMode}${
-      isReduced ? "&reduced=1" : ""
+      isCompact ? "&compact=1" : ""
     }&format=csv`;
     copy(text, {
       format: "text/plain",
