@@ -4,10 +4,11 @@ import InformationModal from "../components/InformationModal";
 import { executeQuery, exportCsvTsv } from "../lib/util";
 import { ArrowArea } from "react-arrow-master";
 import { categories } from "../lib/setting";
+import useConfig from "../hooks/useConfig";
 
 const Explore = (props) => {
   const [modalVisibility, setModalVisibility] = useState(false);
-  const [tableData, setTableData] = useState({ heading: [], rows: [] });
+  const [tableData, setTableData] = useState({ heading: [] });
   const [informationModal, setInformationModal] = useState(false);
   const [database, setDatabase] = useState(null);
   const [visibleActionButtonIndex, setVisibleActionButtonIndex] = useState([
@@ -17,6 +18,8 @@ const Explore = (props) => {
   const [convertedCount, setConvertedCount] = useState([]);
   const [nodesList, setNodesList] = useState([]);
   const [sortModeOrderList, setSortModeOrderList] = useState([]);
+
+  const { datasetConfig } = useConfig();
 
   useEffect(() => {
     if (tableData.heading.length > 0) setModalVisibility(true);
@@ -32,12 +35,10 @@ const Explore = (props) => {
         sortModeOrders.push(sortModeOrderList[i]);
       } else {
         const sorted = v.sort((a, b) => {
-          if (
-            props.dbCatalogue[a.name].label < props.dbCatalogue[b.name].label
-          ) {
+          if (datasetConfig[a.name].label < datasetConfig[b.name].label) {
             return -1;
           } else if (
-            props.dbCatalogue[a.name].label > props.dbCatalogue[b.name].label
+            datasetConfig[a.name].label > datasetConfig[b.name].label
           ) {
             return 1;
           } else {
@@ -70,7 +71,7 @@ const Explore = (props) => {
       report: "target",
     });
 
-    const prefix = props.dbCatalogue[database.name].prefix.split("/").slice(-1);
+    const prefix = datasetConfig[database.name].prefix.split("/").slice(-1);
 
     exportCsvTsv(
       d.results.map((result) => [prefix + result]),
@@ -83,17 +84,9 @@ const Explore = (props) => {
     const r = selectDatabase(database, routeIndex).slice(0, routeIndex + 1);
     const heading = r
       .filter((v, i) => i <= routeIndex)
-      .map((v) => props.dbCatalogue[v.name]);
-    const d = await executeQuery({
-      route: r,
-      ids: props.ids,
-      report: "full",
-      limit: 100,
-    });
+      .map((v) => datasetConfig[v.name]);
 
-    const rows = d.results.map((v) => v.slice(0, routeIndex + 1));
-
-    setTableData({ heading, rows });
+    setTableData({ heading });
     const counts = r.map((v) => {
       const source = v.message
         ? v.message === "ERROR"
@@ -122,11 +115,9 @@ const Explore = (props) => {
     const nodesListCopy = nodesList.slice();
     if (mode === "name") {
       nodesListCopy[i].sort((a, b) => {
-        if (props.dbCatalogue[a.name].label < props.dbCatalogue[b.name].label) {
+        if (datasetConfig[a.name].label < datasetConfig[b.name].label) {
           return n * -1;
-        } else if (
-          props.dbCatalogue[a.name].label > props.dbCatalogue[b.name].label
-        ) {
+        } else if (datasetConfig[a.name].label > datasetConfig[b.name].label) {
           return n * 1;
         }
       });
@@ -311,7 +302,7 @@ const Explore = (props) => {
                                         ></span>
                                       )}
                                       <span className="text">
-                                        {props.dbCatalogue[v.name].label}
+                                        {datasetConfig[v.name].label}
                                       </span>
                                       <span
                                         id={`total${i}-${v.name}`}
@@ -389,9 +380,6 @@ const Explore = (props) => {
                     <InformationModal
                       setInformationModal={setInformationModal}
                       database={database}
-                      dbCatalogue={props.dbCatalogue}
-                      dbConfig={props.dbConfig}
-                      dbDesc={props.dbDesc}
                     />
                   )}
 
@@ -401,7 +389,6 @@ const Explore = (props) => {
                       ids={props.ids}
                       tableData={tableData}
                       setModalVisibility={setModalVisibility}
-                      dbCatalogue={props.dbCatalogue}
                       convertedCount={convertedCount}
                     />
                   )}

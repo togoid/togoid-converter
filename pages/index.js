@@ -28,11 +28,8 @@ const Home = () => {
   const [offsetRoute, setOffsetRoute] = useState(null);
   const [previousSearchTab, setPreviousSearchTab] = useState("EXPLORE");
 
-  const {
-    datasetConfig: dbCatalogue,
-    relationConfig: dbConfig,
-    descriptionConfig: dbDesc,
-  } = useConfig(true);
+  const { datasetConfig: dbCatalogue, relationConfig: dbConfig } =
+    useConfig(true);
 
   useEffect(() => {
     if (route.length > 0) {
@@ -678,7 +675,6 @@ const Home = () => {
           setRoute={setRoute}
           previousRoute={previousRoute}
           setPreviousRoute={setPreviousRoute}
-          dbCatalogue={dbCatalogue}
           restartExplore={restartExplore}
           setIsUseKeepRoute={setIsUseKeepRoute}
         />
@@ -691,9 +687,6 @@ const Home = () => {
               route={route}
               setRoute={setRoute}
               ids={ids}
-              dbCatalogue={dbCatalogue}
-              dbConfig={dbConfig}
-              dbDesc={dbDesc}
               lookupRoute={lookupRoute}
               offsetRoute={offsetRoute}
               setOffsetRoute={setOffsetRoute}
@@ -706,9 +699,6 @@ const Home = () => {
               route={route}
               setRoute={setRoute}
               ids={ids}
-              dbCatalogue={dbCatalogue}
-              dbConfig={dbConfig}
-              dbDesc={dbDesc}
               setPreviousRoute={setPreviousRoute}
             />
           )}
