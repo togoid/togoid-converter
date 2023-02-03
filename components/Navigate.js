@@ -8,7 +8,7 @@ import useConfig from "../hooks/useConfig";
 
 const Navigate = (props) => {
   const [modalVisibility, setModalVisibility] = useState(false);
-  const [tableData, setTableData] = useState({ heading: [], rows: [] });
+  const [tableData, setTableData] = useState({ heading: [] });
   const [informationModal, setInformationModal] = useState(false);
   const [database, setDatabase] = useState(null);
   const [visibleActionButtonIndex, setVisibleActionButtonIndex] = useState([
@@ -57,14 +57,8 @@ const Navigate = (props) => {
   const showModal = async (database, routeIndex, j) => {
     const r = selectDatabaseModal(routeIndex, j);
     const heading = r.map((v) => datasetConfig[v.name]);
-    const d = await executeQuery({
-      route: r,
-      ids: props.ids,
-      report: "full",
-      limit: 100,
-    });
-    const rows = d.results;
-    setTableData({ heading, rows });
+
+    setTableData({ heading });
 
     const counts = r.map((v) => {
       const target = v.message ? v.message : v?.target;
