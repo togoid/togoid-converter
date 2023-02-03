@@ -125,7 +125,9 @@ const Databases = (props) => {
                       </label>
                     </div>
                   ))}
-                  <button className="button_micro" onClick={handleResetfilter}>Reset</button>
+                  <button className="button_micro" onClick={handleResetfilter}>
+                    Reset
+                  </button>
                 </section>
               </section>
 
