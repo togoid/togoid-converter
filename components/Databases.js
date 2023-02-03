@@ -94,7 +94,6 @@ const Databases = (props) => {
 
               <section className="database__index">
                 <h3 className="database__index__title">Color Legend</h3>
-                <button onClick={handleResetfilter}>Reset</button>
                 <section className="database__index__colors">
                   {colorLegendList.map((v, i) => (
                     <div key={i} className="color">
@@ -126,6 +125,7 @@ const Databases = (props) => {
                       </label>
                     </div>
                   ))}
+                  <button className="button_micro" onClick={handleResetfilter}>Reset</button>
                 </section>
               </section>
 
@@ -198,7 +198,7 @@ const Databases = (props) => {
                               key={i}
                             >
                               {datasetConfig[l].label}
-                              <span>{count}</span>
+                              <span className="total">{count}</span>
                             </div>
                           </a>
                         ) : null
