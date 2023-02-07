@@ -78,13 +78,23 @@ const ResultModalAction = (props) => {
       // target
       return {
         heading: [tableHeading[tableHeading.length - 1]],
-        rows: tableRows.map((v) => [
-          joinPrefix(
-            v[v.length - 1],
-            lineMode[lineMode.length - 1],
-            tableHeading[tableHeading.length - 1].prefix
-          ),
-        ]),
+        rows: isCompact
+          ? [
+              [
+                joinPrefix(
+                  tableRows,
+                  lineMode[lineMode.length - 1],
+                  tableHeading[tableHeading.length - 1].prefix
+                ),
+              ],
+            ]
+          : tableRows.map((v) => [
+              joinPrefix(
+                v,
+                lineMode[lineMode.length - 1],
+                tableHeading[tableHeading.length - 1].prefix
+              ),
+            ]),
       };
     } else if (previewMode === "full") {
       // full
@@ -100,7 +110,7 @@ const ResultModalAction = (props) => {
 
   const joinPrefix = (id, mode, prefix) => {
     // nullチェックが必要な場合は関数に渡す前にチェックすること
-    // reducedの際の処理を共通化させるためにsplitする
+    // compactの際の処理を共通化させるためにsplitする
     if (mode === "id") {
       return id;
     } else if (mode === "url") {
@@ -124,10 +134,7 @@ const ResultModalAction = (props) => {
       compact: isCompact,
     });
 
-    const results =
-      previewMode !== "target" ? d.results : d.results.map((v) => [v]);
-
-    const { rows } = createExportTable(props.tableData.heading, results);
+    const { rows } = createExportTable(props.tableData.heading, d.results);
     const text = invokeUnparse(rows, "tsv");
 
     copy(text, {
@@ -143,11 +150,9 @@ const ResultModalAction = (props) => {
       compact: isCompact,
     });
 
-    const results =
-      previewMode !== "target" ? d.results : d.results.map((v) => [v]);
     const { heading, rows } = createExportTable(
       props.tableData.heading,
-      results
+      d.results
     );
     const h = heading.map((v) => v.label);
     exportCsvTsv([h, ...rows], extension, `result.${extension}`);
