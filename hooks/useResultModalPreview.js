@@ -81,7 +81,6 @@ const useResultModalPreview = (
   prefixList
 ) => {
   const [filterTable, setFilterTable] = useState({});
-  const [expandedTable, setExpandedTable] = useState(/** @type {array} */ ([]));
 
   const { data: baseTable } = useSWRImmutable(
     {
@@ -91,11 +90,18 @@ const useResultModalPreview = (
       limit: 100,
       compact: isCompact,
     },
-    (key) => fetcher(key, tableHeading, prefixList),
+    (key) => fetcher(key, tableHeading, prefixList)
+  );
+
+  const { data: expandedTable } = useSWRImmutable(
     {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
+      route: route,
+      ids: ids,
+      report: "full",
+      limit: 100,
+      compact: false,
+    },
+    (key) => fetcher(key, tableHeading, prefixList)
   );
 
   useEffect(() => {
@@ -104,24 +110,10 @@ const useResultModalPreview = (
         setFilterTable(editCompactTable());
       } else {
         setFilterTable(editTable());
-        if (!expandedTable.length) {
-          setExpandedTable(baseTable);
-        }
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [baseTable]);
-
-  useEffect(() => {
-    if (baseTable) {
-      if (isCompact) {
-        setFilterTable(editCompactTable());
-      } else {
-        setFilterTable(editTable());
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [previewMode]);
+  }, [baseTable, previewMode]);
 
   /**
    * @return {{ heading: any[], rows: any[] }}
