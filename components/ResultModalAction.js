@@ -363,7 +363,7 @@ const ResultModalAction = (props) => {
                 <tr key={i}>
                   {data.map((d, j) => (
                     <td key={j}>
-                      {isCompact && previewMode !== "target" ? (
+                      {isCompact ? (
                         d.url &&
                         Array.isArray(d.url) &&
                         d.url.map((f, k) => (

@@ -93,24 +93,9 @@ const useResultModalPreview = (
     (key) => fetcher(key, tableHeading, prefixList)
   );
 
-  const { data: expandedTable } = useSWRImmutable(
-    {
-      route: route,
-      ids: ids,
-      report: "full",
-      limit: 100,
-      compact: false,
-    },
-    (key) => fetcher(key, tableHeading, prefixList)
-  );
-
   useEffect(() => {
     if (baseTable) {
-      if (isCompact) {
-        setFilterTable(editCompactTable());
-      } else {
-        setFilterTable(editTable());
-      }
+      setFilterTable(isCompact ? editCompactTable() : editTable());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [baseTable, previewMode]);
@@ -185,12 +170,19 @@ const useResultModalPreview = (
       // 重複は消す
       return {
         heading: [tableHeading[tableHeading.length - 1]],
-        rows: expandedTable
-          .filter((v) => v[v.length - 1].url)
-          .map((v) => [v[v.length - 1]])
-          .filter(
-            (v, i, self) => self.findIndex((w) => w[0].url === v[0].url) === i
-          ),
+        rows: [
+          [
+            structuredClone(baseTable)
+              .filter((v) => v[v.length - 1].url.length)
+              .map((v) => v[v.length - 1])
+              .reduce((prev, curr) => {
+                Object.entries(curr).forEach(([key, value]) => {
+                  prev[key] = [...new Set(prev[key].concat(value))];
+                });
+                return prev;
+              }),
+          ],
+        ],
       };
     } else if (previewMode === "full") {
       // full
