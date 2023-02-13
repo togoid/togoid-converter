@@ -181,8 +181,11 @@ const Explore = (props) => {
                           }
                           key={1}
                         >
-                          <label className="sort__label">Sort by</label>
+                          <label className="sort__label" htmlFor="sort">
+                            Sort by
+                          </label>
                           <select
+                            id="sort"
                             className="select white"
                             onChange={(e) =>
                               sortNode(
@@ -211,13 +214,21 @@ const Explore = (props) => {
                               onClick={() =>
                                 sortNode(sortModeOrderList[i].mode, "asc", i)
                               }
-                              className="sort__button asc"
+                              className={`sort__button asc ${
+                                sortModeOrderList[i].order === "asc"
+                                  ? "active"
+                                  : ""
+                              }`}
                             />
                             <button
                               onClick={() =>
                                 sortNode(sortModeOrderList[i].mode, "desc", i)
                               }
-                              className="sort__button desc"
+                              className={`sort__button desc ${
+                                sortModeOrderList[i].order === "desc"
+                                  ? "active"
+                                  : ""
+                              }`}
                             />
                           </div>
                         </div>
