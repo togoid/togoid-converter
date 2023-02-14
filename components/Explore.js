@@ -35,10 +35,14 @@ const Explore = (props) => {
         sortModeOrders.push(sortModeOrderList[i]);
       } else {
         const sorted = v.sort((a, b) => {
-          if (datasetConfig[a.name].label < datasetConfig[b.name].label) {
+          if (
+            datasetConfig[a.name].label.toLowerCase() <
+            datasetConfig[b.name].label.toLowerCase()
+          ) {
             return -1;
           } else if (
-            datasetConfig[a.name].label > datasetConfig[b.name].label
+            datasetConfig[a.name].label.toLowerCase() >
+            datasetConfig[b.name].label.toLowerCase()
           ) {
             return 1;
           } else {
@@ -115,9 +119,15 @@ const Explore = (props) => {
     const nodesListCopy = nodesList.slice();
     if (mode === "name") {
       nodesListCopy[i].sort((a, b) => {
-        if (datasetConfig[a.name].label < datasetConfig[b.name].label) {
+        if (
+          datasetConfig[a.name].label.toLowerCase() <
+          datasetConfig[b.name].label.toLowerCase()
+        ) {
           return n * -1;
-        } else if (datasetConfig[a.name].label > datasetConfig[b.name].label) {
+        } else if (
+          datasetConfig[a.name].label.toLowerCase() >
+          datasetConfig[b.name].label.toLowerCase()
+        ) {
           return n * 1;
         }
       });
