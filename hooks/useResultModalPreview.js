@@ -81,7 +81,6 @@ const useResultModalPreview = (
   prefixList
 ) => {
   const [filterTable, setFilterTable] = useState({});
-  const [expandedTable, setExpandedTable] = useState(/** @type {array} */ ([]));
 
   const { data: baseTable } = useSWRImmutable(
     {
@@ -91,37 +90,15 @@ const useResultModalPreview = (
       limit: 100,
       compact: isCompact,
     },
-    (key) => fetcher(key, tableHeading, prefixList),
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
+    (key) => fetcher(key, tableHeading, prefixList)
   );
 
   useEffect(() => {
     if (baseTable) {
-      if (isCompact) {
-        setFilterTable(editCompactTable());
-      } else {
-        setFilterTable(editTable());
-        if (!expandedTable.length) {
-          setExpandedTable(baseTable);
-        }
-      }
+      setFilterTable(isCompact ? editCompactTable() : editTable());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [baseTable]);
-
-  useEffect(() => {
-    if (baseTable) {
-      if (isCompact) {
-        setFilterTable(editCompactTable());
-      } else {
-        setFilterTable(editTable());
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [previewMode]);
+  }, [baseTable, previewMode]);
 
   /**
    * @return {{ heading: any[], rows: any[] }}
@@ -193,12 +170,19 @@ const useResultModalPreview = (
       // 重複は消す
       return {
         heading: [tableHeading[tableHeading.length - 1]],
-        rows: expandedTable
-          .filter((v) => v[v.length - 1].url)
-          .map((v) => [v[v.length - 1]])
-          .filter(
-            (v, i, self) => self.findIndex((w) => w[0].url === v[0].url) === i
-          ),
+        rows: [
+          [
+            structuredClone(baseTable)
+              .filter((v) => v[v.length - 1].url.length)
+              .map((v) => v[v.length - 1])
+              .reduce((prev, curr) => {
+                Object.entries(curr).forEach(([key, value]) => {
+                  prev[key] = [...new Set(prev[key].concat(value))];
+                });
+                return prev;
+              }),
+          ],
+        ],
       };
     } else if (previewMode === "full") {
       // full
