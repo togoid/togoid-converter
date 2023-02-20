@@ -34,21 +34,7 @@ const Explore = (props) => {
         sortNodes.push(v);
         sortModeOrders.push(sortModeOrderList[i]);
       } else {
-        const sorted = v.sort((a, b) => {
-          if (
-            datasetConfig[a.name].label.toLowerCase() <
-            datasetConfig[b.name].label.toLowerCase()
-          ) {
-            return -1;
-          } else if (
-            datasetConfig[a.name].label.toLowerCase() >
-            datasetConfig[b.name].label.toLowerCase()
-          ) {
-            return 1;
-          } else {
-            return 0;
-          }
-        });
+        const sorted = sortFunc(v, "name", "asc");
 
         sortNodes.push(sorted);
         sortModeOrders.push({ mode: "name", order: "asc" });
@@ -58,6 +44,55 @@ const Explore = (props) => {
     setSortModeOrderList(sortModeOrders);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.databaseNodesList]);
+
+  const sortNode = (mode, order, i) => {
+    // この時点で元の配列が壊れても気にしないので shallow copy する
+    const nodesListCopy = nodesList.slice();
+    nodesListCopy[i] = sortFunc(nodesListCopy[i], mode, order);
+
+    setNodesList(nodesListCopy);
+
+    const sortModeOrderListCopy = sortModeOrderList.slice();
+    sortModeOrderListCopy[i] = {
+      mode,
+      order,
+    };
+    setSortModeOrderList(sortModeOrderListCopy);
+  };
+
+  const sortFunc = (item, mode, order) => {
+    const n = order === "asc" ? 1 : -1;
+
+    if (mode === "name") {
+      item.sort((a, b) => {
+        if (
+          datasetConfig[a.name].label.toLowerCase() <
+          datasetConfig[b.name].label.toLowerCase()
+        ) {
+          return n * -1;
+        } else if (
+          datasetConfig[a.name].label.toLowerCase() >
+          datasetConfig[b.name].label.toLowerCase()
+        ) {
+          return n * 1;
+        }
+      });
+    } else if (mode === "category") {
+      item.sort((a, b) => {
+        if (a.category < b.category) {
+          return n * -1;
+        } else if (a.category > b.category) {
+          return n * 1;
+        }
+      });
+    } else if (mode === "sourceCount") {
+      item.sort((a, b) => (a.source - b.source) * n);
+    } else if (mode === "targetCount") {
+      item.sort((a, b) => (a.target - b.target) * n);
+    }
+
+    return item;
+  };
 
   const selectDatabase = (database, i) => {
     const r = props.route.slice(0, i);
@@ -110,48 +145,6 @@ const Explore = (props) => {
 
   const handleActionButtonVisibility = (i, j) => {
     setVisibleActionButtonIndex([i, j]);
-  };
-
-  const sortNode = (mode, order, i) => {
-    const n = order === "asc" ? 1 : -1;
-
-    // この時点で元の配列が壊れても気にしないので shallow copy する
-    const nodesListCopy = nodesList.slice();
-    if (mode === "name") {
-      nodesListCopy[i].sort((a, b) => {
-        if (
-          datasetConfig[a.name].label.toLowerCase() <
-          datasetConfig[b.name].label.toLowerCase()
-        ) {
-          return n * -1;
-        } else if (
-          datasetConfig[a.name].label.toLowerCase() >
-          datasetConfig[b.name].label.toLowerCase()
-        ) {
-          return n * 1;
-        }
-      });
-    } else if (mode === "category") {
-      nodesListCopy[i].sort((a, b) => {
-        if (a.category < b.category) {
-          return n * -1;
-        } else if (a.category > b.category) {
-          return n * 1;
-        }
-      });
-    } else if (mode === "sourceCount") {
-      nodesListCopy[i].sort((a, b) => (a.source - b.source) * n);
-    } else if (mode === "targetCount") {
-      nodesListCopy[i].sort((a, b) => (a.target - b.target) * n);
-    }
-    setNodesList(nodesListCopy);
-
-    const sortModeOrderListCopy = sortModeOrderList.slice();
-    sortModeOrderListCopy[i] = {
-      mode,
-      order,
-    };
-    setSortModeOrderList(sortModeOrderListCopy);
   };
 
   return (
