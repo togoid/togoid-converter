@@ -8,6 +8,7 @@ import IdInput from "../components/IdInput";
 import Documents from "../components/Documents";
 import TabWrapper from "../components/TabWrapper";
 import Navigate from "../components/Navigate";
+import Annotate from "../components/Annotate";
 import {
   executeQuery,
   executeCountQuery,
@@ -702,6 +703,7 @@ const Home = () => {
               setPreviousRoute={setPreviousRoute}
             />
           )}
+          {activeTab === "ANNOTATE" && <Annotate />}
           {activeTab === "DATABASE" && (
             <Databases executeExamples={executeExamples} />
           )}
