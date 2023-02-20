@@ -295,7 +295,40 @@
       }
     }
 
-    &__inner {
+    &__lang-keyword {
+      display: flex;
+      align-items: center;
+      gap: 59px;
+      margin: 0 0 25px;
+    }
+
+    &__lang,
+    &__keyword {
+      flex-basis: 50%;
+    }
+
+    &__lang {
+      padding: 17px;
+      border-radius: 10px;
+      background-color: $white;
+    }
+
+    &__keyword {
+      height: 50px;
+      padding: 0 15px 0 46px;
+      border-radius: 25px;
+      border: 1px solid $gray01;
+      background: {
+        color: $white;
+        image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.9 15.9"><path d="M15.9,14.5l-3.3-3.3A6.847,6.847,0,0,0,14,7,6.957,6.957,0,0,0,7,0,6.957,6.957,0,0,0,0,7a6.957,6.957,0,0,0,7,7,6.847,6.847,0,0,0,4.2-1.4l3.3,3.3ZM2,7A4.951,4.951,0,0,1,7,2a4.951,4.951,0,0,1,5,5,4.951,4.951,0,0,1-5,5A4.951,4.951,0,0,1,2,7Z" fill="%23969696" /></svg>');
+        repeat: no-repeat;
+        position: 15px center;
+        size: 16px auto;
+      }
+    }
+
+
+  &__inner {
       width: 900px;
       margin: 0 auto;
     }

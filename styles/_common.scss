@@ -78,9 +78,9 @@
 
 .select_lang {
   display: flex;
-  margin: 0 0 18px;
+  gap: 16px;
+  margin: 0 0 9px;
   .radio {
-    margin: 0 24px 0 0;
     &__label {
       font-family: Oswald;
       cursor: pointer;
