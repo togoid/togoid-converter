@@ -222,24 +222,31 @@ const Explore = (props) => {
                           <div className="sort">
                             <button
                               onClick={() =>
-                                sortNode(sortModeOrderList[i].mode, "asc", i)
+                                sortNode(
+                                  sortModeOrderList[i].mode,
+                                  sortModeOrderList[i].order === "asc"
+                                    ? "desc"
+                                    : "asc",
+                                  i
+                                )
                               }
-                              className={`sort__button asc ${
-                                sortModeOrderList[i].order === "asc"
-                                  ? "active"
-                                  : ""
-                              }`}
-                            />
-                            <button
-                              onClick={() =>
-                                sortNode(sortModeOrderList[i].mode, "desc", i)
-                              }
-                              className={`sort__button desc ${
-                                sortModeOrderList[i].order === "desc"
-                                  ? "active"
-                                  : ""
-                              }`}
-                            />
+                              className={`sort__button`}
+                            >
+                              <div
+                                className={`sort__button asc ${
+                                  sortModeOrderList[i].order === "asc"
+                                    ? "active"
+                                    : ""
+                                }`}
+                              />
+                              <div
+                                className={`sort__button desc ${
+                                  sortModeOrderList[i].order === "desc"
+                                    ? "active"
+                                    : ""
+                                }`}
+                              />
+                            </button>
                           </div>
                         </div>
 
