@@ -6,6 +6,13 @@ import { ArrowArea } from "react-arrow-master";
 import { categories } from "../lib/setting";
 import useConfig from "../hooks/useConfig";
 
+const sortConfig = {
+  name: { up: "desc", down: "asc" },
+  category: { up: "desc", down: "asc" },
+  sourceCount: { up: "asc", down: "desc" },
+  targetCount: { up: "asc", down: "desc" },
+};
+
 const Explore = (props) => {
   const [modalVisibility, setModalVisibility] = useState(false);
   const [tableData, setTableData] = useState({ heading: [] });
@@ -34,10 +41,10 @@ const Explore = (props) => {
         sortNodes.push(v);
         sortModeOrders.push(sortModeOrderList[i]);
       } else {
-        const sorted = sortFunc(v, "name", "asc");
+        const sorted = sortFunc(v, "name", "down");
 
         sortNodes.push(sorted);
-        sortModeOrders.push({ mode: "name", order: "asc" });
+        sortModeOrders.push({ mode: "name", direction: "down" });
       }
     });
     setNodesList(sortNodes);
@@ -45,23 +52,23 @@ const Explore = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.databaseNodesList]);
 
-  const sortNode = (mode, order, i) => {
+  const sortNode = (mode, direction, i) => {
     // この時点で元の配列が壊れても気にしないので shallow copy する
     const nodesListCopy = nodesList.slice();
-    nodesListCopy[i] = sortFunc(nodesListCopy[i], mode, order);
+    nodesListCopy[i] = sortFunc(nodesListCopy[i], mode, direction);
 
     setNodesList(nodesListCopy);
 
     const sortModeOrderListCopy = sortModeOrderList.slice();
     sortModeOrderListCopy[i] = {
       mode,
-      order,
+      direction,
     };
     setSortModeOrderList(sortModeOrderListCopy);
   };
 
-  const sortFunc = (item, mode, order) => {
-    const n = order === "asc" ? 1 : -1;
+  const sortFunc = (item, mode, direction) => {
+    const n = sortConfig[mode][direction] === "asc" ? 1 : -1;
 
     if (mode === "name") {
       item.sort((a, b) => {
@@ -193,7 +200,7 @@ const Explore = (props) => {
                             onChange={(e) =>
                               sortNode(
                                 e.target.value,
-                                sortModeOrderList[i].order,
+                                sortModeOrderList[i].direction,
                                 i
                               )
                             }
@@ -217,24 +224,24 @@ const Explore = (props) => {
                               onClick={() =>
                                 sortNode(
                                   sortModeOrderList[i].mode,
-                                  sortModeOrderList[i].order === "asc"
-                                    ? "desc"
-                                    : "asc",
+                                  sortModeOrderList[i].direction === "up"
+                                    ? "down"
+                                    : "up",
                                   i
                                 )
                               }
                               className={`sort__button`}
                             >
                               <div
-                                className={`sort__button asc ${
-                                  sortModeOrderList[i].order === "asc"
+                                className={`sort__button up ${
+                                  sortModeOrderList[i].direction === "up"
                                     ? "active"
                                     : ""
                                 }`}
                               />
                               <div
-                                className={`sort__button desc ${
-                                  sortModeOrderList[i].order === "desc"
+                                className={`sort__button down ${
+                                  sortModeOrderList[i].direction === "down"
                                     ? "active"
                                     : ""
                                 }`}
