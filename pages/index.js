@@ -703,7 +703,9 @@ const Home = () => {
               setPreviousRoute={setPreviousRoute}
             />
           )}
-          {activeTab === "ANNOTATE" && <Annotate />}
+          {activeTab === "ANNOTATE" && (
+            <Annotate databaseNodesList={databaseNodesList} />
+          )}
           {activeTab === "DATABASE" && (
             <Databases executeExamples={executeExamples} />
           )}
