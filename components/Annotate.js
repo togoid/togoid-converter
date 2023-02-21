@@ -4,10 +4,15 @@ import { categories } from "../lib/setting";
 import useConfig from "../hooks/useConfig";
 
 /**
- * @param {{ databaseNodesList: any[] }} props
+ * @param {{ databaseNodesList: any[]; route: any[]; setRoute: Function }} props
  */
 const Annotate = (props) => {
   const { datasetConfig } = useConfig();
+
+  const selectDataset = (input) => {
+    props.setRoute([input]);
+  };
+
   return (
     <div className="annotate">
       {props.databaseNodesList[0] && (
@@ -16,10 +21,13 @@ const Annotate = (props) => {
             {props.databaseNodesList[0].map((v, i) => (
               <button
                 key={i}
-                className="annotate__side-menu__button active"
+                className={`annotate__side-menu__button ${
+                  v.name === props.route[0]?.name ? "active" : ""
+                }`}
                 style={{
-                  backgroundColor: categories?.[v.category]?.color,
+                  backgroundColor: categories[v.category]?.color,
                 }}
+                onClick={() => selectDataset(v)}
               >
                 <span className="text">{datasetConfig[v.name].label}</span>
                 <span className="total">{v.target}</span>

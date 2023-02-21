@@ -704,7 +704,11 @@ const Home = () => {
             />
           )}
           {activeTab === "ANNOTATE" && (
-            <Annotate databaseNodesList={databaseNodesList} />
+            <Annotate
+              databaseNodesList={databaseNodesList}
+              route={route}
+              setRoute={setRoute}
+            />
           )}
           {activeTab === "DATABASE" && (
             <Databases executeExamples={executeExamples} />
