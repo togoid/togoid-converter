@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 
 /**
- * @param {{children: string, copyFunction: Function, isReduced?: boolean}} props
+ * @param {{ children: string; copyFunction: Function; isReduced?: boolean }} props
  */
 const ResultModalClipboardButton = (props) => {
   const [isShowCopied, setIsShowCopied] = useState(false);

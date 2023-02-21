@@ -52,7 +52,7 @@ const createCompactBaseTable = (tableRows, tableHeading, prefixList) => {
 };
 
 /**
- * @param {{route: object[], ids: string[], report: string, limit: number, compact: boolean}} key
+ * @param {{ route: object[]; ids: string[]; report: string; limit: number; compact: boolean }} key
  * @param {array} tableHeading
  * @param {array} prefixList
  */
@@ -101,7 +101,7 @@ const useResultModalPreview = (
   }, [baseTable, previewMode]);
 
   /**
-   * @return {{ heading: any[], rows: any[] }}
+   * @returns {{ heading: any[]; rows: any[] }}
    */
   const editTable = () => {
     if (previewMode === "all") {
@@ -147,7 +147,7 @@ const useResultModalPreview = (
   };
 
   /**
-   * @return {{ heading: any[], rows: any[] }}
+   * @returns {{ heading: any[]; rows: any[] }}
    */
   const editCompactTable = () => {
     if (previewMode === "all") {
