@@ -10,6 +10,7 @@ const Databases = (props) => {
 
   const [language, setLanguage] = useState("en");
   const [datasetFilterObj, setDatasetFilterObj] = useState(datasetConfig);
+  const [searchText, setSearchText] = useState("");
 
   // Dataset Name Index のリストを作成
   const nameIndex = useMemo(
@@ -30,6 +31,23 @@ const Databases = (props) => {
     );
 
     setDatasetFilterObj(filterDataset);
+  };
+
+  const handleTextfilter = (input) => {
+    setSearchText(input);
+
+    const filterDataset = Object.entries(datasetConfig).reduce(
+      (prev, [key, value]) => {
+        return isFindText(input, value) ? { ...prev, [key]: value } : prev;
+      },
+      {}
+    );
+
+    setDatasetFilterObj(filterDataset);
+  };
+
+  const isFindText = (input, value) => {
+    return value.label.includes(input);
   };
 
   const handleResetfilter = () => {
@@ -90,7 +108,12 @@ const Databases = (props) => {
                     </section>
                   </section>
                 </section>
-                <input type="text" className="database__keyword" />
+                <input
+                  type="text"
+                  className="database__keyword"
+                  value={searchText}
+                  onChange={(e) => handleTextfilter(e.target.value)}
+                />
               </section>
 
               <section className="database__index">
