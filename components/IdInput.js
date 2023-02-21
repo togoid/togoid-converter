@@ -1,10 +1,17 @@
-import React from "react";
+// @ts-check
+import React, { useState, useEffect } from "react";
 
 const IdInput = (props) => {
+  const [text, setText] = useState(props.idTexts);
+
+  useEffect(() => {
+    setText(props.idTexts);
+  }, [props.idTexts]);
+
   const handleSubmit = (e) => {
     if (e) e.preventDefault();
 
-    const findDatabaseList = props.handleIdTextsSubmit(props.idTexts);
+    const findDatabaseList = props.handleIdTextsSubmit(text);
     if (props.previousRoute.length) {
       const firstRoute = findDatabaseList.find(
         (v) => v.name === props.previousRoute[0].name
@@ -63,8 +70,8 @@ const IdInput = (props) => {
             rows="10"
             placeholder="Input your ID (set), separated by comma, space, or newline (e.g. 5460, 6657, 9314, 4609 for NCBI gene)."
             className="textarea__input"
-            value={props.idTexts}
-            onChange={(e) => props.setIdTexts(e.target.value)}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
             onKeyDown={handleKeyDown}
           />
           {props.idTexts && (
