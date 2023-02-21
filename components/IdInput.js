@@ -37,6 +37,7 @@ const IdInput = (props) => {
   };
 
   const selectTextFile = () => {
+    // @ts-expect-error
     inputRef.current.click();
   };
   const inputRef = React.useRef();
@@ -66,8 +67,8 @@ const IdInput = (props) => {
       <form onSubmit={handleSubmit} className="textarea">
         <div className="textarea_wrapper">
           <textarea
-            cols="30"
-            rows="10"
+            cols={30}
+            rows={10}
             placeholder="Input your ID (set), separated by comma, space, or newline (e.g. 5460, 6657, 9314, 4609 for NCBI gene)."
             className="textarea__input"
             value={text}
@@ -93,6 +94,7 @@ const IdInput = (props) => {
           />
           <input
             type="file"
+            // @ts-expect-error
             ref={inputRef}
             style={{ display: "none" }}
             onChange={readTextFile}
