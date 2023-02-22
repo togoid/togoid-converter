@@ -1,6 +1,7 @@
 // @ts-check
-import React from "react";
+import React, { useMemo } from "react";
 import { categories } from "../lib/setting";
+import { annotateTargetList } from "../lib/annotate-target";
 import useConfig from "../hooks/useConfig";
 
 /**
@@ -9,16 +10,21 @@ import useConfig from "../hooks/useConfig";
 const Annotate = (props) => {
   const { datasetConfig } = useConfig();
 
+  const annotateDatabaseNodesList = useMemo(
+    () => props.databaseNodesList[0]?.filter((v) => annotateTargetList[v.name]),
+    [props.databaseNodesList]
+  );
+
   const selectDataset = (input) => {
     props.setRoute([input]);
   };
 
   return (
     <div className="annotate">
-      {props.databaseNodesList[0] && (
+      {annotateDatabaseNodesList && (
         <>
           <nav className="annotate__side-menu">
-            {props.databaseNodesList[0].map((v, i) => (
+            {annotateDatabaseNodesList.map((v, i) => (
               <button
                 key={i}
                 className={`annotate__side-menu__button ${
