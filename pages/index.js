@@ -8,6 +8,7 @@ import IdInput from "../components/IdInput";
 import Documents from "../components/Documents";
 import TabWrapper from "../components/TabWrapper";
 import Navigate from "../components/Navigate";
+import Annotate from "../components/Annotate";
 import {
   executeQuery,
   executeCountQuery,
@@ -49,6 +50,8 @@ const Home = () => {
           } else {
             createNavigatePath(databaseNodesList);
           }
+          // eslint-disable-next-line no-empty
+        } else if (activeTab === "ANNOTATE") {
         } else if (isUseKeepRoute) {
           const r = route;
           for (let i = 0; i < previousRoute.length; i++) {
@@ -700,6 +703,13 @@ const Home = () => {
               setRoute={setRoute}
               ids={ids}
               setPreviousRoute={setPreviousRoute}
+            />
+          )}
+          {activeTab === "ANNOTATE" && (
+            <Annotate
+              databaseNodesList={databaseNodesList}
+              route={route}
+              setRoute={setRoute}
             />
           )}
           {activeTab === "DATABASE" && (
