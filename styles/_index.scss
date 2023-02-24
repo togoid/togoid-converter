@@ -138,19 +138,23 @@
 
             &__button {
               width: 22px;
-              height: 10px;
+              height: 22px;
               border: none;
               background-color: $white;
               background-repeat: no-repeat;
               background-position: center;
               background-size: 9px auto;
-              &.asc {
+              &.up {
+                width: 11px;
+                height: 9px;
                 background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 5"><path d="M4.5,0,9,5H0Z" fill="%23C4C4C4" /></svg>');
                 &.active {
                   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 5"><path d="M4.5,0,9,5H0Z" fill="%23249eb3" /></svg>');
                 }
               }
-              &.desc {
+              &.down {
+                width: 11px;
+                height: 9px;
                 background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 5"><path d="M4.5,5,9,0H0Z" fill="%23C4C4C4" /></svg>');
                 &.active {
                   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 5"><path d="M4.5,5,9,0H0Z" fill="%23249eb3" /></svg>');
