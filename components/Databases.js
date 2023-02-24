@@ -47,7 +47,7 @@ const Databases = (props) => {
   };
 
   const isFindText = (input, value) => {
-    return value.label.includes(input);
+    return value.label.toLowerCase().includes(input.toLowerCase());
   };
 
   const handleResetfilter = () => {
