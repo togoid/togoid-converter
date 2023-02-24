@@ -50,6 +50,8 @@ const Home = () => {
           } else {
             createNavigatePath(databaseNodesList);
           }
+          // eslint-disable-next-line no-empty
+        } else if (activeTab === "ANNOTATE") {
         } else if (isUseKeepRoute) {
           const r = route;
           for (let i = 0; i < previousRoute.length; i++) {

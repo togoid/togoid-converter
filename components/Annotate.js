@@ -3,12 +3,17 @@ import React, { useMemo } from "react";
 import { categories } from "../lib/setting";
 import { annotateTargetList } from "../lib/annotate-target";
 import useConfig from "../hooks/useConfig";
+import useAnnotate from "../hooks/useAnnotate";
 
 /**
  * @param {{ databaseNodesList: any[]; route: any[]; setRoute: Function }} props
  */
 const Annotate = (props) => {
   const { datasetConfig } = useConfig();
+  const annotateResultList = useAnnotate(
+    props.route[0]?.results,
+    annotateTargetList[props.route[0]?.name]
+  );
 
   const annotateDatabaseNodesList = useMemo(
     () => props.databaseNodesList[0]?.filter((v) => annotateTargetList[v.name]),
@@ -45,25 +50,15 @@ const Annotate = (props) => {
               <tr>
                 <th>URI</th>
                 <th>ID</th>
-                <th>LABEL</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Xxx-xxx-xxxx</td>
-                <td>YYY-YYY-YYY</td>
-                <td>Zzz-zzz-zzzz</td>
-              </tr>
-              <tr>
-                <td>Xxx-xxx-xxxx</td>
-                <td>YYY-YYY-YYY</td>
-                <td>Zzz-zzz-zzzz</td>
-              </tr>
-              <tr>
-                <td>Xxx-xxx-xxxx</td>
-                <td>YYY-YYY-YYY</td>
-                <td>Zzz-zzz-zzzz</td>
-              </tr>
+              {annotateResultList?.map((v, i) => (
+                <tr key={i}>
+                  <td>{v.iri}</td>
+                  <td>{v.id}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </>
