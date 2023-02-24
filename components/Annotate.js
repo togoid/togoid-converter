@@ -6,7 +6,7 @@ import useConfig from "../hooks/useConfig";
 import useAnnotate from "../hooks/useAnnotate";
 
 /**
- * @param {{ databaseNodesList: any[]; route: any[]; setRoute: Function }} props
+ * @param {{ databaseNodesList: Route[][]; route: Route[]; setRoute: Function }} props
  */
 const Annotate = (props) => {
   const { datasetConfig } = useConfig();
