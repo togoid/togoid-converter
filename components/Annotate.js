@@ -50,6 +50,7 @@ const Annotate = (props) => {
               <tr>
                 <th>URI</th>
                 <th>ID</th>
+                <th>LABEL</th>
               </tr>
             </thead>
             <tbody>
@@ -57,6 +58,7 @@ const Annotate = (props) => {
                 <tr key={i}>
                   <td>{v.iri}</td>
                   <td>{v.id}</td>
+                  <td>{v.label}</td>
                 </tr>
               ))}
             </tbody>
