@@ -12,8 +12,13 @@
   ],
   "rules": {
     "react/prop-types": "off",
-    "prettier/prettier": "error",
-    "react/react-in-jsx-scope": "off" 
+    "prettier/prettier": ["error",{
+      "jsdocSingleLineComment": false,
+      "jsdocCapitalizeDescription": false,
+      "jsdocPrintWidth": 240,
+      "jsdocSeparateReturnsFromParam": true
+    }],
+    "react/react-in-jsx-scope": "off"
   },
   "env": {
     "browser": true,

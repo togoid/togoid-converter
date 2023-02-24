@@ -10,6 +10,7 @@ const Databases = (props) => {
 
   const [language, setLanguage] = useState("en");
   const [datasetFilterObj, setDatasetFilterObj] = useState(datasetConfig);
+  const [searchText, setSearchText] = useState("");
 
   // Dataset Name Index のリストを作成
   const nameIndex = useMemo(
@@ -32,6 +33,23 @@ const Databases = (props) => {
     setDatasetFilterObj(filterDataset);
   };
 
+  const handleTextfilter = (input) => {
+    setSearchText(input);
+
+    const filterDataset = Object.entries(datasetConfig).reduce(
+      (prev, [key, value]) => {
+        return isFindText(input, value) ? { ...prev, [key]: value } : prev;
+      },
+      {}
+    );
+
+    setDatasetFilterObj(filterDataset);
+  };
+
+  const isFindText = (input, value) => {
+    return value.label.includes(input);
+  };
+
   const handleResetfilter = () => {
     setDatasetFilterObj(datasetConfig);
   };
@@ -46,50 +64,56 @@ const Databases = (props) => {
         <div className="drawing_area">
           <div className="database">
             <div className="database__inner">
-              <div className="select_lang">
-                <div className="radio">
-                  <input
-                    type="radio"
-                    id="en"
-                    name="en"
-                    value="en"
-                    className="radio__input"
-                    style={{ width: "20px", height: "20px" }}
-                    onChange={() => setLanguage("en")}
-                    checked={language === "en"}
-                  />
-                  <label htmlFor="en" className="radio__label">
-                    en
-                  </label>
-                </div>
-                <div className="radio">
-                  <input
-                    type="radio"
-                    id="ja"
-                    name="ja"
-                    value="ja"
-                    className="radio__input"
-                    style={{ width: "20px", height: "20px" }}
-                    onChange={() => setLanguage("ja")}
-                    checked={language === "ja"}
-                  />
-                  <label htmlFor="ja" className="radio__label">
-                    ja
-                  </label>
-                </div>
-              </div>
-
-              <section className="database__index">
-                <section className="database__index__names">
-                  <h3 className="database__index__title">Dataset Name Index</h3>
-                  <section className="database__index__links">
-                    {nameIndex.map((v, i) => (
-                      <a href={"/#" + v} key={i}>
-                        {v + " "}
-                      </a>
-                    ))}
+              <section className="database__lang-keyword">
+                <section className="database__lang">
+                  <section className="database__index__names">
+                    <div className="select_lang">
+                      <div className="radio">
+                        <input
+                          type="radio"
+                          id="en"
+                          name="en"
+                          value="en"
+                          className="radio__input"
+                          style={{ width: "20px", height: "20px" }}
+                          onChange={() => setLanguage("en")}
+                          checked={language === "en"}
+                        />
+                        <label htmlFor="en" className="radio__label">
+                          en
+                        </label>
+                      </div>
+                      <div className="radio">
+                        <input
+                          type="radio"
+                          id="ja"
+                          name="ja"
+                          value="ja"
+                          className="radio__input"
+                          style={{ width: "20px", height: "20px" }}
+                          onChange={() => setLanguage("ja")}
+                          checked={language === "ja"}
+                        />
+                        <label htmlFor="ja" className="radio__label">
+                          ja
+                        </label>
+                      </div>
+                    </div>
+                    <section className="database__index__links">
+                      {nameIndex.map((v, i) => (
+                        <a href={"/#" + v} key={i}>
+                          {v + " "}
+                        </a>
+                      ))}
+                    </section>
                   </section>
                 </section>
+                <input
+                  type="text"
+                  className="database__keyword"
+                  value={searchText}
+                  onChange={(e) => handleTextfilter(e.target.value)}
+                />
               </section>
 
               <section className="database__index">
