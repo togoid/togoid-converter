@@ -142,7 +142,7 @@ const IdInput = (props) => {
             }}
             className="input_area__bottom__link"
           >
-            Uniprot
+            UniProt
           </a>
         </div>
       </div>
