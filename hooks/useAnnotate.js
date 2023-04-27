@@ -19,6 +19,7 @@ const fetcher = async (key) => {
         ${key.name}(id: ${JSON.stringify(key.id)}) {
           iri
           id
+          label
         }
       }`,
     },
