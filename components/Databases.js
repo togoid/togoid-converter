@@ -11,6 +11,7 @@ const Databases = (props) => {
   const [language, setLanguage] = useState("en");
   const [datasetFilterObj, setDatasetFilterObj] = useState(datasetConfig);
   const [searchText, setSearchText] = useState("");
+  const [searchCategory, setSearchCategory] = useState("");
 
   // Dataset Name Index のリストを作成
   const nameIndex = useMemo(
@@ -23,22 +24,31 @@ const Databases = (props) => {
   );
 
   const handleCategoryFilter = (input) => {
-    const filterDataset = Object.entries(datasetConfig).reduce(
-      (prev, [key, value]) => {
-        return value.category === input ? { ...prev, [key]: value } : prev;
-      },
-      {}
-    );
+    setSearchCategory(input);
 
-    setDatasetFilterObj(filterDataset);
+    searchDataset(searchText, input);
   };
 
   const handleTextfilter = (input) => {
     setSearchText(input);
 
+    searchDataset(input, searchCategory);
+  };
+
+  const searchDataset = (text, category) => {
     const filterDataset = Object.entries(datasetConfig).reduce(
       (prev, [key, value]) => {
-        return isFindText(input, value) ? { ...prev, [key]: value } : prev;
+        if (text && category) {
+          return isFindText(text, value) && value.category === category
+            ? { ...prev, [key]: value }
+            : prev;
+        } else if (text) {
+          return isFindText(text, value) ? { ...prev, [key]: value } : prev;
+        } else if (category) {
+          return value.category === category ? { ...prev, [key]: value } : prev;
+        } else {
+          return prev;
+        }
       },
       {}
     );
@@ -46,12 +56,14 @@ const Databases = (props) => {
     setDatasetFilterObj(filterDataset);
   };
 
-  const isFindText = (input, value) => {
-    return value.label.includes(input);
+  const isFindText = (text, value) => {
+    return value.label.toLowerCase().includes(text.toLowerCase());
   };
 
   const handleResetfilter = () => {
-    setDatasetFilterObj(datasetConfig);
+    searchText
+      ? searchDataset(searchText, "")
+      : setDatasetFilterObj(datasetConfig);
   };
 
   const clickExamples = (examples, key) => {
