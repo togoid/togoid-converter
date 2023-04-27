@@ -15,7 +15,7 @@
     "prettier/prettier": ["error",{
       "jsdocSingleLineComment": false,
       "jsdocCapitalizeDescription": false,
-      "jsdocPrintWidth": 240,
+      "jsdocPrintWidth": 160,
       "jsdocSeparateReturnsFromParam": true
     }],
     "react/react-in-jsx-scope": "off"
