@@ -173,7 +173,7 @@ const Databases = (props) => {
                       transform="translate(11786.354 -1800.647)"
                       fill="rgba(0,0,0,0)"
                       stroke="#707070"
-                      stroke-width="1"
+                      strokeWidth="1"
                     />
                   </svg>
                   <span className="clear-button__text">Clear</span>
