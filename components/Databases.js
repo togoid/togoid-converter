@@ -152,7 +152,7 @@ const Databases = (props) => {
                             <span
                               style={{ cursor: "pointer" }}
                               onClick={() => handleCategoryFilter(v2)}
-                              className="text"
+                              className="text active"
                             >
                               {v2}
                             </span>
@@ -161,10 +161,23 @@ const Databases = (props) => {
                       </label>
                     </div>
                   ))}
-                  <button className="button_micro" onClick={handleResetfilter}>
-                    Reset
-                  </button>
                 </section>
+                <button className="clear-button" onClick={handleResetfilter}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 11.708 11.708"
+                    className="clear-button__icon"
+                  >
+                    <path
+                      d="M-11780.5,1806.5l-5.5,5.5,5.5-5.5-5.5-5.5,5.5,5.5,5.5-5.5-5.5,5.5,5.5,5.5Z"
+                      transform="translate(11786.354 -1800.647)"
+                      fill="rgba(0,0,0,0)"
+                      stroke="#707070"
+                      stroke-width="1"
+                    />
+                  </svg>
+                  <span className="clear-button__text">Clear</span>
+                </button>
               </section>
 
               {Object.keys(datasetFilterObj).map((key) => (
