@@ -133,32 +133,24 @@ const Databases = (props) => {
                 <section className="database__index__colors">
                   {colorLegendList.map((v, i) => (
                     <div key={i} className="color">
-                      <input
-                        type="radio"
-                        id={v.color}
-                        name="color"
-                        className="color__input"
+                      <span
+                        className="square"
+                        style={{
+                          backgroundColor: v.color,
+                        }}
                       />
-                      <label htmlFor={v.color} className="label">
-                        <span
-                          className="square"
-                          style={{
-                            backgroundColor: v.color,
-                          }}
-                        />
-                        {v.categoryList.map((v2, i2) => (
-                          <span key={i2}>
-                            {i2 > 0 && ", "}
-                            <span
-                              style={{ cursor: "pointer" }}
-                              onClick={() => handleCategoryFilter(v2)}
-                              className="text active"
-                            >
-                              {v2}
-                            </span>
+                      {v.categoryList.map((v2, i2) => (
+                        <span key={i2}>
+                          {i2 > 0 && ", "}
+                          <span
+                            style={{ cursor: "pointer" }}
+                            onClick={() => handleCategoryFilter(v2)}
+                            className="text active"
+                          >
+                            {v2}
                           </span>
-                        ))}
-                      </label>
+                        </span>
+                      ))}
                     </div>
                   ))}
                 </section>
