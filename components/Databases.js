@@ -1,10 +1,14 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
+// @ts-check
 import React, { useState, useMemo } from "react";
 import useConfig from "../hooks/useConfig";
 import { categories, colorLegendList } from "../lib/setting";
 
+/**
+ * @type {Set<string>}
+ */
 const searchCategorySetList = new Set();
 
 const Databases = (props) => {
