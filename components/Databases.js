@@ -1,9 +1,15 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
+// @ts-check
 import React, { useState, useMemo } from "react";
 import useConfig from "../hooks/useConfig";
 import { categories, colorLegendList } from "../lib/setting";
+
+/**
+ * @type {Set<string>}
+ */
+const searchCategorySetList = new Set();
 
 const Databases = (props) => {
   const { datasetConfig, descriptionConfig } = useConfig();
@@ -11,7 +17,6 @@ const Databases = (props) => {
   const [language, setLanguage] = useState("en");
   const [datasetFilterObj, setDatasetFilterObj] = useState(datasetConfig);
   const [searchText, setSearchText] = useState("");
-  const [searchCategory, setSearchCategory] = useState("");
 
   // Dataset Name Index のリストを作成
   const nameIndex = useMemo(
@@ -24,30 +29,35 @@ const Databases = (props) => {
   );
 
   const handleCategoryFilter = (input) => {
-    setSearchCategory(input);
+    searchCategorySetList.has(input)
+      ? searchCategorySetList.delete(input)
+      : searchCategorySetList.add(input);
 
-    searchDataset(searchText, input);
+    searchDataset(searchText);
   };
 
   const handleTextfilter = (input) => {
     setSearchText(input);
 
-    searchDataset(input, searchCategory);
+    searchDataset(input);
   };
 
-  const searchDataset = (text, category) => {
+  const searchDataset = (text) => {
     const filterDataset = Object.entries(datasetConfig).reduce(
       (prev, [key, value]) => {
-        if (text && category) {
-          return isFindText(text, value) && value.category === category
+        if (text && searchCategorySetList.size) {
+          return isFindText(text, value) &&
+            searchCategorySetList.has(value.category)
             ? { ...prev, [key]: value }
             : prev;
         } else if (text) {
           return isFindText(text, value) ? { ...prev, [key]: value } : prev;
-        } else if (category) {
-          return value.category === category ? { ...prev, [key]: value } : prev;
+        } else if (searchCategorySetList.size) {
+          return searchCategorySetList.has(value.category)
+            ? { ...prev, [key]: value }
+            : prev;
         } else {
-          return prev;
+          return { ...prev, [key]: value };
         }
       },
       {}
@@ -60,10 +70,9 @@ const Databases = (props) => {
     return value.label.toLowerCase().includes(text.toLowerCase());
   };
 
-  const handleResetfilter = () => {
-    searchText
-      ? searchDataset(searchText, "")
-      : setDatasetFilterObj(datasetConfig);
+  const handleCategoryClear = () => {
+    searchCategorySetList.clear();
+    searchText ? searchDataset(searchText) : setDatasetFilterObj(datasetConfig);
   };
 
   const clickExamples = (examples, key) => {
@@ -133,38 +142,48 @@ const Databases = (props) => {
                 <section className="database__index__colors">
                   {colorLegendList.map((v, i) => (
                     <div key={i} className="color">
-                      <input
-                        type="radio"
-                        id={v.color}
-                        name="color"
-                        className="color__input"
+                      <span
+                        className="square"
+                        style={{
+                          backgroundColor: v.color,
+                        }}
                       />
-                      <label htmlFor={v.color} className="label">
-                        <span
-                          className="square"
-                          style={{
-                            backgroundColor: v.color,
-                          }}
-                        />
-                        {v.categoryList.map((v2, i2) => (
-                          <span key={i2}>
-                            {i2 > 0 && ", "}
-                            <span
-                              style={{ cursor: "pointer" }}
-                              onClick={() => handleCategoryFilter(v2)}
-                              className="text"
-                            >
-                              {v2}
-                            </span>
+                      {v.categoryList.map((v2, i2) => (
+                        <span key={i2}>
+                          {i2 > 0 && ", "}
+                          <span
+                            style={{ cursor: "pointer" }}
+                            onClick={() => handleCategoryFilter(v2)}
+                            className={
+                              searchCategorySetList.size === 0 ||
+                              searchCategorySetList.has(v2)
+                                ? "text active"
+                                : "text"
+                            }
+                          >
+                            {v2}
                           </span>
-                        ))}
-                      </label>
+                        </span>
+                      ))}
                     </div>
                   ))}
-                  <button className="button_micro" onClick={handleResetfilter}>
-                    Reset
-                  </button>
                 </section>
+                <button className="clear-button" onClick={handleCategoryClear}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 11.708 11.708"
+                    className="clear-button__icon"
+                  >
+                    <path
+                      d="M-11780.5,1806.5l-5.5,5.5,5.5-5.5-5.5-5.5,5.5,5.5,5.5-5.5-5.5,5.5,5.5,5.5Z"
+                      transform="translate(11786.354 -1800.647)"
+                      fill="rgba(0,0,0,0)"
+                      stroke="#707070"
+                      strokeWidth="1"
+                    />
+                  </svg>
+                  <span className="clear-button__text">Clear</span>
+                </button>
               </section>
 
               {Object.keys(datasetFilterObj).map((key) => (
