@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { categories } from "../lib/setting";
+import { categories, colorLegendList } from "../lib/setting";
 
 const Databases = (props) => {
   const [language, setLanguage] = useState("en");
@@ -78,103 +78,22 @@ const Databases = (props) => {
               <section className="database__index color">
                 <h3 className="database__index__title">Color Legend</h3>
                 <section className="database__index__colors">
-                  <span className="color">
-                    <span
-                      className="color__square"
-                      style={{
-                        backgroundColor: "#53C666",
-                      }}
-                    />
-                    <span className="color__label">
-                      Gene, Transcript, Ortholog, Probe
-                    </span>
-                  </span>
-                  <span className="color">
-                    <span
-                      className="color__square"
-                      style={{
-                        backgroundColor: "#A2C653",
-                      }}
-                    />
-                    <span className="color__label">Protein, Domain</span>
-                  </span>
-                  <span className="color">
-                    <span
-                      className="color__square"
-                      style={{
-                        backgroundColor: "#C68753",
-                      }}
-                    />
-                    <span className="color__label">Structure</span>
-                  </span>
-                  <span className="color">
-                    <span
-                      className="color__square"
-                      style={{
-                        backgroundColor: "#C65381",
-                      }}
-                    />
-                    <span className="color__label">
-                      Interaction, Pathway, Reaction
-                    </span>
-                  </span>
-                  <span className="color">
-                    <span
-                      className="color__square"
-                      style={{
-                        backgroundColor: "#A853C6",
-                      }}
-                    />
-                    <span className="color__label">Compound</span>
-                  </span>
-                  <span className="color">
-                    <span
-                      className="color__square"
-                      style={{
-                        backgroundColor: "#673AA6",
-                      }}
-                    />
-                    <span className="color__label">Glycan</span>
-                  </span>
-                  <span className="color">
-                    <span
-                      className="color__square"
-                      style={{
-                        backgroundColor: "#5361C6",
-                      }}
-                    />
-                    <span className="color__label">Disease</span>
-                  </span>
-                  <span className="color">
-                    <span
-                      className="color__square"
-                      style={{
-                        backgroundColor: "#53C3C6",
-                      }}
-                    />
-                    <span className="color__label">Variant</span>
-                  </span>
-                  <span className="color">
-                    <span
-                      className="color__square"
-                      style={{
-                        backgroundColor: "#006400",
-                      }}
-                    />
-                    <span className="color__label">Taxonomy</span>
-                  </span>
-                  <span className="color">
-                    <span
-                      className="color__square"
-                      style={{
-                        backgroundColor: "#696969",
-                      }}
-                    />
-                    <span className="color__label">
-                      Analysis, Experiment, Project, Literature, Sample,
-                      SequenceRun, Submission, Function
-                    </span>
-                  </span>
+                  {colorLegendList.map((v, i) => (
+                    <div key={i} className="color">
+                      <span
+                        className="color__square"
+                        style={{
+                          backgroundColor: v.color,
+                        }}
+                      />
+                      {v.categoryList.map((v2, i2) => (
+                        <span key={i2} className="color__label">
+                          {i2 > 0 && ", "}
+                          {v2}
+                        </span>
+                      ))}
+                    </div>
+                  ))}
                 </section>
               </section>
 
