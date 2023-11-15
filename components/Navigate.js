@@ -4,10 +4,11 @@ import InformationModal from "../components/InformationModal";
 import { executeQuery, exportCsvTsv } from "../lib/util";
 import { ArrowArea } from "react-arrow-master";
 import { categories } from "../lib/setting";
+import useConfig from "../hooks/useConfig";
 
 const Navigate = (props) => {
   const [modalVisibility, setModalVisibility] = useState(false);
-  const [tableData, setTableData] = useState({ heading: [], rows: [] });
+  const [tableData, setTableData] = useState({ heading: [] });
   const [informationModal, setInformationModal] = useState(false);
   const [database, setDatabase] = useState(null);
   const [visibleActionButtonIndex, setVisibleActionButtonIndex] = useState([
@@ -15,6 +16,8 @@ const Navigate = (props) => {
     null,
   ]);
   const [convertedCount, setConvertedCount] = useState([]);
+
+  const { datasetConfig } = useConfig();
 
   useEffect(() => {
     if (tableData.heading.length > 0) setModalVisibility(true);
@@ -37,8 +40,12 @@ const Navigate = (props) => {
 
   const handleIdDownload = async (database, routeIndex, j) => {
     const r = selectDatabaseModal(routeIndex, j);
-    const d = await executeQuery(r, props.ids, "target", 10000);
-    const prefix = props.dbCatalogue[database.name].prefix.split("/").slice(-1);
+    const d = await executeQuery({
+      route: r,
+      ids: props.ids,
+      report: "target",
+    });
+    const prefix = datasetConfig[database.name].prefix.split("/").slice(-1);
 
     exportCsvTsv(
       d.results.map((result) => [prefix + result]),
@@ -49,10 +56,9 @@ const Navigate = (props) => {
 
   const showModal = async (database, routeIndex, j) => {
     const r = selectDatabaseModal(routeIndex, j);
-    const heading = r.map((v) => props.dbCatalogue[v.name]);
-    const d = await executeQuery(r, props.ids, "full", 100);
-    const rows = d.results;
-    setTableData({ heading, rows });
+    const heading = r.map((v) => datasetConfig[v.name]);
+
+    setTableData({ heading });
 
     const counts = r.map((v) => {
       const target = v.message ? v.message : v?.target;
@@ -156,11 +162,12 @@ const Navigate = (props) => {
                                             opacity: isActionButtonVisible
                                               ? 0.7
                                               : 1,
-                                            backgroundColor: isActionButtonVisible
-                                              ? "#000000"
-                                              : categories[v.category]
-                                              ? categories[v.category].color
-                                              : null,
+                                            backgroundColor:
+                                              isActionButtonVisible
+                                                ? "#000000"
+                                                : categories[v.category]
+                                                ? categories[v.category].color
+                                                : null,
                                           }}
                                         >
                                           <div
@@ -179,7 +186,7 @@ const Navigate = (props) => {
                                               id={`total${i}-${v.name}`}
                                             ></span>
                                             <span className="text">
-                                              {props.dbCatalogue[v.name].label}
+                                              {datasetConfig[v.name].label}
                                             </span>
                                             <span
                                               id={`total${i}-${v.name}`}
@@ -258,11 +265,12 @@ const Navigate = (props) => {
                                               opacity: isActionButtonVisible
                                                 ? 0.7
                                                 : 1,
-                                              backgroundColor: isActionButtonVisible
-                                                ? "#000000"
-                                                : categories[v.category]
-                                                ? categories[v.category].color
-                                                : null,
+                                              backgroundColor:
+                                                isActionButtonVisible
+                                                  ? "#000000"
+                                                  : categories[v.category]
+                                                  ? categories[v.category].color
+                                                  : null,
                                             }}
                                           >
                                             <div
@@ -281,10 +289,7 @@ const Navigate = (props) => {
                                                 id={`converted${i}-${v.name}-${j}`}
                                               ></span>
                                               <span className="text">
-                                                {
-                                                  props.dbCatalogue[v.name]
-                                                    .label
-                                                }
+                                                {datasetConfig[v.name].label}
                                               </span>
                                               {i ===
                                               props.databaseNodesList.length -
@@ -385,19 +390,11 @@ const Navigate = (props) => {
                             }
                           >
                             <option>---</option>
-                            {Object.keys(props.dbCatalogue).map((key) => {
-                              // ドロップダウンには LINK TO が存在するものだけを表示
-                              if (
-                                Object.keys(props.dbConfig).find(
-                                  (k) =>
-                                    k.split("-").indexOf(key) === 0 ||
-                                    k.split("-").indexOf(key) === 1
-                                ) &&
-                                !props.route.find((v) => v.name === key)
-                              ) {
+                            {Object.keys(datasetConfig).map((key) => {
+                              if (!props.route.find((v) => v.name === key)) {
                                 return (
                                   <option key={key} value={key}>
-                                    {props.dbCatalogue[key].label}
+                                    {datasetConfig[key].label}
                                   </option>
                                 );
                               }
@@ -412,9 +409,6 @@ const Navigate = (props) => {
                     <InformationModal
                       setInformationModal={setInformationModal}
                       database={database}
-                      dbCatalogue={props.dbCatalogue}
-                      dbConfig={props.dbConfig}
-                      dbDesc={props.dbDesc}
                     />
                   )}
 
@@ -424,7 +418,6 @@ const Navigate = (props) => {
                       ids={props.ids}
                       tableData={tableData}
                       setModalVisibility={setModalVisibility}
-                      dbCatalogue={props.dbCatalogue}
                       convertedCount={convertedCount}
                     />
                   )}

@@ -61,13 +61,26 @@
       }
     }
   }
+
+  .total {
+    font-size: 1.2rem;
+    color: $gray07;
+    margin-left: 10px;
+    padding: 0 8px;
+    line-height: 18px;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid $blue02;
+    background: $white;
+  }
+
 }
 
 .select_lang {
   display: flex;
-  margin: 0 0 18px;
+  gap: 16px;
+  margin: 0 0 9px;
   .radio {
-    margin: 0 24px 0 0;
     &__label {
       font-family: Oswald;
       cursor: pointer;

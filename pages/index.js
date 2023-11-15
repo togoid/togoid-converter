@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import NProgress from "nprogress";
-import axios from "axios";
+import useConfig from "../hooks/useConfig";
 import Header from "../components/Header";
 import Explore from "../components/Explore";
 import Databases from "../components/Databases";
@@ -8,6 +8,7 @@ import IdInput from "../components/IdInput";
 import Documents from "../components/Documents";
 import TabWrapper from "../components/TabWrapper";
 import Navigate from "../components/Navigate";
+import Annotate from "../components/Annotate";
 import {
   executeQuery,
   executeCountQuery,
@@ -25,27 +26,11 @@ const Home = () => {
   const [isUseKeepRoute, setIsUseKeepRoute] = useState(false);
   const [candidatePaths, setCandidatePaths] = useState([]);
   const [idTexts, setIdTexts] = useState("");
-  const [dbCatalogue, setDbCatalogue] = useState([]);
-  const [dbConfig, setDbConfig] = useState([]);
-  const [dbDesc, setDbDesc] = useState([]);
   const [offsetRoute, setOffsetRoute] = useState(null);
   const [previousSearchTab, setPreviousSearchTab] = useState("EXPLORE");
 
-  useEffect(() => {
-    const fetchApi = async () => {
-      const promises = await Promise.all([
-        axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/dataset`),
-        axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/relation`),
-        axios.get(
-          `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/descriptions`
-        ),
-      ]);
-      setDbCatalogue(promises[0].data);
-      setDbConfig(promises[1].data);
-      setDbDesc(promises[2].data);
-    };
-    fetchApi();
-  }, []);
+  const { datasetConfig: dbCatalogue, relationConfig: dbConfig } =
+    useConfig(true);
 
   useEffect(() => {
     if (route.length > 0) {
@@ -65,6 +50,8 @@ const Home = () => {
           } else {
             createNavigatePath(databaseNodesList);
           }
+          // eslint-disable-next-line no-empty
+        } else if (activeTab === "ANNOTATE") {
         } else if (isUseKeepRoute) {
           const r = route;
           for (let i = 0; i < previousRoute.length; i++) {
@@ -148,9 +135,12 @@ const Home = () => {
         const _v = Object.assign({}, v);
 
         // 変換結果を取得
-        const convert = await executeQuery(r, ids, "target", 10000).catch(
-          () => null
-        );
+        const convert = await executeQuery({
+          route: r,
+          ids: ids,
+          report: "target",
+          limit: 10000,
+        }).catch(() => null);
         NProgress.inc(1 / candidates.length);
 
         if (convert === null) {
@@ -524,9 +514,12 @@ const Home = () => {
         const r = route.slice().concat(v);
 
         // 変換結果を取得
-        const convert = await executeQuery(r, ids, "target", 10000).catch(
-          () => null
-        );
+        const convert = await executeQuery({
+          route: r,
+          ids: ids,
+          report: "target",
+          limit: 10000,
+        }).catch(() => null);
         NProgress.inc(1 / candidates.length);
 
         if (convert === null) {
@@ -685,7 +678,6 @@ const Home = () => {
           setRoute={setRoute}
           previousRoute={previousRoute}
           setPreviousRoute={setPreviousRoute}
-          dbCatalogue={dbCatalogue}
           restartExplore={restartExplore}
           setIsUseKeepRoute={setIsUseKeepRoute}
         />
@@ -698,9 +690,6 @@ const Home = () => {
               route={route}
               setRoute={setRoute}
               ids={ids}
-              dbCatalogue={dbCatalogue}
-              dbConfig={dbConfig}
-              dbDesc={dbDesc}
               lookupRoute={lookupRoute}
               offsetRoute={offsetRoute}
               setOffsetRoute={setOffsetRoute}
@@ -713,19 +702,18 @@ const Home = () => {
               route={route}
               setRoute={setRoute}
               ids={ids}
-              dbCatalogue={dbCatalogue}
-              dbConfig={dbConfig}
-              dbDesc={dbDesc}
               setPreviousRoute={setPreviousRoute}
             />
           )}
-          {activeTab === "DATABASE" && (
-            <Databases
-              executeExamples={executeExamples}
-              dbCatalogue={dbCatalogue}
-              dbConfig={dbConfig}
-              dbDesc={dbDesc}
+          {activeTab === "ANNOTATE" && (
+            <Annotate
+              databaseNodesList={databaseNodesList}
+              route={route}
+              setRoute={setRoute}
             />
+          )}
+          {activeTab === "DATABASE" && (
+            <Databases executeExamples={executeExamples} />
           )}
           {activeTab === "DOCUMENTS" && <Documents />}
         </div>

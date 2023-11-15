@@ -117,6 +117,52 @@
         .item_wrapper {
           display: flex;
           flex-direction: column;
+          &__buttons {
+            display: flex;
+            align-items: center;
+            margin: 0 0 16px 30px;
+            &.first {
+              margin: 0 0 16px 20px;
+            }
+          }
+          .sort {
+            display: flex;
+            flex-direction: column;
+            margin: 0 0 0 5px;
+            overflow: hidden;
+            border-radius: 5px;
+            border: 1px solid $gray06;
+            &__label {
+              font-family: Oswald;
+              margin-right: 10px;
+            }
+
+            &__button {
+              width: 22px;
+              height: 22px;
+              border: none;
+              background-color: $white;
+              background-repeat: no-repeat;
+              background-position: center;
+              background-size: 9px auto;
+              &.up {
+                width: 11px;
+                height: 9px;
+                background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 5"><path d="M4.5,0,9,5H0Z" fill="%23C4C4C4" /></svg>');
+                &.active {
+                  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 5"><path d="M4.5,0,9,5H0Z" fill="%23249eb3" /></svg>');
+                }
+              }
+              &.down {
+                width: 11px;
+                height: 9px;
+                background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 5"><path d="M4.5,5,9,0H0Z" fill="%23C4C4C4" /></svg>');
+                &.active {
+                  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 5"><path d="M4.5,5,9,0H0Z" fill="%23249eb3" /></svg>');
+                }
+              }
+            }
+          }
           .result_list {
             margin: 0 0 0 30px;
             &.first {
@@ -139,6 +185,9 @@
           }
           .label_list {
             margin: 0 0 0 80px;
+            &.with_sort{
+              margin: 38px 0 0 80px;
+            }
             &__item {
               position: relative;
               display: flex;
@@ -251,7 +300,40 @@
       }
     }
 
-    &__inner {
+    &__lang-keyword {
+      display: flex;
+      align-items: center;
+      gap: 59px;
+      margin: 0 0 25px;
+    }
+
+    &__lang,
+    &__keyword {
+      flex-basis: 50%;
+    }
+
+    &__lang {
+      padding: 17px;
+      border-radius: 10px;
+      background-color: $white;
+    }
+
+    &__keyword {
+      height: 50px;
+      padding: 0 15px 0 46px;
+      border-radius: 25px;
+      border: 1px solid $gray01;
+      background: {
+        color: $white;
+        image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.9 15.9"><path d="M15.9,14.5l-3.3-3.3A6.847,6.847,0,0,0,14,7,6.957,6.957,0,0,0,7,0,6.957,6.957,0,0,0,0,7a6.957,6.957,0,0,0,7,7,6.847,6.847,0,0,0,4.2-1.4l3.3,3.3ZM2,7A4.951,4.951,0,0,1,7,2a4.951,4.951,0,0,1,5,5,4.951,4.951,0,0,1-5,5A4.951,4.951,0,0,1,2,7Z" fill="%23969696" /></svg>');
+        repeat: no-repeat;
+        position: 15px center;
+        size: 16px auto;
+      }
+    }
+
+
+  &__inner {
       width: 900px;
       margin: 0 auto;
     }
@@ -260,33 +342,32 @@
       margin: 0 0 15px;
       border-radius: 10px;
       background: $white;
-      &.color {
-        padding: 11px 20px 0;
+
+      .clear-button {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 0;
+        margin: 3px 0 0 auto;
+        border: none;
+        background-color: unset;
+        &__icon {
+          width: 11px;
+          height: 11px;
+        }
+        &__text {
+          font: {
+            family: Oswald;
+            size: 1.6rem;
+            weight: 300;
+          }
+        }
       }
+
       &__colors {
         display: flex;
         flex-wrap: wrap;
-        .color {
-          margin: 0 22px 13px 0;
-          &__square,
-          &__label {
-            display: inline-block;
-            vertical-align: middle;
-          }
-
-          &__square {
-            width: 18px;
-            height: 18px;
-            margin: 0 5px 0 0;
-            border-radius: 5px;
-            background: $green01;
-          }
-
-          &__label {
-            font-family: Oswald;
-            font-size: 1.6rem;
-          }
-        }
+        align-items: flex-start;
       }
 
       &__title {
@@ -311,13 +392,15 @@
     }
     &__item {
       color: $gray04;
-      padding: 19px 0 38px;
+      padding: 43px 0 38px;
+      margin-top: -24px;
       border-bottom: 1px solid $gray06;
       &:last-child {
         border-bottom: none;
       }
       .title {
-        margin: 0 0 19px;
+        margin: -43px 0 19px;
+        padding-top: 43px;
         &__square,
         &__text {
           display: inline-block;
@@ -403,6 +486,47 @@
     }
   }
 
+  .color {
+    display: flex;
+    margin: 8px 17px 0 0;
+    .label {
+      display: flex;
+      align-items: center;
+    }
+
+    .square {
+      position: relative;
+      width: 18px;
+      height: 18px;
+      margin: 0 5px 0 0;
+      border-radius: 4px;
+      background: $green01;
+    }
+
+    .text {
+      font: {
+        family: Oswald;
+        size: 1.6rem;
+        weight: 300;
+      }
+      color: $gray01;
+      &.active {
+        color: $gray05;
+      }
+    }
+
+    &__input {
+      width: 1px;
+      height: 1px;
+      white-space: nowrap;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      border: 0;
+    }
+  }
   .documents{
     background: $gray03;
     padding: 20px 0;

@@ -88,6 +88,17 @@
   }
 }
 
+.button_micro {
+  cursor: pointer;
+  margin-top: 10px;
+  font-size: 1.2rem;
+  color: $white;
+  border-radius: 6px;
+  padding: 4px 6px;
+  border: 1px solid $blue02;
+  background: $blue01 no-repeat padding-box;
+}
+
 .button_more {
   display: block;
   width: 350px;
@@ -174,6 +185,7 @@
   border-radius: 5px;
   border: none;
   background: $blue01;
+  width: 25%;
   &__icon {
     width: 12px;
     margin: 0 6px 0 0;
@@ -185,14 +197,18 @@
 
 .select {
   width: 148px;
-  height: 40px;
+  height: 22px;
+  font-family: Oswald;
   font-size: 1.4rem;
   padding: 0 0 0 14px;
   border-radius: 5px;
   :focus:not(:focus-visible) {
     outline: none;
   }
-  background: url("../public/images/icon_select.png") no-repeat calc(100% - 17px) center/ 12px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 5"><path d="M4.5,5,9,0H0Z" fill="%23C4C4C4" /></svg>');
+  background-repeat: no-repeat;
+  background-position: calc(100% - 4px) center;
+  background-size: 9px auto;
   &.green {
     border: 1px solid $blue01;
     background: $green01;
