@@ -4,7 +4,7 @@
       "title": "Togo ID API",
       "version": "2.0.0"
     },
-    "host": "api.togoid.dbcls.jp.il3c.com",
+    "host": "api.togoid.dbcls.jp",
     "schemes": [
       "https"
     ],
