@@ -12,7 +12,7 @@ const fetcher = async (key) => {
   }
 
   const response = await axios({
-    url: "http://ep.dbcls.jp/grasp-togoid/",
+    url: "https://rdfportal.org/grasp-togoid",
     method: "POST",
     data: {
       query: `query {
