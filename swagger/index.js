@@ -1,7 +1,7 @@
 import SwaggerUI from "swagger-ui";
 import "swagger-ui/dist/swagger-ui.css";
 
-const spec = require("./swagger-config.yaml");
+const spec = require("./oas.json");
 
 const ui = SwaggerUI({
   spec,
