@@ -1,7 +1,7 @@
 {
     "openapi": "3.0.1",
     "info": {
-      "title": "Togo ID API",
+      "title": "TogoID API",
       "version": "2.0.0"
     },
     "host": "api.togoid.dbcls.jp",
