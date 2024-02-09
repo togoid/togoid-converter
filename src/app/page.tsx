@@ -19,7 +19,6 @@ import TabWrapper from "@/components/TabWrapper";
 
 const Home = () => {
   // const [ids, setIds] = useState([]);
-  const [activeTab, setActiveTab] = useState("EXPLORE");
   // const [databaseNodesList, setDatabaseNodesList] = useState([]);
   // const [route, setRoute] = useState([]);
   // const [previousRoute, setPreviousRoute] = useState([]);
@@ -28,6 +27,8 @@ const Home = () => {
   // const [idTexts, setIdTexts] = useState("");
   // const [offsetRoute, setOffsetRoute] = useState(null);
   // const [previousSearchTab, setPreviousSearchTab] = useState("EXPLORE");
+
+  const [activeTab] = useAtom(activeTabAtom);
 
   const { datasetConfig: dbCatalogue, relationConfig: dbConfig } =
     useConfig(true);
@@ -661,7 +662,7 @@ const Home = () => {
     //   setDatabaseNodesList(databaseNodesList.slice(0, 1));
     //   setPreviousSearchTab(name);
     // }
-    setActiveTab(name);
+    // setActiveTab(name);
   };
 
   return (
@@ -681,7 +682,7 @@ const Home = () => {
           setIsUseKeepRoute={setIsUseKeepRoute}
         /> */}
         <div className="drawing_area">
-          <TabWrapper activeTab={activeTab} changeIndexTab={changeIndexTab} />
+          <TabWrapper changeIndexTab={changeIndexTab} />
           {/* {activeTab === "NAVIGATE" && (
             <Navigate
               databaseNodesList={databaseNodesList}
