@@ -1,10 +1,12 @@
+import SelectLanguageRadio from "@/components/SelectLanguageRadio";
 
 const searchCategorySetList = new Set();
 
 const Databases = (props: any) => {
   const { datasetConfig, descriptionConfig } = useConfig();
 
-  const [language, setLanguage] = useState("en");
+  const [language] = useAtom(languageAtom);
+
   const [datasetFilterObj, setDatasetFilterObj] = useState(datasetConfig);
   const [searchText, setSearchText] = useState("");
 
@@ -78,38 +80,7 @@ const Databases = (props: any) => {
               <section className="database__lang-keyword">
                 <section className="database__lang">
                   <section className="database__index__names">
-                    <div className="select_lang">
-                      <div className="radio">
-                        <input
-                          type="radio"
-                          id="en"
-                          name="en"
-                          value="en"
-                          className="radio__input"
-                          style={{ width: "20px", height: "20px" }}
-                          onChange={() => setLanguage("en")}
-                          checked={language === "en"}
-                        />
-                        <label htmlFor="en" className="radio__label">
-                          en
-                        </label>
-                      </div>
-                      <div className="radio">
-                        <input
-                          type="radio"
-                          id="ja"
-                          name="ja"
-                          value="ja"
-                          className="radio__input"
-                          style={{ width: "20px", height: "20px" }}
-                          onChange={() => setLanguage("ja")}
-                          checked={language === "ja"}
-                        />
-                        <label htmlFor="ja" className="radio__label">
-                          ja
-                        </label>
-                      </div>
-                    </div>
+                    <SelectLanguageRadio />
                     <section className="database__index__links">
                       {nameIndex.map((v, i) => (
                         <a href={"/#" + v} key={i}>
