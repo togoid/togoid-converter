@@ -1,6 +1,5 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
 // import NProgress from "nprogress";
 // import useConfig from "../hooks/useConfig";
 import Header from "@/components/Header";
