@@ -15,6 +15,7 @@ const nextConfig = {
     config.plugins.push(
       AutoImport({
         imports: ["react"],
+        dirs: ["./src/hooks", "./src/lib"],
       }),
     );
 

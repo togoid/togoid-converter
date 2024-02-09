@@ -1,7 +1,6 @@
 "use client";
 
 // import NProgress from "nprogress";
-import useConfig from "../hooks/useConfig";
 import Header from "@/components/Header";
 // import Explore from "../components/Explore";
 import Datasets from "@/components/Datasets";
@@ -271,7 +270,7 @@ const Home = () => {
   // };
 
   // Examplesをクリックした際の検索
-  const executeExamples = (idTexts, key) => {
+  const executeExamples = (idTexts: any, key: any) => {
     // changeIndexTab("EXPLORE");
     // setIdTexts(idTexts);
     // const findDatabaseList = handleIdTextsSubmit(idTexts);
