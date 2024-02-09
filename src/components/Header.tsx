@@ -88,8 +88,7 @@ const Header = () => (
             y="0px"
             viewBox="0 0 336.8 122.4"
             style={{
-              // @ts-expect-error
-              "enable-background": "new 0 0 336.8 122.4;",
+              "enableBackground": "new 0 0 336.8 122.4",
             }}
             xmlSpace="preserve"
           >
