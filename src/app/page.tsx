@@ -6,8 +6,8 @@ import Header from "@/components/Header";
 // import Explore from "../components/Explore";
 // import Databases from "../components/Databases";
 // import IdInput from "../components/IdInput";
-// import Documents from "../components/Documents";
-import TabWrapper from "../components/TabWrapper";
+import Documents from "@/components/Documents";
+import TabWrapper from "@/components/TabWrapper";
 // import Navigate from "../components/Navigate";
 // import Annotate from "../components/Annotate";
 // import {
@@ -715,8 +715,8 @@ const Home = () => {
           )}
           {activeTab === "DATABASE" && (
             <Databases executeExamples={executeExamples} />
-          )}
-          {activeTab === "DOCUMENTS" && <Documents />} */}
+          )} */}
+          {activeTab === "DOCUMENTS" && <Documents />}
         </div>
       </main>
     </div>
