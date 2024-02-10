@@ -1,10 +1,12 @@
+import { createPortal } from "react-dom";
 // import ResultModal from "../components/ResultModal";
-// import InformationModal from "../components/InformationModal";
+import InformationModal from "@/components/InformationModal";
 
 const ExploreResultItem = (props) => {
   const { datasetConfig } = useConfig();
 
   const [isActionButtonVisible, setIsActionButtonVisible] = useState(false);
+  const [isShowInfomationModal, setIsShowInfomationModal] = useState(false);
 
   return (
     <li
@@ -100,7 +102,7 @@ const ExploreResultItem = (props) => {
             )}
 
             <button
-              onClick={() => showInformationModal(props.v)}
+              onClick={() => setIsShowInfomationModal(true)}
               className="action_icons__item"
             >
               <svg
@@ -117,6 +119,15 @@ const ExploreResultItem = (props) => {
           </div>
         )}
       </div>
+
+      {isShowInfomationModal &&
+        createPortal(
+          <InformationModal
+            setInformationModal={setIsShowInfomationModal}
+            database={props.v.name}
+          />,
+          document.body,
+        )}
     </li>
   );
 };

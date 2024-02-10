@@ -14,8 +14,6 @@ const sortConfig = {
 const Explore = (props) => {
   const [modalVisibility, setModalVisibility] = useState(false);
   const [tableData, setTableData] = useState({ heading: [] });
-  const [informationModal, setInformationModal] = useState(false);
-  const [database, setDatabase] = useState(null);
   const [visibleActionButtonIndex, setVisibleActionButtonIndex] = useState([
     null,
     null,
@@ -141,11 +139,6 @@ const Explore = (props) => {
       return { source: source, target: target };
     });
     setConvertedCount(counts);
-  };
-
-  const showInformationModal = (v) => {
-    setInformationModal(true);
-    setDatabase(v.name);
   };
 
   const handleActionButtonVisibility = (i, j) => {
