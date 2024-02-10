@@ -25,9 +25,9 @@ const TabWrapper = (props) => (
       ANNOTATE
     </button>
     <button
-      onClick={() => props.changeIndexTab("DATABASE")}
+      onClick={() => props.changeIndexTab("DATASETS")}
       className={
-        props.activeTab === "DATABASE" ? "button_tab active" : "button_tab"
+        props.activeTab === "DATASETS" ? "button_tab active" : "button_tab"
       }
     >
       DATASETS

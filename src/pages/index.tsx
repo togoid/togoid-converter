@@ -1,8 +1,7 @@
 // import NProgress from "nprogress";
-// import useConfig from "../hooks/useConfig";
 import Header from "@/components/Header";
 // import Explore from "../components/Explore";
-// import Databases from "../components/Databases";
+import Datasets from "@/components/Datasets";
 // import IdInput from "../components/IdInput";
 import Documents from "@/components/Documents";
 import TabWrapper from "@/components/TabWrapper";
@@ -28,8 +27,8 @@ const Home = () => {
   // const [offsetRoute, setOffsetRoute] = useState(null);
   // const [previousSearchTab, setPreviousSearchTab] = useState("EXPLORE");
 
-  // const { datasetConfig: dbCatalogue, relationConfig: dbConfig } =
-  //   useConfig(true);
+  const { datasetConfig: dbCatalogue, relationConfig: dbConfig } =
+    useConfig(true);
 
   // useEffect(() => {
   //   if (route.length > 0) {
@@ -268,24 +267,24 @@ const Home = () => {
   //   executeExamples(topExamples[key].join("\n"), key);
   // };
 
-  // // Examplesをクリックした際の検索
-  // const executeExamples = (idTexts, key) => {
-  //   changeIndexTab("EXPLORE");
-  //   setIdTexts(idTexts);
+  // Examplesをクリックした際の検索
+  const executeExamples = (idTexts, key) => {
+    changeIndexTab("EXPLORE");
+    // setIdTexts(idTexts);
 
-  //   const findDatabaseList = handleIdTextsSubmit(idTexts);
-  //   if (
-  //     previousRoute.length &&
-  //     findDatabaseList.find((v) => v.name === previousRoute[0].name)
-  //   ) {
-  //     // keepRouteを使用する
-  //     setRoute([previousRoute[0]]);
-  //     setIsUseKeepRoute(true);
-  //   } else {
-  //     // Examplesで選択したものは必ず見つかる前提
-  //     setRoute([findDatabaseList.find((v) => v.name === key)]);
-  //   }
-  // };
+    // const findDatabaseList = handleIdTextsSubmit(idTexts);
+    // if (
+    //   previousRoute.length &&
+    //   findDatabaseList.find((v) => v.name === previousRoute[0].name)
+    // ) {
+    //   // keepRouteを使用する
+    //   setRoute([previousRoute[0]]);
+    //   setIsUseKeepRoute(true);
+    // } else {
+    //   // Examplesで選択したものは必ず見つかる前提
+    //   setRoute([findDatabaseList.find((v) => v.name === key)]);
+    // }
+  };
 
   // const lookupRoute = async (target) => {
   //   const r = route[route.length - 1];
@@ -710,10 +709,10 @@ const Home = () => {
               route={route}
               setRoute={setRoute}
             />
-          )}
-          {activeTab === "DATABASE" && (
-            <Databases executeExamples={executeExamples} />
           )} */}
+          {activeTab === "DATASETS" && (
+            <Datasets executeExamples={executeExamples} />
+          )}
           {activeTab === "DOCUMENTS" && <Documents />}
         </div>
       </main>
