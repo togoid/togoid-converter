@@ -24,6 +24,7 @@ const Home = () => {
   // const [previousRoute, setPreviousRoute] = useState([]);
   // const [isUseKeepRoute, setIsUseKeepRoute] = useState(false);
   // const [candidatePaths, setCandidatePaths] = useState([]);
+  const [idTexts, setIdTexts] = useState("");
   // const [offsetRoute, setOffsetRoute] = useState(null);
   // const [previousSearchTab, setPreviousSearchTab] = useState("EXPLORE");
 
@@ -669,14 +670,16 @@ const Home = () => {
       <Header />
       <main className="main">
         <IdInput
-        // handleIdTextsSubmit={handleIdTextsSubmit}
-        // handleTopExamples={handleTopExamples}
-        // route={route}
-        // setRoute={setRoute}
-        // previousRoute={previousRoute}
-        // setPreviousRoute={setPreviousRoute}
-        // restartExplore={restartExplore}
-        // setIsUseKeepRoute={setIsUseKeepRoute}
+          // handleIdTextsSubmit={handleIdTextsSubmit}
+          setIdTexts={setIdTexts}
+          idTexts={idTexts}
+          // handleTopExamples={handleTopExamples}
+          // route={route}
+          // setRoute={setRoute}
+          // previousRoute={previousRoute}
+          // setPreviousRoute={setPreviousRoute}
+          // restartExplore={restartExplore}
+          // setIsUseKeepRoute={setIsUseKeepRoute}
         />
         <div className="drawing_area">
           <TabWrapper changeIndexTab={changeIndexTab} />

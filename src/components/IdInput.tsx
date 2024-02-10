@@ -1,25 +1,11 @@
-import Link from "next/link";
-import { useSearchParams, useRouter } from "next/navigation";
-
 const IdInput = (props: any) => {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-
-  const idTexts = searchParams.get("ids");
-
-  const setActiveTab = useSetAtom(activeTabAtom);
-
-  const [text, setText] = useState(idTexts ?? "");
+  const [text, setText] = useState(props.idTexts);
 
   useEffect(() => {
-    if (idTexts) {
-      setText(idTexts.replaceAll(",", "\n"));
-    } else {
-      setText("");
-    }
-  }, [idTexts]);
+    setText(props.idTexts);
+  }, [props.idTexts]);
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e) => {
     if (e) e.preventDefault();
 
     // const findDatabaseList = props.handleIdTextsSubmit(text);
@@ -41,7 +27,7 @@ const IdInput = (props: any) => {
     // }
   };
 
-  const handleKeyDown = (e: any) => {
+  const handleKeyDown = (e) => {
     if ((e.ctrlKey || e.shiftKey) && e.keyCode === 13) {
       handleSubmit(e);
     }
@@ -86,13 +72,9 @@ const IdInput = (props: any) => {
             onChange={(e) => setText(e.target.value)}
             onKeyDown={handleKeyDown}
           />
-          {text && (
+          {props.idTexts && (
             <button
-              type="button"
-              onClick={() => {
-                setText("");
-                router.push("/");
-              }}
+              onClick={() => props.setIdTexts("")}
               className="textarea_clear"
             />
           )}
@@ -125,34 +107,37 @@ const IdInput = (props: any) => {
 
       <div className="input_area__bottom">
         <div className="input_area__bottom__links">
-          <p className="input_area__bottom__square">Examples:</p>
-          <Link
-            href={{
-              query: { ids: topExamples.refseq_rna.join(",") },
+          {/* <p className="input_area__bottom__square">Examples:</p>
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              props.handleTopExamples("refseq_rna");
             }}
-            onClick={() => setActiveTab("EXPLORE")}
             className="input_area__bottom__link"
           >
             Refseq RNA
-          </Link>
-          <Link
-            href={{
-              query: { ids: topExamples.ensembl_gene.join(",") },
+          </a>
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              props.handleTopExamples("ensembl_gene");
             }}
-            onClick={() => setActiveTab("EXPLORE")}
             className="input_area__bottom__link"
           >
             Ensembl gene
-          </Link>
-          <Link
-            href={{
-              query: { ids: topExamples.uniprot.join(",") },
+          </a>
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              props.handleTopExamples("uniprot");
             }}
-            onClick={() => setActiveTab("EXPLORE")}
             className="input_area__bottom__link"
           >
             UniProt
-          </Link>
+          </a> */}
         </div>
       </div>
     </div>
