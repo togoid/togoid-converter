@@ -1,7 +1,6 @@
 "use client";
 
 // import NProgress from "nprogress";
-import Header from "@/components/Header";
 // import Explore from "../components/Explore";
 import Datasets from "@/components/Datasets";
 import IdInput from "@/components/IdInput";
@@ -667,7 +666,6 @@ const Home = () => {
 
   return (
     <div className="home">
-      <Header />
       <main className="main">
         <IdInput
           handleIdTextsSubmit={handleIdTextsSubmit}

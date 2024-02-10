@@ -1,4 +1,5 @@
 import "@/../styles/style.scss";
+import Header from "@/components/Header";
 
 export const metadata = {
   title: "TogoID",
@@ -11,7 +12,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <Header />
+        {children}
+      </body>
     </html>
   );
 }
