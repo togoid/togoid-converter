@@ -8,7 +8,8 @@ const IdInput = (props: any) => {
   const handleSubmit = (e) => {
     if (e) e.preventDefault();
 
-    // const findDatabaseList = props.handleIdTextsSubmit(text);
+    const findDatabaseList = props.handleIdTextsSubmit(text);
+    console.log(findDatabaseList);
     // if (props.previousRoute.length) {
     //   const firstRoute = findDatabaseList.find(
     //     (v) => v.name === props.previousRoute[0].name,

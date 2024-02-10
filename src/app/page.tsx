@@ -18,9 +18,9 @@ import TabWrapper from "@/components/TabWrapper";
 // import { topExamples } from "../lib/examples";
 
 const Home = () => {
-  // const [ids, setIds] = useState([]);
-  // const [databaseNodesList, setDatabaseNodesList] = useState([]);
-  // const [route, setRoute] = useState([]);
+  const [ids, setIds] = useState([]);
+  const [databaseNodesList, setDatabaseNodesList] = useState([]);
+  const [route, setRoute] = useState([]);
   // const [previousRoute, setPreviousRoute] = useState([]);
   // const [isUseKeepRoute, setIsUseKeepRoute] = useState(false);
   // const [candidatePaths, setCandidatePaths] = useState([]);
@@ -192,48 +192,48 @@ const Home = () => {
   //   setCandidatePaths(candidatePaths);
   // };
 
-  // /**
-  //  * idsに入力されたIDまたはIDリストをidPatternsから正規表現で検索
-  //  */
-  // const searchDatabase = (ids) => {
-  //   const candidates = [];
-  //   ids.forEach((id) => {
-  //     Object.keys(dbCatalogue).forEach((k) => {
-  //       if (
-  //         dbCatalogue[k].regex &&
-  //         id.match(dbCatalogue[k].regex) &&
-  //         Object.keys(dbConfig).find((d) => {
-  //           return d.split("-").shift() === k || d.split("-").pop() === k;
-  //         })
-  //       ) {
-  //         const index = candidates.findIndex(
-  //           (databases) => databases.name === k,
-  //         );
-  //         if (index === -1) {
-  //           candidates.push({
-  //             name: k,
-  //             category: dbCatalogue[k].category,
-  //             target: 1,
-  //             results: [id],
-  //           });
-  //         } else {
-  //           candidates[index].target += 1;
-  //           candidates[index].results.push(id);
-  //         }
-  //       }
-  //     });
-  //   });
-  //   if (candidates.length > 0) {
-  //     setDatabaseNodesList([candidates]);
-  //     setRoute([]);
-  //   }
-  //   return candidates;
-  // };
+  /**
+   * idsに入力されたIDまたはIDリストをidPatternsから正規表現で検索
+   */
+  const searchDatabase = (ids) => {
+    const candidates = [];
+    ids.forEach((id) => {
+      Object.keys(dbCatalogue).forEach((k) => {
+        if (
+          dbCatalogue[k].regex &&
+          id.match(dbCatalogue[k].regex) &&
+          Object.keys(dbConfig).find((d) => {
+            return d.split("-").shift() === k || d.split("-").pop() === k;
+          })
+        ) {
+          const index = candidates.findIndex(
+            (databases) => databases.name === k,
+          );
+          if (index === -1) {
+            candidates.push({
+              name: k,
+              category: dbCatalogue[k].category,
+              target: 1,
+              results: [id],
+            });
+          } else {
+            candidates[index].target += 1;
+            candidates[index].results.push(id);
+          }
+        }
+      });
+    });
+    if (candidates.length > 0) {
+      setDatabaseNodesList([candidates]);
+      setRoute([]);
+    }
+    return candidates;
+  };
 
-  // const clearExplore = () => {
-  //   setDatabaseNodesList([]);
-  //   setRoute([]);
-  // };
+  const clearExplore = () => {
+    setDatabaseNodesList([]);
+    setRoute([]);
+  };
 
   // const restartExplore = () => {
   //   setDatabaseNodesList(databaseNodesList.slice(0, 1));
@@ -253,18 +253,18 @@ const Home = () => {
   //   }
   // };
 
-  // const handleIdTextsSubmit = (t) => {
-  //   const ids = t
-  //     .replace(/[Ａ-Ｚａ-ｚ０-９]/g, (s) =>
-  //       String.fromCharCode(s.charCodeAt(0) - 0xfee0),
-  //     )
-  //     .split(/[\s,\n,、,,]+/)
-  //     .filter((v) => v)
-  //     .map((v) => v.trim());
-  //   clearExplore();
-  //   setIds(ids);
-  //   return searchDatabase(ids);
-  // };
+  const handleIdTextsSubmit = (t) => {
+    const ids = t
+      .replace(/[Ａ-Ｚａ-ｚ０-９]/g, (s) =>
+        String.fromCharCode(s.charCodeAt(0) - 0xfee0),
+      )
+      .split(/[\s,\n,、,,]+/)
+      .filter((v) => v)
+      .map((v) => v.trim());
+    clearExplore();
+    setIds(ids);
+    return searchDatabase(ids);
+  };
 
   // const handleTopExamples = (key) => {
   //   executeExamples(topExamples[key].join("\n"), key);
@@ -670,7 +670,7 @@ const Home = () => {
       <Header />
       <main className="main">
         <IdInput
-          // handleIdTextsSubmit={handleIdTextsSubmit}
+          handleIdTextsSubmit={handleIdTextsSubmit}
           setIdTexts={setIdTexts}
           idTexts={idTexts}
           // handleTopExamples={handleTopExamples}
