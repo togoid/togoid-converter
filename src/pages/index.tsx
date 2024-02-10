@@ -6,7 +6,7 @@ import IdInput from "@/components/IdInput";
 import Documents from "@/components/Documents";
 import TabWrapper from "@/components/TabWrapper";
 import Navigate from "@/components/Navigate";
-// import Annotate from "../components/Annotate";
+import Annotate from "@/components/Annotate";
 
 const Home = () => {
   const [ids, setIds] = useState([]);
@@ -696,13 +696,13 @@ const Home = () => {
               setOffsetRoute={setOffsetRoute}
             />
           )}
-          {/* {activeTab === "ANNOTATE" && (
+          {activeTab === "ANNOTATE" && (
             <Annotate
               databaseNodesList={databaseNodesList}
               route={route}
               setRoute={setRoute}
             />
-          )} */}
+          )}
           {activeTab === "DATASETS" && (
             <Datasets executeExamples={executeExamples} />
           )}
