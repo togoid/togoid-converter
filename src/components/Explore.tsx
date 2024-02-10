@@ -11,17 +11,12 @@ const sortConfig = {
 };
 
 const Explore = (props) => {
-  const [modalVisibility, setModalVisibility] = useState(false);
   const [tableData, setTableData] = useState({ heading: [] });
   const [convertedCount, setConvertedCount] = useState([]);
   const [nodesList, setNodesList] = useState([]);
   const [sortModeOrderList, setSortModeOrderList] = useState([]);
 
   const { datasetConfig } = useConfig();
-
-  useEffect(() => {
-    if (tableData.heading.length > 0) setModalVisibility(true);
-  }, [tableData]);
 
   useEffect(() => {
     // 直前の状態と比較して変化していればnameとascでソートする
@@ -230,22 +225,15 @@ const Explore = (props) => {
                               route={props.route}
                               selectDatabase={selectDatabase}
                               ids={props.ids}
+                              showModal={showModal}
+                              tableData={tableData}
+                              convertedCount={convertedCount}
                             />
                           ))}
                         </ul>
                       </div>
                     </React.Fragment>
                   ))}
-
-                  {/* {modalVisibility && (
-                    <ResultModal
-                      route={props.route}
-                      ids={props.ids}
-                      tableData={tableData}
-                      setModalVisibility={setModalVisibility}
-                      convertedCount={convertedCount}
-                    />
-                  )}  */}
                 </div>
               </ArrowArea>
             </div>

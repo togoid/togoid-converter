@@ -54,6 +54,7 @@ declare global {
   const useReducerAtom: typeof import('jotai/utils')['useReducerAtom']
   const useRef: typeof import('react')['useRef']
   const useResetAtom: typeof import('jotai/utils')['useResetAtom']
+  const useResultModalPreview: typeof import('./src/hooks/useResultModalPreview')['default']
   const useSetAtom: typeof import('jotai')['useSetAtom']
   const useState: typeof import('react')['useState']
   const useSyncExternalStore: typeof import('react')['useSyncExternalStore']

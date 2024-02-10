@@ -1,11 +1,12 @@
 import { createPortal } from "react-dom";
 import { useHoverDirty } from "react-use";
-// import ResultModal from "../components/ResultModal";
+import ResultModal from "@/components/ResultModal";
 import InformationModal from "@/components/InformationModal";
 
 const ExploreResultItem = (props) => {
   const { datasetConfig } = useConfig();
 
+  const [isShowResultModal, setIsShowResultModal] = useState(false);
   const [isShowInfomationModal, setIsShowInfomationModal] = useState(false);
 
   const ref = useRef(null);
@@ -89,7 +90,10 @@ const ExploreResultItem = (props) => {
           <div className="action_icons">
             {props.i > 0 && props.v.target > 0 && (
               <button
-                onClick={() => showModal(props.v, props.i)}
+                onClick={() => {
+                  props.showModal(props.v, props.i);
+                  setIsShowResultModal(true);
+                }}
                 className="action_icons__item"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 16">
@@ -141,6 +145,18 @@ const ExploreResultItem = (props) => {
           <InformationModal
             setInformationModal={setIsShowInfomationModal}
             database={props.v.name}
+          />,
+          document.body,
+        )}
+
+      {isShowResultModal &&
+        createPortal(
+          <ResultModal
+            route={props.route}
+            ids={props.ids}
+            tableData={props.tableData}
+            setModalVisibility={setIsShowResultModal}
+            convertedCount={props.convertedCount}
           />,
           document.body,
         )}
