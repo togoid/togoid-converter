@@ -13,10 +13,6 @@ const sortConfig = {
 const Explore = (props) => {
   const [modalVisibility, setModalVisibility] = useState(false);
   const [tableData, setTableData] = useState({ heading: [] });
-  const [visibleActionButtonIndex, setVisibleActionButtonIndex] = useState([
-    null,
-    null,
-  ]);
   const [convertedCount, setConvertedCount] = useState([]);
   const [nodesList, setNodesList] = useState([]);
   const [sortModeOrderList, setSortModeOrderList] = useState([]);
@@ -121,10 +117,6 @@ const Explore = (props) => {
       return { source: source, target: target };
     });
     setConvertedCount(counts);
-  };
-
-  const handleActionButtonVisibility = (i, j) => {
-    setVisibleActionButtonIndex([i, j]);
   };
 
   return (
