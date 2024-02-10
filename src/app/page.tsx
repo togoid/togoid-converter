@@ -1,7 +1,7 @@
 "use client";
 
 // import NProgress from "nprogress";
-// import Explore from "../components/Explore";
+import Explore from "@/components/Explore";
 import Datasets from "@/components/Datasets";
 import IdInput from "@/components/IdInput";
 import Documents from "@/components/Documents";
@@ -681,6 +681,16 @@ const Home = () => {
         />
         <div className="drawing_area">
           <TabWrapper changeIndexTab={changeIndexTab} />
+          {activeTab === "EXPLORE" && (
+            <Explore
+              databaseNodesList={databaseNodesList}
+              // candidatePaths={candidatePaths}
+              route={route}
+              setRoute={setRoute}
+              ids={ids}
+              // setPreviousRoute={setPreviousRoute}
+            />
+          )}
           {/* {activeTab === "NAVIGATE" && (
             <Navigate
               databaseNodesList={databaseNodesList}
@@ -691,16 +701,6 @@ const Home = () => {
               lookupRoute={lookupRoute}
               offsetRoute={offsetRoute}
               setOffsetRoute={setOffsetRoute}
-            />
-          )}
-          {activeTab === "EXPLORE" && (
-            <Explore
-              databaseNodesList={databaseNodesList}
-              candidatePaths={candidatePaths}
-              route={route}
-              setRoute={setRoute}
-              ids={ids}
-              setPreviousRoute={setPreviousRoute}
             />
           )}
           {activeTab === "ANNOTATE" && (
