@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from "react";
 // import NProgress from "nprogress";
 // import useConfig from "../hooks/useConfig";
 import Header from "@/components/Header";
@@ -6,7 +5,7 @@ import Header from "@/components/Header";
 // import Databases from "../components/Databases";
 // import IdInput from "../components/IdInput";
 // import Documents from "../components/Documents";
-// import TabWrapper from "../components/TabWrapper";
+import TabWrapper from "@/components/TabWrapper";
 // import Navigate from "../components/Navigate";
 // import Annotate from "../components/Annotate";
 // import {
@@ -19,7 +18,7 @@ import Header from "@/components/Header";
 
 const Home = () => {
   // const [ids, setIds] = useState([]);
-  // const [activeTab, setActiveTab] = useState("EXPLORE");
+  const [activeTab, setActiveTab] = useState("EXPLORE");
   // const [databaseNodesList, setDatabaseNodesList] = useState([]);
   // const [route, setRoute] = useState([]);
   // const [previousRoute, setPreviousRoute] = useState([]);
@@ -653,17 +652,17 @@ const Home = () => {
   //   setCandidatePaths(candidatePaths);
   // };
 
-  // const changeIndexTab = (name) => {
-  //   if (
-  //     (previousSearchTab === "NAVIGATE" && name === "EXPLORE") ||
-  //     (previousSearchTab === "EXPLORE" && name === "NAVIGATE")
-  //   ) {
-  //     setRoute(route.slice(0, 1));
-  //     setDatabaseNodesList(databaseNodesList.slice(0, 1));
-  //     setPreviousSearchTab(name);
-  //   }
-  //   setActiveTab(name);
-  // };
+  const changeIndexTab = (name) => {
+    // if (
+    //   (previousSearchTab === "NAVIGATE" && name === "EXPLORE") ||
+    //   (previousSearchTab === "EXPLORE" && name === "NAVIGATE")
+    // ) {
+    //   setRoute(route.slice(0, 1));
+    //   setDatabaseNodesList(databaseNodesList.slice(0, 1));
+    //   setPreviousSearchTab(name);
+    // }
+    setActiveTab(name);
+  };
 
   return (
     <div className="home">
@@ -680,10 +679,10 @@ const Home = () => {
           setPreviousRoute={setPreviousRoute}
           restartExplore={restartExplore}
           setIsUseKeepRoute={setIsUseKeepRoute}
-        />
+        /> */}
         <div className="drawing_area">
           <TabWrapper activeTab={activeTab} changeIndexTab={changeIndexTab} />
-          {activeTab === "NAVIGATE" && (
+          {/* {activeTab === "NAVIGATE" && (
             <Navigate
               databaseNodesList={databaseNodesList}
               candidatePaths={candidatePaths}
@@ -715,8 +714,8 @@ const Home = () => {
           {activeTab === "DATABASE" && (
             <Databases executeExamples={executeExamples} />
           )}
-          {activeTab === "DOCUMENTS" && <Documents />}
-        </div> */}
+          {activeTab === "DOCUMENTS" && <Documents />} */}
+        </div>
       </main>
     </div>
   );
