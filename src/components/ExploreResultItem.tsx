@@ -1,19 +1,18 @@
 import { createPortal } from "react-dom";
+import { useHoverDirty } from "react-use";
 // import ResultModal from "../components/ResultModal";
 import InformationModal from "@/components/InformationModal";
 
 const ExploreResultItem = (props) => {
   const { datasetConfig } = useConfig();
 
-  const [isActionButtonVisible, setIsActionButtonVisible] = useState(false);
   const [isShowInfomationModal, setIsShowInfomationModal] = useState(false);
 
+  const ref = useRef(null);
+  const isActionButtonVisible = useHoverDirty(ref);
+
   return (
-    <li
-      onMouseOver={() => setIsActionButtonVisible(true)}
-      onMouseLeave={() => setIsActionButtonVisible(false)}
-      className="result_list__item"
-    >
+    <li ref={ref} className="result_list__item">
       <div
         id={`to${props.i}-${props.v.name}`}
         className={`radio green ${
