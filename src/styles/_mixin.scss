@@ -1,0 +1,23 @@
+@charset "UTF-8";
+
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400&display=swap');
+
+@function Oswald() {
+  @return 'Oswald';
+}
+
+@function ls_cal($space){
+  @return $space / 1000 + em;
+}
+
+@function lh_cal($lh, $fs) {
+  @return $lh / $fs;
+}
+
+@mixin border_title() {
+  font-family: Oswald;
+  font-size: 2.4rem;
+  padding: 0 0 20px;
+  text-align: center;
+  border-bottom: 9px solid $gray06;
+}
