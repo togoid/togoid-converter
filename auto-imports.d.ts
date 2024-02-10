@@ -28,6 +28,7 @@ declare global {
   const selectAtom: typeof import('jotai/utils')['selectAtom']
   const splitAtom: typeof import('jotai/utils')['splitAtom']
   const startTransition: typeof import('react')['startTransition']
+  const topExamples: typeof import('./src/lib/examples')['topExamples']
   const useAtom: typeof import('jotai')['useAtom']
   const useAtomCallback: typeof import('jotai/utils')['useAtomCallback']
   const useAtomValue: typeof import('jotai')['useAtomValue']

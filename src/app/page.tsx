@@ -4,7 +4,7 @@
 import Header from "@/components/Header";
 // import Explore from "../components/Explore";
 import Datasets from "@/components/Datasets";
-// import IdInput from "../components/IdInput";
+import IdInput from "@/components/IdInput";
 import Documents from "@/components/Documents";
 import TabWrapper from "@/components/TabWrapper";
 // import Navigate from "../components/Navigate";
@@ -24,7 +24,6 @@ const Home = () => {
   // const [previousRoute, setPreviousRoute] = useState([]);
   // const [isUseKeepRoute, setIsUseKeepRoute] = useState(false);
   // const [candidatePaths, setCandidatePaths] = useState([]);
-  // const [idTexts, setIdTexts] = useState("");
   // const [offsetRoute, setOffsetRoute] = useState(null);
   // const [previousSearchTab, setPreviousSearchTab] = useState("EXPLORE");
 
@@ -669,18 +668,16 @@ const Home = () => {
     <div className="home">
       <Header />
       <main className="main">
-        {/* <IdInput
-          handleIdTextsSubmit={handleIdTextsSubmit}
-          setIdTexts={setIdTexts}
-          idTexts={idTexts}
-          handleTopExamples={handleTopExamples}
-          route={route}
-          setRoute={setRoute}
-          previousRoute={previousRoute}
-          setPreviousRoute={setPreviousRoute}
-          restartExplore={restartExplore}
-          setIsUseKeepRoute={setIsUseKeepRoute}
-        /> */}
+        <IdInput
+        // handleIdTextsSubmit={handleIdTextsSubmit}
+        // handleTopExamples={handleTopExamples}
+        // route={route}
+        // setRoute={setRoute}
+        // previousRoute={previousRoute}
+        // setPreviousRoute={setPreviousRoute}
+        // restartExplore={restartExplore}
+        // setIsUseKeepRoute={setIsUseKeepRoute}
+        />
         <div className="drawing_area">
           <TabWrapper changeIndexTab={changeIndexTab} />
           {/* {activeTab === "NAVIGATE" && (
