@@ -11,6 +11,23 @@ const ExploreResultItem = (props) => {
   const ref = useRef(null);
   const isActionButtonVisible = useHoverDirty(ref);
 
+  const handleIdDownload = async (database, routeIndex) => {
+    const r = props.selectDatabase(database, routeIndex);
+    const d = await executeQuery({
+      route: r,
+      ids: props.ids,
+      report: "target",
+    });
+
+    const prefix = datasetConfig[database.name].prefix.split("/").slice(-1);
+
+    exportCsvTsv(
+      d.results.map((result) => [prefix + result]),
+      "tsv",
+      "ids.tsv",
+    );
+  };
+
   return (
     <li ref={ref} className="result_list__item">
       <div

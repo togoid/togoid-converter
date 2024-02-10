@@ -1,8 +1,7 @@
 import React from "react";
-// import ResultModal from "../components/ResultModal";
-// import InformationModal from "../components/InformationModal";
 import { ArrowArea } from "react-arrow-master";
 import ExploreResultItem from "@/components/ExploreResultItem";
+// import ResultModal from "../components/ResultModal";
 
 const sortConfig = {
   name: { up: "desc", down: "asc" },
@@ -103,23 +102,6 @@ const Explore = (props) => {
     props.setRoute(r);
     props.setPreviousRoute(r);
     return r;
-  };
-
-  const handleIdDownload = async (database, routeIndex) => {
-    const r = selectDatabase(database, routeIndex).slice(0, routeIndex + 1);
-    const d = await executeQuery({
-      route: r,
-      ids: props.ids,
-      report: "target",
-    });
-
-    const prefix = datasetConfig[database.name].prefix.split("/").slice(-1);
-
-    exportCsvTsv(
-      d.results.map((result) => [prefix + result]),
-      "tsv",
-      "ids.tsv",
-    );
   };
 
   const showModal = async (database, routeIndex) => {
@@ -255,6 +237,7 @@ const Explore = (props) => {
                               v={v}
                               route={props.route}
                               selectDatabase={selectDatabase}
+                              ids={props.ids}
                             />
                           ))}
                         </ul>
@@ -262,14 +245,7 @@ const Explore = (props) => {
                     </React.Fragment>
                   ))}
 
-                  {/* {informationModal && (
-                    <InformationModal
-                      setInformationModal={setInformationModal}
-                      database={database}
-                    />
-                  )}
-
-                  {modalVisibility && (
+                  {/* {modalVisibility && (
                     <ResultModal
                       route={props.route}
                       ids={props.ids}
@@ -277,7 +253,7 @@ const Explore = (props) => {
                       setModalVisibility={setModalVisibility}
                       convertedCount={convertedCount}
                     />
-                  )} */}
+                  )}  */}
                 </div>
               </ArrowArea>
             </div>
