@@ -7,13 +7,13 @@ const IdInput = (props: any) => {
 
   const idTexts = searchParams.get("ids");
 
-  const [activeTab, setActiveTab] = useAtom(activeTabAtom);
+  const setActiveTab = useSetAtom(activeTabAtom);
 
   const [text, setText] = useState(idTexts ?? "");
 
   useEffect(() => {
     if (idTexts) {
-      setText(idTexts.split(",").join("\n"));
+      setText(idTexts.replaceAll(",", "\n"));
     } else {
       setText("");
     }
@@ -91,7 +91,7 @@ const IdInput = (props: any) => {
               type="button"
               onClick={() => {
                 setText("");
-                router.push("/?ids=");
+                router.push("/");
               }}
               className="textarea_clear"
             />
@@ -130,6 +130,7 @@ const IdInput = (props: any) => {
             href={{
               query: { ids: topExamples.refseq_rna.join(",") },
             }}
+            onClick={() => setActiveTab("EXPLORE")}
             className="input_area__bottom__link"
           >
             Refseq RNA
@@ -138,6 +139,7 @@ const IdInput = (props: any) => {
             href={{
               query: { ids: topExamples.ensembl_gene.join(",") },
             }}
+            onClick={() => setActiveTab("EXPLORE")}
             className="input_area__bottom__link"
           >
             Ensembl gene
@@ -146,6 +148,7 @@ const IdInput = (props: any) => {
             href={{
               query: { ids: topExamples.uniprot.join(",") },
             }}
+            onClick={() => setActiveTab("EXPLORE")}
             className="input_area__bottom__link"
           >
             UniProt

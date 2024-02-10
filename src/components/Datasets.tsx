@@ -1,3 +1,4 @@
+import Link from "next/link";
 import SelectLanguageRadio from "@/components/SelectLanguageRadio";
 
 const searchCategorySetList = new Set();
@@ -6,6 +7,7 @@ const Databases = (props: any) => {
   const { datasetConfig, descriptionConfig } = useConfig();
 
   const [language] = useAtom(languageAtom);
+  const setActiveTab = useSetAtom(activeTabAtom);
 
   const [datasetFilterObj, setDatasetFilterObj] = useState(datasetConfig);
   const [searchText, setSearchText] = useState("");
@@ -259,15 +261,19 @@ const Databases = (props: any) => {
                         <dd>
                           {datasetConfig[key].examples.map((example, i) => (
                             <li key={i}>
-                              <a
-                                href="#"
-                                onClick={(e) => {
-                                  e.preventDefault();
+                              <Link
+                                href={{
+                                  query: {
+                                    ids: example.join(","),
+                                  },
+                                }}
+                                onClick={() => {
+                                  setActiveTab("EXPLORE");
                                   clickExamples(example, key);
                                 }}
                               >
                                 {example.join(", ")}
-                              </a>
+                              </Link>
                             </li>
                           ))}
                         </dd>
