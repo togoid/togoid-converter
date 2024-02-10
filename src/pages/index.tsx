@@ -5,7 +5,7 @@ import Datasets from "@/components/Datasets";
 import IdInput from "@/components/IdInput";
 import Documents from "@/components/Documents";
 import TabWrapper from "@/components/TabWrapper";
-// import Navigate from "../components/Navigate";
+import Navigate from "@/components/Navigate";
 // import Annotate from "../components/Annotate";
 
 const Home = () => {
@@ -684,7 +684,7 @@ const Home = () => {
               setPreviousRoute={setPreviousRoute}
             />
           )}
-          {/* {activeTab === "NAVIGATE" && (
+          {activeTab === "NAVIGATE" && (
             <Navigate
               databaseNodesList={databaseNodesList}
               candidatePaths={candidatePaths}
@@ -696,7 +696,7 @@ const Home = () => {
               setOffsetRoute={setOffsetRoute}
             />
           )}
-          {activeTab === "ANNOTATE" && (
+          {/* {activeTab === "ANNOTATE" && (
             <Annotate
               databaseNodesList={databaseNodesList}
               route={route}
