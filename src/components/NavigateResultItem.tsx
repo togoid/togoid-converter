@@ -173,7 +173,7 @@ const NavigateResultItem = (props) => {
                 )}
 
                 <button
-                  onClick={() => showInformationModal(v)}
+                  onClick={() => setIsShowInfomationModal(true)}
                   className="action_icons__item"
                 >
                   <svg

@@ -4,12 +4,7 @@ import NavigateResultItem from "@/components/NavigateResultItem";
 const Navigate = (props) => {
   const [modalVisibility, setModalVisibility] = useState(false);
   const [tableData, setTableData] = useState({ heading: [] });
-  const [informationModal, setInformationModal] = useState(false);
-  const [database, setDatabase] = useState(null);
-  const [visibleActionButtonIndex, setVisibleActionButtonIndex] = useState([
-    null,
-    null,
-  ]);
+
   const [convertedCount, setConvertedCount] = useState([]);
 
   const { datasetConfig } = useConfig();
@@ -60,15 +55,6 @@ const Navigate = (props) => {
       return { target: target };
     });
     setConvertedCount(counts);
-  };
-
-  const showInformationModal = (v) => {
-    setInformationModal(true);
-    setDatabase(v.name);
-  };
-
-  const handleActionButtonVisibility = (i, j) => {
-    setVisibleActionButtonIndex([i, j]);
   };
 
   const handleSelectDropDown = (value) => {
@@ -139,14 +125,7 @@ const Navigate = (props) => {
                     </div>
                   )}
 
-                  {/* {informationModal && (
-                    <InformationModal
-                      setInformationModal={setInformationModal}
-                      database={database}
-                    />
-                  )}
-
-                  {modalVisibility && (
+                  {/* {modalVisibility && (
                     <ResultModal
                       route={props.route}
                       ids={props.ids}
