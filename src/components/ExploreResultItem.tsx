@@ -30,8 +30,17 @@ const ExploreResultItem = (props) => {
   };
 
   return (
-    <li ref={ref} className="result_list__item">
+    <li className="result_list__item">
+      {props.i !== 0 && (
+        <p
+          id={`label${props.i}-${props.v.name}`}
+          className="label_list label_list__item label_list__item__inner"
+        >
+          {props.v.link}
+        </p>
+      )}
       <div
+        ref={ref}
         id={`to${props.i}-${props.v.name}`}
         className={`radio green ${
           props.i === 0 || props.v.target > 0 ? null : "not_found"

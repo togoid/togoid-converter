@@ -1,7 +1,6 @@
 import React from "react";
 import { ArrowArea } from "react-arrow-master";
 import ExploreResultItem from "@/components/ExploreResultItem";
-// import ResultModal from "../components/ResultModal";
 
 const sortConfig = {
   name: { up: "desc", down: "asc" },
@@ -123,116 +122,90 @@ const Explore = (props) => {
               <ArrowArea arrows={props.candidatePaths}>
                 <div className="drawing">
                   {nodesList.map((nodes, i) => (
-                    <React.Fragment key={i}>
-                      {i !== 0 && (
-                        <div className="item_wrapper" key={1}>
-                          <ul className="label_list with_sort" key={2}>
-                            {nodes.map((v, j) => {
-                              return (
-                                <li key={j} className="label_list__item">
-                                  <p
-                                    id={`label${i}-${v.name}`}
-                                    className="label_list__item__inner"
-                                  >
-                                    {v.link}
-                                  </p>
-                                </li>
-                              );
-                            })}
-                          </ul>
-                        </div>
-                      )}
-                      <div className="item_wrapper" key={2}>
-                        <div
-                          className={
-                            i === 0
-                              ? "item_wrapper__buttons first"
-                              : "item_wrapper__buttons"
+                    <div className="item_wrapper" key={i}>
+                      <div
+                        className={
+                          i === 0
+                            ? "item_wrapper__buttons first"
+                            : "item_wrapper__buttons"
+                        }
+                      >
+                        <label className="sort__label" htmlFor="sort">
+                          Sort by
+                        </label>
+                        <select
+                          id="sort"
+                          className="select white"
+                          onChange={(e) =>
+                            sortNode(
+                              e.target.value,
+                              sortModeOrderList[i].direction,
+                              i,
+                            )
                           }
-                          key={1}
+                          value={sortModeOrderList[i].mode}
                         >
-                          <label className="sort__label" htmlFor="sort">
-                            Sort by
-                          </label>
-                          <select
-                            id="sort"
-                            className="select white"
-                            onChange={(e) =>
+                          <option value="name">Name</option>
+                          <option value="category">Category</option>
+                          {i !== 0 && (
+                            <>
+                              <option value="sourceCount">Source count</option>
+                              <option value="targetCount">Target count</option>
+                            </>
+                          )}
+                        </select>
+                        <div className="sort">
+                          <button
+                            onClick={() =>
                               sortNode(
-                                e.target.value,
-                                sortModeOrderList[i].direction,
+                                sortModeOrderList[i].mode,
+                                sortModeOrderList[i].direction === "up"
+                                  ? "down"
+                                  : "up",
                                 i,
                               )
                             }
-                            value={sortModeOrderList[i].mode}
+                            className={`sort__button`}
                           >
-                            <option value="name">Name</option>
-                            <option value="category">Category</option>
-                            {i !== 0 && (
-                              <>
-                                <option value="sourceCount">
-                                  Source count
-                                </option>
-                                <option value="targetCount">
-                                  Target count
-                                </option>
-                              </>
-                            )}
-                          </select>
-                          <div className="sort">
-                            <button
-                              onClick={() =>
-                                sortNode(
-                                  sortModeOrderList[i].mode,
-                                  sortModeOrderList[i].direction === "up"
-                                    ? "down"
-                                    : "up",
-                                  i,
-                                )
-                              }
-                              className={`sort__button`}
-                            >
-                              <div
-                                className={`sort__button up ${
-                                  sortModeOrderList[i].direction === "up"
-                                    ? "active"
-                                    : ""
-                                }`}
-                              />
-                              <div
-                                className={`sort__button down ${
-                                  sortModeOrderList[i].direction === "down"
-                                    ? "active"
-                                    : ""
-                                }`}
-                              />
-                            </button>
-                          </div>
-                        </div>
-
-                        <ul
-                          className={
-                            i === 0 ? "result_list first" : "result_list"
-                          }
-                          key={2}
-                        >
-                          {nodes.map((v, j) => (
-                            <ExploreResultItem
-                              key={j}
-                              i={i}
-                              j={j}
-                              v={v}
-                              route={props.route}
-                              selectDatabase={selectDatabase}
-                              ids={props.ids}
-                              showModal={showModal}
-                              tableData={tableData}
-                              convertedCount={convertedCount}
+                            <div
+                              className={`sort__button up ${
+                                sortModeOrderList[i].direction === "up"
+                                  ? "active"
+                                  : ""
+                              }`}
                             />
-                          ))}
-                        </ul>
+                            <div
+                              className={`sort__button down ${
+                                sortModeOrderList[i].direction === "down"
+                                  ? "active"
+                                  : ""
+                              }`}
+                            />
+                          </button>
+                        </div>
                       </div>
-                    </React.Fragment>
+
+                      <ul
+                        className={
+                          i === 0 ? "result_list first" : "result_list"
+                        }
+                      >
+                        {nodes.map((v, j) => (
+                          <ExploreResultItem
+                            key={j}
+                            i={i}
+                            j={j}
+                            v={v}
+                            route={props.route}
+                            selectDatabase={selectDatabase}
+                            ids={props.ids}
+                            showModal={showModal}
+                            tableData={tableData}
+                            convertedCount={convertedCount}
+                          />
+                        ))}
+                      </ul>
+                    </div>
                   ))}
                 </div>
               </ArrowArea>
