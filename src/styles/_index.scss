@@ -181,6 +181,10 @@
               &.hover {
                 background: rgba(0, 0, 0, 0.8);
               }
+
+              &__null {
+                height: 40px;
+              }
             }
           }
           .label_list {
