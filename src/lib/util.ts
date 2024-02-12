@@ -2,6 +2,8 @@ import PaPa from "papaparse";
 import { saveAs } from "file-saver";
 import axios from "axios";
 
+import type { Arrow, HeadStyleAlias } from "react-arrow-master";
+
 export const exportCsvTsv = (rows, extension, outputName) => {
   const blob = new Blob([invokeUnparse(rows, extension)], {
     type: `text/${extension}`,
@@ -50,27 +52,36 @@ export const executeCountQuery = async (path, ids) => {
     .then((d) => d.data);
 };
 
-export const mergePathStyle = (fromId, toId, isRoute) => {
+export const mergePathStyle = (
+  fromId: string,
+  toId: string,
+  isRoute: boolean,
+) => {
   const toLabelId = toId.replace(/^to/, "label");
   const toLabelPath = getPathStyle(fromId, toLabelId, isRoute, "none");
   const fromLabelPath = getPathStyle(toLabelId, toId, isRoute, "default");
   return [toLabelPath, fromLabelPath];
 };
 
-export const getPathStyle = (fromId, toId, isRoute, head) => {
+export const getPathStyle = (
+  fromId: string,
+  toId: string,
+  isRoute: boolean,
+  head: HeadStyleAlias,
+): Arrow => {
   const style = isRoute
-    ? {
+    ? ({
         color: "#1A8091",
         head: head,
         arrow: "smooth",
         width: 2,
-      }
-    : {
+      } as const)
+    : ({
         color: "#dddddd",
         head: head,
         arrow: "smooth",
         width: 1.5,
-      };
+      } as const);
   return {
     from: {
       id: fromId,

@@ -1,8 +1,5 @@
-// @ts-check
-import { useState, useEffect } from "react";
 import { printf } from "fast-printf";
 import useSWRImmutable from "swr/immutable";
-import { executeQuery } from "../lib/util";
 
 const createBaseTable = (tableRows, tableHeading, prefixList) => {
   const baseTable = tableRows.map((v) => {
@@ -51,12 +48,17 @@ const createCompactBaseTable = (tableRows, tableHeading, prefixList) => {
   return baseTable;
 };
 
-/**
- * @param {{ route: object[]; ids: string[]; report: string; limit: number; compact: boolean }} key
- * @param {array} tableHeading
- * @param {array} prefixList
- */
-const fetcher = async (key, tableHeading, prefixList) => {
+const fetcher = async (
+  key: {
+    route: object[];
+    ids: string[];
+    report: string;
+    limit: number;
+    compact: boolean;
+  },
+  tableHeading: any[],
+  prefixList: any[],
+) => {
   const data = await executeQuery(key);
 
   return key.compact
@@ -64,21 +66,13 @@ const fetcher = async (key, tableHeading, prefixList) => {
     : createBaseTable(data.results, tableHeading, prefixList);
 };
 
-/**
- * @param {string} previewMode
- * @param {boolean} isCompact
- * @param {array} route
- * @param {array} ids
- * @param {array} tableHeading
- * @param {array} prefixList
- */
 const useResultModalPreview = (
-  previewMode,
-  isCompact,
-  route,
-  ids,
-  tableHeading,
-  prefixList,
+  previewMode: string,
+  isCompact: boolean,
+  route: any[],
+  ids: any[],
+  tableHeading: any[],
+  prefixList: any[],
 ) => {
   const [filterTable, setFilterTable] = useState({});
 
@@ -100,10 +94,7 @@ const useResultModalPreview = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [baseTable, previewMode]);
 
-  /**
-   * @returns {{ heading: any[]; rows: any[] }}
-   */
-  const editTable = () => {
+  const editTable = (): { heading: any[]; rows: any[] } => {
     if (previewMode === "all") {
       // all
       const rows = baseTable.filter((v) => v[v.length - 1].url);
@@ -146,10 +137,7 @@ const useResultModalPreview = (
     return { heading: [], rows: [] };
   };
 
-  /**
-   * @returns {{ heading: any[]; rows: any[] }}
-   */
-  const editCompactTable = () => {
+  const editCompactTable = (): { heading: any[]; rows: any[] } => {
     if (previewMode === "all") {
       // all
       return {

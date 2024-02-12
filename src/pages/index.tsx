@@ -8,6 +8,8 @@ import TabWrapper from "@/components/TabWrapper";
 import Navigate from "@/components/Navigate";
 import Annotate from "@/components/Annotate";
 
+import type { Arrow } from "react-arrow-master";
+
 const Home = () => {
   const [ids, setIds] = useState([]);
   const [activeTab, setActiveTab] = useState("EXPLORE");
@@ -15,7 +17,7 @@ const Home = () => {
   const [route, setRoute] = useState([]);
   const [previousRoute, setPreviousRoute] = useState([]);
   const [isUseKeepRoute, setIsUseKeepRoute] = useState(false);
-  const [candidatePaths, setCandidatePaths] = useState([]);
+  const [candidatePaths, setCandidatePaths] = useState<Arrow[]>([]);
   const [idTexts, setIdTexts] = useState("");
   const [offsetRoute, setOffsetRoute] = useState(null);
   const [previousSearchTab, setPreviousSearchTab] = useState("EXPLORE");
