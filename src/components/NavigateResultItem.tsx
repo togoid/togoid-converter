@@ -42,71 +42,135 @@ const NavigateResultItem = (props) => {
             </p>
           )}
           <div ref={ref} id={`to${props.i}-${props.j}`} className="radio green">
-            <label
-              htmlFor={`result${props.i}-${props.j}`}
-              className="radio__large_label green no_radio"
-              style={{
-                opacity: isActionButtonVisible ? 0.7 : 1,
-                backgroundColor: isActionButtonVisible
-                  ? "#000000"
-                  : categories[props.v.category]
-                    ? categories[props.v.category].color
-                    : null,
-              }}
-            >
-              <div id={`from${props.i}-${props.j}`} className="dummy" />
-              <p
-                className="radio__large_label__inner"
+            {props.i === 0 ? (
+              <>
+                <input
+                  type="radio"
+                  name={`result${props.i}`}
+                  id={`result${props.i}-${props.j}`}
+                  className="radio__input"
+                  checked={Boolean(
+                    props.route[props.i] &&
+                      props.route[props.i].name === props.v.name,
+                  )}
+                  onChange={() =>
+                    props.selectDatabase(props.v, props.i, props.j)
+                  }
+                />
+                <label
+                  htmlFor={`result${props.i}-${props.j}`}
+                  className="radio__large_label green"
+                  style={{
+                    opacity: isActionButtonVisible ? 0.7 : 1,
+                    backgroundColor: isActionButtonVisible
+                      ? "#000000"
+                      : categories[props.v.category]
+                        ? categories[props.v.category].color
+                        : null,
+                  }}
+                >
+                  <div
+                    id={`from${props.i}-${props.v.name}`}
+                    className="dummy"
+                  />
+                  <p
+                    className="radio__large_label__inner"
+                    style={{
+                      color: isActionButtonVisible ? "#333333" : "#ffffff",
+                    }}
+                  >
+                    <span id={`total${props.i}-${props.v.name}`}></span>
+                    <span className="text">
+                      {datasetConfig[props.v.name].label}
+                    </span>
+                    <span
+                      id={`total${props.i}-${props.v.name}`}
+                      className="total"
+                    >
+                      {props.v.target}
+                    </span>
+                  </p>
+                </label>
+              </>
+            ) : (
+              <label
+                htmlFor={`result${props.i}-${props.j}`}
+                className="radio__large_label green no_radio"
                 style={{
-                  color: isActionButtonVisible ? "#333333" : "#ffffff",
+                  opacity: isActionButtonVisible ? 0.7 : 1,
+                  backgroundColor: isActionButtonVisible
+                    ? "#000000"
+                    : categories[props.v.category]
+                      ? categories[props.v.category].color
+                      : null,
                 }}
               >
-                <span
-                  id={`converted${props.i}-${props.v.name}-${props.j}`}
-                ></span>
-                <span className="text">
-                  {datasetConfig[props.v.name].label}
-                </span>
-                {props.i === props.databaseNodesList.length - 1 ? (
+                <div id={`from${props.i}-${props.j}`} className="dummy" />
+                <p
+                  className="radio__large_label__inner"
+                  style={{
+                    color: isActionButtonVisible ? "#333333" : "#ffffff",
+                  }}
+                >
                   <span
-                    id={`total${props.i}-${props.v.name}-${props.j}`}
-                    className="total"
-                  >
-                    {props.v.message ? props.v.message : props.v.target}
-                  </span>
-                ) : (
-                  <span
-                    id={`total${props.i}-${props.v.name}-${props.j}`}
+                    id={`converted${props.i}-${props.v.name}-${props.j}`}
                   ></span>
-                )}
-              </p>
-            </label>
+                  <span className="text">
+                    {datasetConfig[props.v.name].label}
+                  </span>
+                  {props.i === props.databaseNodesList.length - 1 ? (
+                    <span
+                      id={`total${props.i}-${props.v.name}-${props.j}`}
+                      className="total"
+                    >
+                      {props.v.message ? props.v.message : props.v.target}
+                    </span>
+                  ) : (
+                    <span
+                      id={`total${props.i}-${props.v.name}-${props.j}`}
+                    ></span>
+                  )}
+                </p>
+              </label>
+            )}
             {isActionButtonVisible && (
               <div className="action_icons">
-                <button
-                  onClick={() => props.showModal(props.v, props.i, props.j)}
-                  className="action_icons__item"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 16">
-                    <path
-                      d="M5,4H19a2,2,0,0,1,2,2V18a2,2,0,0,1-2,2H5a2,2,0,0,1-2-2V6A2,2,0,0,1,5,4M5,8v4h6V8H5m8,0v4h6V8H13M5,14v4h6V14H5m8,0v4h6V14Z"
-                      transform="translate(-3 -4)"
-                      fill="#fff"
-                    />
-                  </svg>
-                </button>
-                <button
-                  onClick={() => handleIdDownload(props.v, props.i, props.j)}
-                  className="action_icons__item"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 17">
-                    <path
-                      d="M5,20H19V18H5M19,9H15V3H9V9H5l7,7Z"
-                      transform="translate(-5 -3)"
-                      fill="#fff"
-                    />
-                  </svg>
-                </button>
+                {props.i !== 0 && (
+                  <>
+                    <button
+                      onClick={() => props.showModal(props.v, props.i, props.j)}
+                      className="action_icons__item"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 18 16"
+                      >
+                        <path
+                          d="M5,4H19a2,2,0,0,1,2,2V18a2,2,0,0,1-2,2H5a2,2,0,0,1-2-2V6A2,2,0,0,1,5,4M5,8v4h6V8H5m8,0v4h6V8H13M5,14v4h6V14H5m8,0v4h6V14Z"
+                          transform="translate(-3 -4)"
+                          fill="#fff"
+                        />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleIdDownload(props.v, props.i, props.j)
+                      }
+                      className="action_icons__item"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 14 17"
+                      >
+                        <path
+                          d="M5,20H19V18H5M19,9H15V3H9V9H5l7,7Z"
+                          transform="translate(-5 -3)"
+                          fill="#fff"
+                        />
+                      </svg>
+                    </button>
+                  </>
+                )}
 
                 <button
                   onClick={() => showInformationModal(v)}
@@ -150,9 +214,7 @@ const NavigateResultItem = (props) => {
         </>
       ) : (
         <>
-          {props.i !== 0 && (
-            <p className="label_list label_list__item label_list__item__inner"></p>
-          )}
+          <p className="label_list label_list__item label_list__item__inner"></p>
           <div
             id={`to${props.i}-${props.j}`}
             className="result_list__item__null"
