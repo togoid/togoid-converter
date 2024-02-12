@@ -3856,12 +3856,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-arrow-master@npm:0.3.2":
+"react-arrow-master@https://github.com/InfoLoungeLLC/react-arrow-master":
   version: 0.3.2
-  resolution: "react-arrow-master@npm:0.3.2"
+  resolution: "react-arrow-master@https://github.com/InfoLoungeLLC/react-arrow-master.git#commit=2d85374f188fd283527d5d6521e8d83910f153a0"
   peerDependencies:
-    react: ^16
-  checksum: 10c0/a6cf17d4a51a3f2465a9b8f56e5a4b70a5707b0cf706f3445d437cba7764b3459341f387ded151a9ad7109161d84a9789c46dc1a8b589352db412943834c788e
+    react: ^18
+  checksum: 10c0/226dc73ef02d7885dcb9d7269ae6d9657028c7a0f5fb8033fddf92e723321e2d0dcd69e4dd426d18d6aea987ebced6bdb58537404ea6f882f1ed6794d9aadf1e
   languageName: node
   linkType: hard
 
@@ -4668,7 +4668,7 @@ __metadata:
     papaparse: "npm:5.4.1"
     prettier: "npm:3.2.5"
     react: "npm:18.2.0"
-    react-arrow-master: "npm:0.3.2"
+    react-arrow-master: "https://github.com/InfoLoungeLLC/react-arrow-master"
     react-dom: "npm:18.2.0"
     react-markdown: "npm:9.0.1"
     react-use: "npm:17.5.0"
