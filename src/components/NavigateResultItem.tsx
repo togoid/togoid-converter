@@ -138,7 +138,10 @@ const NavigateResultItem = (props) => {
                 {props.i !== 0 && (
                   <>
                     <button
-                      onClick={() => props.showModal(props.v, props.i, props.j)}
+                      onClick={() => {
+                        props.showModal(props.v, props.i, props.j);
+                        setIsShowResultModal(true);
+                      }}
                       className="action_icons__item"
                     >
                       <svg

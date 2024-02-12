@@ -2,16 +2,10 @@ import { ArrowArea } from "react-arrow-master";
 import NavigateResultItem from "@/components/NavigateResultItem";
 
 const Navigate = (props) => {
-  const [modalVisibility, setModalVisibility] = useState(false);
   const [tableData, setTableData] = useState({ heading: [] });
-
   const [convertedCount, setConvertedCount] = useState([]);
 
   const { datasetConfig } = useConfig();
-
-  useEffect(() => {
-    if (tableData.heading.length > 0) setModalVisibility(true);
-  }, [tableData]);
 
   const selectDatabase = (database) => {
     props.setRoute([database]);
@@ -109,16 +103,6 @@ const Navigate = (props) => {
                       </ul>
                     </div>
                   )}
-
-                  {/* {modalVisibility && (
-                    <ResultModal
-                      route={props.route}
-                      ids={props.ids}
-                      tableData={tableData}
-                      setModalVisibility={setModalVisibility}
-                      convertedCount={convertedCount}
-                    />
-                  )} */}
                 </div>
               </ArrowArea>
             </div>
