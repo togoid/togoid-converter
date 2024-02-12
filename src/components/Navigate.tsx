@@ -69,6 +69,7 @@ const Navigate = (props) => {
                               j={j}
                               v={v}
                               route={props.route}
+                              selectDatabase={selectDatabase}
                               selectDatabaseModal={selectDatabaseModal}
                               ids={props.ids}
                               showModal={showModal}
