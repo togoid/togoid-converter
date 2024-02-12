@@ -246,6 +246,12 @@ const Datasets = (props) => {
                           </dd>
                         </div>
                       )}
+                    {datasetFilterObj[key].description && (
+                      <div className="data__wrapper">
+                        <dt>DESCRIPTION</dt>
+                        <dd>{datasetFilterObj[key].description}</dd>
+                      </div>
+                    )}
                     {datasetFilterObj[key].count && (
                       <div className="data__wrapper">
                         <dt>COUNT</dt>
