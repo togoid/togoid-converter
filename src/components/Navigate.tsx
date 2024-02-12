@@ -28,22 +28,6 @@ const Navigate = (props) => {
     return r;
   };
 
-  const handleIdDownload = async (database, routeIndex, j) => {
-    const r = selectDatabaseModal(routeIndex, j);
-    const d = await executeQuery({
-      route: r,
-      ids: props.ids,
-      report: "target",
-    });
-    const prefix = datasetConfig[database.name].prefix.split("/").slice(-1);
-
-    exportCsvTsv(
-      d.results.map((result) => [prefix + result]),
-      "tsv",
-      "ids.tsv",
-    );
-  };
-
   const showModal = async (database, routeIndex, j) => {
     const r = selectDatabaseModal(routeIndex, j);
     const heading = r.map((v) => datasetConfig[v.name]);
@@ -85,7 +69,7 @@ const Navigate = (props) => {
                               j={j}
                               v={v}
                               route={props.route}
-                              selectDatabase={selectDatabase}
+                              selectDatabaseModal={selectDatabaseModal}
                               ids={props.ids}
                               showModal={showModal}
                               tableData={tableData}

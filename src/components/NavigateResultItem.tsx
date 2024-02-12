@@ -12,8 +12,8 @@ const NavigateResultItem = (props) => {
   const ref = useRef(null);
   const isActionButtonVisible = useHoverDirty(ref);
 
-  const handleIdDownload = async (database, routeIndex) => {
-    const r = props.selectDatabase(database, routeIndex);
+  const handleIdDownload = async (database, routeIndex, j) => {
+    const r = props.selectDatabaseModal(routeIndex, j);
     const d = await executeQuery({
       route: r,
       ids: props.ids,
