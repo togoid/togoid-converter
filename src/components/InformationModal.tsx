@@ -1,5 +1,7 @@
+import LanguageButton from "@/components/LanguageButton";
+
 const InformationModal = (props) => {
-  const [language, setLanguage] = useState("en");
+  const [language, setLanguage] = useState<"en" | "ja">("en");
 
   const { datasetConfig, descriptionConfig } = useConfig();
 
@@ -25,38 +27,7 @@ const InformationModal = (props) => {
         <h2 className="modal--through__title">
           {datasetConfig[props.database].label}
         </h2>
-        <div className="select_lang">
-          <div className="radio">
-            <input
-              type="radio"
-              id="en"
-              name="en"
-              value="en"
-              className="radio__input"
-              style={{ width: "20px", height: "20px" }}
-              onChange={() => setLanguage("en")}
-              checked={language === "en"}
-            />
-            <label htmlFor="en" className="radio__label">
-              en
-            </label>
-          </div>
-          <div className="radio">
-            <input
-              type="radio"
-              id="ja"
-              name="ja"
-              value="ja"
-              className="radio__input"
-              style={{ width: "20px", height: "20px" }}
-              onChange={() => setLanguage("ja")}
-              checked={language === "ja"}
-            />
-            <label htmlFor="ja" className="radio__label">
-              ja
-            </label>
-          </div>
-        </div>
+        <LanguageButton language={language} setLanguage={setLanguage} />
         <p className="modal--through__description">
           {Object.prototype.hasOwnProperty.call(
             descriptionConfig,

@@ -1,3 +1,5 @@
+import LanguageButton from "@/components/LanguageButton";
+
 /**
  * @type {Set<string>}
  */
@@ -6,7 +8,7 @@ const searchCategorySetList = new Set();
 const Datasets = (props) => {
   const { datasetConfig, descriptionConfig } = useConfig();
 
-  const [language, setLanguage] = useState("en");
+  const [language, setLanguage] = useState<"en" | "ja">("en");
   const [datasetFilterObj, setDatasetFilterObj] = useState(datasetConfig);
   const [searchText, setSearchText] = useState("");
 
@@ -80,38 +82,10 @@ const Datasets = (props) => {
               <section className="database__lang-keyword">
                 <section className="database__lang">
                   <section className="database__index__names">
-                    <div className="select_lang">
-                      <div className="radio">
-                        <input
-                          type="radio"
-                          id="en"
-                          name="en"
-                          value="en"
-                          className="radio__input"
-                          style={{ width: "20px", height: "20px" }}
-                          onChange={() => setLanguage("en")}
-                          checked={language === "en"}
-                        />
-                        <label htmlFor="en" className="radio__label">
-                          en
-                        </label>
-                      </div>
-                      <div className="radio">
-                        <input
-                          type="radio"
-                          id="ja"
-                          name="ja"
-                          value="ja"
-                          className="radio__input"
-                          style={{ width: "20px", height: "20px" }}
-                          onChange={() => setLanguage("ja")}
-                          checked={language === "ja"}
-                        />
-                        <label htmlFor="ja" className="radio__label">
-                          ja
-                        </label>
-                      </div>
-                    </div>
+                    <LanguageButton
+                      language={language}
+                      setLanguage={setLanguage}
+                    />
                     <section className="database__index__links">
                       {nameIndex.map((v, i) => (
                         <a href={"/#" + v} key={i}>
