@@ -3858,10 +3858,10 @@ __metadata:
 
 "react-arrow-master@https://github.com/InfoLoungeLLC/react-arrow-master":
   version: 0.3.2
-  resolution: "react-arrow-master@https://github.com/InfoLoungeLLC/react-arrow-master.git#commit=2d85374f188fd283527d5d6521e8d83910f153a0"
+  resolution: "react-arrow-master@https://github.com/InfoLoungeLLC/react-arrow-master.git#commit=a82ba52d0f5b43a780e228147cb30e6db5f62ee3"
   peerDependencies:
     react: ^18
-  checksum: 10c0/226dc73ef02d7885dcb9d7269ae6d9657028c7a0f5fb8033fddf92e723321e2d0dcd69e4dd426d18d6aea987ebced6bdb58537404ea6f882f1ed6794d9aadf1e
+  checksum: 10c0/caf00c92b87d7c600f50297ba9bc2280d907767a50e1f6a6eb6ce52e918ff179ffea5854b664fd2fd963acecd5f486c035aaceef56d007b7cd12f4c506d43b9e
   languageName: node
   linkType: hard
 
