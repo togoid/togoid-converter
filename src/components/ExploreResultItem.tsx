@@ -12,21 +12,44 @@ const ExploreResultItem = (props) => {
   const ref = useRef(null);
   const isActionButtonVisible = useHoverDirty(ref);
 
-  const handleIdDownload = async (database, routeIndex) => {
-    const r = props.selectDatabase(database, routeIndex);
+  const tableData = useRef<{ heading: any[] }>({ heading: [] });
+  const convertedCount = useRef<any[]>([]);
+
+  const handleIdDownload = async () => {
+    const r = props.selectDatabase(props.v, props.i);
     const d = await executeQuery({
       route: r,
       ids: props.ids,
       report: "target",
     });
 
-    const prefix = datasetConfig[database.name].prefix.split("/").slice(-1);
+    const prefix = datasetConfig[props.v.name].prefix.split("/").slice(-1);
 
     exportCsvTsv(
-      d.results.map((result) => [prefix + result]),
+      d.results.map((result: any) => [prefix + result]),
       "tsv",
       "ids.tsv",
     );
+  };
+
+  const openResultModal = async () => {
+    const r: any[] = props.selectDatabase(props.v, props.i);
+
+    tableData.current = {
+      heading: r.map((v) => datasetConfig[v.name]),
+    };
+
+    convertedCount.current = r.map((v) => {
+      const source = v.message
+        ? v.message === "ERROR"
+          ? v.message
+          : "-"
+        : v.source;
+      const target = v.message ? v.message : v.target;
+      return { source: source, target: target };
+    });
+
+    setIsShowResultModal(true);
   };
 
   return (
@@ -99,10 +122,7 @@ const ExploreResultItem = (props) => {
           <div className="action_icons">
             {props.i > 0 && props.v.target > 0 && (
               <button
-                onClick={() => {
-                  props.showModal(props.v, props.i);
-                  setIsShowResultModal(true);
-                }}
+                onClick={() => openResultModal()}
                 className="action_icons__item"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 16">
@@ -117,7 +137,7 @@ const ExploreResultItem = (props) => {
 
             {props.i > 0 && props.v.target > 0 && (
               <button
-                onClick={() => handleIdDownload(props.v, props.i)}
+                onClick={() => handleIdDownload()}
                 className="action_icons__item"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 17">
@@ -163,9 +183,9 @@ const ExploreResultItem = (props) => {
           <ResultModal
             route={props.route}
             ids={props.ids}
-            tableData={props.tableData}
+            tableData={tableData.current}
+            convertedCount={convertedCount.current}
             setModalVisibility={setIsShowResultModal}
-            convertedCount={props.convertedCount}
           />,
           document.body,
         )}

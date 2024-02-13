@@ -10,8 +10,6 @@ const sortConfig = {
 };
 
 const Explore = (props) => {
-  const [tableData, setTableData] = useState({ heading: [] });
-  const [convertedCount, setConvertedCount] = useState([]);
   const [nodesList, setNodesList] = useState([]);
   const [sortModeOrderList, setSortModeOrderList] = useState([]);
 
@@ -92,25 +90,6 @@ const Explore = (props) => {
     props.setRoute(r);
     props.setPreviousRoute(r);
     return r;
-  };
-
-  const showModal = async (database, routeIndex) => {
-    const r = selectDatabase(database, routeIndex).slice(0, routeIndex + 1);
-    const heading = r
-      .filter((v, i) => i <= routeIndex)
-      .map((v) => datasetConfig[v.name]);
-
-    setTableData({ heading });
-    const counts = r.map((v) => {
-      const source = v.message
-        ? v.message === "ERROR"
-          ? v.message
-          : "-"
-        : v.source;
-      const target = v.message ? v.message : v.target;
-      return { source: source, target: target };
-    });
-    setConvertedCount(counts);
   };
 
   return (
@@ -196,11 +175,8 @@ const Explore = (props) => {
                             i={i}
                             v={v}
                             route={props.route}
-                            selectDatabase={selectDatabase}
                             ids={props.ids}
-                            showModal={showModal}
-                            tableData={tableData}
-                            convertedCount={convertedCount}
+                            selectDatabase={selectDatabase}
                           />
                         ))}
                       </ul>

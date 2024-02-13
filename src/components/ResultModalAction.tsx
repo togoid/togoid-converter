@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import copy from "copy-to-clipboard";
 import { printf } from "fast-printf";
 import ResultModalClipboardButton from "@/components/ResultModalClipboardButton";
@@ -364,12 +365,12 @@ const ResultModalAction = (props) => {
                         d.url &&
                         Array.isArray(d.url) &&
                         d.url.map((f, k) => (
-                          <React.Fragment key={k}>
+                          <Fragment key={k}>
                             <a href={f} target="_blank" rel="noreferrer">
                               {d[lineMode[filterTable.heading[j].index]][k]}
                             </a>
                             <br />
-                          </React.Fragment>
+                          </Fragment>
                         ))
                       ) : (
                         <a href={d.url} target="_blank" rel="noreferrer">

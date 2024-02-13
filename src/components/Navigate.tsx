@@ -2,9 +2,6 @@ import { ArrowArea } from "react-arrow-master";
 import NavigateResultItem from "@/components/NavigateResultItem";
 
 const Navigate = (props) => {
-  const [tableData, setTableData] = useState({ heading: [] });
-  const [convertedCount, setConvertedCount] = useState([]);
-
   const { datasetConfig } = useConfig();
 
   const selectDatabase = (database) => {
@@ -20,19 +17,6 @@ const Navigate = (props) => {
     props.setRoute(r);
     props.setOffsetRoute(j);
     return r;
-  };
-
-  const showModal = async (database, routeIndex, j) => {
-    const r = selectDatabaseModal(routeIndex, j);
-    const heading = r.map((v) => datasetConfig[v.name]);
-
-    setTableData({ heading });
-
-    const counts = r.map((v) => {
-      const target = v.message ? v.message : v?.target;
-      return { target: target };
-    });
-    setConvertedCount(counts);
   };
 
   const handleSelectDropDown = (value) => {
@@ -66,9 +50,6 @@ const Navigate = (props) => {
                               selectDatabase={selectDatabase}
                               selectDatabaseModal={selectDatabaseModal}
                               ids={props.ids}
-                              showModal={showModal}
-                              tableData={tableData}
-                              convertedCount={convertedCount}
                               databaseNodesList={props.databaseNodesList}
                             />
                           ))}
