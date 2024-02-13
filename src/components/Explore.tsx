@@ -194,7 +194,6 @@ const Explore = (props) => {
                           <ExploreResultItem
                             key={j}
                             i={i}
-                            j={j}
                             v={v}
                             route={props.route}
                             selectDatabase={selectDatabase}

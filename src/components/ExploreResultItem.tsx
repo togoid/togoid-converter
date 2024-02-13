@@ -49,7 +49,7 @@ const ExploreResultItem = (props) => {
         <input
           type="radio"
           name={`result${props.i}`}
-          id={`result${props.i}-${props.j}`}
+          id={`result${props.i}-${props.v.name}`}
           className="radio__input"
           checked={Boolean(
             props.route[props.i] && props.route[props.i].name === props.v.name,
@@ -58,7 +58,7 @@ const ExploreResultItem = (props) => {
           disabled={props.i > 0 && !props.v.target}
         />
         <label
-          htmlFor={`result${props.i}-${props.j}`}
+          htmlFor={`result${props.i}-${props.v.name}`}
           className="radio__large_label green"
           style={{
             backgroundColor: isActionButtonVisible
