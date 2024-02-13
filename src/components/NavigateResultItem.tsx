@@ -230,7 +230,10 @@ const NavigateResultItem = (props) => {
         </>
       ) : (
         <>
-          <p className="label_list label_list__item label_list__item__inner"></p>
+          <p
+            id={`label${props.i}-${props.j}`}
+            className="label_list label_list__item label_list__item__inner null"
+          ></p>
           <div
             id={`to${props.i}-${props.j}`}
             className="result_list__item__null"

@@ -202,9 +202,6 @@
               &.hover {
                 background: rgba(0, 0, 0, 0.8);
               }
-              &.null {
-                height: 16px;
-              }
               &__inner {
                 position: relative;
                 display: inline-block;
@@ -215,6 +212,10 @@
                 border-radius: 8px;
                 background-color: $white;
                 margin: 0 50px;
+                &.null {
+                min-width: 0;
+                padding: 0;
+                }
               }
             }
           }

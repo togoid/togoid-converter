@@ -558,7 +558,7 @@ const Home = () => {
             candidatePaths.push(
               getPathStyle(
                 `from${0}-${route[0].name}`,
-                `to${i}-${j}`,
+                `label${i}-${j}`,
                 j === offsetRoute,
                 "none",
               ),
@@ -579,7 +579,7 @@ const Home = () => {
             candidatePaths.push(
               {
                 from: {
-                  id: `to${i - 2}-${j}`,
+                  id: `label${i - 2}-${j}`,
                   posX: "left",
                   posY: "middle",
                 },
