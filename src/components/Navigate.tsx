@@ -41,17 +41,41 @@ const Navigate = (props) => {
                           }
                         >
                           {nodes.map((v, j) => (
-                            <NavigateResultItem
-                              key={j}
-                              i={i}
-                              j={j}
-                              v={v}
-                              route={props.route}
-                              selectDatabase={selectDatabase}
-                              selectDatabaseModal={selectDatabaseModal}
-                              ids={props.ids}
-                              databaseNodesList={props.databaseNodesList}
-                            />
+                            <li key={j} className="result_list__item">
+                              {v ? (
+                                <>
+                                  {i !== 0 && (
+                                    <p
+                                      id={`label${i}-${j}`}
+                                      className="label_list label_list__item label_list__item__inner"
+                                    >
+                                      {v.link}
+                                    </p>
+                                  )}
+                                  <NavigateResultItem
+                                    i={i}
+                                    j={j}
+                                    v={v}
+                                    route={props.route}
+                                    selectDatabase={selectDatabase}
+                                    selectDatabaseModal={selectDatabaseModal}
+                                    ids={props.ids}
+                                    databaseNodesList={props.databaseNodesList}
+                                  />
+                                </>
+                              ) : (
+                                <>
+                                  <p
+                                    id={`label${i}-${j}`}
+                                    className="label_list label_list__item label_list__item__inner null"
+                                  ></p>
+                                  <div
+                                    id={`to${i}-${j}`}
+                                    className="result_list__item__null"
+                                  ></div>
+                                </>
+                              )}
+                            </li>
                           ))}
                         </ul>
                       </div>

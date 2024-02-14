@@ -170,14 +170,23 @@ const Explore = (props) => {
                         }
                       >
                         {nodes.map((v, j) => (
-                          <ExploreResultItem
-                            key={j}
-                            i={i}
-                            v={v}
-                            route={props.route}
-                            ids={props.ids}
-                            selectDatabase={selectDatabase}
-                          />
+                          <li key={j} className="result_list__item">
+                            {i !== 0 && (
+                              <p
+                                id={`label${i}-${v.name}`}
+                                className="label_list label_list__item label_list__item__inner"
+                              >
+                                {v.link}
+                              </p>
+                            )}
+                            <ExploreResultItem
+                              i={i}
+                              v={v}
+                              route={props.route}
+                              ids={props.ids}
+                              selectDatabase={selectDatabase}
+                            />
+                          </li>
                         ))}
                       </ul>
                     </div>
