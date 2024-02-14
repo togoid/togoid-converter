@@ -174,24 +174,31 @@ const Datasets = (props) => {
                       {datasetConfig[key].label}
                     </span>
                   </h3>
-                  {descriptionConfig[key] &&
-                    descriptionConfig[key][`description_${language}`] && (
-                      <div className="description">
-                        <p>
-                          {descriptionConfig[key][`description_${language}`]}
-                        </p>
-                        <p>
-                          Cited from{" "}
-                          <a
-                            href={`https://integbio.jp/dbcatalog/record/${datasetConfig[key].catalog}`}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            Integbio Database Catalog
-                          </a>
-                        </p>
-                      </div>
-                    )}
+                  {(datasetFilterObj[key].description ||
+                    (descriptionConfig[key] &&
+                      descriptionConfig[key][`description_${language}`])) && (
+                    <div className="description">
+                      {datasetFilterObj[key].description ? (
+                        <p>{datasetFilterObj[key].description}</p>
+                      ) : (
+                        <>
+                          <p>
+                            {descriptionConfig[key][`description_${language}`]}
+                          </p>
+                          <p>
+                            Cited from{" "}
+                            <a
+                              href={`https://integbio.jp/dbcatalog/record/${datasetConfig[key].catalog}`}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              Integbio Database Catalog
+                            </a>
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  )}
                   <div className="path">
                     <div className="path_label small white">LINK TO</div>
                     <svg className="icon" viewBox="0 0 24 24">
@@ -246,12 +253,6 @@ const Datasets = (props) => {
                           </dd>
                         </div>
                       )}
-                    {datasetFilterObj[key].description && (
-                      <div className="data__wrapper">
-                        <dt>DESCRIPTION</dt>
-                        <dd>{datasetFilterObj[key].description}</dd>
-                      </div>
-                    )}
                     {datasetFilterObj[key].count && (
                       <div className="data__wrapper">
                         <dt>COUNT</dt>
