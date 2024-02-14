@@ -1,4 +1,5 @@
 import { ArrowArea } from "react-arrow-master";
+import Select from "react-select";
 import NavigateResultItem from "@/components/NavigateResultItem";
 
 const Navigate = (props) => {
@@ -19,7 +20,7 @@ const Navigate = (props) => {
     return r;
   };
 
-  const handleSelectDropDown = (value) => {
+  const handleSelectDropDown = (value: string) => {
     props.lookupRoute(value);
   };
 
@@ -87,23 +88,25 @@ const Navigate = (props) => {
                     <div className="item_wrapper">
                       <ul className="result_list dropdown_wrap">
                         <div id={`nodeOther`} className={`radio green`}>
-                          <select
-                            className="dropdown"
-                            onChange={(e) =>
-                              handleSelectDropDown(e.target.value)
-                            }
-                          >
-                            <option>---</option>
-                            {Object.keys(datasetConfig).map((key) => {
-                              if (!props.route.find((v) => v.name === key)) {
-                                return (
-                                  <option key={key} value={key}>
-                                    {datasetConfig[key].label}
-                                  </option>
-                                );
-                              }
-                            })}
-                          </select>
+                          <Select
+                            styles={{
+                              control: (css) => ({
+                                ...css,
+                                width: "300px",
+                              }),
+                              menu: ({ width, ...css }) => ({
+                                ...css,
+                                width: "300px",
+                              }),
+                              option: (css) => ({ ...css, width: "300px" }),
+                            }}
+                            options={Object.keys(datasetConfig).map((key) => ({
+                              value: key,
+                              label: datasetConfig[key].label,
+                            }))}
+                            placeholder="---"
+                            onChange={(e) => handleSelectDropDown(e!.value)}
+                          />
                         </div>
                       </ul>
                     </div>
