@@ -1,28 +1,21 @@
 import ResultModalAction from "@/components/ResultModalAction";
 import { ArrowArea } from "react-arrow-master";
 
+import type { Arrow, HeadStyleAlias } from "react-arrow-master";
+
 const ResultModal = (props) => {
-  const [routePath, setRoutePath] = useState([]);
+  const { datasetConfig } = useConfig();
 
-  useEffect(() => {
-    const routePathList = props.tableData.heading.flatMap((v, i) => {
-      if (i === 0) {
-        return getResultPathStyle(`label-${i}`, `link-${i + 1}`, "none");
-      } else if (i === props.tableData.heading.length - 1) {
-        return getResultPathStyle(`link-${i}`, `label-${i}`, "default");
-      } else {
-        return [
-          getResultPathStyle(`link-${i}`, `label-${i}`, "default"),
-          getResultPathStyle(`label-${i}`, `link-${i + 1}`, "none"),
-        ];
-      }
-    });
-    setRoutePath(routePathList);
+  const tableHead = useMemo(
+    () => props.route.map((v) => datasetConfig[v.name]),
+    [],
+  );
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const getResultPathStyle = (from, to, head) => {
+  const getResultPathStyle = (
+    from: string,
+    to: string,
+    head: HeadStyleAlias,
+  ): Arrow => {
     return {
       from: {
         id: from,
@@ -42,6 +35,23 @@ const ResultModal = (props) => {
       },
     };
   };
+
+  const routePath = useMemo<Arrow[]>(
+    () =>
+      tableHead.flatMap((v, i) => {
+        if (i === 0) {
+          return getResultPathStyle(`label-${i}`, `link-${i + 1}`, "none");
+        } else if (i === tableHead.length - 1) {
+          return getResultPathStyle(`link-${i}`, `label-${i}`, "default");
+        } else {
+          return [
+            getResultPathStyle(`link-${i}`, `label-${i}`, "default"),
+            getResultPathStyle(`label-${i}`, `link-${i + 1}`, "none"),
+          ];
+        }
+      }),
+    [],
+  );
 
   return (
     <div className="modal" onClick={() => props.setModalVisibility(false)}>
@@ -71,7 +81,7 @@ const ResultModal = (props) => {
               <div className="modal__path__frame__inner">
                 <ArrowArea arrows={routePath}>
                   <div className="modal__path__frame__inner">
-                    {props.tableData.heading.map((v, i) => (
+                    {tableHead.map((v, i) => (
                       <div className="modal__path__frame__item" key={i}>
                         {i !== 0 && (
                           <div className="path_label white" id={`link-${i}`}>
@@ -111,7 +121,7 @@ const ResultModal = (props) => {
           <ResultModalAction
             route={props.route}
             ids={props.ids}
-            tableData={props.tableData}
+            tableHead={tableHead}
             lastTargetCount={
               props.convertedCount[props.convertedCount.length - 1].target
             }

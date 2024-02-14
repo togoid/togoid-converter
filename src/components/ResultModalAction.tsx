@@ -27,18 +27,18 @@ const ResultModalAction = (props) => {
   const [previewMode, setPreviewMode] = useState("all");
   const [isCompact, setIsCompact] = useState(false);
   const [lineMode, setLineMode] = useState(
-    Array(props.tableData.heading.length).fill("id"),
+    Array(props.tableHead.length).fill("id"),
   );
   const prefixList = useMemo(
-    () => createPrefixList(props.tableData.heading),
-    [props.tableData.heading],
+    () => createPrefixList(props.tableHead),
+    [props.tableHead],
   );
   const filterTable = useResultModalPreview(
     previewMode,
     isCompact,
     props.route,
     props.ids,
-    props.tableData.heading,
+    props.tableHead,
     prefixList,
   );
 
@@ -132,7 +132,7 @@ const ResultModalAction = (props) => {
       compact: isCompact,
     });
 
-    const { rows } = createExportTable(props.tableData.heading, d.results);
+    const { rows } = createExportTable(props.tableHead, d.results);
     const text = invokeUnparse(rows, "tsv");
 
     copy(text, {
@@ -148,10 +148,7 @@ const ResultModalAction = (props) => {
       compact: isCompact,
     });
 
-    const { heading, rows } = createExportTable(
-      props.tableData.heading,
-      d.results,
-    );
+    const { heading, rows } = createExportTable(props.tableHead, d.results);
     const h = heading.map((v) => v.label);
     exportCsvTsv([h, ...rows], extension, `result.${extension}`);
   };
@@ -383,10 +380,7 @@ const ResultModalAction = (props) => {
               ))
             : filterTable.heading && (
                 <tr>
-                  <td
-                    colSpan={props.tableData.heading.length}
-                    className="no_results"
-                  >
+                  <td colSpan={props.tableHead.length} className="no_results">
                     No Results
                   </td>
                 </tr>

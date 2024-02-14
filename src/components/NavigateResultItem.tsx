@@ -12,7 +12,6 @@ const NavigateResultItem = (props) => {
   const ref = useRef(null);
   const isActionButtonVisible = useHoverDirty(ref);
 
-  const tableData = useRef<{ heading: any[] }>({ heading: [] });
   const convertedCount = useRef<any[]>([]);
 
   const handleIdDownload = async () => {
@@ -34,10 +33,6 @@ const NavigateResultItem = (props) => {
 
   const openResultModal = async () => {
     const r: any[] = props.selectDatabaseModal(props.i, props.j);
-
-    tableData.current = {
-      heading: r.map((v) => datasetConfig[v.name]),
-    };
 
     convertedCount.current = r.map((v) => {
       const target = v.message ? v.message : v?.target;
@@ -183,7 +178,6 @@ const NavigateResultItem = (props) => {
           <ResultModal
             route={props.route}
             ids={props.ids}
-            tableData={tableData.current}
             convertedCount={convertedCount.current}
             setModalVisibility={setIsShowResultModal}
           />,
