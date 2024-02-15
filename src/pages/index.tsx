@@ -7,6 +7,7 @@ import Documents from "@/components/Documents";
 import TabWrapper from "@/components/TabWrapper";
 import Navigate from "@/components/Navigate";
 import Annotate from "@/components/Annotate";
+import LabelToId from "@/components/LabelToId";
 
 import type { Arrow } from "react-arrow-master";
 
@@ -705,6 +706,7 @@ const Home = () => {
               setRoute={setRoute}
             />
           )}
+          {activeTab === "LABEL2LD" && <LabelToId />}
           {activeTab === "DATASETS" && (
             <Datasets executeExamples={executeExamples} />
           )}
