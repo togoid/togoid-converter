@@ -24,21 +24,25 @@ const createPrefixList = (tableHeading) => {
 };
 
 const ResultModalAction = (props) => {
+  const { datasetConfig } = useConfig();
+
   const [previewMode, setPreviewMode] = useState("all");
   const [isCompact, setIsCompact] = useState(false);
   const [lineMode, setLineMode] = useState(
-    Array(props.tableHead.length).fill("id"),
+    Array(props.route.length).fill("id"),
   );
-  const prefixList = useMemo(
-    () => createPrefixList(props.tableHead),
-    [props.tableHead],
+
+  const tableHead = useMemo(
+    () => props.route.map((v) => datasetConfig[v.name]),
+    [],
   );
+  const prefixList = useMemo(() => createPrefixList(tableHead), []);
   const filterTable = useResultModalPreview(
     previewMode,
     isCompact,
     props.route,
     props.ids,
-    props.tableHead,
+    tableHead,
     prefixList,
   );
 
@@ -132,7 +136,7 @@ const ResultModalAction = (props) => {
       compact: isCompact,
     });
 
-    const { rows } = createExportTable(props.tableHead, d.results);
+    const { rows } = createExportTable(tableHead, d.results);
     const text = invokeUnparse(rows, "tsv");
 
     copy(text, {
@@ -148,7 +152,7 @@ const ResultModalAction = (props) => {
       compact: isCompact,
     });
 
-    const { heading, rows } = createExportTable(props.tableHead, d.results);
+    const { heading, rows } = createExportTable(tableHead, d.results);
     const h = heading.map((v) => v.label);
     exportCsvTsv([h, ...rows], extension, `result.${extension}`);
   };
@@ -380,7 +384,7 @@ const ResultModalAction = (props) => {
               ))
             : filterTable.heading && (
                 <tr>
-                  <td colSpan={props.tableHead.length} className="no_results">
+                  <td colSpan={tableHead.length} className="no_results">
                     No Results
                   </td>
                 </tr>

@@ -6,11 +6,6 @@ import type { Arrow, HeadStyleAlias } from "react-arrow-master";
 const ResultModal = (props) => {
   const { datasetConfig } = useConfig();
 
-  const tableHead = useMemo(
-    () => props.route.map((v) => datasetConfig[v.name]),
-    [],
-  );
-
   const getResultPathStyle = (
     from: string,
     to: string,
@@ -38,10 +33,10 @@ const ResultModal = (props) => {
 
   const routePath = useMemo<Arrow[]>(
     () =>
-      tableHead.flatMap((v, i) => {
+      props.route.flatMap((v, i) => {
         if (i === 0) {
           return getResultPathStyle(`label-${i}`, `link-${i + 1}`, "none");
-        } else if (i === tableHead.length - 1) {
+        } else if (i === props.route.length - 1) {
           return getResultPathStyle(`link-${i}`, `label-${i}`, "default");
         } else {
           return [
@@ -81,11 +76,11 @@ const ResultModal = (props) => {
               <div className="modal__path__frame__inner">
                 <ArrowArea arrows={routePath}>
                   <div className="modal__path__frame__inner">
-                    {tableHead.map((v, i) => (
+                    {props.route.map((v: any, i: number) => (
                       <div className="modal__path__frame__item" key={i}>
                         {i !== 0 && (
                           <div className="path_label white" id={`link-${i}`}>
-                            {props.route[i].link}
+                            {v.link}
                           </div>
                         )}
                         <div
@@ -103,7 +98,9 @@ const ResultModal = (props) => {
                               {props.convertedCount[i].source}
                             </span>
                           )}
-                          <span className="path_label__inner">{v.label}</span>
+                          <span className="path_label__inner">
+                            {datasetConfig[v.name].label}
+                          </span>
                           {props.convertedCount[i].target && (
                             <span id={`total${i}`} className="total">
                               {props.convertedCount[i].target}
@@ -121,7 +118,6 @@ const ResultModal = (props) => {
           <ResultModalAction
             route={props.route}
             ids={props.ids}
-            tableHead={tableHead}
             lastTargetCount={
               props.convertedCount[props.convertedCount.length - 1].target
             }
