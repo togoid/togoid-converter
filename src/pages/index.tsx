@@ -14,7 +14,7 @@ import type { Arrow } from "react-arrow-master";
 const Home = () => {
   const [ids, setIds] = useState([]);
   const [activeTab, setActiveTab] = useState("EXPLORE");
-  const [databaseNodesList, setDatabaseNodesList] = useState([]);
+  const [databaseNodesList, setDatabaseNodesList] = useState<any[][]>([]);
   const [route, setRoute] = useState([]);
   const [previousRoute, setPreviousRoute] = useState([]);
   const [isUseKeepRoute, setIsUseKeepRoute] = useState(false);
@@ -75,12 +75,12 @@ const Home = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route]);
 
-  const createNodesList = async (routeTemp) => {
+  const createNodesList = async (routeTemp: any[]) => {
     const nodesList = isUseKeepRoute
       ? databaseNodesList
       : databaseNodesList.slice(0, routeTemp.length);
     const r = routeTemp[routeTemp.length - 1];
-    const candidates = [];
+    const candidates: any[] = [];
     Object.keys(relationConfig).forEach((k) => {
       if (!candidates.find((v) => v.name === r.name)) {
         if (k.split("-").shift() === r.name) {
@@ -284,8 +284,8 @@ const Home = () => {
 
   const lookupRoute = async (target) => {
     const r = route[route.length - 1];
-    const firstCandidates = [];
-    const firstCandidatesTemp = [];
+    const firstCandidates: any[] = [];
+    const firstCandidatesTemp: any[] = [];
 
     Object.keys(relationConfig).forEach((k) => {
       const keySplit = k.split("-");
@@ -331,8 +331,8 @@ const Home = () => {
       }
     });
 
-    const secondCandidates = [];
-    const secondCandidatesTemp = [];
+    const secondCandidates: any[][] = [];
+    const secondCandidatesTemp: any[][] = [];
 
     firstCandidatesTemp.forEach((r) => {
       Object.keys(relationConfig).forEach((k) => {
@@ -416,7 +416,7 @@ const Home = () => {
       return;
     }
 
-    const thirdCandidates = [];
+    const thirdCandidates: any[][] = [];
     secondCandidatesTemp.forEach((r) => {
       Object.keys(relationConfig).forEach((k) => {
         const keySplit = k.split("-");
@@ -482,29 +482,29 @@ const Home = () => {
 
     const t = await getTotal(candidates);
 
-    const u = t.map((v) => {
+    const nodesList: any[][] = [databaseNodesList[0], [], [], []];
+    t.forEach((v) => {
       if (v.length === 1) {
-        return [null, null, v[0]];
+        nodesList[1].push(null);
+        nodesList[2].push(null);
+        nodesList[3].push(v[0]);
       } else if (v.length === 2) {
-        return [v[0], null, v[1]];
+        nodesList[1].push(v[0]);
+        nodesList[2].push(null);
+        nodesList[3].push(v[1]);
       } else {
-        return v;
+        nodesList[1].push(v[0]);
+        nodesList[2].push(v[1]);
+        nodesList[3].push(v[2]);
       }
     });
-
-    const nodesList = [
-      databaseNodesList[0],
-      u.map((v) => v[0]),
-      u.map((v) => v[1]),
-      u.map((v) => v[2]),
-    ].filter((v) => v.length);
 
     await setDatabaseNodesList(nodesList);
 
     createNavigatePath(nodesList);
   };
 
-  const getTotal = async (candidates) => {
+  const getTotal = async (candidates: any[][]) => {
     NProgress.start();
     const result = await Promise.all(
       candidates.map(async (v) => {
@@ -537,13 +537,16 @@ const Home = () => {
         }
       }),
     );
-    const nodesList = result.filter((v) => v);
+
+    const nodesList = result.filter(
+      (v): v is NonNullable<typeof v> => v !== null,
+    );
     NProgress.done();
     return nodesList;
   };
 
-  const createNavigatePath = (nodesList) => {
-    const candidatePaths = [];
+  const createNavigatePath = (nodesList: any[][]) => {
+    const candidatePaths: any[] = [];
     nodesList.forEach((nodes, i) => {
       if (i === 0) {
         if (nodesList.length === 1) {
