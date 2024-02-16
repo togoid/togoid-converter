@@ -191,23 +191,21 @@ const Home = () => {
    * idsに入力されたIDまたはIDリストをidPatternsから正規表現で検索
    */
   const searchDatabase = (ids: string[]) => {
-    const candidates: any = [];
+    const candidates: any[] = [];
     ids.forEach((id) => {
-      Object.keys(datasetConfig).forEach((k) => {
+      Object.entries(datasetConfig).forEach(([key, value]) => {
         if (
-          datasetConfig[k].regex &&
-          id.match(datasetConfig[k].regex) &&
-          Object.keys(relationConfig).find((d) => {
-            return d.split("-").shift() === k || d.split("-").pop() === k;
-          })
+          value.regex &&
+          id.match(value.regex) &&
+          Object.keys(relationConfig).some((d) => d.split("-").includes(key))
         ) {
           const index = candidates.findIndex(
-            (databases) => databases.name === k,
+            (databases) => databases.name === key,
           );
           if (index === -1) {
             candidates.push({
-              name: k,
-              category: datasetConfig[k].category,
+              name: key,
+              category: value.category,
               target: 1,
               results: [id],
             });
