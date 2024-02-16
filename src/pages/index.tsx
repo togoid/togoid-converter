@@ -23,8 +23,7 @@ const Home = () => {
   const [offsetRoute, setOffsetRoute] = useState(null);
   const [previousSearchTab, setPreviousSearchTab] = useState("EXPLORE");
 
-  const { datasetConfig: dbCatalogue, relationConfig: dbConfig } =
-    useConfig(true);
+  const { datasetConfig, relationConfig } = useConfig(true);
 
   useEffect(() => {
     if (route.length > 0) {
@@ -82,7 +81,7 @@ const Home = () => {
       : databaseNodesList.slice(0, routeTemp.length);
     const r = routeTemp[routeTemp.length - 1];
     const candidates = [];
-    Object.keys(dbConfig).forEach((k) => {
+    Object.keys(relationConfig).forEach((k) => {
       if (!candidates.find((v) => v.name === r.name)) {
         if (k.split("-").shift() === r.name) {
           const name = k.split("-")[1];
@@ -93,14 +92,17 @@ const Home = () => {
             // 順方向の変換
             candidates.push({
               name,
-              category: dbCatalogue[name].category,
+              category: datasetConfig[name].category,
               source: 0,
               target: 0,
-              link: dbConfig[`${r.name}-${name}`].link.forward.label,
+              link: relationConfig[`${r.name}-${name}`].link.forward.label,
               results: [],
             });
           }
-        } else if (dbConfig[k].link.reverse && k.split("-").pop() === r.name) {
+        } else if (
+          relationConfig[k].link.reverse &&
+          k.split("-").pop() === r.name
+        ) {
           // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
           const name = k.split("-")[0];
           if (
@@ -110,10 +112,10 @@ const Home = () => {
             // 逆方向の変換
             candidates.push({
               name,
-              category: dbCatalogue[name].category,
+              category: datasetConfig[name].category,
               source: 0,
               target: 0,
-              link: dbConfig[`${name}-${r.name}`].link.reverse.label,
+              link: relationConfig[`${name}-${r.name}`].link.reverse.label,
               results: [],
             });
           }
@@ -188,14 +190,14 @@ const Home = () => {
   /**
    * idsに入力されたIDまたはIDリストをidPatternsから正規表現で検索
    */
-  const searchDatabase = (ids) => {
-    const candidates = [];
+  const searchDatabase = (ids: string[]) => {
+    const candidates: any = [];
     ids.forEach((id) => {
-      Object.keys(dbCatalogue).forEach((k) => {
+      Object.keys(datasetConfig).forEach((k) => {
         if (
-          dbCatalogue[k].regex &&
-          id.match(dbCatalogue[k].regex) &&
-          Object.keys(dbConfig).find((d) => {
+          datasetConfig[k].regex &&
+          id.match(datasetConfig[k].regex) &&
+          Object.keys(relationConfig).find((d) => {
             return d.split("-").shift() === k || d.split("-").pop() === k;
           })
         ) {
@@ -205,7 +207,7 @@ const Home = () => {
           if (index === -1) {
             candidates.push({
               name: k,
-              category: dbCatalogue[k].category,
+              category: datasetConfig[k].category,
               target: 1,
               results: [id],
             });
@@ -287,7 +289,7 @@ const Home = () => {
     const firstCandidates = [];
     const firstCandidatesTemp = [];
 
-    Object.keys(dbConfig).forEach((k) => {
+    Object.keys(relationConfig).forEach((k) => {
       const keySplit = k.split("-");
       if (keySplit[0] === r.name) {
         const name = keySplit[1];
@@ -296,19 +298,19 @@ const Home = () => {
             if (!firstCandidates.length) {
               firstCandidates.push({
                 name,
-                category: dbCatalogue[name].category,
-                link: dbConfig[k].link.forward.label,
+                category: datasetConfig[name].category,
+                link: relationConfig[k].link.forward.label,
               });
             }
           } else if (!firstCandidatesTemp.find((v) => v.name === name)) {
             firstCandidatesTemp.push({
               name,
-              category: dbCatalogue[name].category,
-              link: dbConfig[k].link.forward.label,
+              category: datasetConfig[name].category,
+              link: relationConfig[k].link.forward.label,
             });
           }
         }
-      } else if (dbConfig[k].link.reverse && keySplit[1] === r.name) {
+      } else if (relationConfig[k].link.reverse && keySplit[1] === r.name) {
         // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
         const name = keySplit[0];
         if (!route.find((w) => w.name === name)) {
@@ -316,15 +318,15 @@ const Home = () => {
             if (!firstCandidates.length) {
               firstCandidates.push({
                 name,
-                category: dbCatalogue[name].category,
-                link: dbConfig[k].link.reverse.label,
+                category: datasetConfig[name].category,
+                link: relationConfig[k].link.reverse.label,
               });
             }
           } else if (!firstCandidatesTemp.find((v) => v.name === name)) {
             firstCandidatesTemp.push({
               name,
-              category: dbCatalogue[name].category,
-              link: dbConfig[k].link.reverse.label,
+              category: datasetConfig[name].category,
+              link: relationConfig[k].link.reverse.label,
             });
           }
         }
@@ -335,7 +337,7 @@ const Home = () => {
     const secondCandidatesTemp = [];
 
     firstCandidatesTemp.forEach((r) => {
-      Object.keys(dbConfig).forEach((k) => {
+      Object.keys(relationConfig).forEach((k) => {
         const keySplit = k.split("-");
         if (keySplit[0] === r.name) {
           const name = keySplit[1];
@@ -350,8 +352,8 @@ const Home = () => {
                   r,
                   {
                     name,
-                    category: dbCatalogue[name].category,
-                    link: dbConfig[k].link.forward.label,
+                    category: datasetConfig[name].category,
+                    link: relationConfig[k].link.forward.label,
                   },
                 ]);
               }
@@ -364,13 +366,13 @@ const Home = () => {
                 r,
                 {
                   name,
-                  category: dbCatalogue[name].category,
-                  link: dbConfig[k].link.forward.label,
+                  category: datasetConfig[name].category,
+                  link: relationConfig[k].link.forward.label,
                 },
               ]);
             }
           }
-        } else if (dbConfig[k].link.reverse && keySplit[1] === r.name) {
+        } else if (relationConfig[k].link.reverse && keySplit[1] === r.name) {
           // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
           const name = keySplit[0];
           if (!route.find((w) => w.name === name)) {
@@ -384,8 +386,8 @@ const Home = () => {
                   r,
                   {
                     name,
-                    category: dbCatalogue[name].category,
-                    link: dbConfig[k].link.reverse.label,
+                    category: datasetConfig[name].category,
+                    link: relationConfig[k].link.reverse.label,
                   },
                 ]);
               }
@@ -398,8 +400,8 @@ const Home = () => {
                 r,
                 {
                   name,
-                  category: dbCatalogue[name].category,
-                  link: dbConfig[k].link.reverse.label,
+                  category: datasetConfig[name].category,
+                  link: relationConfig[k].link.reverse.label,
                 },
               ]);
             }
@@ -418,7 +420,7 @@ const Home = () => {
 
     const thirdCandidates = [];
     secondCandidatesTemp.forEach((r) => {
-      Object.keys(dbConfig).forEach((k) => {
+      Object.keys(relationConfig).forEach((k) => {
         const keySplit = k.split("-");
         if (keySplit[0] === r[1].name) {
           const name = keySplit[1];
@@ -437,14 +439,17 @@ const Home = () => {
                   r[1],
                   {
                     name,
-                    category: dbCatalogue[name].category,
-                    link: dbConfig[k].link.forward.label,
+                    category: datasetConfig[name].category,
+                    link: relationConfig[k].link.forward.label,
                   },
                 ]);
               }
             }
           }
-        } else if (dbConfig[k].link.reverse && keySplit[1] === r[1].name) {
+        } else if (
+          relationConfig[k].link.reverse &&
+          keySplit[1] === r[1].name
+        ) {
           // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
           const name = keySplit[0];
           if (!route.find((w) => w.name === name)) {
@@ -462,8 +467,8 @@ const Home = () => {
                   r[1],
                   {
                     name,
-                    category: dbCatalogue[name].category,
-                    link: dbConfig[k].link.reverse.label,
+                    category: datasetConfig[name].category,
+                    link: relationConfig[k].link.reverse.label,
                   },
                 ]);
               }
