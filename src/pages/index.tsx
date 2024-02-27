@@ -47,8 +47,9 @@ const Home = () => {
         } else if (activeTab === "ANNOTATE") {
         } else if (isUseKeepRoute) {
           const r = route;
+          let nodesList: any[][] = [];
           for (let i = 0; i < previousRoute.length; i++) {
-            await createNodesList(r);
+            nodesList = await createNodesList(r);
             if (i < previousRoute.length - 1) {
               const v = databaseNodesList[i + 1].find(
                 (element) => element.name === previousRoute[i + 1].name,
@@ -59,10 +60,15 @@ const Home = () => {
               r.push(v);
             }
           }
+
+          createExplorePath(nodesList);
           setRoute(r);
           setIsUseKeepRoute(false);
         } else {
-          await createNodesList(route);
+          let nodesList: any[][] = [];
+          nodesList = await createNodesList(route);
+
+          createExplorePath(nodesList);
         }
 
         return () => {
@@ -164,6 +170,10 @@ const Home = () => {
     NProgress.done();
     setDatabaseNodesList(nodesList);
 
+    return nodesList;
+  };
+
+  const createExplorePath = (nodesList: any[][]) => {
     const candidatePaths: Arrow[] = [];
     nodesList.forEach((nodes, i) => {
       if (i === 0) return;
@@ -177,6 +187,7 @@ const Home = () => {
         );
       });
     });
+
     setCandidatePaths(candidatePaths);
   };
 
