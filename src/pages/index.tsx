@@ -82,37 +82,36 @@ const Home = () => {
     const r = routeTemp[routeTemp.length - 1];
     const candidateMap = new Map();
     Object.entries(relationConfig).forEach(([key, value]) => {
-      if (!candidateMap.has(r.name)) {
-        if (key.split("-").shift() === r.name) {
-          const name = key.split("-")[1];
-          if (!routeTemp.find((w) => w.name === name)) {
-            // 順方向の変換
-            candidateMap.set(name, {
-              name,
-              category: datasetConfig[name].category,
-              source: 0,
-              target: 0,
-              link: relationConfig[`${r.name}-${name}`].link.forward.label,
-              results: [],
-            });
-          }
-        } else if (value.link.reverse && key.split("-").pop() === r.name) {
-          // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
-          const name = key.split("-")[0];
-          if (
-            !candidateMap.has(name) &&
-            !routeTemp.find((w) => w.name === name)
-          ) {
-            // 逆方向の変換
-            candidateMap.set(name, {
-              name,
-              category: datasetConfig[name].category,
-              source: 0,
-              target: 0,
-              link: relationConfig[`${name}-${r.name}`].link.reverse.label,
-              results: [],
-            });
-          }
+      const keySplit = key.split("-");
+      if (keySplit[0] === r.name) {
+        const name = keySplit[1];
+        if (!routeTemp.find((w) => w.name === name)) {
+          // 順方向の変換
+          candidateMap.set(name, {
+            name,
+            category: datasetConfig[name].category,
+            source: 0,
+            target: 0,
+            link: value.link.forward.label,
+            results: [],
+          });
+        }
+      } else if (value.link.reverse && keySplit[1] === r.name) {
+        // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
+        const name = keySplit[0];
+        if (
+          !candidateMap.has(name) &&
+          !routeTemp.find((w) => w.name === name)
+        ) {
+          // 逆方向の変換
+          candidateMap.set(name, {
+            name,
+            category: datasetConfig[name].category,
+            source: 0,
+            target: 0,
+            link: value.link.reverse.label,
+            results: [],
+          });
         }
       }
     });
