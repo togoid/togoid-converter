@@ -167,7 +167,7 @@ const NavigateResultItem = (props) => {
       {isShowInfomationModal &&
         createPortal(
           <InformationModal
-            setInformationModal={setIsShowInfomationModal}
+            setIsShowInfomationModal={setIsShowInfomationModal}
             database={props.v.name}
           />,
           document.body,
@@ -179,7 +179,7 @@ const NavigateResultItem = (props) => {
             route={props.route}
             ids={props.ids}
             convertedCount={convertedCount.current}
-            setModalVisibility={setIsShowResultModal}
+            setIsShowResultModal={setIsShowResultModal}
           />,
           document.body,
         )}

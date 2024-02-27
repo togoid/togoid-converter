@@ -150,7 +150,7 @@ const ExploreResultItem = (props) => {
       {isShowInfomationModal &&
         createPortal(
           <InformationModal
-            setInformationModal={setIsShowInfomationModal}
+            setIsShowInfomationModal={setIsShowInfomationModal}
             database={props.v.name}
           />,
           document.body,
@@ -162,7 +162,7 @@ const ExploreResultItem = (props) => {
             route={props.route}
             ids={props.ids}
             convertedCount={convertedCount.current}
-            setModalVisibility={setIsShowResultModal}
+            setIsShowResultModal={setIsShowResultModal}
           />,
           document.body,
         )}

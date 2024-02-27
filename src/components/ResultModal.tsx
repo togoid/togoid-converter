@@ -1,9 +1,17 @@
-import ResultModalAction from "@/components/ResultModalAction";
+import { useClickAway } from "react-use";
 import { ArrowArea } from "react-arrow-master";
+import ResultModalAction from "@/components/ResultModalAction";
 
 import type { Arrow, HeadStyleAlias } from "react-arrow-master";
 
-const ResultModal = (props) => {
+type Props = {
+  route: Route[];
+  ids: any;
+  convertedCount: any;
+  setIsShowResultModal: Dispatch<SetStateAction<boolean>>;
+};
+
+const ResultModal = ({ setIsShowResultModal, ...props }: Props) => {
   const { datasetConfig } = useConfig();
 
   const getResultPathStyle = (
@@ -33,7 +41,7 @@ const ResultModal = (props) => {
 
   const routePath = useMemo<Arrow[]>(
     () =>
-      props.route.flatMap((v, i) => {
+      props.route.flatMap((_, i) => {
         if (i === 0) {
           return getResultPathStyle(`label-${i}`, `link-${i + 1}`, "none");
         } else if (i === props.route.length - 1) {
@@ -45,20 +53,21 @@ const ResultModal = (props) => {
           ];
         }
       }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 
+  const ref = useRef(null);
+  useClickAway(ref, () => {
+    setIsShowResultModal(false);
+  });
+
   return (
-    <div className="modal" onClick={() => props.setModalVisibility(false)}>
-      <div
-        className="modal__inner"
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-      >
+    <div className="modal">
+      <div ref={ref} className="modal__inner">
         <div className="modal__scroll_area">
           <button
-            onClick={() => props.setModalVisibility(false)}
+            onClick={() => setIsShowResultModal(false)}
             className="modal__close"
           >
             <svg viewBox="0 0 24 24">
@@ -88,8 +97,10 @@ const ResultModal = (props) => {
                           className="path_label green"
                           id={`label-${i}`}
                           style={{
+                            // @ts-expect-error
                             backgroundColor: categories[v.category]
-                              ? categories[v.category].color
+                              ? // @ts-expect-error
+                                categories[v.category].color
                               : null,
                           }}
                         >

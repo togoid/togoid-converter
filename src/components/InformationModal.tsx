@@ -1,27 +1,26 @@
+import { useClickAway } from "react-use";
 import LanguageButton from "@/components/LanguageButton";
 
-const InformationModal = (props) => {
+type Props = {
+  setIsShowInfomationModal: Dispatch<SetStateAction<boolean>>;
+  database: any;
+};
+
+const InformationModal = ({ setIsShowInfomationModal, ...props }: Props) => {
   const [language, setLanguage] = useState<"en" | "ja">("en");
 
   const { datasetConfig, descriptionConfig } = useConfig();
 
-  const hideInformationModal = () => {
-    props.setInformationModal(false);
-  };
+  const ref = useRef(null);
+  useClickAway(ref, () => {
+    setIsShowInfomationModal(false);
+  });
 
   return (
-    <div
-      className="modal modal--through"
-      onClick={() => hideInformationModal()}
-    >
-      <div
-        className="modal__inner modal__inner--through"
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-      >
+    <div className="modal modal--through">
+      <div ref={ref} className="modal__inner modal__inner--through">
         <button
-          onClick={() => hideInformationModal()}
+          onClick={() => setIsShowInfomationModal(false)}
           className="modal--through__close"
         />
         <h2 className="modal--through__title">
@@ -67,8 +66,10 @@ const InformationModal = (props) => {
               <div
                 className="path_label small green"
                 style={{
+                  // @ts-expect-error
                   backgroundColor: categories[datasetConfig[v].category]
-                    ? categories[datasetConfig[v].category].color
+                    ? // @ts-expect-error
+                      categories[datasetConfig[v].category].color
                     : null,
                 }}
                 key={i}
