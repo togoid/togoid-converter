@@ -75,7 +75,7 @@ const InformationModal = ({ setIsShowInfomationModal, ...props }: Props) => {
                 key={i}
               >
                 {datasetConfig[v].label}
-                <span>{count}</span>
+                <span className="total">{count}</span>
               </div>
             ))}
           </div>
