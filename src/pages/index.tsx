@@ -49,7 +49,7 @@ const Home = () => {
           const r = route;
           let nodesList: any[][] = [];
           for (let i = 0; i < previousRoute.length; i++) {
-            nodesList = await createNodesList(r);
+            nodesList = await createNodesList(r, databaseNodesList);
             if (i < previousRoute.length - 1) {
               const v = databaseNodesList[i + 1].find(
                 (element) => element.name === previousRoute[i + 1].name,
@@ -61,13 +61,17 @@ const Home = () => {
             }
           }
 
+          setDatabaseNodesList(nodesList);
           createExplorePath(nodesList);
           setRoute(r);
           setIsUseKeepRoute(false);
         } else {
-          let nodesList: any[][] = [];
-          nodesList = await createNodesList(route);
+          const nodesList = await createNodesList(
+            route,
+            databaseNodesList.slice(0, route.length),
+          );
 
+          setDatabaseNodesList(nodesList);
           createExplorePath(nodesList);
         }
 
@@ -81,10 +85,7 @@ const Home = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route]);
 
-  const createNodesList = async (routeTemp: Route[]) => {
-    const nodesList = isUseKeepRoute
-      ? databaseNodesList
-      : databaseNodesList.slice(0, routeTemp.length);
+  const createNodesList = async (routeTemp: Route[], nodesList: any[][]) => {
     const r = routeTemp[routeTemp.length - 1];
     const candidateMap = new Map();
     Object.entries(relationConfig).forEach(([key, value]) => {
@@ -168,9 +169,8 @@ const Home = () => {
       }),
     );
     NProgress.done();
-    setDatabaseNodesList(nodesList);
 
-    return nodesList;
+    return nodesList.slice();
   };
 
   const createExplorePath = (nodesList: any[][]) => {

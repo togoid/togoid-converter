@@ -5,7 +5,7 @@ const IdInput = (props) => {
     setText(props.idTexts);
   }, [props.idTexts]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: any) => {
     if (e) e.preventDefault();
 
     const findDatabaseList = props.handleIdTextsSubmit(text);
@@ -27,9 +27,9 @@ const IdInput = (props) => {
     }
   };
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: any) => {
     if ((e.ctrlKey || e.shiftKey) && e.keyCode === 13) {
-      handleSubmit();
+      handleSubmit(e);
     }
   };
 
