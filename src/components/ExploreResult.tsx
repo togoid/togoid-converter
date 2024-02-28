@@ -1,4 +1,5 @@
 import React from "react";
+import { useUpdateEffect } from "react-use";
 import ExploreResultItem from "@/components/ExploreResultItem";
 
 const sortConfig = {
@@ -64,7 +65,7 @@ const ExploreResult = (props: any) => {
     direction: "down",
   });
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     // 直前の状態と比較して変化していればnameとascでソートする
     setNodesList(sortFunc(props.nodes, "name", "down"));
     setSortModeOrder({
