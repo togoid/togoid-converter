@@ -20,34 +20,14 @@ const IdInput = (props) => {
       .filter((v) => v)
       .map((v) => v.trim());
 
-    props.setDatabaseNodesList([]);
-    props.setRoute([]);
-
     isUpdateText.current = false;
-    props.setIds(ids);
-    return props.searchDatabase(ids);
+    props.searchDatabase(ids);
   };
 
   const handleSubmit = (e: any) => {
     if (e) e.preventDefault();
 
-    const findDatabaseList = handleIdTextsSubmit(text);
-    if (props.previousRoute.length) {
-      const firstRoute = findDatabaseList.find(
-        (v) => v.name === props.previousRoute[0].name,
-      );
-      if (firstRoute) {
-        // keepRouteを使用する
-        props.setRoute([firstRoute]);
-        props.setIsUseKeepRoute(true);
-        return;
-      }
-    }
-
-    if (findDatabaseList.length === 1) {
-      // listが1件の時は自動で選択する
-      props.setRoute(findDatabaseList);
-    }
+    handleIdTextsSubmit(text);
   };
 
   const handleKeyDown = (e: any) => {
@@ -69,35 +49,13 @@ const IdInput = (props) => {
 
     reader.onload = () => {
       setText(reader.result as string);
-
-      const findDatabaseList = handleIdTextsSubmit(reader.result as string);
-      e.target.value = "";
-      if (props.previousRoute.length) {
-        const firstRoute = findDatabaseList.find(
-          (v) => v.name === props.previousRoute[0].name,
-        );
-        if (firstRoute) {
-          // keepRouteを使用する
-          props.setRoute([firstRoute]);
-          props.setIsUseKeepRoute(true);
-          return;
-        }
-      }
-
-      if (findDatabaseList.length === 1) {
-        // listが1件の時は自動で選択する
-        props.setRoute(findDatabaseList);
-      }
+      handleIdTextsSubmit(reader.result as string);
     };
     reader.onerror = () => {
       console.error(reader.error);
     };
 
     e.target.value = "";
-  };
-
-  const handleReset = () => {
-    props.restartExplore();
   };
 
   return (
@@ -138,7 +96,7 @@ const IdInput = (props) => {
             className="button_small"
             type="button"
             value="Reset"
-            onClick={handleReset}
+            onClick={props.restartExplore}
           />
         </div>
       </form>

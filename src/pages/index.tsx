@@ -160,7 +160,9 @@ const Home = () => {
   /**
    * idsに入力されたIDまたはIDリストをidPatternsから正規表現で検索
    */
-  const searchDatabase = (ids: string[]) => {
+  const searchDatabase = (ids: string[], exampleTarget?: string) => {
+    setIds(ids);
+
     const candidates: any[] = [];
     ids.forEach((id) => {
       Object.entries(datasetConfig).forEach(([key, value]) => {
@@ -186,11 +188,30 @@ const Home = () => {
         }
       });
     });
+
     if (candidates.length > 0) {
       setDatabaseNodesList([candidates]);
+    } else {
+      setDatabaseNodesList([]);
+    }
+
+    if (exampleTarget) {
+      // Examplesで選択したものは必ず見つかる前提
+      setRoute([candidates.find((v) => v.name === exampleTarget)]);
+      setPreviousRoute([candidates.find((v) => v.name === exampleTarget)]);
+    } else if (
+      previousRoute.length &&
+      candidates.some((v) => v.name === previousRoute[0].name)
+    ) {
+      // keepRouteを使用する
+      setRoute([previousRoute[0]]);
+      setIsUseKeepRoute(true);
+    } else if (candidates.length === 1) {
+      // listが1件の時は自動で選択する
+      setRoute(candidates);
+    } else {
       setRoute([]);
     }
-    return candidates;
   };
 
   const restartExplore = () => {
@@ -204,25 +225,10 @@ const Home = () => {
   };
 
   // Examplesをクリックした際の検索
-  const executeExamples = (idList: string[], key: string) => {
+  const executeExamples = (idList: string[], exampleTarget: string) => {
     changeIndexTab("EXPLORE");
 
-    setDatabaseNodesList([]);
-    setRoute([]);
-    setIds(idList);
-    const findDatabaseList = searchDatabase(idList);
-    if (
-      previousRoute.length &&
-      findDatabaseList.find((v) => v.name === previousRoute[0].name)
-    ) {
-      // keepRouteを使用する
-      setRoute([previousRoute[0]]);
-      setIsUseKeepRoute(true);
-    } else {
-      // Examplesで選択したものは必ず見つかる前提
-      setRoute([findDatabaseList.find((v) => v.name === key)]);
-      setPreviousRoute([findDatabaseList.find((v) => v.name === key)]);
-    }
+    searchDatabase(idList, exampleTarget);
   };
 
   const lookupRoute = async (target) => {
@@ -504,15 +510,8 @@ const Home = () => {
       <main className="main">
         <IdInput
           ids={ids}
-          route={route}
-          setRoute={setRoute}
-          previousRoute={previousRoute}
-          setPreviousRoute={setPreviousRoute}
           restartExplore={restartExplore}
-          setIsUseKeepRoute={setIsUseKeepRoute}
           executeExamples={executeExamples}
-          setDatabaseNodesList={setDatabaseNodesList}
-          setIds={setIds}
           searchDatabase={searchDatabase}
         />
         <div className="drawing_area">
