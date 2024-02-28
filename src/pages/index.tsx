@@ -16,7 +16,7 @@ const Home = () => {
   const [activeTab, setActiveTab] = useState("EXPLORE");
   const [databaseNodesList, setDatabaseNodesList] = useState<any[][]>([]);
   const [route, setRoute] = useState<Route[]>([]);
-  const [previousRoute, setPreviousRoute] = useState([]);
+  const [previousRoute, setPreviousRoute] = useState<Route[]>([]);
   const [isUseKeepRoute, setIsUseKeepRoute] = useState(false);
   const [candidatePaths, setCandidatePaths] = useState<Arrow[]>([]);
   const [idTexts, setIdTexts] = useState("");
@@ -263,6 +263,7 @@ const Home = () => {
     } else {
       // Examplesで選択したものは必ず見つかる前提
       setRoute([findDatabaseList.find((v) => v.name === key)]);
+      setPreviousRoute([findDatabaseList.find((v) => v.name === key)]);
     }
   };
 
