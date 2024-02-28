@@ -69,10 +69,6 @@ const Datasets = (props) => {
     searchText ? searchDataset(searchText) : setDatasetFilterObj(datasetConfig);
   };
 
-  const clickExamples = (examples, key) => {
-    props.executeExamples(examples.join("\n"), key);
-  };
-
   return (
     <div className="home">
       <main className="main">
@@ -275,7 +271,7 @@ const Datasets = (props) => {
                                 href="#"
                                 onClick={(e) => {
                                   e.preventDefault();
-                                  clickExamples(example, key);
+                                  props.executeExamples(example, key);
                                 }}
                               >
                                 {example.join(", ")}

@@ -112,7 +112,7 @@ const IdInput = (props) => {
             href="#"
             onClick={(e) => {
               e.preventDefault();
-              props.handleTopExamples("refseq_rna");
+              props.executeExamples(topExamples["refseq_rna"], "refseq_rna");
             }}
             className="input_area__bottom__link"
           >
@@ -122,7 +122,10 @@ const IdInput = (props) => {
             href="#"
             onClick={(e) => {
               e.preventDefault();
-              props.handleTopExamples("ensembl_gene");
+              props.executeExamples(
+                topExamples["ensembl_gene"],
+                "ensembl_gene",
+              );
             }}
             className="input_area__bottom__link"
           >
@@ -132,7 +135,7 @@ const IdInput = (props) => {
             href="#"
             onClick={(e) => {
               e.preventDefault();
-              props.handleTopExamples("uniprot");
+              props.executeExamples(topExamples["uniprot"], "uniprot");
             }}
             className="input_area__bottom__link"
           >

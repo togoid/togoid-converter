@@ -222,12 +222,9 @@ const Home = () => {
     return searchDatabase(ids);
   };
 
-  const handleTopExamples = (key) => {
-    executeExamples(topExamples[key].join("\n"), key);
-  };
-
   // Examplesをクリックした際の検索
-  const executeExamples = (idTexts, key) => {
+  const executeExamples = (idList: string[], key: string) => {
+    const idTexts = idList.join("\n");
     changeIndexTab("EXPLORE");
     setIdTexts(idTexts);
 
@@ -527,13 +524,13 @@ const Home = () => {
           handleIdTextsSubmit={handleIdTextsSubmit}
           setIdTexts={setIdTexts}
           idTexts={idTexts}
-          handleTopExamples={handleTopExamples}
           route={route}
           setRoute={setRoute}
           previousRoute={previousRoute}
           setPreviousRoute={setPreviousRoute}
           restartExplore={restartExplore}
           setIsUseKeepRoute={setIsUseKeepRoute}
+          executeExamples={executeExamples}
         />
         <div className="drawing_area">
           <TabWrapper activeTab={activeTab} changeIndexTab={changeIndexTab} />
