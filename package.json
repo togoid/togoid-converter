@@ -39,5 +39,6 @@
     "sass": "1.70.0",
     "typescript": "5.3.3",
     "unplugin-auto-import": "0.17.5"
-  }
+  },
+  "packageManager": "yarn@4.1.0"
 }
