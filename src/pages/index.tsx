@@ -9,8 +9,6 @@ import Navigate from "@/components/Navigate";
 import Annotate from "@/components/Annotate";
 import LabelToId from "@/components/LabelToId";
 
-import type { Arrow } from "react-arrow-master";
-
 const Home = () => {
   const [ids, setIds] = useState([]);
   const [activeTab, setActiveTab] = useState("EXPLORE");
@@ -18,7 +16,6 @@ const Home = () => {
   const [route, setRoute] = useState<Route[]>([]);
   const [previousRoute, setPreviousRoute] = useState<Route[]>([]);
   const [isUseKeepRoute, setIsUseKeepRoute] = useState(false);
-  const [candidatePaths, setCandidatePaths] = useState<Arrow[]>([]);
   const [idTexts, setIdTexts] = useState("");
   const [offsetRoute, setOffsetRoute] = useState(null);
   const [previousSearchTab, setPreviousSearchTab] = useState("EXPLORE");
@@ -32,16 +29,6 @@ const Home = () => {
         if (activeTab === "NAVIGATE") {
           if (route.length === 1) {
             setDatabaseNodesList([databaseNodesList[0]]);
-            setCandidatePaths([
-              getPathStyle(
-                `from${0}-${route[0].name}`,
-                `nodeOther`,
-                false,
-                "default",
-              ),
-            ]);
-          } else {
-            createNavigatePath(databaseNodesList);
           }
           // eslint-disable-next-line no-empty
         } else if (activeTab === "ANNOTATE") {
@@ -217,14 +204,6 @@ const Home = () => {
 
     if (activeTab === "NAVIGATE") {
       setRoute(route.slice(0, 1));
-      setCandidatePaths([
-        getPathStyle(
-          `from${0}-${route[0].name}`,
-          `nodeOther`,
-          false,
-          "default",
-        ),
-      ]);
     } else {
       setRoute([]);
     }
@@ -485,8 +464,6 @@ const Home = () => {
     });
 
     await setDatabaseNodesList(nodesList);
-
-    createNavigatePath(nodesList);
   };
 
   const getTotal = async (candidates: any[][]) => {
@@ -528,114 +505,6 @@ const Home = () => {
     );
     NProgress.done();
     return nodesList;
-  };
-
-  const createNavigatePath = (nodesList: any[][]) => {
-    const candidatePaths: any[] = [];
-    nodesList.forEach((nodes, i) => {
-      if (i === 0) {
-        if (nodesList.length === 1) {
-          candidatePaths.push(
-            getPathStyle(
-              `from${0}-${route[0].name}`,
-              `nodeOther`,
-              false,
-              "default",
-            ),
-          );
-        }
-      } else if (i === 1) {
-        nodes.forEach((v, j) => {
-          if (v === null) {
-            candidatePaths.push(
-              getPathStyle(
-                `from${0}-${route[0].name}`,
-                `label${i}-${j}`,
-                j === offsetRoute,
-                "none",
-              ),
-            );
-          } else {
-            candidatePaths.push(
-              ...mergePathStyle(
-                `from${0}-${route[0].name}`,
-                `to${i}-${j}`,
-                j === offsetRoute,
-              ),
-            );
-          }
-        });
-      } else if (i === nodesList.length - 1) {
-        nodes.forEach((v, j) => {
-          if (nodesList[i - 2][j] === null) {
-            candidatePaths.push(
-              {
-                from: {
-                  id: `label${i - 2}-${j}`,
-                  posX: "left",
-                  posY: "middle",
-                },
-                to: {
-                  id: `label${i}-${j}`,
-                  posX: "left",
-                  posY: "middle",
-                },
-                style:
-                  j === offsetRoute
-                    ? {
-                        color: "#1A8091",
-                        head: "none",
-                        arrow: "smooth",
-                        width: 2,
-                      }
-                    : {
-                        color: "#dddddd",
-                        head: "none",
-                        arrow: "smooth",
-                        width: 1.5,
-                      },
-              },
-              getPathStyle(
-                `label${i}-${j}`,
-                `to${i}-${j}`,
-                j === offsetRoute,
-                "default",
-              ),
-            );
-          } else if (nodesList[i - 1][j] === null) {
-            candidatePaths.push(
-              ...mergePathStyle(
-                `to${i - 2}-${j}`,
-                `to${i}-${j}`,
-                j === offsetRoute,
-              ),
-            );
-          } else {
-            candidatePaths.push(
-              ...mergePathStyle(
-                `to${i - 1}-${j}`,
-                `to${i}-${j}`,
-                j === offsetRoute,
-              ),
-            );
-          }
-        });
-      } else {
-        nodes.forEach((v, j) => {
-          if (v === null) return;
-          else {
-            candidatePaths.push(
-              ...mergePathStyle(
-                `to${i - 1}-${j}`,
-                `to${i}-${j}`,
-                j === offsetRoute,
-              ),
-            );
-          }
-        });
-      }
-    });
-    setCandidatePaths(candidatePaths);
   };
 
   const changeIndexTab = (name) => {
@@ -680,7 +549,6 @@ const Home = () => {
           {activeTab === "NAVIGATE" && (
             <Navigate
               databaseNodesList={databaseNodesList}
-              candidatePaths={candidatePaths}
               route={route}
               setRoute={setRoute}
               ids={ids}

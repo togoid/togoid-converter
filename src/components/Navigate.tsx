@@ -2,8 +2,139 @@ import { ArrowArea } from "react-arrow-master";
 import Select from "react-select";
 import NavigateResultItem from "@/components/NavigateResultItem";
 
+import type { Arrow } from "react-arrow-master";
+
 const Navigate = (props) => {
   const { datasetConfig } = useConfig();
+
+  const isShowDropdown = useMemo(() => {
+    return Boolean(
+      (props.route.length === 1 && props.databaseNodesList.length === 1) ||
+        (props.databaseNodesList[1] && props.databaseNodesList[1].length === 0),
+    );
+  }, [props.route, props.databaseNodesList]);
+
+  const candidatePathList = useMemo(() => {
+    const candidatePaths: Arrow[] = [];
+
+    if (isShowDropdown) {
+      candidatePaths.push(
+        getPathStyle(
+          `from${0}-${props.route[0].name}`,
+          `nodeOther`,
+          false,
+          "default",
+        ),
+      );
+    } else if (props.route.length) {
+      props.databaseNodesList.forEach((nodes, i) => {
+        if (i === 0) {
+          if (props.databaseNodesList.length === 1) {
+            candidatePaths.push(
+              getPathStyle(
+                `from${0}-${props.route[0].name}`,
+                `nodeOther`,
+                false,
+                "default",
+              ),
+            );
+          }
+        } else if (i === 1) {
+          nodes.forEach((v, j) => {
+            if (v === null) {
+              candidatePaths.push(
+                getPathStyle(
+                  `from${0}-${props.route[0].name}`,
+                  `label${i}-${j}`,
+                  j === props.offsetRoute,
+                  "none",
+                ),
+              );
+            } else {
+              candidatePaths.push(
+                ...mergePathStyle(
+                  `from${0}-${props.route[0].name}`,
+                  `to${i}-${j}`,
+                  j === props.offsetRoute,
+                ),
+              );
+            }
+          });
+        } else if (i === props.databaseNodesList.length - 1) {
+          nodes.forEach((v, j) => {
+            if (props.databaseNodesList[i - 2][j] === null) {
+              candidatePaths.push(
+                {
+                  from: {
+                    id: `label${i - 2}-${j}`,
+                    posX: "left",
+                    posY: "middle",
+                  },
+                  to: {
+                    id: `label${i}-${j}`,
+                    posX: "left",
+                    posY: "middle",
+                  },
+                  style:
+                    j === props.offsetRoute
+                      ? {
+                          color: "#1A8091",
+                          head: "none",
+                          arrow: "smooth",
+                          width: 2,
+                        }
+                      : {
+                          color: "#dddddd",
+                          head: "none",
+                          arrow: "smooth",
+                          width: 1.5,
+                        },
+                },
+                getPathStyle(
+                  `label${i}-${j}`,
+                  `to${i}-${j}`,
+                  j === props.offsetRoute,
+                  "default",
+                ),
+              );
+            } else if (props.databaseNodesList[i - 1][j] === null) {
+              candidatePaths.push(
+                ...mergePathStyle(
+                  `to${i - 2}-${j}`,
+                  `to${i}-${j}`,
+                  j === props.offsetRoute,
+                ),
+              );
+            } else {
+              candidatePaths.push(
+                ...mergePathStyle(
+                  `to${i - 1}-${j}`,
+                  `to${i}-${j}`,
+                  j === props.offsetRoute,
+                ),
+              );
+            }
+          });
+        } else {
+          nodes.forEach((v, j) => {
+            if (v === null) return;
+            else {
+              candidatePaths.push(
+                ...mergePathStyle(
+                  `to${i - 1}-${j}`,
+                  `to${i}-${j}`,
+                  j === props.offsetRoute,
+                ),
+              );
+            }
+          });
+        }
+      });
+    }
+
+    return candidatePaths;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.databaseNodesList, props.route]);
 
   const selectDatabase = (database) => {
     props.setRoute([database]);
@@ -30,7 +161,7 @@ const Navigate = (props) => {
         <div className="panel">
           <div className="panel__inner">
             <div className="explore">
-              <ArrowArea arrows={props.candidatePaths}>
+              <ArrowArea arrows={candidatePathList}>
                 <div className="drawing">
                   {props.databaseNodesList &&
                     props.databaseNodesList.length > 0 &&
@@ -81,10 +212,7 @@ const Navigate = (props) => {
                         </ul>
                       </div>
                     ))}
-                  {((props.route.length === 1 &&
-                    props.databaseNodesList.length === 1) ||
-                    (props.databaseNodesList[1] &&
-                      props.databaseNodesList[1].length === 0)) && (
+                  {isShowDropdown && (
                     <div className="item_wrapper">
                       <ul className="result_list dropdown_wrap">
                         <div id={`nodeOther`} className={`radio green`}>
