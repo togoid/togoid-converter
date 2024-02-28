@@ -463,7 +463,7 @@ const Home = () => {
       }
     });
 
-    await setDatabaseNodesList(nodesList);
+    setDatabaseNodesList(nodesList);
   };
 
   const getTotal = async (candidates: any[][]) => {
