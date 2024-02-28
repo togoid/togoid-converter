@@ -62,7 +62,6 @@ const Home = () => {
           }
 
           setDatabaseNodesList(nodesList);
-          createExplorePath(nodesList);
           setRoute(r);
           setIsUseKeepRoute(false);
         } else {
@@ -72,7 +71,6 @@ const Home = () => {
           );
 
           setDatabaseNodesList(nodesList);
-          createExplorePath(nodesList);
         }
 
         return () => {
@@ -171,24 +169,6 @@ const Home = () => {
     NProgress.done();
 
     return nodesList.slice();
-  };
-
-  const createExplorePath = (nodesList: any[][]) => {
-    const candidatePaths: Arrow[] = [];
-    nodesList.forEach((nodes, i) => {
-      if (i === 0) return;
-      nodes.forEach((v) => {
-        candidatePaths.push(
-          ...mergePathStyle(
-            `from${i - 1}-${route[i - 1].name}`,
-            `to${i}-${v.name}`,
-            route[i] && route[i].name === v.name,
-          ),
-        );
-      });
-    });
-
-    setCandidatePaths(candidatePaths);
   };
 
   /**
@@ -690,7 +670,6 @@ const Home = () => {
           {activeTab === "EXPLORE" && (
             <Explore
               databaseNodesList={databaseNodesList}
-              candidatePaths={candidatePaths}
               route={route}
               setRoute={setRoute}
               ids={ids}
