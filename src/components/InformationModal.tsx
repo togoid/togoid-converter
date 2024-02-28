@@ -27,31 +27,36 @@ const InformationModal = ({ setIsShowInfomationModal, ...props }: Props) => {
           {datasetConfig[props.database].label}
         </h2>
         <LanguageButton language={language} setLanguage={setLanguage} />
-        <p className="modal--through__description">
-          {Object.prototype.hasOwnProperty.call(
-            descriptionConfig,
-            props.database,
-          ) &&
-            descriptionConfig[props.database][`description_${language}`] && (
-              <div>
-                <p>
-                  {descriptionConfig[props.database][`description_${language}`]}
-                </p>
-                <p>
-                  Cited from{" "}
-                  <a
-                    href={`https://integbio.jp/dbcatalog/record/${
-                      datasetConfig[props.database].catalog
-                    }`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Integbio Database Catalog
-                  </a>
-                </p>
-              </div>
-            )}
-        </p>
+        {datasetConfig[props.database].description ||
+          (descriptionConfig[props.database]?.[`description_${language}`] && (
+            <div className="modal--through__description">
+              {datasetConfig[props.database].description ? (
+                <p>{datasetConfig[props.database].description}</p>
+              ) : (
+                <>
+                  <p>
+                    {
+                      descriptionConfig[props.database][
+                        `description_${language}`
+                      ]
+                    }
+                  </p>
+                  <p>
+                    Cited from{" "}
+                    <a
+                      href={`https://integbio.jp/dbcatalog/record/${
+                        datasetConfig[props.database].catalog
+                      }`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Integbio Database Catalog
+                    </a>
+                  </p>
+                </>
+              )}
+            </div>
+          ))}
 
         <div className="modal--through__buttons path">
           <div className="path_label small white">LINK TO</div>
