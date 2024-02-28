@@ -16,7 +16,6 @@ const Home = () => {
   const [route, setRoute] = useState<Route[]>([]);
   const [previousRoute, setPreviousRoute] = useState<Route[]>([]);
   const [isUseKeepRoute, setIsUseKeepRoute] = useState(false);
-  const [idTexts, setIdTexts] = useState("");
   const [offsetRoute, setOffsetRoute] = useState(null);
   const [previousSearchTab, setPreviousSearchTab] = useState("EXPLORE");
 
@@ -224,11 +223,9 @@ const Home = () => {
 
   // Examplesをクリックした際の検索
   const executeExamples = (idList: string[], key: string) => {
-    const idTexts = idList.join("\n");
     changeIndexTab("EXPLORE");
-    setIdTexts(idTexts);
 
-    const findDatabaseList = handleIdTextsSubmit(idTexts);
+    const findDatabaseList = handleIdTextsSubmit(idList.join("\n"));
     if (
       previousRoute.length &&
       findDatabaseList.find((v) => v.name === previousRoute[0].name)
@@ -521,9 +518,8 @@ const Home = () => {
       <Header />
       <main className="main">
         <IdInput
+          ids={ids}
           handleIdTextsSubmit={handleIdTextsSubmit}
-          setIdTexts={setIdTexts}
-          idTexts={idTexts}
           route={route}
           setRoute={setRoute}
           previousRoute={previousRoute}

@@ -1,13 +1,20 @@
 const IdInput = (props) => {
-  const [text, setText] = useState(props.idTexts);
+  const [text, setText] = useState("");
+
+  const isUpdateText = useRef(true);
 
   useEffect(() => {
-    setText(props.idTexts);
-  }, [props.idTexts]);
+    if (isUpdateText.current) {
+      setText(props.ids.join("\n"));
+    } else {
+      isUpdateText.current = true;
+    }
+  }, [props.ids]);
 
   const handleSubmit = (e: any) => {
     if (e) e.preventDefault();
 
+    isUpdateText.current = false;
     const findDatabaseList = props.handleIdTextsSubmit(text);
     if (props.previousRoute.length) {
       const firstRoute = findDatabaseList.find(
@@ -45,7 +52,9 @@ const IdInput = (props) => {
     reader.readAsText(file);
 
     reader.onload = () => {
-      props.setIdTexts(reader.result);
+      setText(reader.result as string);
+
+      isUpdateText.current = false;
       props.handleIdTextsSubmit(reader.result);
     };
     reader.onerror = () => {
@@ -72,11 +81,8 @@ const IdInput = (props) => {
             onChange={(e) => setText(e.target.value)}
             onKeyDown={handleKeyDown}
           />
-          {props.idTexts && (
-            <button
-              onClick={() => props.setIdTexts("")}
-              className="textarea_clear"
-            />
+          {text && (
+            <button onClick={() => setText("")} className="textarea_clear" />
           )}
         </div>
         <div className="input">
