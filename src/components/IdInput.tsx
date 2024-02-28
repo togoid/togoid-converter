@@ -11,11 +11,27 @@ const IdInput = (props) => {
     }
   }, [props.ids]);
 
+  const handleIdTextsSubmit = (t: string) => {
+    const ids = t
+      .replace(/[Ａ-Ｚａ-ｚ０-９]/g, (s) =>
+        String.fromCharCode(s.charCodeAt(0) - 0xfee0),
+      )
+      .split(/[\s,\n,、,,]+/)
+      .filter((v) => v)
+      .map((v) => v.trim());
+
+    props.setDatabaseNodesList([]);
+    props.setRoute([]);
+
+    isUpdateText.current = false;
+    props.setIds(ids);
+    return props.searchDatabase(ids);
+  };
+
   const handleSubmit = (e: any) => {
     if (e) e.preventDefault();
 
-    isUpdateText.current = false;
-    const findDatabaseList = props.handleIdTextsSubmit(text);
+    const findDatabaseList = handleIdTextsSubmit(text);
     if (props.previousRoute.length) {
       const firstRoute = findDatabaseList.find(
         (v) => v.name === props.previousRoute[0].name,
@@ -54,11 +70,27 @@ const IdInput = (props) => {
     reader.onload = () => {
       setText(reader.result as string);
 
-      isUpdateText.current = false;
-      props.handleIdTextsSubmit(reader.result);
+      const findDatabaseList = handleIdTextsSubmit(reader.result as string);
+      e.target.value = "";
+      if (props.previousRoute.length) {
+        const firstRoute = findDatabaseList.find(
+          (v) => v.name === props.previousRoute[0].name,
+        );
+        if (firstRoute) {
+          // keepRouteを使用する
+          props.setRoute([firstRoute]);
+          props.setIsUseKeepRoute(true);
+          return;
+        }
+      }
+
+      if (findDatabaseList.length === 1) {
+        // listが1件の時は自動で選択する
+        props.setRoute(findDatabaseList);
+      }
     };
     reader.onerror = () => {
-      console.log(reader.error);
+      console.error(reader.error);
     };
 
     e.target.value = "";

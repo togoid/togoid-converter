@@ -10,7 +10,7 @@ import Annotate from "@/components/Annotate";
 import LabelToId from "@/components/LabelToId";
 
 const Home = () => {
-  const [ids, setIds] = useState([]);
+  const [ids, setIds] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState("EXPLORE");
   const [databaseNodesList, setDatabaseNodesList] = useState<any[][]>([]);
   const [route, setRoute] = useState<Route[]>([]);
@@ -193,11 +193,6 @@ const Home = () => {
     return candidates;
   };
 
-  const clearExplore = () => {
-    setDatabaseNodesList([]);
-    setRoute([]);
-  };
-
   const restartExplore = () => {
     setDatabaseNodesList(databaseNodesList.slice(0, 1));
 
@@ -208,24 +203,14 @@ const Home = () => {
     }
   };
 
-  const handleIdTextsSubmit = (t) => {
-    const ids = t
-      .replace(/[Ａ-Ｚａ-ｚ０-９]/g, (s) =>
-        String.fromCharCode(s.charCodeAt(0) - 0xfee0),
-      )
-      .split(/[\s,\n,、,,]+/)
-      .filter((v) => v)
-      .map((v) => v.trim());
-    clearExplore();
-    setIds(ids);
-    return searchDatabase(ids);
-  };
-
   // Examplesをクリックした際の検索
   const executeExamples = (idList: string[], key: string) => {
     changeIndexTab("EXPLORE");
 
-    const findDatabaseList = handleIdTextsSubmit(idList.join("\n"));
+    setDatabaseNodesList([]);
+    setRoute([]);
+    setIds(idList);
+    const findDatabaseList = searchDatabase(idList);
     if (
       previousRoute.length &&
       findDatabaseList.find((v) => v.name === previousRoute[0].name)
@@ -519,7 +504,6 @@ const Home = () => {
       <main className="main">
         <IdInput
           ids={ids}
-          handleIdTextsSubmit={handleIdTextsSubmit}
           route={route}
           setRoute={setRoute}
           previousRoute={previousRoute}
@@ -527,6 +511,9 @@ const Home = () => {
           restartExplore={restartExplore}
           setIsUseKeepRoute={setIsUseKeepRoute}
           executeExamples={executeExamples}
+          setDatabaseNodesList={setDatabaseNodesList}
+          setIds={setIds}
+          searchDatabase={searchDatabase}
         />
         <div className="drawing_area">
           <TabWrapper activeTab={activeTab} changeIndexTab={changeIndexTab} />
