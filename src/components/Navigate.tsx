@@ -143,11 +143,13 @@ const Navigate = (props) => {
     setOffsetRoute(null);
   };
 
-  const selectDatabaseModal = (i, j) => {
-    const r = props.databaseNodesList
-      .map((node, l) => (l === 0 ? props.route[0] : node[j]))
-      .filter((v) => v)
-      .slice(0, i + 1);
+  const selectDatabaseModal = (i: number, j: number) => {
+    const r: any[] = [props.route[0]];
+    for (let ii = 1; ii <= i; ii++) {
+      if (props.databaseNodesList[ii][j]) {
+        r.push(props.databaseNodesList[ii][j]);
+      }
+    }
     props.setRoute(r);
     setOffsetRoute(j);
     return r;
