@@ -5,6 +5,8 @@ import NavigateResultItem from "@/components/NavigateResultItem";
 import type { Arrow } from "react-arrow-master";
 
 const Navigate = (props) => {
+  const [offsetRoute, setOffsetRoute] = useState<number | null>(null);
+
   const { datasetConfig } = useConfig();
 
   const isShowDropdown = useMemo(() => {
@@ -46,7 +48,7 @@ const Navigate = (props) => {
                 getPathStyle(
                   `from${0}-${props.route[0].name}`,
                   `label${i}-${j}`,
-                  j === props.offsetRoute,
+                  j === offsetRoute,
                   "none",
                 ),
               );
@@ -55,7 +57,7 @@ const Navigate = (props) => {
                 ...mergePathStyle(
                   `from${0}-${props.route[0].name}`,
                   `to${i}-${j}`,
-                  j === props.offsetRoute,
+                  j === offsetRoute,
                 ),
               );
             }
@@ -76,7 +78,7 @@ const Navigate = (props) => {
                     posY: "middle",
                   },
                   style:
-                    j === props.offsetRoute
+                    j === offsetRoute
                       ? {
                           color: "#1A8091",
                           head: "none",
@@ -93,7 +95,7 @@ const Navigate = (props) => {
                 getPathStyle(
                   `label${i}-${j}`,
                   `to${i}-${j}`,
-                  j === props.offsetRoute,
+                  j === offsetRoute,
                   "default",
                 ),
               );
@@ -102,7 +104,7 @@ const Navigate = (props) => {
                 ...mergePathStyle(
                   `to${i - 2}-${j}`,
                   `to${i}-${j}`,
-                  j === props.offsetRoute,
+                  j === offsetRoute,
                 ),
               );
             } else {
@@ -110,7 +112,7 @@ const Navigate = (props) => {
                 ...mergePathStyle(
                   `to${i - 1}-${j}`,
                   `to${i}-${j}`,
-                  j === props.offsetRoute,
+                  j === offsetRoute,
                 ),
               );
             }
@@ -123,7 +125,7 @@ const Navigate = (props) => {
                 ...mergePathStyle(
                   `to${i - 1}-${j}`,
                   `to${i}-${j}`,
-                  j === props.offsetRoute,
+                  j === offsetRoute,
                 ),
               );
             }
@@ -138,7 +140,7 @@ const Navigate = (props) => {
 
   const selectDatabase = (database) => {
     props.setRoute([database]);
-    props.setOffsetRoute(null);
+    setOffsetRoute(null);
   };
 
   const selectDatabaseModal = (i, j) => {
@@ -147,7 +149,7 @@ const Navigate = (props) => {
       .filter((v) => v)
       .slice(0, i + 1);
     props.setRoute(r);
-    props.setOffsetRoute(j);
+    setOffsetRoute(j);
     return r;
   };
 

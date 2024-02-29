@@ -16,7 +16,6 @@ const Home = () => {
   const [route, setRoute] = useState<Route[]>([]);
   const [previousRoute, setPreviousRoute] = useState<Route[]>([]);
   const [isUseKeepRoute, setIsUseKeepRoute] = useState(false);
-  const [offsetRoute, setOffsetRoute] = useState(null);
   const [previousSearchTab, setPreviousSearchTab] = useState("EXPLORE");
 
   const { datasetConfig, relationConfig } = useConfig(true);
@@ -532,8 +531,6 @@ const Home = () => {
               setRoute={setRoute}
               ids={ids}
               lookupRoute={lookupRoute}
-              offsetRoute={offsetRoute}
-              setOffsetRoute={setOffsetRoute}
             />
           )}
           {activeTab === "ANNOTATE" && (
