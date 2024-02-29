@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import NProgress from "nprogress";
 import Header from "@/components/Header";
 import Explore from "@/components/Explore";
@@ -10,6 +11,8 @@ import Annotate from "@/components/Annotate";
 import LabelToId from "@/components/LabelToId";
 
 const Home = () => {
+  const router = useRouter();
+
   const [ids, setIds] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState("EXPLORE");
   const [databaseNodesList, setDatabaseNodesList] = useState<any[][]>([]);
@@ -67,6 +70,18 @@ const Home = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route]);
+
+  useEffect(() => {
+    if (router.query.ids && datasetConfig) {
+      searchDatabase(
+        (Array.isArray(router.query.ids)
+          ? router.query.ids[0]
+          : router.query.ids
+        )?.split(",") ?? [],
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [datasetConfig]);
 
   const createNodesList = async (routeTemp: Route[], nodesList: any[][]) => {
     const r = routeTemp[routeTemp.length - 1];
@@ -161,6 +176,7 @@ const Home = () => {
    */
   const searchDatabase = (ids: string[], exampleTarget?: string) => {
     setIds(ids);
+    router.replace({ query: ids.length ? { ids: ids.join(",") } : undefined });
 
     const candidates: any[] = [];
     ids.forEach((id) => {
