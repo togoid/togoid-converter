@@ -248,122 +248,112 @@ const Home = () => {
 
   const lookupRoute = async (target) => {
     const r = route[route.length - 1];
-    const firstCandidates: any[] = [];
-    const firstCandidatesTemp: any[] = [];
+    const firstCandidateMap = new Map<string, any[]>();
+    const firstCandidateTempMap = new Map<string, any[]>();
 
-    Object.keys(relationConfig).forEach((k) => {
-      const keySplit = k.split("-");
+    Object.entries(relationConfig).forEach(([key, value]) => {
+      const keySplit = key.split("-");
       if (keySplit[0] === r.name) {
         const name = keySplit[1];
-        if (!route.find((w) => w.name === name)) {
+        if (!route.some((w) => w.name === name)) {
           if (name === target) {
-            if (!firstCandidates.length) {
-              firstCandidates.push({
+            firstCandidateMap.set(name, [
+              {
                 name,
                 category: datasetConfig[name].category,
-                link: relationConfig[k].link.forward.label,
-              });
-            }
-          } else if (!firstCandidatesTemp.find((v) => v.name === name)) {
-            firstCandidatesTemp.push({
-              name,
-              category: datasetConfig[name].category,
-              link: relationConfig[k].link.forward.label,
-            });
+                link: value.link.forward.label,
+              },
+            ]);
+          } else {
+            firstCandidateTempMap.set(name, [
+              {
+                name,
+                category: datasetConfig[name].category,
+                link: value.link.forward.label,
+              },
+            ]);
           }
         }
-      } else if (relationConfig[k].link.reverse && keySplit[1] === r.name) {
+      } else if (value.link.reverse && keySplit[1] === r.name) {
         // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
         const name = keySplit[0];
-        if (!route.find((w) => w.name === name)) {
+        if (
+          !firstCandidateMap.has(name) &&
+          !route.some((w) => w.name === name)
+        ) {
           if (name === target) {
-            if (!firstCandidates.length) {
-              firstCandidates.push({
+            firstCandidateMap.set(name, [
+              {
                 name,
                 category: datasetConfig[name].category,
-                link: relationConfig[k].link.reverse.label,
-              });
-            }
-          } else if (!firstCandidatesTemp.find((v) => v.name === name)) {
-            firstCandidatesTemp.push({
-              name,
-              category: datasetConfig[name].category,
-              link: relationConfig[k].link.reverse.label,
-            });
+                link: value.link.reverse.label,
+              },
+            ]);
+          } else if (!firstCandidateTempMap.has(name)) {
+            firstCandidateTempMap.set(name, [
+              {
+                name,
+                category: datasetConfig[name].category,
+                link: value.link.reverse.label,
+              },
+            ]);
           }
         }
       }
     });
 
-    const secondCandidates: any[][] = [];
-    const secondCandidatesTemp: any[][] = [];
+    const secondCandidateMap = new Map<string, any[]>();
+    const secondCandidateTempMap = new Map<string, any[]>();
 
-    firstCandidatesTemp.forEach((r) => {
-      Object.keys(relationConfig).forEach((k) => {
-        const keySplit = k.split("-");
-        if (keySplit[0] === r.name) {
+    firstCandidateTempMap.forEach((r) => {
+      Object.entries(relationConfig).forEach(([key, value]) => {
+        const keySplit = key.split("-");
+        if (keySplit[0] === r[0].name) {
           const name = keySplit[1];
-          if (!route.find((w) => w.name === name)) {
+          if (!route.some((w) => w.name === name)) {
             if (name === target) {
-              if (
-                !secondCandidates.find(
-                  (v) => v[0].name === r.name && v[1].name === name,
-                )
-              ) {
-                secondCandidates.push([
-                  r,
-                  {
-                    name,
-                    category: datasetConfig[name].category,
-                    link: relationConfig[k].link.forward.label,
-                  },
-                ]);
-              }
-            } else if (
-              !secondCandidatesTemp.find(
-                (v) => v[0].name === r.name && v[1].name === name,
-              )
-            ) {
-              secondCandidatesTemp.push([
-                r,
+              secondCandidateMap.set(`${r[0].name}-${name}`, [
+                r[0],
                 {
                   name,
                   category: datasetConfig[name].category,
-                  link: relationConfig[k].link.forward.label,
+                  link: value.link.forward.label,
+                },
+              ]);
+            } else {
+              secondCandidateTempMap.set(`${r[0].name}-${name}`, [
+                r[0],
+                {
+                  name,
+                  category: datasetConfig[name].category,
+                  link: value.link.forward.label,
                 },
               ]);
             }
           }
-        } else if (relationConfig[k].link.reverse && keySplit[1] === r.name) {
+        } else if (value.link.reverse && keySplit[1] === r[0].name) {
           // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
           const name = keySplit[0];
-          if (!route.find((w) => w.name === name)) {
+          if (
+            !secondCandidateMap.has(`${r[0].name}-${name}`) &&
+            !route.some((w) => w.name === name)
+          ) {
             if (name === target) {
-              if (
-                !secondCandidates.find(
-                  (v) => v[0].name === r.name && v[1].name === name,
-                )
-              ) {
-                secondCandidates.push([
-                  r,
-                  {
-                    name,
-                    category: datasetConfig[name].category,
-                    link: relationConfig[k].link.reverse.label,
-                  },
-                ]);
-              }
-            } else if (
-              !secondCandidatesTemp.find(
-                (v) => v[0].name === r.name && v[1].name === name,
-              )
-            ) {
-              secondCandidatesTemp.push([
-                r,
+              secondCandidateMap.set(`${r[0].name}-${name}`, [
+                r[0],
                 {
                   name,
                   category: datasetConfig[name].category,
-                  link: relationConfig[k].link.reverse.label,
+                  link: value.link.reverse.label,
+                },
+              ]);
+            } else if (!secondCandidateTempMap.has(`${r[0].name}-${name}`)) {
+              secondCandidateTempMap.set(`${r[0].name}-${name}`, [
+                r[0],
+                {
+                  name,
+                  category: datasetConfig[name].category,
+                  link: value.link.reverse.label,
                 },
               ]);
             }
@@ -373,76 +363,60 @@ const Home = () => {
     });
 
     if (
-      !firstCandidates.length &&
-      !secondCandidates.length &&
-      !secondCandidatesTemp.length
+      !firstCandidateMap.size &&
+      !secondCandidateMap.size &&
+      !secondCandidateTempMap.size
     ) {
       return;
     }
 
-    const thirdCandidates: any[][] = [];
-    secondCandidatesTemp.forEach((r) => {
-      Object.keys(relationConfig).forEach((k) => {
-        const keySplit = k.split("-");
+    const thirdCandidateMap = new Map<string, any[]>();
+    secondCandidateTempMap.forEach((r) => {
+      Object.entries(relationConfig).forEach(([key, value]) => {
+        const keySplit = key.split("-");
         if (keySplit[0] === r[1].name) {
           const name = keySplit[1];
-          if (!route.find((w) => w.name === name)) {
+          if (!route.some((w) => w.name === name)) {
             if (name === target) {
-              if (
-                !thirdCandidates.find(
-                  (v) =>
-                    v[0].name === r[0].name &&
-                    v[1].name === r[1].name &&
-                    v[2].name === name,
-                )
-              ) {
-                thirdCandidates.push([
-                  r[0],
-                  r[1],
-                  {
-                    name,
-                    category: datasetConfig[name].category,
-                    link: relationConfig[k].link.forward.label,
-                  },
-                ]);
-              }
+              thirdCandidateMap.set(`${r[0].name}-${r[1].name}-${name}`, [
+                r[0],
+                r[1],
+                {
+                  name,
+                  category: datasetConfig[name].category,
+                  link: value.link.forward.label,
+                },
+              ]);
             }
           }
-        } else if (
-          relationConfig[k].link.reverse &&
-          keySplit[1] === r[1].name
-        ) {
+        } else if (value.link.reverse && keySplit[1] === r[1].name) {
           // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
           const name = keySplit[0];
-          if (!route.find((w) => w.name === name)) {
+          if (
+            !thirdCandidateMap.has(`${r[0].name}-${r[1].name}-${name}`) &&
+            !route.some((w) => w.name === name)
+          ) {
             if (name === target) {
-              if (
-                !thirdCandidates.find(
-                  (v) =>
-                    v[0].name === r[0].name &&
-                    v[1].name === r[1].name &&
-                    v[2].name === name,
-                )
-              ) {
-                thirdCandidates.push([
-                  r[0],
-                  r[1],
-                  {
-                    name,
-                    category: datasetConfig[name].category,
-                    link: relationConfig[k].link.reverse.label,
-                  },
-                ]);
-              }
+              thirdCandidateMap.set(`${r[0].name}-${r[1].name}-${name}`, [
+                r[0],
+                r[1],
+                {
+                  name,
+                  category: datasetConfig[name].category,
+                  link: value.link.reverse.label,
+                },
+              ]);
             }
           }
         }
       });
     });
 
-    const candidates = firstCandidates.length
-      ? [...[firstCandidates], ...secondCandidates, ...thirdCandidates]
-      : [...secondCandidates, ...thirdCandidates];
+    const candidates = [
+      ...firstCandidateMap.values(),
+      ...secondCandidateMap.values(),
+      ...thirdCandidateMap.values(),
+    ];
 
     const t = await getTotal(candidates);
 
@@ -470,11 +444,9 @@ const Home = () => {
     NProgress.start();
     const result = await Promise.all(
       candidates.map(async (v) => {
-        const r = route.slice().concat(v);
-
         // 変換結果を取得
         const convert = await executeQuery({
-          route: r,
+          route: route.concat(v),
           ids: ids,
           report: "target",
           limit: 10000,
