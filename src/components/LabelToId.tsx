@@ -6,36 +6,22 @@ const LabelToId = () => {
   const { datasetConfig } = useConfig();
 
   const [dataset, setDataset] = useState();
-  const [path, setPath] = useState();
-  // const [];
+  const [species, setSpecies] = useState();
 
-  const { data } = useSWRImmutable(
-    {
-      dataset: dataset,
-      path: path,
-    },
-    async () => {
-      if (dataset && path) {
-        const res = await axios.get<string[][]>(
-          `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/${path}`,
-        );
+  const { data: taxonomyList } = useSWRImmutable("taxonomy", async () => {
+    const res = await axios.get<string[][]>(
+      `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/taxonomy`,
+    );
 
-        return res.data;
-      }
-    },
-  );
-  // console.log(data);
+    return res.data;
+  });
 
-  const handleSelectDropDown = (value) => {
+  const handleSelectDropDown = (value: any) => {
     setDataset(value);
-    console.log(value);
-    if (value) {
-      Object.entries(value.label_resolver).forEach(([key, value]) => {
-        if (value === true) {
-          setPath(key);
-        }
-      });
-    }
+  };
+
+  const handleSelectSpecies = (value: any) => {
+    setSpecies(value);
   };
 
   return (
@@ -61,31 +47,39 @@ const LabelToId = () => {
         placeholder="Select a dataset"
         onChange={(e) => handleSelectDropDown(e!.value)}
       />
-      {data?.length && (
+
+      {taxonomyList?.length && dataset && (
         <div>
-          <div>
-            <Select
-              styles={{
-                control: (css) => ({
-                  ...css,
-                  width: "300px",
-                }),
-                menu: ({ width, ...css }) => ({
-                  ...css,
-                  width: "300px",
-                }),
-                option: (css) => ({ ...css, width: "300px" }),
-              }}
-              options={data.map((v) => ({
-                value: "",
-                label: `${v[1]} (ID: ${v[0]}, ${v[2]}, ${v[3]})`,
-              }))}
-              placeholder="Select a species"
-              onChange={(e) => handleSelectDropDown(e!.value)}
-            />
-            OR
-            <input type="text" />
-          </div>
+          {dataset?.label_resolver?.taxonomy && (
+            <div>
+              <Select
+                styles={{
+                  control: (css) => ({
+                    ...css,
+                    width: "300px",
+                  }),
+                  menu: ({ width, ...css }) => ({
+                    ...css,
+                    width: "300px",
+                  }),
+                  option: (css) => ({ ...css, width: "300px" }),
+                }}
+                options={taxonomyList.map((v) => ({
+                  value: "",
+                  label: `${v[1]} (ID: ${v[0]}, ${v[2]}, ${v[3]})`,
+                }))}
+                placeholder="Select a species"
+                onChange={(e) => handleSelectSpecies(e!.value)}
+              />
+              OR
+              <input type="text" />
+            </div>
+          )}
+          {dataset?.label_resolver?.threshold && (
+            <div>
+              <p>Threshold</p>
+            </div>
+          )}
           <div>
             <p>Select label types</p>
             {dataset.label_resolver.relations?.map((v) => (
