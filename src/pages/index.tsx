@@ -246,10 +246,13 @@ const Home = () => {
     searchDatabase(idList, exampleTarget);
   };
 
-  const lookupRoute = async (target) => {
+  const lookupRoute = async (target: string) => {
     const r = route[route.length - 1];
-    const firstCandidateMap = new Map<string, any[]>();
-    const firstCandidateTempMap = new Map<string, any[]>();
+    const candidateMap = new Map<string, any[]>();
+    const candidateTempMapList = [
+      new Map<string, any[]>(),
+      new Map<string, any[]>(),
+    ];
 
     Object.entries(relationConfig).forEach(([key, value]) => {
       const keySplit = key.split("-");
@@ -257,7 +260,7 @@ const Home = () => {
         const name = keySplit[1];
         if (!route.some((w) => w.name === name)) {
           if (name === target) {
-            firstCandidateMap.set(name, [
+            candidateMap.set(name, [
               {
                 name,
                 category: datasetConfig[name].category,
@@ -265,7 +268,7 @@ const Home = () => {
               },
             ]);
           } else {
-            firstCandidateTempMap.set(name, [
+            candidateTempMapList[0].set(name, [
               {
                 name,
                 category: datasetConfig[name].category,
@@ -277,20 +280,17 @@ const Home = () => {
       } else if (value.link.reverse && keySplit[1] === r.name) {
         // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
         const name = keySplit[0];
-        if (
-          !firstCandidateMap.has(name) &&
-          !route.some((w) => w.name === name)
-        ) {
+        if (!candidateMap.has(name) && !route.some((w) => w.name === name)) {
           if (name === target) {
-            firstCandidateMap.set(name, [
+            candidateMap.set(name, [
               {
                 name,
                 category: datasetConfig[name].category,
                 link: value.link.reverse.label,
               },
             ]);
-          } else if (!firstCandidateTempMap.has(name)) {
-            firstCandidateTempMap.set(name, [
+          } else if (!candidateTempMapList[0].has(name)) {
+            candidateTempMapList[0].set(name, [
               {
                 name,
                 category: datasetConfig[name].category,
@@ -302,17 +302,14 @@ const Home = () => {
       }
     });
 
-    const secondCandidateMap = new Map<string, any[]>();
-    const secondCandidateTempMap = new Map<string, any[]>();
-
-    firstCandidateTempMap.forEach((r) => {
+    candidateTempMapList[0].forEach((r) => {
       Object.entries(relationConfig).forEach(([key, value]) => {
         const keySplit = key.split("-");
         if (keySplit[0] === r[0].name) {
           const name = keySplit[1];
           if (!route.some((w) => w.name === name)) {
             if (name === target) {
-              secondCandidateMap.set(`${r[0].name}-${name}`, [
+              candidateMap.set(`${r[0].name}-${name}`, [
                 r[0],
                 {
                   name,
@@ -321,7 +318,7 @@ const Home = () => {
                 },
               ]);
             } else {
-              secondCandidateTempMap.set(`${r[0].name}-${name}`, [
+              candidateTempMapList[1].set(`${r[0].name}-${name}`, [
                 r[0],
                 {
                   name,
@@ -335,11 +332,11 @@ const Home = () => {
           // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
           const name = keySplit[0];
           if (
-            !secondCandidateMap.has(`${r[0].name}-${name}`) &&
+            !candidateMap.has(`${r[0].name}-${name}`) &&
             !route.some((w) => w.name === name)
           ) {
             if (name === target) {
-              secondCandidateMap.set(`${r[0].name}-${name}`, [
+              candidateMap.set(`${r[0].name}-${name}`, [
                 r[0],
                 {
                   name,
@@ -347,8 +344,8 @@ const Home = () => {
                   link: value.link.reverse.label,
                 },
               ]);
-            } else if (!secondCandidateTempMap.has(`${r[0].name}-${name}`)) {
-              secondCandidateTempMap.set(`${r[0].name}-${name}`, [
+            } else if (!candidateTempMapList[1].has(`${r[0].name}-${name}`)) {
+              candidateTempMapList[1].set(`${r[0].name}-${name}`, [
                 r[0],
                 {
                   name,
@@ -362,23 +359,18 @@ const Home = () => {
       });
     });
 
-    if (
-      !firstCandidateMap.size &&
-      !secondCandidateMap.size &&
-      !secondCandidateTempMap.size
-    ) {
+    if (!candidateMap.size && !candidateTempMapList[1].size) {
       return;
     }
 
-    const thirdCandidateMap = new Map<string, any[]>();
-    secondCandidateTempMap.forEach((r) => {
+    candidateTempMapList[1].forEach((r) => {
       Object.entries(relationConfig).forEach(([key, value]) => {
         const keySplit = key.split("-");
         if (keySplit[0] === r[1].name) {
           const name = keySplit[1];
           if (!route.some((w) => w.name === name)) {
             if (name === target) {
-              thirdCandidateMap.set(`${r[0].name}-${r[1].name}-${name}`, [
+              candidateMap.set(`${r[0].name}-${r[1].name}-${name}`, [
                 r[0],
                 r[1],
                 {
@@ -393,11 +385,11 @@ const Home = () => {
           // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
           const name = keySplit[0];
           if (
-            !thirdCandidateMap.has(`${r[0].name}-${r[1].name}-${name}`) &&
+            !candidateMap.has(`${r[0].name}-${r[1].name}-${name}`) &&
             !route.some((w) => w.name === name)
           ) {
             if (name === target) {
-              thirdCandidateMap.set(`${r[0].name}-${r[1].name}-${name}`, [
+              candidateMap.set(`${r[0].name}-${r[1].name}-${name}`, [
                 r[0],
                 r[1],
                 {
@@ -412,16 +404,10 @@ const Home = () => {
       });
     });
 
-    const candidates = [
-      ...firstCandidateMap.values(),
-      ...secondCandidateMap.values(),
-      ...thirdCandidateMap.values(),
-    ];
-
     NProgress.start();
     const result = (
       await Promise.all(
-        candidates.map(async (v) => {
+        [...candidateMap.values()].map(async (v) => {
           // 変換結果を取得
           const convert = await executeQuery({
             route: route.concat(v),
@@ -429,7 +415,7 @@ const Home = () => {
             report: "target",
             limit: 10000,
           }).catch(() => null);
-          NProgress.inc(1 / candidates.length);
+          NProgress.inc(1 / candidateMap.size);
 
           if (convert === null) {
             // 変換に失敗したとき
