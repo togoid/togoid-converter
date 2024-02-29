@@ -165,55 +165,53 @@ const Navigate = (props) => {
             <div className="explore">
               <ArrowArea arrows={candidatePathList}>
                 <div className="drawing">
-                  {props.databaseNodesList &&
-                    props.databaseNodesList.length > 0 &&
-                    props.databaseNodesList.map((nodes, i) => (
-                      <div className="item_wrapper" key={i}>
-                        <ul
-                          className={
-                            i === 0 ? "result_list first" : "result_list"
-                          }
-                        >
-                          {nodes.map((v, j) => (
-                            <li key={j} className="result_list__item">
-                              {v ? (
-                                <>
-                                  {i !== 0 && (
-                                    <p
-                                      id={`label${i}-${j}`}
-                                      className="label_list label_list__item label_list__item__inner"
-                                    >
-                                      {v.link}
-                                    </p>
-                                  )}
-                                  <NavigateResultItem
-                                    i={i}
-                                    j={j}
-                                    v={v}
-                                    route={props.route}
-                                    selectDatabase={selectDatabase}
-                                    selectDatabaseModal={selectDatabaseModal}
-                                    ids={props.ids}
-                                    databaseNodesList={props.databaseNodesList}
-                                  />
-                                </>
-                              ) : (
-                                <>
+                  {props.databaseNodesList?.map((nodes, i) => (
+                    <div className="item_wrapper" key={i}>
+                      <ul
+                        className={
+                          i === 0 ? "result_list first" : "result_list"
+                        }
+                      >
+                        {nodes.map((v, j) => (
+                          <li key={j} className="result_list__item">
+                            {v ? (
+                              <>
+                                {i !== 0 && (
                                   <p
                                     id={`label${i}-${j}`}
-                                    className="label_list label_list__item label_list__item__inner null"
-                                  ></p>
-                                  <div
-                                    id={`to${i}-${j}`}
-                                    className="result_list__item__null"
-                                  ></div>
-                                </>
-                              )}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
+                                    className="label_list label_list__item label_list__item__inner"
+                                  >
+                                    {v.link}
+                                  </p>
+                                )}
+                                <NavigateResultItem
+                                  i={i}
+                                  j={j}
+                                  v={v}
+                                  route={props.route}
+                                  selectDatabase={selectDatabase}
+                                  selectDatabaseModal={selectDatabaseModal}
+                                  ids={props.ids}
+                                  databaseNodesList={props.databaseNodesList}
+                                />
+                              </>
+                            ) : (
+                              <>
+                                <p
+                                  id={`label${i}-${j}`}
+                                  className="label_list label_list__item label_list__item__inner null"
+                                ></p>
+                                <div
+                                  id={`to${i}-${j}`}
+                                  className="result_list__item__null"
+                                ></div>
+                              </>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
                   {isShowDropdown && (
                     <div className="item_wrapper">
                       <ul className="result_list dropdown_wrap">
