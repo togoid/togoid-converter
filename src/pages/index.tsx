@@ -418,10 +418,42 @@ const Home = () => {
       ...thirdCandidateMap.values(),
     ];
 
-    const t = await getTotal(candidates);
+    NProgress.start();
+    const result = (
+      await Promise.all(
+        candidates.map(async (v) => {
+          // 変換結果を取得
+          const convert = await executeQuery({
+            route: route.concat(v),
+            ids: ids,
+            report: "target",
+            limit: 10000,
+          }).catch(() => null);
+          NProgress.inc(1 / candidates.length);
+
+          if (convert === null) {
+            // 変換に失敗したとき
+            v[v.length - 1].message = "ERROR";
+            return v;
+          } else if (convert.results.length) {
+            // 変換に成功して結果が存在するとき 10000未満かどうかで分ける
+            if (convert.results.length < 10000) {
+              v[v.length - 1].target = convert.results.length;
+            } else {
+              v[v.length - 1].message = `${convert.results.length}+`;
+            }
+            return v;
+          } else {
+            // 変換結果が空のとき
+            return null;
+          }
+        }),
+      )
+    ).filter((v): v is NonNullable<typeof v> => v !== null);
+    NProgress.done();
 
     const nodesList: any[][] = [databaseNodesList[0], [], [], []];
-    t.forEach((v) => {
+    result.forEach((v) => {
       if (v.length === 1) {
         nodesList[1].push(null);
         nodesList[2].push(null);
@@ -438,45 +470,6 @@ const Home = () => {
     });
 
     setDatabaseNodesList(nodesList);
-  };
-
-  const getTotal = async (candidates: any[][]) => {
-    NProgress.start();
-    const result = await Promise.all(
-      candidates.map(async (v) => {
-        // 変換結果を取得
-        const convert = await executeQuery({
-          route: route.concat(v),
-          ids: ids,
-          report: "target",
-          limit: 10000,
-        }).catch(() => null);
-        NProgress.inc(1 / candidates.length);
-
-        if (convert === null) {
-          // 変換に失敗したとき
-          v[v.length - 1].message = "ERROR";
-          return v;
-        } else if (convert.results.length) {
-          // 変換に成功して結果が存在するとき 10000未満かどうかで分ける
-          if (convert.results.length < 10000) {
-            v[v.length - 1].target = convert.results.length;
-          } else {
-            v[v.length - 1].message = `${convert.results.length}+`;
-          }
-          return v;
-        } else {
-          // 変換結果が空のとき
-          return null;
-        }
-      }),
-    );
-
-    const nodesList = result.filter(
-      (v): v is NonNullable<typeof v> => v !== null,
-    );
-    NProgress.done();
-    return nodesList;
   };
 
   const changeIndexTab = (name) => {
