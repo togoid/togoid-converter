@@ -123,7 +123,7 @@ const Home = () => {
 
     NProgress.start();
     nodesList[routeTemp.length] = await Promise.all(
-      [...candidateMap.values()].map(async (v) => {
+      Array.from(candidateMap.values(), async (v) => {
         const r = [routeTemp[routeTemp.length - 1], v];
         const ids = routeTemp[routeTemp.length - 1].results;
         const _v = Object.assign({}, v);
@@ -407,7 +407,7 @@ const Home = () => {
     NProgress.start();
     const result = (
       await Promise.all(
-        [...candidateMap.values()].map(async (v) => {
+        Array.from(candidateMap.values(), async (v) => {
           // 変換結果を取得
           const convert = await executeQuery({
             route: route.concat(v),
