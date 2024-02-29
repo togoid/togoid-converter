@@ -7,6 +7,7 @@ const LabelToId = () => {
 
   const [dataset, setDataset] = useState();
   const [path, setPath] = useState();
+  // const [];
 
   const { data } = useSWRImmutable(
     {
@@ -57,7 +58,7 @@ const LabelToId = () => {
             value: datasetConfig[key],
             label: datasetConfig[key].label,
           }))}
-        placeholder="---"
+        placeholder="Select a dataset"
         onChange={(e) => handleSelectDropDown(e!.value)}
       />
       {data?.length && (
@@ -79,7 +80,7 @@ const LabelToId = () => {
                 value: "",
                 label: `${v[1]} (ID: ${v[0]}, ${v[2]}, ${v[3]})`,
               }))}
-              placeholder="---"
+              placeholder="Select a species"
               onChange={(e) => handleSelectDropDown(e!.value)}
             />
             OR
@@ -89,8 +90,10 @@ const LabelToId = () => {
             <p>Select label types</p>
             {dataset.label_resolver.relations?.map((v) => (
               <div key={v.label}>
-                <input type="checkbox" />
-                <label>{v.label}</label>
+                <label>
+                  <input type="checkbox" />
+                  {v.label}
+                </label>
               </div>
             ))}
           </div>
