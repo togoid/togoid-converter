@@ -55,7 +55,7 @@ const NavigateResultItem = (props) => {
               props.route[props.i] &&
                 props.route[props.i].name === props.v.name,
             )}
-            onChange={() => props.selectDatabase(props.v, props.i, props.j)}
+            onChange={() => props.selectDatabase(props.v)}
           />
           <label
             htmlFor={`result${props.i}-${props.j}`}
