@@ -7,6 +7,9 @@ const LabelToId = () => {
 
   const [dataset, setDataset] = useState();
   const [species, setSpecies] = useState();
+  const [selectDictionaryList, setSelectDictionaryList] = useState<
+    (string | false)[]
+  >([]);
 
   const { data: taxonomyList } = useSWRImmutable("taxonomy", async () => {
     const res = await axios.get<string[][]>(
@@ -18,6 +21,9 @@ const LabelToId = () => {
 
   const handleSelectDropDown = (value: any) => {
     setDataset(value);
+    setSelectDictionaryList(
+      value.label_resolver.dictionaries.map((v) => v.dictionary),
+    );
   };
 
   const handleSelectSpecies = (value: any) => {
@@ -38,11 +44,11 @@ const LabelToId = () => {
           }),
           option: (css) => ({ ...css, width: "300px" }),
         }}
-        options={Object.keys(datasetConfig)
-          .filter((key) => "label_resolver" in datasetConfig[key])
-          .map((key) => ({
-            value: datasetConfig[key],
-            label: datasetConfig[key].label,
+        options={Object.values(datasetConfig)
+          .filter((value) => "label_resolver" in value)
+          .map((value) => ({
+            value: value,
+            label: value.label,
           }))}
         placeholder="Select a dataset"
         onChange={(e) => handleSelectDropDown(e!.value)}
@@ -82,10 +88,23 @@ const LabelToId = () => {
           )}
           <div>
             <p>Select label types</p>
-            {dataset.label_resolver.relations?.map((v) => (
+            {dataset.label_resolver.dictionaries?.map((v, i) => (
               <div key={v.label}>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    value={v.dictionary}
+                    checked={Boolean(selectDictionaryList[i])}
+                    onChange={(e) =>
+                      setSelectDictionaryList(
+                        selectDictionaryList.toSpliced(
+                          i,
+                          1,
+                          e.target.checked ? e.target.value : false,
+                        ),
+                      )
+                    }
+                  />
                   {v.label}
                 </label>
               </div>
