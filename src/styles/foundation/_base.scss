@@ -1,6 +1,4 @@
-@charset "UTF-8";
-
-@import url("https://fonts.googleapis.com/css?family=Noto+Sans+JP");
+@use "../global" as g;
 
 html {
   font-size: 62.5%;
@@ -8,25 +6,28 @@ html {
 
 body {
   font-size: 1.4rem;
-  font-family: 'Hiragino Kaku Gothic Pro', 'Meiryo', 'メイリオ', 'ヒラギノ角ゴ ProN', Roboto, Helvetica, Arial, sans-serif;
-  font-family: "Noto Sans JP";
+  font-family: g.$ff-hiragino;
+  font-family: g.$ff-noto-sans;
   padding: 0;
   margin: 0;
   overflow: auto;
+
   & * {
     box-sizing: border-box;
-    // -webkit-appearance: none;
   }
 }
 
 main {
   display: block;
 }
+
 p { margin: 0; }
+
 a {
   text-decoration: none;
   opacity: 1;
   transition: all 0.3s ease;
+
   &:hover {
     opacity: 0.5;
   }
@@ -64,27 +65,34 @@ table {
   border-collapse: collapse;
   word-break: break-word;
 }
+
 fieldset {
   margin: 0;
   padding: 0;
   border: none;
 }
+
 input,
 select {
   font-size: 16px;
+
   :focus:not(:focus-visible) {
     outline: none;
   }
 }
+
 select {
   position: relative;
   appearance: none;
+
   &::-ms-expand {
     display: none;
   }
 }
+
 button {
   cursor: pointer;
+
   :focus:not(:focus-visible) {
     outline: none;
   }
