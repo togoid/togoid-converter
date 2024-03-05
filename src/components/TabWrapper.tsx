@@ -30,7 +30,7 @@ const TabWrapper = (props) => (
         props.activeTab === "LABEL2LD" ? "button_tab active" : "button_tab"
       }
     >
-      LABEL2LD
+      LABEL2ID
     </button>
     <button
       onClick={() => props.changeIndexTab("DATASETS")}
