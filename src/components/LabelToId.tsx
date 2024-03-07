@@ -44,11 +44,11 @@ const LabelToId = () => {
                 ...css,
                 width: "300px",
               }),
-              menu: ({width, ...css}) => ({
+              menu: ({ width, ...css }) => ({
                 ...css,
                 width: "300px",
               }),
-              option: (css) => ({...css, width: "300px"}),
+              option: (css) => ({ ...css, width: "300px" }),
             }}
             options={Object.values(datasetConfig)
               .filter((value) => "label_resolver" in value)
@@ -76,11 +76,11 @@ const LabelToId = () => {
                         ...css,
                         width: "300px",
                       }),
-                      menu: ({width, ...css}) => ({
+                      menu: ({ width, ...css }) => ({
                         ...css,
                         width: "300px",
                       }),
-                      option: (css) => ({...css, width: "300px"}),
+                      option: (css) => ({ ...css, width: "300px" }),
                     }}
                     options={taxonomyList.map((v) => ({
                       value: "",
@@ -128,7 +128,9 @@ const LabelToId = () => {
                         )
                       }
                     />
-                    <label htmlFor={v.label} className="checkbox-label">{v.label}</label>
+                    <label htmlFor={v.label} className="checkbox-label">
+                      {v.label}
+                    </label>
                   </>
                 ))}
               </div>

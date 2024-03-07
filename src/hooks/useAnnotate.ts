@@ -38,7 +38,7 @@ const useAnnotate = (id, name) => {
       id: id,
       name: name,
     },
-    fetcher
+    fetcher,
   );
 
   return data;
