@@ -1,22 +1,11 @@
-@charset "UTF-8";
+@forward "foundation";
+@forward "components";
 
-@import "color";
-@import "base";
+@forward "input";
+@forward "modal";
+@forward "table";
+@forward "markdown";
+@forward "index";
+@forward"nprogress";
+@forward "annotate";
 
-@import "mixin";
-
-@import "common";
-@import "input";
-@import "modal";
-@import "table";
-
-@import "header";
-@import "footer";
-
-@import "markdown";
-
-@import "index";
-
-@import "nprogress";
-
-@import "annotate";

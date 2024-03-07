@@ -226,6 +226,7 @@ const Navigate = (props) => {
                               }),
                               menu: ({ width, ...css }) => ({
                                 ...css,
+                                position: "relative",
                                 width: "300px",
                               }),
                               option: (css) => ({ ...css, width: "300px" }),
