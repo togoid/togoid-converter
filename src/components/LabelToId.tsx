@@ -110,10 +110,9 @@ const LabelToId = () => {
               <legend className="label">Select label types</legend>
               <div className="labels__wrapper">
                 {dataset.label_resolver.dictionaries?.map((v, i) => (
-                  <>
+                  <Fragment key={v.label}>
                     <input
                       type="checkbox"
-                      key={v.label}
                       id={v.label}
                       value={v.dictionary}
                       className="checkbox"
@@ -131,7 +130,7 @@ const LabelToId = () => {
                     <label htmlFor={v.label} className="checkbox-label">
                       {v.label}
                     </label>
-                  </>
+                  </Fragment>
                 ))}
               </div>
             </fieldset>

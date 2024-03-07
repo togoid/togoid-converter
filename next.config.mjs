@@ -14,7 +14,7 @@ const nextConfig = {
   webpack: (config, options) => {
     config.plugins.push(
       AutoImport({
-        imports: ["react", "jotai", "jotai/utils"],
+        imports: ["react", "jotai", "jotai/utils", { react: ["Fragment"] }],
         dirs: ["./src/hooks", "./src/lib", "./src/atoms"],
       }),
     );
