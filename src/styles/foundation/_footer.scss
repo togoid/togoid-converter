@@ -1,16 +1,19 @@
-@charset "UTF-8";
+@use "../global" as g;
 
 .footer {
-  color: $white;
+  color: g.$col-FFF;
   padding: 37px 0 50px;
-  background: $gray04;
+  background: g.$col-707070;
+
   &__inner {
     max-width: 987px;
     margin: 0 auto;
   }
+
   &__logo {
     margin: 0 0 20px;
   }
+
   &__text {
     font-size: 1.2rem;
   }

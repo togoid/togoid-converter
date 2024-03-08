@@ -1,4 +1,4 @@
-@charset "UTF-8";
+@use "global" as g;
 
 .annotate {
   display: grid;
@@ -6,10 +6,12 @@
   gap: 30px;
   max-width: 1080px;
   margin: 88px auto;
+
   &__side-menu {
     display: flex;
     flex-direction: column;
     gap: 15px;
+
     &__button {
       display: flex;
       justify-content: space-between;
@@ -19,29 +21,35 @@
         size: 1.2rem;
         weight: 600;
       }
+
       opacity: 0.65;
       border-radius: 5px;
-      box-shadow: 0 3px 6px rgb($black, 0.16);
+      box-shadow: 0 3px 6px rgb(g.$col-000, 0.16);
       border: none;
+
       &:hover,
       &.active {
         opacity: 1;
       }
+
       &.green {
-        background-color: $green01;
+        background-color: g.$col-B1DD6A;
       }
+
       &.orange {
-        background-color: $orange01;
+        background-color: g.$col-F7A157;
       }
+
       .text {
-        color: $textColor02;
+        color: g.$col-5C5C5C;
       }
+
       .total {
-        font-family: Oswald;
-        color: $gray07;
+        font-family: g.$ff-oswald;
+        color: g.$col-5A5A5A;
         padding: 0 9px;
         border-radius: 8px;
-        background-color: $white;
+        background-color: g.$col-FFF;
       }
     }
   }
@@ -49,7 +57,7 @@
   .table {
     thead {
       th {
-        font-family: Oswald;
+        font-family: g.$ff-oswald;
         vertical-align: middle;
       }
     }

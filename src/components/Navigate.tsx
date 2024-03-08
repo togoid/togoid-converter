@@ -5,6 +5,8 @@ import NavigateResultItem from "@/components/NavigateResultItem";
 import type { Arrow } from "react-arrow-master";
 
 const Navigate = (props) => {
+  const [offsetRoute, setOffsetRoute] = useState<number | null>(null);
+
   const { datasetConfig } = useConfig();
 
   const isShowDropdown = useMemo(() => {
@@ -46,7 +48,7 @@ const Navigate = (props) => {
                 getPathStyle(
                   `from${0}-${props.route[0].name}`,
                   `label${i}-${j}`,
-                  j === props.offsetRoute,
+                  j === offsetRoute,
                   "none",
                 ),
               );
@@ -55,7 +57,7 @@ const Navigate = (props) => {
                 ...mergePathStyle(
                   `from${0}-${props.route[0].name}`,
                   `to${i}-${j}`,
-                  j === props.offsetRoute,
+                  j === offsetRoute,
                 ),
               );
             }
@@ -76,7 +78,7 @@ const Navigate = (props) => {
                     posY: "middle",
                   },
                   style:
-                    j === props.offsetRoute
+                    j === offsetRoute
                       ? {
                           color: "#1A8091",
                           head: "none",
@@ -93,7 +95,7 @@ const Navigate = (props) => {
                 getPathStyle(
                   `label${i}-${j}`,
                   `to${i}-${j}`,
-                  j === props.offsetRoute,
+                  j === offsetRoute,
                   "default",
                 ),
               );
@@ -102,7 +104,7 @@ const Navigate = (props) => {
                 ...mergePathStyle(
                   `to${i - 2}-${j}`,
                   `to${i}-${j}`,
-                  j === props.offsetRoute,
+                  j === offsetRoute,
                 ),
               );
             } else {
@@ -110,7 +112,7 @@ const Navigate = (props) => {
                 ...mergePathStyle(
                   `to${i - 1}-${j}`,
                   `to${i}-${j}`,
-                  j === props.offsetRoute,
+                  j === offsetRoute,
                 ),
               );
             }
@@ -123,7 +125,7 @@ const Navigate = (props) => {
                 ...mergePathStyle(
                   `to${i - 1}-${j}`,
                   `to${i}-${j}`,
-                  j === props.offsetRoute,
+                  j === offsetRoute,
                 ),
               );
             }
@@ -138,16 +140,18 @@ const Navigate = (props) => {
 
   const selectDatabase = (database) => {
     props.setRoute([database]);
-    props.setOffsetRoute(null);
+    setOffsetRoute(null);
   };
 
-  const selectDatabaseModal = (i, j) => {
-    const r = props.databaseNodesList
-      .map((node, l) => (l === 0 ? props.route[0] : node[j]))
-      .filter((v) => v)
-      .slice(0, i + 1);
+  const selectDatabaseModal = (i: number, j: number) => {
+    const r: any[] = [props.route[0]];
+    for (let ii = 1; ii <= i; ii++) {
+      if (props.databaseNodesList[ii][j]) {
+        r.push(props.databaseNodesList[ii][j]);
+      }
+    }
     props.setRoute(r);
-    props.setOffsetRoute(j);
+    setOffsetRoute(j);
     return r;
   };
 
@@ -163,55 +167,53 @@ const Navigate = (props) => {
             <div className="explore">
               <ArrowArea arrows={candidatePathList}>
                 <div className="drawing">
-                  {props.databaseNodesList &&
-                    props.databaseNodesList.length > 0 &&
-                    props.databaseNodesList.map((nodes, i) => (
-                      <div className="item_wrapper" key={i}>
-                        <ul
-                          className={
-                            i === 0 ? "result_list first" : "result_list"
-                          }
-                        >
-                          {nodes.map((v, j) => (
-                            <li key={j} className="result_list__item">
-                              {v ? (
-                                <>
-                                  {i !== 0 && (
-                                    <p
-                                      id={`label${i}-${j}`}
-                                      className="label_list label_list__item label_list__item__inner"
-                                    >
-                                      {v.link}
-                                    </p>
-                                  )}
-                                  <NavigateResultItem
-                                    i={i}
-                                    j={j}
-                                    v={v}
-                                    route={props.route}
-                                    selectDatabase={selectDatabase}
-                                    selectDatabaseModal={selectDatabaseModal}
-                                    ids={props.ids}
-                                    databaseNodesList={props.databaseNodesList}
-                                  />
-                                </>
-                              ) : (
-                                <>
+                  {props.databaseNodesList?.map((nodes, i) => (
+                    <div className="item_wrapper" key={i}>
+                      <ul
+                        className={
+                          i === 0 ? "result_list first" : "result_list"
+                        }
+                      >
+                        {nodes.map((v, j) => (
+                          <li key={j} className="result_list__item">
+                            {v ? (
+                              <>
+                                {i !== 0 && (
                                   <p
                                     id={`label${i}-${j}`}
-                                    className="label_list label_list__item label_list__item__inner null"
-                                  ></p>
-                                  <div
-                                    id={`to${i}-${j}`}
-                                    className="result_list__item__null"
-                                  ></div>
-                                </>
-                              )}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
+                                    className="label_list label_list__item label_list__item__inner"
+                                  >
+                                    {v.link}
+                                  </p>
+                                )}
+                                <NavigateResultItem
+                                  i={i}
+                                  j={j}
+                                  v={v}
+                                  route={props.route}
+                                  selectDatabase={selectDatabase}
+                                  selectDatabaseModal={selectDatabaseModal}
+                                  ids={props.ids}
+                                  databaseNodesList={props.databaseNodesList}
+                                />
+                              </>
+                            ) : (
+                              <>
+                                <p
+                                  id={`label${i}-${j}`}
+                                  className="label_list label_list__item label_list__item__inner null"
+                                ></p>
+                                <div
+                                  id={`to${i}-${j}`}
+                                  className="result_list__item__null"
+                                ></div>
+                              </>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
                   {isShowDropdown && (
                     <div className="item_wrapper">
                       <ul className="result_list dropdown_wrap">
@@ -224,6 +226,7 @@ const Navigate = (props) => {
                               }),
                               menu: ({ width, ...css }) => ({
                                 ...css,
+                                position: "relative",
                                 width: "300px",
                               }),
                               option: (css) => ({ ...css, width: "300px" }),

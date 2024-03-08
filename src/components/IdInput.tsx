@@ -1,30 +1,33 @@
 const IdInput = (props) => {
-  const [text, setText] = useState(props.idTexts);
+  const [text, setText] = useState("");
+
+  const isUpdateText = useRef(true);
 
   useEffect(() => {
-    setText(props.idTexts);
-  }, [props.idTexts]);
+    if (isUpdateText.current) {
+      setText(props.ids.join("\n"));
+    } else {
+      isUpdateText.current = true;
+    }
+  }, [props.ids]);
+
+  const handleIdTextsSubmit = (t: string) => {
+    const ids = t
+      .replace(/[Ａ-Ｚａ-ｚ０-９]/g, (s) =>
+        String.fromCharCode(s.charCodeAt(0) - 0xfee0),
+      )
+      .split(/[\s,\n,、,,]+/)
+      .filter((v) => v)
+      .map((v) => v.trim());
+
+    isUpdateText.current = false;
+    props.searchDatabase(ids);
+  };
 
   const handleSubmit = (e: any) => {
     if (e) e.preventDefault();
 
-    const findDatabaseList = props.handleIdTextsSubmit(text);
-    if (props.previousRoute.length) {
-      const firstRoute = findDatabaseList.find(
-        (v) => v.name === props.previousRoute[0].name,
-      );
-      if (firstRoute) {
-        // keepRouteを使用する
-        props.setRoute([firstRoute]);
-        props.setIsUseKeepRoute(true);
-        return;
-      }
-    }
-
-    if (findDatabaseList.length === 1) {
-      // listが1件の時は自動で選択する
-      props.setRoute(findDatabaseList);
-    }
+    handleIdTextsSubmit(text);
   };
 
   const handleKeyDown = (e: any) => {
@@ -45,18 +48,14 @@ const IdInput = (props) => {
     reader.readAsText(file);
 
     reader.onload = () => {
-      props.setIdTexts(reader.result);
-      props.handleIdTextsSubmit(reader.result);
+      setText(reader.result as string);
+      handleIdTextsSubmit(reader.result as string);
     };
     reader.onerror = () => {
-      console.log(reader.error);
+      console.error(reader.error);
     };
 
     e.target.value = "";
-  };
-
-  const handleReset = () => {
-    props.restartExplore();
   };
 
   return (
@@ -72,11 +71,8 @@ const IdInput = (props) => {
             onChange={(e) => setText(e.target.value)}
             onKeyDown={handleKeyDown}
           />
-          {props.idTexts && (
-            <button
-              onClick={() => props.setIdTexts("")}
-              className="textarea_clear"
-            />
+          {text && (
+            <button onClick={() => setText("")} className="textarea_clear" />
           )}
         </div>
         <div className="input">
@@ -100,7 +96,7 @@ const IdInput = (props) => {
             className="button_small"
             type="button"
             value="Reset"
-            onClick={handleReset}
+            onClick={props.restartExplore}
           />
         </div>
       </form>
@@ -112,7 +108,7 @@ const IdInput = (props) => {
             href="#"
             onClick={(e) => {
               e.preventDefault();
-              props.handleTopExamples("refseq_rna");
+              props.executeExamples(topExamples["refseq_rna"], "refseq_rna");
             }}
             className="input_area__bottom__link"
           >
@@ -122,7 +118,10 @@ const IdInput = (props) => {
             href="#"
             onClick={(e) => {
               e.preventDefault();
-              props.handleTopExamples("ensembl_gene");
+              props.executeExamples(
+                topExamples["ensembl_gene"],
+                "ensembl_gene",
+              );
             }}
             className="input_area__bottom__link"
           >
@@ -132,7 +131,7 @@ const IdInput = (props) => {
             href="#"
             onClick={(e) => {
               e.preventDefault();
-              props.handleTopExamples("uniprot");
+              props.executeExamples(topExamples["uniprot"], "uniprot");
             }}
             className="input_area__bottom__link"
           >
