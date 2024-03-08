@@ -1,6 +1,5 @@
 import copy from "copy-to-clipboard";
 import { printf } from "fast-printf";
-import ResultModalClipboardButton from "@/components/ResultModalClipboardButton";
 
 // 定数
 const previewModeList = new Map([

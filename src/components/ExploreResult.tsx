@@ -1,6 +1,5 @@
 import React from "react";
 import { useUpdateEffect } from "react-use";
-import ExploreResultItem from "@/components/ExploreResultItem";
 
 const sortConfig = {
   name: { up: "desc", down: "asc" },
