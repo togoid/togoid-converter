@@ -16,6 +16,7 @@ declare global {
   const IdInput: typeof import('./src/components/IdInput')['default']
   const InformationModal: typeof import('./src/components/InformationModal')['default']
   const LabelToId: typeof import('./src/components/LabelToId')['default']
+  const LabelToIdTable: typeof import('./src/components/LabelToIdTable')['default']
   const LanguageButton: typeof import('./src/components/LanguageButton')['default']
   const Navigate: typeof import('./src/components/Navigate')['default']
   const NavigateResultItem: typeof import('./src/components/NavigateResultItem')['default']

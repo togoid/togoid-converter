@@ -10,6 +10,14 @@ const LabelToId = () => {
   const [selectDictionaryList, setSelectDictionaryList] = useState<
     (string | false)[]
   >([]);
+  const [threshold, setThreshold] = useState(0.5);
+  const [isShowTable, setIsShowTable] = useState(false);
+  const [pubdictionariesParam, setPubdictionariesParam] = useState({
+    labels: "",
+    dictionaries: "",
+    threshold: undefined as number | undefined,
+    verbose: true,
+  });
 
   const { data: taxonomyList } = useSWRImmutable("taxonomy", async () => {
     const res = await axios.get<string[][]>(
@@ -28,6 +36,17 @@ const LabelToId = () => {
 
   const handleSelectSpecies = (value: any) => {
     setSpecies(value);
+  };
+
+  const handleExecute = () => {
+    setPubdictionariesParam({
+      labels: "ovarian+cancer",
+      dictionaries: selectDictionaryList.filter((v) => v).join(","),
+      threshold: dataset?.label_resolver?.threshold ? threshold : undefined,
+      verbose: true,
+    });
+
+    setIsShowTable(true);
   };
 
   return (
@@ -100,9 +119,12 @@ const LabelToId = () => {
                 <label className="label">Threshold</label>
                 <input
                   type="number"
-                  min="0.5"
-                  step="0.5"
+                  min="0"
+                  max="1"
+                  step="0.1"
                   className="threshold"
+                  value={threshold}
+                  onChange={(e) => setThreshold(e.target.value)}
                 />
               </div>
             )}
@@ -135,10 +157,15 @@ const LabelToId = () => {
               </div>
             </fieldset>
 
-            <button className="submit">EXECUTE</button>
+            <button className="submit" onClick={handleExecute}>
+              EXECUTE
+            </button>
           </>
         )}
       </div>
+      {isShowTable && (
+        <LabelToIdTable pubdictionariesParam={pubdictionariesParam} />
+      )}
     </div>
   );
 };

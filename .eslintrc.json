@@ -5,6 +5,6 @@
   ],
   "rules": {
     "prettier/prettier": "error",
-    "react/jsx-no-undef": ["error", { "allowGlobals": true }]
+    "react/jsx-no-undef": "off"
   }
 }
