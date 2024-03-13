@@ -238,9 +238,17 @@
 
               &__inner {
                 position: relative;
-                display: inline-block;
+                display: grid;
+                gap: 4px;
+                grid-template-columns: 1fr 18px;
                 min-width: 150px;
-                padding: 0 6px;
+                font: {
+                  family: g.$ff-oswald;
+                  size: 1.2rem;
+                }
+
+                color: g.$col-5A5A5A;
+                padding: 3px 10px;
                 text-align: center;
                 line-height: 16px;
                 border-radius: 8px;
@@ -248,8 +256,33 @@
                 margin: 0 50px;
 
                 &.null {
-                min-width: 0;
-                padding: 0;
+                  min-width: 0;
+                  padding: 0;
+                }
+
+                .text {
+                  text-align: left;
+                }
+
+                .circle-button {
+                  width: 18px;
+                  height: 18px;
+                  border-radius: 50%;
+                  border: unset;
+                  background-color: g.$col-E0E0E0;
+
+                  &:hover {
+                    background-color: g.$col-CD87F2;
+                  }
+
+                  svg {
+                    width: auto;
+                    height: 10px;
+                  }
+
+                  path {
+                    fill: g.$col-FFF;
+                  }
                 }
               }
             }
