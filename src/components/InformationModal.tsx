@@ -1,5 +1,4 @@
 import { useClickAway } from "react-use";
-import LanguageButton from "@/components/LanguageButton";
 
 type Props = {
   setIsShowInfomationModal: Dispatch<SetStateAction<boolean>>;

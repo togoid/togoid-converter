@@ -1,14 +1,5 @@
 import { useRouter } from "next/router";
 import NProgress from "nprogress";
-import Header from "@/components/Header";
-import Explore from "@/components/Explore";
-import Datasets from "@/components/Datasets";
-import IdInput from "@/components/IdInput";
-import Documents from "@/components/Documents";
-import TabWrapper from "@/components/TabWrapper";
-import Navigate from "@/components/Navigate";
-import Annotate from "@/components/Annotate";
-import LabelToId from "@/components/LabelToId";
 
 const Home = () => {
   const router = useRouter();

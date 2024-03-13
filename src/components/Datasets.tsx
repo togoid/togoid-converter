@@ -1,5 +1,3 @@
-import LanguageButton from "@/components/LanguageButton";
-
 /**
  * @type {Set<string>}
  */

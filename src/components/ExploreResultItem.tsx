@@ -1,7 +1,5 @@
 import { createPortal } from "react-dom";
 import { useHoverDirty } from "react-use";
-import ResultModal from "@/components/ResultModal";
-import InformationModal from "@/components/InformationModal";
 
 const ExploreResultItem = (props) => {
   const { datasetConfig } = useConfig();

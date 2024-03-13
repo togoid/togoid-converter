@@ -1,6 +1,5 @@
 import { ArrowArea } from "react-arrow-master";
 import Select from "react-select";
-import NavigateResultItem from "@/components/NavigateResultItem";
 
 import type { Arrow } from "react-arrow-master";
 

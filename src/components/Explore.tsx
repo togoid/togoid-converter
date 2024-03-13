@@ -1,5 +1,4 @@
 import { ArrowArea } from "react-arrow-master";
-import ExploreResult from "@/components/ExploreResult";
 
 import type { Arrow } from "react-arrow-master";
 
