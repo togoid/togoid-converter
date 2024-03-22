@@ -10,7 +10,7 @@ const configFetcher = async () => {
   ]);
 
   const relationConfig = res[1].data as {
-    [key: string]: { [key: string]: any };
+    [key: string]: { forward: any; reverse?: any; description?: string }[];
   };
   const descriptionConfig = res[2].data as {
     [key: string]: { [key: string]: any };

@@ -88,11 +88,12 @@ const Home = () => {
             category: datasetConfig[name].category,
             source: 0,
             target: 0,
-            link: value.link.forward.label,
+            link: value[0].forward.display_label,
+            relationDescription: value[0].description,
             results: [],
           });
         }
-      } else if (value.link.reverse && keySplit[1] === r.name) {
+      } else if (value[0].reverse && keySplit[1] === r.name) {
         // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
         const name = keySplit[0];
         if (
@@ -105,7 +106,8 @@ const Home = () => {
             category: datasetConfig[name].category,
             source: 0,
             target: 0,
-            link: value.link.reverse.label,
+            link: value[0].reverse.display_label,
+            relationDescription: value[0].description,
             results: [],
           });
         }
@@ -255,7 +257,8 @@ const Home = () => {
               {
                 name,
                 category: datasetConfig[name].category,
-                link: value.link.forward.label,
+                link: value[0].forward.display_label,
+                relationDescription: value[0].description,
               },
             ]);
           } else {
@@ -263,12 +266,13 @@ const Home = () => {
               {
                 name,
                 category: datasetConfig[name].category,
-                link: value.link.forward.label,
+                link: value[0].forward.display_label,
+                relationDescription: value[0].description,
               },
             ]);
           }
         }
-      } else if (value.link.reverse && keySplit[1] === r.name) {
+      } else if (value[0].reverse && keySplit[1] === r.name) {
         // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
         const name = keySplit[0];
         if (!candidateMap.has(name) && !route.some((w) => w.name === name)) {
@@ -277,7 +281,8 @@ const Home = () => {
               {
                 name,
                 category: datasetConfig[name].category,
-                link: value.link.reverse.label,
+                link: value[0].reverse.display_label,
+                relationDescription: value[0].description,
               },
             ]);
           } else if (!candidateTempMapList[0].has(name)) {
@@ -285,7 +290,8 @@ const Home = () => {
               {
                 name,
                 category: datasetConfig[name].category,
-                link: value.link.reverse.label,
+                link: value[0].reverse.display_label,
+                relationDescription: value[0].description,
               },
             ]);
           }
@@ -305,7 +311,8 @@ const Home = () => {
                 {
                   name,
                   category: datasetConfig[name].category,
-                  link: value.link.forward.label,
+                  link: value[0].forward.display_label,
+                  relationDescription: value[0].description,
                 },
               ]);
             } else {
@@ -314,12 +321,13 @@ const Home = () => {
                 {
                   name,
                   category: datasetConfig[name].category,
-                  link: value.link.forward.label,
+                  link: value[0].forward.display_label,
+                  relationDescription: value[0].description,
                 },
               ]);
             }
           }
-        } else if (value.link.reverse && keySplit[1] === r[0].name) {
+        } else if (value[0].reverse && keySplit[1] === r[0].name) {
           // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
           const name = keySplit[0];
           if (
@@ -332,7 +340,8 @@ const Home = () => {
                 {
                   name,
                   category: datasetConfig[name].category,
-                  link: value.link.reverse.label,
+                  link: value[0].reverse.display_label,
+                  relationDescription: value[0].description,
                 },
               ]);
             } else if (!candidateTempMapList[1].has(`${r[0].name}-${name}`)) {
@@ -341,7 +350,8 @@ const Home = () => {
                 {
                   name,
                   category: datasetConfig[name].category,
-                  link: value.link.reverse.label,
+                  link: value[0].reverse.display_label,
+                  relationDescription: value[0].description,
                 },
               ]);
             }
@@ -367,12 +377,13 @@ const Home = () => {
                 {
                   name,
                   category: datasetConfig[name].category,
-                  link: value.link.forward.label,
+                  link: value[0].forward.display_label,
+                  relationDescription: value[0].description,
                 },
               ]);
             }
           }
-        } else if (value.link.reverse && keySplit[1] === r[1].name) {
+        } else if (value[0].reverse && keySplit[1] === r[1].name) {
           // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
           const name = keySplit[0];
           if (
@@ -386,7 +397,8 @@ const Home = () => {
                 {
                   name,
                   category: datasetConfig[name].category,
-                  link: value.link.reverse.label,
+                  link: value[0].reverse.display_label,
+                  relationDescription: value[0].description,
                 },
               ]);
             }
