@@ -164,7 +164,10 @@ const LabelToId = () => {
         )}
       </div>
       {isShowTable && (
-        <LabelToIdTable pubdictionariesParam={pubdictionariesParam} />
+        <LabelToIdTable
+          pubdictionariesParam={pubdictionariesParam}
+          dataset={dataset}
+        />
       )}
     </div>
   );
