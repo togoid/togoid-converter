@@ -5,6 +5,7 @@ type Props = {
   pubdictionariesParam: {
     labels: string;
     dictionaries: string;
+    tag?: string;
     threshold?: number;
     verbose: boolean;
   };
