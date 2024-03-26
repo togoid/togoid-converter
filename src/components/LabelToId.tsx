@@ -15,6 +15,7 @@ const LabelToId = () => {
   const [pubdictionariesParam, setPubdictionariesParam] = useState({
     labels: "",
     dictionaries: "",
+    tag: undefined as string | undefined,
     threshold: undefined as number | undefined,
     verbose: true,
   });
@@ -42,6 +43,7 @@ const LabelToId = () => {
     setPubdictionariesParam({
       labels: "ovarian+cancer",
       dictionaries: selectDictionaryList.filter((v) => v).join(","),
+      tag: dataset?.label_resolver?.taxonomy ? species : undefined,
       threshold: dataset?.label_resolver?.threshold ? threshold : undefined,
       verbose: true,
     });
