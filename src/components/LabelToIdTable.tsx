@@ -8,9 +8,10 @@ type Props = {
     threshold?: number;
     verbose: boolean;
   };
+  dataset: any;
 };
 
-const LabelToIdTable = ({ pubdictionariesParam }: Props) => {
+const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
   const { data: tableData } = useSWRImmutable(
     pubdictionariesParam,
     async (key) => {
@@ -18,7 +19,7 @@ const LabelToIdTable = ({ pubdictionariesParam }: Props) => {
         params: key,
       });
 
-      return res.data[pubdictionariesParam.labels];
+      return res.data[pubdictionariesParam.labels] as any[];
     },
   );
 
@@ -39,7 +40,13 @@ const LabelToIdTable = ({ pubdictionariesParam }: Props) => {
             {tableData.map((v, i) => (
               <tr key={i}>
                 <th>{v.label}</th>
-                <th></th>
+                <th>
+                  {
+                    dataset.label_resolver.dictionaries.find(
+                      (w: any) => w.dictionary === v.dictionary,
+                    )?.label
+                  }
+                </th>
                 <th></th>
                 <th>{v.score}</th>
                 <th>{v.identifier}</th>
