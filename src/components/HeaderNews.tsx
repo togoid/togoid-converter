@@ -38,28 +38,9 @@ const HeaderNews = () => {
       </a>
       <details className="news-list">
         <summary className="news-list__summary">History</summary>
-        <ReactMarkdown>{news}</ReactMarkdown>
-        {/* <ul className="news-list__list">
-          <li>
-            <a href="" className="link">
-              <time dateTime="2024-01-10" className="date">
-                2024-01-10
-              </time>
-              <p className="title">Weekly update has been completed.</p>
-            </a>
-          </li>
-          <li>
-            <a href="" className="link">
-              <time dateTime="2024-01-10" className="date">
-                2024-01-10
-              </time>
-              <p className="title">
-                Weekly update has been completed.- Weekly update has been
-                completed.- Weekly update has been completed.
-              </p>
-            </a>
-          </li>
-        </ul> */}
+        <div className="news-list__list">
+          <ReactMarkdown>{news}</ReactMarkdown>
+        </div>
       </details>
     </div>
   );
