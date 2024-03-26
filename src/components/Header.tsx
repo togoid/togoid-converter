@@ -80,11 +80,35 @@ const Header = () => (
     />
     <header className="header">
       <div className="header__news">
-        <a href="" className="link" target="_blank">
+        <a href="" className="link">
           <span>
             Update information : <time dateTime="2024-03-11">2024-03-11</time>
           </span>
         </a>
+        <details className="news-list">
+          <summary className="news-list__summary">History</summary>
+          <ul className="news-list__list">
+            <li>
+              <a href="" className="link">
+                <time dateTime="2024-01-10" className="date">
+                  2024-01-10
+                </time>
+                <p className="title">Weekly update has been completed.</p>
+              </a>
+            </li>
+            <li>
+              <a href="" className="link">
+                <time dateTime="2024-01-10" className="date">
+                  2024-01-10
+                </time>
+                <p className="title">
+                  Weekly update has been completed.- Weekly update has been completed.- Weekly update has been
+                  completed.
+                </p>
+              </a>
+            </li>
+          </ul>
+        </details>
       </div>
       <h1 className="header__title">
         <a href="/">
