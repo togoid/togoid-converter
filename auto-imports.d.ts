@@ -14,6 +14,7 @@ declare global {
   const ExploreResultRelation: typeof import('./src/components/ExploreResultRelation')['default']
   const Fragment: typeof import('react')['Fragment']
   const Header: typeof import('./src/components/Header')['default']
+  const HeaderNews: typeof import('./src/components/HeaderNews')['default']
   const IdInput: typeof import('./src/components/IdInput')['default']
   const InformationModal: typeof import('./src/components/InformationModal')['default']
   const LabelToId: typeof import('./src/components/LabelToId')['default']
