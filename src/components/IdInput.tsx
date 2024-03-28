@@ -1,5 +1,5 @@
 const IdInput = (props) => {
-  const [text, setText] = useState("");
+  const [text, setText] = useAtom(textAtom);
 
   const isUpdateText = useRef(true);
 

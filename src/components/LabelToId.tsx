@@ -19,6 +19,7 @@ const LabelToId = () => {
     threshold: undefined as number | undefined,
     verbose: true,
   });
+  const text = useAtomValue(textAtom);
 
   const { data: taxonomyList } = useSWRImmutable("taxonomy", async () => {
     const res = await axios.get<string[][]>(
@@ -40,8 +41,18 @@ const LabelToId = () => {
   };
 
   const handleExecute = () => {
+    const labels = text
+      .replace(/[Ａ-Ｚａ-ｚ０-９]/g, (s) =>
+        String.fromCharCode(s.charCodeAt(0) - 0xfee0),
+      )
+      .split(/[\s,\n,、,,]+/)
+      .filter((v) => v)
+      .map((v) => v.trim())
+      .join("|");
+
+    // exanple: ovarian+cancer
     setPubdictionariesParam({
-      labels: "ovarian+cancer",
+      labels: labels,
       dictionaries: selectDictionaryList.filter((v) => v).join(","),
       tag: dataset?.label_resolver?.taxonomy ? species : undefined,
       threshold: dataset?.label_resolver?.threshold ? threshold : undefined,
