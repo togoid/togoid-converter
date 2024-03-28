@@ -100,11 +100,11 @@ const LabelToId = () => {
             {dataset?.label_resolver?.taxonomy && (
               <>
                 <div className="">
-                  <label htmlFor="selectSpiecies" className="label">
-                    Spiecies
+                  <label htmlFor="selectSpecies" className="label">
+                    Species
                   </label>
                   <Select
-                    id="selectSpiecies"
+                    id="selectSpecies"
                     styles={{
                       control: (css) => ({
                         ...css,
