@@ -47,9 +47,9 @@ const LabelToId = () => {
       .replace(/[Ａ-Ｚａ-ｚ０-９]/g, (s) =>
         String.fromCharCode(s.charCodeAt(0) - 0xfee0),
       )
-      .split(/[\s,\n,、,,]+/)
+      .split(/[\n,、,,]+/)
       .filter((v) => v)
-      .map((v) => v.trim())
+      .map((v) => v.trim().replace(/\s+/g, "+"))
       .join("|");
 
     // exanple: ovarian+cancer
@@ -100,11 +100,11 @@ const LabelToId = () => {
             {dataset?.label_resolver?.taxonomy && (
               <>
                 <div className="">
-                  <label htmlFor="selectSpiecies" className="label">
-                    Spiecies
+                  <label htmlFor="selectSpecies" className="label">
+                    Species
                   </label>
                   <Select
-                    id="selectSpiecies"
+                    id="selectSpecies"
                     styles={{
                       control: (css) => ({
                         ...css,
