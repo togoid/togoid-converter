@@ -13,29 +13,6 @@ const HeaderNews = () => {
 
   return (
     <div className="header__news">
-      <a
-        href="https://github.com/togoid/togoid-config/blob/main/docs/news.md"
-        className="link"
-      >
-        <span>
-          Update information :{" "}
-          <ReactMarkdown
-            allowElement={(_, index) => index === 0}
-            components={{
-              h1: ({ children }) => (
-                <time
-                  // @ts-expect-error
-                  dateTime={children}
-                >
-                  {children}
-                </time>
-              ),
-            }}
-          >
-            {news}
-          </ReactMarkdown>
-        </span>
-      </a>
       <details className="news-list">
         <summary className="news-list__summary">History</summary>
         <div className="news-list__list">
