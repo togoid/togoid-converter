@@ -79,13 +79,7 @@ const Header = () => (
       data-license-type="none"
     />
     <header className="header">
-      <div className="header__news">
-        <a href="" className="link" target="_blank">
-          <span>
-            Update information : <time dateTime="2024-03-11">2024-03-11</time>
-          </span>
-        </a>
-      </div>
+      <HeaderNews />
       <h1 className="header__title">
         <a href="/">
           <svg

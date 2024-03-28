@@ -15,9 +15,11 @@ const LabelToId = () => {
   const [pubdictionariesParam, setPubdictionariesParam] = useState({
     labels: "",
     dictionaries: "",
+    tag: undefined as string | undefined,
     threshold: undefined as number | undefined,
     verbose: true,
   });
+  const text = useAtomValue(textAtom);
 
   const { data: taxonomyList } = useSWRImmutable("taxonomy", async () => {
     const res = await axios.get<string[][]>(
@@ -28,6 +30,8 @@ const LabelToId = () => {
   });
 
   const handleSelectDropDown = (value: any) => {
+    setIsShowTable(false);
+    setSpecies(undefined);
     setDataset(value);
     setSelectDictionaryList(
       value.label_resolver.dictionaries.map((v) => v.dictionary),
@@ -39,9 +43,20 @@ const LabelToId = () => {
   };
 
   const handleExecute = () => {
+    const labels = text
+      .replace(/[Ａ-Ｚａ-ｚ０-９]/g, (s) =>
+        String.fromCharCode(s.charCodeAt(0) - 0xfee0),
+      )
+      .split(/[\s,\n,、,,]+/)
+      .filter((v) => v)
+      .map((v) => v.trim())
+      .join("|");
+
+    // exanple: ovarian+cancer
     setPubdictionariesParam({
-      labels: "ovarian+cancer",
+      labels: labels,
       dictionaries: selectDictionaryList.filter((v) => v).join(","),
+      tag: dataset?.label_resolver?.taxonomy ? species : undefined,
       threshold: dataset?.label_resolver?.threshold ? threshold : undefined,
       verbose: true,
     });
@@ -164,7 +179,10 @@ const LabelToId = () => {
         )}
       </div>
       {isShowTable && (
-        <LabelToIdTable pubdictionariesParam={pubdictionariesParam} />
+        <LabelToIdTable
+          pubdictionariesParam={pubdictionariesParam}
+          dataset={dataset}
+        />
       )}
     </div>
   );
