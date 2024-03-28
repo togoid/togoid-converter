@@ -1,5 +1,6 @@
 import useSWRImmutable from "swr/immutable";
 import axios from "axios";
+import copy from "copy-to-clipboard";
 
 type Props = {
   pubdictionariesParam: {
@@ -65,6 +66,14 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
     setText(tableData.map((v) => v.identifier).join("\n"));
   };
 
+  const copyClipboard = async () => {
+    const text = invokeUnparse(tableData, "tsv");
+
+    copy(text, {
+      format: "text/plain",
+    });
+  };
+
   return (
     <div>
       {tableData && (
@@ -99,6 +108,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
           </table>
           <div>
             <button onClick={() => inputResultId()}>Put id</button>
+            <button onClick={() => copyClipboard()}>clipboard</button>
           </div>
         </>
       )}
