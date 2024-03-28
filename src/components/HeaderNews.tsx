@@ -13,7 +13,7 @@ const HeaderNews = () => {
 
   return (
     <div className="header__news">
-      <details className="news-list">
+      <details className="news-list" open>
         <summary className="news-list__summary">History</summary>
         <div className="news-list__list">
           <ReactMarkdown>{news}</ReactMarkdown>
