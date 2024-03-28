@@ -30,6 +30,8 @@ const LabelToId = () => {
   });
 
   const handleSelectDropDown = (value: any) => {
+    setIsShowTable(false);
+    setSpecies(undefined);
     setDataset(value);
     setSelectDictionaryList(
       value.label_resolver.dictionaries.map((v) => v.dictionary),
