@@ -491,14 +491,14 @@ const Home = () => {
               lookupRoute={lookupRoute}
             />
           )}
-          {activeTab === "ANNOTATE" && (
+          {/* {activeTab === "ANNOTATE" && (
             <Annotate
               databaseNodesList={databaseNodesList}
               route={route}
               setRoute={setRoute}
             />
           )}
-          {activeTab === "LABEL2LD" && <LabelToId />}
+          {activeTab === "LABEL2LD" && <LabelToId />} */}
           {activeTab === "DATASETS" && (
             <Datasets executeExamples={executeExamples} />
           )}

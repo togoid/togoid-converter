@@ -16,7 +16,7 @@ const TabWrapper = (props) => (
     >
       NAVIGATE
     </button>
-    <button
+    {/* <button
       onClick={() => props.changeIndexTab("ANNOTATE")}
       className={
         props.activeTab === "ANNOTATE" ? "button_tab active" : "button_tab"
@@ -31,7 +31,7 @@ const TabWrapper = (props) => (
       }
     >
       LABEL2ID
-    </button>
+    </button> */}
     <button
       onClick={() => props.changeIndexTab("DATASETS")}
       className={
