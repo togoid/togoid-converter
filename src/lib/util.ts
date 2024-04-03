@@ -4,14 +4,18 @@ import axios from "axios";
 
 import type { Arrow, HeadStyleAlias } from "react-arrow-master";
 
-export const exportCsvTsv = (rows, extension, outputName) => {
+export const exportCsvTsv = (
+  rows: unknown[],
+  extension: "csv" | "tsv",
+  outputName: string,
+) => {
   const blob = new Blob([invokeUnparse(rows, extension)], {
     type: `text/${extension}`,
   });
   saveAs(blob, outputName);
 };
 
-export const invokeUnparse = (rows, extension) => {
+export const invokeUnparse = (rows: unknown[], extension: "csv" | "tsv") => {
   const delimiterList = {
     csv: ",",
     tsv: "\t",
