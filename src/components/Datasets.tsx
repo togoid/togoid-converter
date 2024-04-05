@@ -1,7 +1,11 @@
 const searchNameIndexSetList = new Set<string>();
 const searchCategorySetList = new Set<string>();
 
-const Datasets = (props) => {
+type Props = {
+  executeExamples: (idList: string[], exampleTarget: string) => void;
+};
+
+const Datasets = ({ executeExamples }: Props) => {
   const { datasetConfig, descriptionConfig } = useConfig();
 
   const [language, setLanguage] = useState<"en" | "ja">("en");
@@ -26,7 +30,7 @@ const Datasets = (props) => {
     searchDataset(searchText);
   };
 
-  const handleCategoryFilter = (input) => {
+  const handleCategoryFilter = (input: string) => {
     searchCategorySetList.has(input)
       ? searchCategorySetList.delete(input)
       : searchCategorySetList.add(input);
@@ -34,16 +38,17 @@ const Datasets = (props) => {
     searchDataset(searchText);
   };
 
-  const handleTextfilter = (input) => {
+  const handleTextfilter = (input: string) => {
     setSearchText(input);
 
     searchDataset(input);
   };
 
-  const searchDataset = (text) => {
+  const searchDataset = (text: string) => {
     const filterDataset = Object.entries(datasetConfig).reduce(
       (prev, [key, value]) => {
-        return (!text || isFindText(text, value)) &&
+        return (!text ||
+          value.label.toLowerCase().includes(text.toLowerCase())) &&
           (!searchCategorySetList.size ||
             searchCategorySetList.has(value.category)) &&
           (!searchNameIndexSetList.size ||
@@ -55,10 +60,6 @@ const Datasets = (props) => {
     );
 
     setDatasetFilterObj(filterDataset);
-  };
-
-  const isFindText = (text, value) => {
-    return value.label.toLowerCase().includes(text.toLowerCase());
   };
 
   const handleNameIndexClear = () => {
@@ -304,7 +305,7 @@ const Datasets = (props) => {
                                 href="#"
                                 onClick={(e) => {
                                   e.preventDefault();
-                                  props.executeExamples(example, key);
+                                  executeExamples(example, key);
                                 }}
                               >
                                 {example.join(", ")}
