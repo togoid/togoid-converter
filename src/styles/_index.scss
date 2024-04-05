@@ -398,6 +398,29 @@
       padding: 17px;
       border-radius: 10px;
       background-color: g.$col-FFF;
+
+      .clear-button {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 0;
+        margin: 20px 0 0 auto;
+        border: none;
+        background-color: unset;
+
+        &__icon {
+          width: 11px;
+          height: 11px;
+        }
+
+        &__text {
+          font: {
+            family: g.$ff-oswald;
+            size: 1.6rem;
+            weight: 300;
+          }
+        }
+      }
     }
 
     &__keyword {
