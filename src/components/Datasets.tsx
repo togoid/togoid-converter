@@ -87,21 +87,18 @@ const Datasets = ({ executeExamples }: Props) => {
                     />
                     <section className="database__index__links">
                       {nameIndex.map((v, i) => (
-                        <span key={i}>
-                          {i > 0 && ", "}
-                          <span
-                            style={{ cursor: "pointer" }}
-                            onClick={() => handleNameIndexFilter(v)}
-                            className={
-                              searchCategorySetList.size === 0 ||
-                              searchCategorySetList.has(v)
-                                ? "text active"
-                                : "text"
-                            }
-                          >
-                            {v}
-                          </span>
-                        </span>
+                        <button
+                          key={i}
+                          onClick={() => handleNameIndexFilter(v)}
+                          className={
+                            searchNameIndexSetList.size === 0 ||
+                            searchNameIndexSetList.has(v)
+                              ? "text active"
+                              : "text"
+                          }
+                        >
+                          {v}
+                        </button>
                       ))}
                     </section>
                   </section>

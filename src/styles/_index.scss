@@ -241,7 +241,7 @@
                 display: grid;
                 gap: 4px;
                 grid-template-columns: 1fr 18px;
-                min-width: 150px;
+                width: 150px;
                 font: {
                   family: g.$ff-oswald;
                   size: 1.2rem;
@@ -398,6 +398,47 @@
       padding: 17px;
       border-radius: 10px;
       background-color: g.$col-FFF;
+
+      .text {
+        cursor: pointer;
+        padding: 0;
+        border: unset;
+        background-color: unset;
+        color: g.$col-C4C4C4;
+
+        &:not(:last-of-type) {
+          &::after {
+            content: ", ";
+          }
+        }
+
+        &.active {
+          color: g.$col-000;
+        }
+      }
+
+      .clear-button {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 0;
+        margin: 20px 0 0 auto;
+        border: none;
+        background-color: unset;
+
+        &__icon {
+          width: 11px;
+          height: 11px;
+        }
+
+        &__text {
+          font: {
+            family: g.$ff-oswald;
+            size: 1.6rem;
+            weight: 300;
+          }
+        }
+      }
     }
 
     &__keyword {
@@ -463,6 +504,7 @@
 
       &__links {
         display: flex;
+        gap: 5px;
 
         a {
           font-family: g.$ff-oswald;
