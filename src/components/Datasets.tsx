@@ -1,7 +1,5 @@
-/**
- * @type {Set<string>}
- */
-const searchCategorySetList = new Set();
+const searchNameIndexSetList = new Set<string>();
+const searchCategorySetList = new Set<string>();
 
 const Datasets = (props) => {
   const { datasetConfig, descriptionConfig } = useConfig();
@@ -14,11 +12,19 @@ const Datasets = (props) => {
   const nameIndex = useMemo(
     () => [
       ...new Set(
-        Object.keys(datasetFilterObj).map((v) => v.slice(0, 1).toUpperCase()),
+        Object.keys(datasetConfig).map((v) => v.slice(0, 1).toUpperCase()),
       ),
     ],
-    [datasetFilterObj],
+    [datasetConfig],
   );
+
+  const handleNameIndexFilter = (input: string) => {
+    searchNameIndexSetList.has(input)
+      ? searchNameIndexSetList.delete(input)
+      : searchNameIndexSetList.add(input);
+
+    searchDataset(searchText);
+  };
 
   const handleCategoryFilter = (input) => {
     searchCategorySetList.has(input)
@@ -37,20 +43,13 @@ const Datasets = (props) => {
   const searchDataset = (text) => {
     const filterDataset = Object.entries(datasetConfig).reduce(
       (prev, [key, value]) => {
-        if (text && searchCategorySetList.size) {
-          return isFindText(text, value) &&
-            searchCategorySetList.has(value.category)
-            ? { ...prev, [key]: value }
-            : prev;
-        } else if (text) {
-          return isFindText(text, value) ? { ...prev, [key]: value } : prev;
-        } else if (searchCategorySetList.size) {
-          return searchCategorySetList.has(value.category)
-            ? { ...prev, [key]: value }
-            : prev;
-        } else {
-          return { ...prev, [key]: value };
-        }
+        return (!text || isFindText(text, value)) &&
+          (!searchCategorySetList.size ||
+            searchCategorySetList.has(value.category)) &&
+          (!searchNameIndexSetList.size ||
+            searchNameIndexSetList.has(key.slice(0, 1).toUpperCase()))
+          ? { ...prev, [key]: value }
+          : prev;
       },
       {},
     );
@@ -62,9 +61,14 @@ const Datasets = (props) => {
     return value.label.toLowerCase().includes(text.toLowerCase());
   };
 
+  const handleNameIndexClear = () => {
+    searchNameIndexSetList.clear();
+    searchDataset(searchText);
+  };
+
   const handleCategoryClear = () => {
     searchCategorySetList.clear();
-    searchText ? searchDataset(searchText) : setDatasetFilterObj(datasetConfig);
+    searchDataset(searchText);
   };
 
   return (
@@ -82,12 +86,43 @@ const Datasets = (props) => {
                     />
                     <section className="database__index__links">
                       {nameIndex.map((v, i) => (
-                        <a href={"/#" + v} key={i}>
-                          {v + " "}
-                        </a>
+                        <span key={i}>
+                          {i > 0 && ", "}
+                          <span
+                            style={{ cursor: "pointer" }}
+                            onClick={() => handleNameIndexFilter(v)}
+                            className={
+                              searchCategorySetList.size === 0 ||
+                              searchCategorySetList.has(v)
+                                ? "text active"
+                                : "text"
+                            }
+                          >
+                            {v}
+                          </span>
+                        </span>
                       ))}
                     </section>
                   </section>
+                  <button
+                    className="clear-button"
+                    onClick={handleNameIndexClear}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 11.708 11.708"
+                      className="clear-button__icon"
+                    >
+                      <path
+                        d="M-11780.5,1806.5l-5.5,5.5,5.5-5.5-5.5-5.5,5.5,5.5,5.5-5.5-5.5,5.5,5.5,5.5Z"
+                        transform="translate(11786.354 -1800.647)"
+                        fill="rgba(0,0,0,0)"
+                        stroke="#707070"
+                        strokeWidth="1"
+                      />
+                    </svg>
+                    <span className="clear-button__text">Clear</span>
+                  </button>
                 </section>
                 <input
                   type="text"
