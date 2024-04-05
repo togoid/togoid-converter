@@ -239,7 +239,7 @@ const Datasets = ({ executeExamples }: Props) => {
                         datasetConfig[l] ? (
                           <a
                             href={
-                              "/#" + datasetConfig[l].label.replace(/\s/g, "")
+                              "#" + datasetConfig[l].label.replace(/\s/g, "")
                             }
                             key={i}
                           >
