@@ -398,6 +398,28 @@
       padding: 17px;
       border-radius: 10px;
       background-color: g.$col-FFF;
+      &:has(.text[aria-current="true"]) {
+        .text {
+          color: g.$col-C4C4C4;
+
+          &[aria-current="true"] {
+            color: g.$col-000;
+          }
+        }
+      }
+
+      .text {
+        cursor: pointer;
+        padding: 0;
+        border: unset;
+        background-color: unset;
+
+        &:not(:last-of-type) {
+          &::after {
+            content: ", ";
+          }
+        }
+      }
 
       .clear-button {
         display: flex;
@@ -486,6 +508,7 @@
 
       &__links {
         display: flex;
+        gap: 5px;
 
         a {
           font-family: g.$ff-oswald;
