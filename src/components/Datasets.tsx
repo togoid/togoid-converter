@@ -90,10 +90,9 @@ const Datasets = ({ executeExamples }: Props) => {
                         <button
                           key={i}
                           onClick={() => handleNameIndexFilter(v)}
-                          aria-current={searchNameIndexSetList.has(v)}
                           className={
-                            searchCategorySetList.size === 0 ||
-                            searchCategorySetList.has(v)
+                            searchNameIndexSetList.size === 0 ||
+                            searchNameIndexSetList.has(v)
                               ? "text active"
                               : "text"
                           }
