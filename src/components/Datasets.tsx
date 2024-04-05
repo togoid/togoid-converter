@@ -1,9 +1,11 @@
-/**
- * @type {Set<string>}
- */
-const searchCategorySetList = new Set();
+const searchNameIndexSetList = new Set<string>();
+const searchCategorySetList = new Set<string>();
 
-const Datasets = (props) => {
+type Props = {
+  executeExamples: (idList: string[], exampleTarget: string) => void;
+};
+
+const Datasets = ({ executeExamples }: Props) => {
   const { datasetConfig, descriptionConfig } = useConfig();
 
   const [language, setLanguage] = useState<"en" | "ja">("en");
@@ -14,13 +16,21 @@ const Datasets = (props) => {
   const nameIndex = useMemo(
     () => [
       ...new Set(
-        Object.keys(datasetFilterObj).map((v) => v.slice(0, 1).toUpperCase()),
+        Object.keys(datasetConfig).map((v) => v.slice(0, 1).toUpperCase()),
       ),
     ],
-    [datasetFilterObj],
+    [datasetConfig],
   );
 
-  const handleCategoryFilter = (input) => {
+  const handleNameIndexFilter = (input: string) => {
+    searchNameIndexSetList.has(input)
+      ? searchNameIndexSetList.delete(input)
+      : searchNameIndexSetList.add(input);
+
+    searchDataset(searchText);
+  };
+
+  const handleCategoryFilter = (input: string) => {
     searchCategorySetList.has(input)
       ? searchCategorySetList.delete(input)
       : searchCategorySetList.add(input);
@@ -28,29 +38,23 @@ const Datasets = (props) => {
     searchDataset(searchText);
   };
 
-  const handleTextfilter = (input) => {
+  const handleTextfilter = (input: string) => {
     setSearchText(input);
 
     searchDataset(input);
   };
 
-  const searchDataset = (text) => {
+  const searchDataset = (text: string) => {
     const filterDataset = Object.entries(datasetConfig).reduce(
       (prev, [key, value]) => {
-        if (text && searchCategorySetList.size) {
-          return isFindText(text, value) &&
-            searchCategorySetList.has(value.category)
-            ? { ...prev, [key]: value }
-            : prev;
-        } else if (text) {
-          return isFindText(text, value) ? { ...prev, [key]: value } : prev;
-        } else if (searchCategorySetList.size) {
-          return searchCategorySetList.has(value.category)
-            ? { ...prev, [key]: value }
-            : prev;
-        } else {
-          return { ...prev, [key]: value };
-        }
+        return (!text ||
+          value.label.toLowerCase().includes(text.toLowerCase())) &&
+          (!searchCategorySetList.size ||
+            searchCategorySetList.has(value.category)) &&
+          (!searchNameIndexSetList.size ||
+            searchNameIndexSetList.has(key.slice(0, 1).toUpperCase()))
+          ? { ...prev, [key]: value }
+          : prev;
       },
       {},
     );
@@ -58,13 +62,14 @@ const Datasets = (props) => {
     setDatasetFilterObj(filterDataset);
   };
 
-  const isFindText = (text, value) => {
-    return value.label.toLowerCase().includes(text.toLowerCase());
+  const handleNameIndexClear = () => {
+    searchNameIndexSetList.clear();
+    searchDataset(searchText);
   };
 
   const handleCategoryClear = () => {
     searchCategorySetList.clear();
-    searchText ? searchDataset(searchText) : setDatasetFilterObj(datasetConfig);
+    searchDataset(searchText);
   };
 
   return (
@@ -82,12 +87,40 @@ const Datasets = (props) => {
                     />
                     <section className="database__index__links">
                       {nameIndex.map((v, i) => (
-                        <a href={"/#" + v} key={i}>
-                          {v + " "}
-                        </a>
+                        <button
+                          key={i}
+                          onClick={() => handleNameIndexFilter(v)}
+                          className={
+                            searchNameIndexSetList.size === 0 ||
+                            searchNameIndexSetList.has(v)
+                              ? "text active"
+                              : "text"
+                          }
+                        >
+                          {v}
+                        </button>
                       ))}
                     </section>
                   </section>
+                  <button
+                    className="clear-button"
+                    onClick={handleNameIndexClear}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 11.708 11.708"
+                      className="clear-button__icon"
+                    >
+                      <path
+                        d="M-11780.5,1806.5l-5.5,5.5,5.5-5.5-5.5-5.5,5.5,5.5,5.5-5.5-5.5,5.5,5.5,5.5Z"
+                        transform="translate(11786.354 -1800.647)"
+                        fill="rgba(0,0,0,0)"
+                        stroke="#707070"
+                        strokeWidth="1"
+                      />
+                    </svg>
+                    <span className="clear-button__text">Clear</span>
+                  </button>
                 </section>
                 <input
                   type="text"
@@ -269,7 +302,7 @@ const Datasets = (props) => {
                                 href="#"
                                 onClick={(e) => {
                                   e.preventDefault();
-                                  props.executeExamples(example, key);
+                                  executeExamples(example, key);
                                 }}
                               >
                                 {example.join(", ")}
