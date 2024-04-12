@@ -36,19 +36,14 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
         .filter((v: any) => v.dictionary !== preferredDictionary)
         .map((v) => v.identifier);
 
-      if (!synonymIdList.length) {
-        return;
-      }
-
-      const res2 = await axios.get<any>(
-        "https://pubdictionaries.org/find_terms.json",
-        {
-          params: {
-            ids: synonymIdList.join("|"),
-            dictionaries: preferredDictionary,
-          },
-        },
-      );
+      const res2 = synonymIdList.length
+        ? await axios.get<any>("https://pubdictionaries.org/find_terms.json", {
+            params: {
+              ids: synonymIdList.join("|"),
+              dictionaries: preferredDictionary,
+            },
+          })
+        : null;
 
       return tableBaseData.map((v) => {
         return {
@@ -57,7 +52,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
             (w: any) => w.dictionary === v.dictionary,
           )?.label,
           symbol:
-            res2.data[v.identifier] && v.dictionary !== preferredDictionary
+            res2?.data[v.identifier] && v.dictionary !== preferredDictionary
               ? res2.data[v.identifier][0].label
               : v.symbol,
           score: v.score,
