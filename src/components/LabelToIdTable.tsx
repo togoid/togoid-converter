@@ -36,25 +36,34 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
         .filter((v: any) => v.dictionary !== preferredDictionary)
         .map((v) => v.identifier);
 
-      if (synonymIdList.length) {
-        const res2 = await axios.get<any>(
-          "https://pubdictionaries.org/find_terms.json",
-          {
-            params: {
-              ids: synonymIdList.join("|"),
-              dictionaries: preferredDictionary,
-            },
-          },
-        );
-
-        tableBaseData.forEach((v) => {
-          if (res2.data[v.identifier] && v.dictionary !== preferredDictionary) {
-            v.symbol = res2.data[v.identifier][0].label;
-          }
-        });
+      if (!synonymIdList.length) {
+        return;
       }
 
-      return tableBaseData;
+      const res2 = await axios.get<any>(
+        "https://pubdictionaries.org/find_terms.json",
+        {
+          params: {
+            ids: synonymIdList.join("|"),
+            dictionaries: preferredDictionary,
+          },
+        },
+      );
+
+      return tableBaseData.map((v) => {
+        return {
+          label: v.label,
+          type: dataset.label_resolver.dictionaries.find(
+            (w: any) => w.dictionary === v.dictionary,
+          )?.label,
+          symbol:
+            res2.data[v.identifier] && v.dictionary !== preferredDictionary
+              ? res2.data[v.identifier][0].label
+              : v.symbol,
+          score: v.score,
+          identifier: v.identifier,
+        };
+      });
     },
   );
 
@@ -107,13 +116,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
               {tableData.map((v, i) => (
                 <tr key={i}>
                   <td>{v.label}</td>
-                  <td>
-                    {
-                      dataset.label_resolver.dictionaries.find(
-                        (w: any) => w.dictionary === v.dictionary,
-                      )?.label
-                    }
-                  </td>
+                  <td>{v.type}</td>
                   <td>{v.symbol}</td>
                   <td>{v.score}</td>
                   <td>{v.identifier}</td>
