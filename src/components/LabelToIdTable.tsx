@@ -76,11 +76,40 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
   };
 
   const copyClipboard = async () => {
-    const text = invokeUnparse(tableData, "tsv");
+    if (!tableData) {
+      return;
+    }
 
+    const table = tableData.map((v) => {
+      return {
+        Input: v.label,
+        "Match type": v.type,
+        Symbol: v.symbol,
+        Score: v.score,
+        ID: v.identifier,
+      };
+    });
+    const text = invokeUnparse(table, "tsv");
     copy(text, {
       format: "text/plain",
     });
+  };
+
+  const handleExportCsvTsv = async (extension: "csv" | "tsv") => {
+    if (!tableData) {
+      return;
+    }
+
+    const table = tableData.map((v) => {
+      return {
+        Input: v.label,
+        "Match type": v.type,
+        Symbol: v.symbol,
+        Score: v.score,
+        ID: v.identifier,
+      };
+    });
+    exportCsvTsv(table, extension, `result.${extension}`);
   };
 
   return (
@@ -98,8 +127,18 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
             >
               Copy to Clipboard
             </button>
-            <button className="button">Download as CSV</button>
-            <button className="button">Download as TSV</button>
+            <button
+              className="button"
+              onClick={() => handleExportCsvTsv("csv")}
+            >
+              Download as CSV
+            </button>
+            <button
+              className="button"
+              onClick={() => handleExportCsvTsv("tsv")}
+            >
+              Download as TSV
+            </button>
           </div>
           <table className="table">
             <caption className="heading">Showing</caption>
