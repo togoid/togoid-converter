@@ -20,7 +20,10 @@
     grid-template-columns: 300px min-content 300px;
     grid-auto-rows: min-content;
     max-width: 900px;
-    margin-inline: auto;
+    padding: 20px 20px 12px;
+    margin: 0 auto 30px;
+    border-radius: 10px;
+    background-color: g.$col-FFF;
   }
 
   .dataset {
