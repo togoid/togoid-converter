@@ -51,10 +51,10 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
           type: dataset.label_resolver.dictionaries.find(
             (w: any) => w.dictionary === v.dictionary,
           )?.label,
-          symbol:
+          name:
             res2?.data[v.identifier] && v.dictionary !== preferredDictionary
               ? res2.data[v.identifier][0].label
-              : v.symbol,
+              : v.name,
           score: v.score,
           identifier: v.identifier,
         };
@@ -79,7 +79,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
       return {
         Input: v.label,
         "Match type": v.type,
-        Symbol: v.symbol,
+        Name: v.name,
         Score: v.score,
         ID: v.identifier,
       };
@@ -99,7 +99,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
       return {
         Input: v.label,
         "Match type": v.type,
-        Symbol: v.symbol,
+        Name: v.name,
         Score: v.score,
         ID: v.identifier,
       };
@@ -141,7 +141,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
               <tr>
                 <th>Input</th>
                 <th>Match type</th>
-                <th>Symbol</th>
+                <th>Name</th>
                 <th>Score</th>
                 <th>ID</th>
               </tr>
@@ -151,7 +151,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
                 <tr key={i}>
                   <td>{v.label}</td>
                   <td>{v.type}</td>
-                  <td>{v.symbol}</td>
+                  <td>{v.name}</td>
                   <td>{v.score}</td>
                   <td>{v.identifier}</td>
                 </tr>
