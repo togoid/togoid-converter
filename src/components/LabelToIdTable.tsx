@@ -89,6 +89,8 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
             >
               Copy to Clipboard
             </button>
+            <button className="button">Download as CSV</button>
+            <button className="button">Download as TSV</button>
           </div>
           <table className="table">
             <caption className="heading">Showing</caption>

@@ -34,13 +34,14 @@
       weight: 400;
     }
 
-    line-height: normal;
+    line-height: 1;
     color: g.$col-FFF;
     padding: 0 12px 0 29px;
     border-radius: 5px;
     border: unset;
     background: {
       color: g.$col-249EB3;
+      image:url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 11.497 13.961"><path fill="%23fff" d="M.333,13.981h11.5V12.338H.333m11.5-7.391H8.545V.02H3.618V4.947H.333L6.082,10.7Z" transform="translate(-0.333 -0.02)" /></svg>');
       repeat: no-repeat;
       position: 12px center;
       size: auto 14px;
