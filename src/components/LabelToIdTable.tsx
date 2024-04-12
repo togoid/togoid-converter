@@ -75,10 +75,25 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
   };
 
   return (
-    <div>
+    <div className="label-to-id-table">
       {tableData && (
         <>
-          <table>
+          <div className="buttons">
+            <p className="heading">Action</p>
+            <button onClick={() => inputResultId()} className="button search">
+              Copy to Search
+            </button>
+            <button
+              onClick={() => copyClipboard()}
+              className="button clipboard"
+            >
+              Copy to Clipboard
+            </button>
+            <button className="button">Download as CSV</button>
+            <button className="button">Download as TSV</button>
+          </div>
+          <table className="table">
+            <caption className="heading">Showing</caption>
             <thead>
               <tr>
                 <th>Input</th>
@@ -91,25 +106,21 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
             <tbody>
               {tableData.map((v, i) => (
                 <tr key={i}>
-                  <th>{v.label}</th>
-                  <th>
+                  <td>{v.label}</td>
+                  <td>
                     {
                       dataset.label_resolver.dictionaries.find(
                         (w: any) => w.dictionary === v.dictionary,
                       )?.label
                     }
-                  </th>
-                  <th>{v.symbol}</th>
-                  <th>{v.score}</th>
-                  <th>{v.identifier}</th>
+                  </td>
+                  <td>{v.symbol}</td>
+                  <td>{v.score}</td>
+                  <td>{v.identifier}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <div>
-            <button onClick={() => inputResultId()}>Put id</button>
-            <button onClick={() => copyClipboard()}>clipboard</button>
-          </div>
         </>
       )}
     </div>
