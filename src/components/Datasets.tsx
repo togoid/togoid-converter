@@ -143,21 +143,18 @@ const Datasets = ({ executeExamples }: Props) => {
                         }}
                       />
                       {v.categoryList.map((v2, i2) => (
-                        <span key={i2}>
-                          {i2 > 0 && ", "}
-                          <span
-                            style={{ cursor: "pointer" }}
-                            onClick={() => handleCategoryFilter(v2)}
-                            className={
-                              searchCategorySetList.value.size === 0 ||
-                              searchCategorySetList.value.has(v2)
-                                ? "text active"
-                                : "text"
-                            }
-                          >
-                            {v2}
-                          </span>
-                        </span>
+                        <button
+                          key={i2}
+                          onClick={() => handleCategoryFilter(v2)}
+                          className={
+                            searchCategorySetList.value.size === 0 ||
+                            searchCategorySetList.value.has(v2)
+                              ? "text active"
+                              : "text"
+                          }
+                        >
+                          {v2}
+                        </button>
                       ))}
                     </div>
                   ))}
