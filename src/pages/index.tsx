@@ -4,15 +4,30 @@ import NProgress from "nprogress";
 const Home = () => {
   const router = useRouter();
 
-  const [ids, setIds] = useState<string[]>([]);
+  const [ids, setIds] = useState<string[]>(
+    router.asPath.match(new RegExp(`[&?]ids=(.*?)(&|$)`))?.[1].split("%2C") ??
+      [],
+  );
+  const [routerRoute, setRouterRoute] = useState(
+    router.asPath.match(new RegExp(`[&?]route=(.*?)(&|$)`))?.[1].split("%2C") ??
+      [],
+  );
   const [activeTab, setActiveTab] = useState("EXPLORE");
   const [databaseNodesList, setDatabaseNodesList] = useState<any[][]>([]);
   const [route, setRoute] = useState<Route[]>([]);
-  const [previousRoute, setPreviousRoute] = useState<Route[]>([]);
   const [isUseKeepRoute, setIsUseKeepRoute] = useState(false);
   const [previousSearchTab, setPreviousSearchTab] = useState("EXPLORE");
 
   const { datasetConfig, relationConfig } = useConfig(true);
+
+  useEffect(() => {
+    router.replace({
+      query: {
+        route: routerRoute.length ? routerRoute.join(",") : undefined,
+        ids: ids.length ? ids.join(",") : undefined,
+      },
+    });
+  }, [routerRoute, ids]);
 
   useEffect(() => {
     if (route.length > 0) {
@@ -27,11 +42,11 @@ const Home = () => {
         } else if (isUseKeepRoute) {
           const r = route;
           let nodesList: any[][] = [];
-          for (let i = 0; i < previousRoute.length; i++) {
+          for (let i = 0; i < routerRoute.length; i++) {
             nodesList = await createNodesList(r, databaseNodesList);
-            if (i < previousRoute.length - 1) {
+            if (i < routerRoute.length - 1) {
               const v = databaseNodesList[i + 1].find(
-                (element) => element.name === previousRoute[i + 1].name,
+                (element) => element.name === routerRoute[i + 1],
               );
               if (v === undefined || v.target === 0) {
                 break;
@@ -42,6 +57,7 @@ const Home = () => {
 
           setDatabaseNodesList(nodesList);
           setRoute(r);
+          setRouterRoute(r.map((v) => v.name));
           setIsUseKeepRoute(false);
         } else {
           const nodesList = await createNodesList(
@@ -63,13 +79,8 @@ const Home = () => {
   }, [route]);
 
   useEffect(() => {
-    if (router.query.ids && datasetConfig) {
-      searchDatabase(
-        (Array.isArray(router.query.ids)
-          ? router.query.ids[0]
-          : router.query.ids
-        )?.split(",") ?? [],
-      );
+    if (ids.length && Object.keys(datasetConfig).length) {
+      searchDatabase(ids);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [datasetConfig]);
@@ -206,19 +217,21 @@ const Home = () => {
     if (exampleTarget) {
       // Examplesで選択したものは必ず見つかる前提
       setRoute([candidates.find((v) => v.name === exampleTarget)]);
-      setPreviousRoute([candidates.find((v) => v.name === exampleTarget)]);
+      setRouterRoute([candidates.find((v) => v.name === exampleTarget).name]);
     } else if (
-      previousRoute.length &&
-      candidates.some((v) => v.name === previousRoute[0].name)
+      routerRoute.length &&
+      candidates.some((v) => v.name === routerRoute[0])
     ) {
       // keepRouteを使用する
-      setRoute([previousRoute[0]]);
+      setRoute([candidates.find((v) => v.name === routerRoute[0])]);
       setIsUseKeepRoute(true);
     } else if (candidates.length === 1) {
       // listが1件の時は自動で選択する
       setRoute(candidates);
+      setRouterRoute([candidates[0].name]);
     } else {
       setRoute([]);
+      setRouterRoute([]);
     }
   };
 
@@ -227,8 +240,10 @@ const Home = () => {
 
     if (activeTab === "NAVIGATE") {
       setRoute(route.slice(0, 1));
+      setRouterRoute([route.slice(0, 1)[0].name]);
     } else {
       setRoute([]);
+      setRouterRoute([]);
     }
   };
 
@@ -467,6 +482,7 @@ const Home = () => {
       (previousSearchTab === "EXPLORE" && name === "NAVIGATE")
     ) {
       setRoute(route.slice(0, 1));
+      setRouterRoute(route.slice(0, 1).map((v) => v.name));
       setDatabaseNodesList(databaseNodesList.slice(0, 1));
       setPreviousSearchTab(name);
     }
@@ -491,7 +507,7 @@ const Home = () => {
               route={route}
               setRoute={setRoute}
               ids={ids}
-              setPreviousRoute={setPreviousRoute}
+              setRouterRoute={setRouterRoute}
             />
           )}
           {activeTab === "NAVIGATE" && (
