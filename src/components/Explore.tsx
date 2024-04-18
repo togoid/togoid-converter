@@ -26,7 +26,7 @@ const Explore = (props: any) => {
     const r = props.route.slice(0, i);
     r[i] = database;
     props.setRoute(r);
-    props.setPreviousRoute(r);
+    props.setRouterRoute(r.map((v: any) => v.name));
     return r;
   };
 

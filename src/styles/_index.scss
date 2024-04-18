@@ -409,6 +409,7 @@
         &:not(:last-of-type) {
           &::after {
             content: ", ";
+            color: g.$col-000;
           }
         }
 
@@ -659,7 +660,18 @@
         weight: 300;
       }
 
+      padding: 0;
+      border: unset;
+      background-color: unset;
       color: g.$col-C4C4C4;
+
+      &:not(:last-of-type) {
+        &::after {
+          content: ",";
+          padding-right: 0.5rem;
+          color: g.$col-3C3C3C;
+        }
+      }
 
       &.active {
         color: g.$col-3C3C3C;

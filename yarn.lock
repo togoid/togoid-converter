@@ -483,6 +483,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@preact/signals-core@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "@preact/signals-core@npm:1.6.0"
+  checksum: 10c0/5e32a98ab248a15e1950ac23dae9cb985c9bdc0ff2f24dbdcccc235eeacd175170852107f5d1e4a7250805eb90cb642510855acd91788ebe95ff9b24bf88689d
+  languageName: node
+  linkType: hard
+
+"@preact/signals-react@npm:2.0.1":
+  version: 2.0.1
+  resolution: "@preact/signals-react@npm:2.0.1"
+  dependencies:
+    "@preact/signals-core": "npm:^1.6.0"
+    use-sync-external-store: "npm:^1.2.0"
+  peerDependencies:
+    react: ^16.14.0 || 17.x || 18.x
+  checksum: 10c0/2da012e2f56fa698396a6d02df1e1d82e3a11302bf44c0beddc3cf7a6fd9b524ad0b2d4ebb0a5a8bf230cbe9f03fa175e885eda47c65e3cca76c120347e7546d
+  languageName: node
+  linkType: hard
+
 "@rollup/pluginutils@npm:^5.1.0":
   version: 5.1.0
   resolution: "@rollup/pluginutils@npm:5.1.0"
@@ -6775,6 +6794,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "togo-id-converter@workspace:."
   dependencies:
+    "@preact/signals-react": "npm:2.0.1"
     "@types/file-saver": "npm:^2.0.7"
     "@types/node": "npm:20.11.30"
     "@types/nprogress": "npm:^0.2.3"
