@@ -18,7 +18,6 @@ const RelationModal = ({ setIsShowRelationModal, ...props }: Props) => {
           onClick={() => setIsShowRelationModal(false)}
           className="modal--through__close"
         />
-        <h2 className="modal--through__title">Relation</h2>
         <div className="modal--through__description">
           <p>{props.v.relationDescription}</p>
         </div>

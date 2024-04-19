@@ -1,16 +1,18 @@
-const searchNameIndexSetList = new Set<string>();
-const searchCategorySetList = new Set<string>();
-
 type Props = {
   executeExamples: (idList: string[], exampleTarget: string) => void;
 };
 
 const Datasets = ({ executeExamples }: Props) => {
+  useSignals();
+
   const { datasetConfig, descriptionConfig } = useConfig();
 
   const [language, setLanguage] = useState<"en" | "ja">("en");
   const [datasetFilterObj, setDatasetFilterObj] = useState(datasetConfig);
-  const [searchText, setSearchText] = useState("");
+
+  const searchNameIndexSetList = useSignal(new Set<string>());
+  const searchCategorySetList = useSignal(new Set<string>());
+  const searchText = useSignal("");
 
   // Dataset Name Index のリストを作成
   const nameIndex = useMemo(
@@ -23,36 +25,35 @@ const Datasets = ({ executeExamples }: Props) => {
   );
 
   const handleNameIndexFilter = (input: string) => {
-    searchNameIndexSetList.has(input)
-      ? searchNameIndexSetList.delete(input)
-      : searchNameIndexSetList.add(input);
+    searchNameIndexSetList.value.has(input)
+      ? searchNameIndexSetList.value.delete(input)
+      : searchNameIndexSetList.value.add(input);
 
-    searchDataset(searchText);
+    searchDataset();
   };
 
   const handleCategoryFilter = (input: string) => {
-    searchCategorySetList.has(input)
-      ? searchCategorySetList.delete(input)
-      : searchCategorySetList.add(input);
+    searchCategorySetList.value.has(input)
+      ? searchCategorySetList.value.delete(input)
+      : searchCategorySetList.value.add(input);
 
-    searchDataset(searchText);
+    searchDataset();
   };
 
   const handleTextfilter = (input: string) => {
-    setSearchText(input);
-
-    searchDataset(input);
+    searchText.value = input;
+    searchDataset();
   };
 
-  const searchDataset = (text: string) => {
+  const searchDataset = () => {
     const filterDataset = Object.entries(datasetConfig).reduce(
       (prev, [key, value]) => {
-        return (!text ||
-          value.label.toLowerCase().includes(text.toLowerCase())) &&
-          (!searchCategorySetList.size ||
-            searchCategorySetList.has(value.category)) &&
-          (!searchNameIndexSetList.size ||
-            searchNameIndexSetList.has(key.slice(0, 1).toUpperCase()))
+        return (!searchText.value ||
+          value.label.toLowerCase().includes(searchText.value.toLowerCase())) &&
+          (!searchCategorySetList.value.size ||
+            searchCategorySetList.value.has(value.category)) &&
+          (!searchNameIndexSetList.value.size ||
+            searchNameIndexSetList.value.has(key.slice(0, 1).toUpperCase()))
           ? { ...prev, [key]: value }
           : prev;
       },
@@ -63,13 +64,13 @@ const Datasets = ({ executeExamples }: Props) => {
   };
 
   const handleNameIndexClear = () => {
-    searchNameIndexSetList.clear();
-    searchDataset(searchText);
+    searchNameIndexSetList.value.clear();
+    searchDataset();
   };
 
   const handleCategoryClear = () => {
-    searchCategorySetList.clear();
-    searchDataset(searchText);
+    searchCategorySetList.value.clear();
+    searchDataset();
   };
 
   return (
@@ -91,8 +92,8 @@ const Datasets = ({ executeExamples }: Props) => {
                           key={i}
                           onClick={() => handleNameIndexFilter(v)}
                           className={
-                            searchNameIndexSetList.size === 0 ||
-                            searchNameIndexSetList.has(v)
+                            searchNameIndexSetList.value.size === 0 ||
+                            searchNameIndexSetList.value.has(v)
                               ? "text active"
                               : "text"
                           }
@@ -125,7 +126,7 @@ const Datasets = ({ executeExamples }: Props) => {
                 <input
                   type="text"
                   className="database__keyword"
-                  value={searchText}
+                  value={searchText.value}
                   onChange={(e) => handleTextfilter(e.target.value)}
                 />
               </section>
@@ -142,21 +143,18 @@ const Datasets = ({ executeExamples }: Props) => {
                         }}
                       />
                       {v.categoryList.map((v2, i2) => (
-                        <span key={i2}>
-                          {i2 > 0 && ", "}
-                          <span
-                            style={{ cursor: "pointer" }}
-                            onClick={() => handleCategoryFilter(v2)}
-                            className={
-                              searchCategorySetList.size === 0 ||
-                              searchCategorySetList.has(v2)
-                                ? "text active"
-                                : "text"
-                            }
-                          >
-                            {v2}
-                          </span>
-                        </span>
+                        <button
+                          key={i2}
+                          onClick={() => handleCategoryFilter(v2)}
+                          className={
+                            searchCategorySetList.value.size === 0 ||
+                            searchCategorySetList.value.has(v2)
+                              ? "text active"
+                              : "text"
+                          }
+                        >
+                          {v2}
+                        </button>
                       ))}
                     </div>
                   ))}
