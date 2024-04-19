@@ -14,7 +14,14 @@ const nextConfig = {
   webpack: (config, options) => {
     config.plugins.push(
       AutoImport({
-        imports: ["react", "jotai", "jotai/utils", { react: ["Fragment"] }],
+        imports: [
+          "react",
+          "jotai",
+          "jotai/utils",
+          { react: ["Fragment"] },
+          { "@preact/signals-react": ["useSignal"] },
+          { "@preact/signals-react/runtime": ["useSignals"] },
+        ],
         defaultExportByFilename: true,
         dirs: ["./src/hooks", "./src/lib", "./src/atoms", "./src/components"],
       }),

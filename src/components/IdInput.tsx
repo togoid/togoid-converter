@@ -1,14 +1,8 @@
 const IdInput = (props) => {
   const [text, setText] = useAtom(textAtom);
 
-  const isUpdateText = useRef(true);
-
   useEffect(() => {
-    if (isUpdateText.current) {
-      setText(props.ids.join("\n"));
-    } else {
-      isUpdateText.current = true;
-    }
+    setText(props.ids.join("\n"));
   }, [props.ids]);
 
   const handleIdTextsSubmit = (t: string) => {
@@ -20,7 +14,6 @@ const IdInput = (props) => {
       .filter((v) => v)
       .map((v) => v.trim());
 
-    isUpdateText.current = false;
     props.searchDatabase(ids);
   };
 

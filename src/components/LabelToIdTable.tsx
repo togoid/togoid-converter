@@ -36,25 +36,29 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
         .filter((v: any) => v.dictionary !== preferredDictionary)
         .map((v) => v.identifier);
 
-      if (synonymIdList.length) {
-        const res2 = await axios.get<any>(
-          "https://pubdictionaries.org/find_terms.json",
-          {
+      const res2 = synonymIdList.length
+        ? await axios.get<any>("https://pubdictionaries.org/find_terms.json", {
             params: {
               ids: synonymIdList.join("|"),
               dictionaries: preferredDictionary,
             },
-          },
-        );
+          })
+        : null;
 
-        tableBaseData.forEach((v) => {
-          if (res2.data[v.identifier] && v.dictionary !== preferredDictionary) {
-            v.symbol = res2.data[v.identifier][0].label;
-          }
-        });
-      }
-
-      return tableBaseData;
+      return tableBaseData.map((v) => {
+        return {
+          label: v.label,
+          type: dataset.label_resolver.dictionaries.find(
+            (w: any) => w.dictionary === v.dictionary,
+          )?.label,
+          name:
+            res2?.data[v.identifier] && v.dictionary !== preferredDictionary
+              ? res2.data[v.identifier][0].label
+              : v.name,
+          score: v.score,
+          identifier: v.identifier,
+        };
+      });
     },
   );
 
@@ -67,23 +71,77 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
   };
 
   const copyClipboard = async () => {
-    const text = invokeUnparse(tableData, "tsv");
+    if (!tableData) {
+      return;
+    }
 
+    const table = tableData.map((v) => {
+      return {
+        Input: v.label,
+        "Match type": v.type,
+        Name: v.name,
+        Score: v.score,
+        ID: v.identifier,
+      };
+    });
+    const text = invokeUnparse(table, "tsv");
     copy(text, {
       format: "text/plain",
     });
   };
 
+  const handleExportCsvTsv = async (extension: "csv" | "tsv") => {
+    if (!tableData) {
+      return;
+    }
+
+    const table = tableData.map((v) => {
+      return {
+        Input: v.label,
+        "Match type": v.type,
+        Name: v.name,
+        Score: v.score,
+        ID: v.identifier,
+      };
+    });
+    exportCsvTsv(table, extension, `result.${extension}`);
+  };
+
   return (
-    <div>
+    <div className="label-to-id-table">
       {tableData && (
         <>
-          <table>
+          <div className="buttons">
+            <p className="heading">Action</p>
+            <button onClick={() => inputResultId()} className="button search">
+              Copy to Search
+            </button>
+            <button
+              onClick={() => copyClipboard()}
+              className="button clipboard"
+            >
+              Copy to Clipboard
+            </button>
+            <button
+              className="button"
+              onClick={() => handleExportCsvTsv("csv")}
+            >
+              Download as CSV
+            </button>
+            <button
+              className="button"
+              onClick={() => handleExportCsvTsv("tsv")}
+            >
+              Download as TSV
+            </button>
+          </div>
+          <table className="table">
+            <caption className="heading">Showing</caption>
             <thead>
               <tr>
                 <th>Input</th>
                 <th>Match type</th>
-                <th>Symbol</th>
+                <th>Name</th>
                 <th>Score</th>
                 <th>ID</th>
               </tr>
@@ -91,25 +149,15 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
             <tbody>
               {tableData.map((v, i) => (
                 <tr key={i}>
-                  <th>{v.label}</th>
-                  <th>
-                    {
-                      dataset.label_resolver.dictionaries.find(
-                        (w: any) => w.dictionary === v.dictionary,
-                      )?.label
-                    }
-                  </th>
-                  <th>{v.symbol}</th>
-                  <th>{v.score}</th>
-                  <th>{v.identifier}</th>
+                  <td>{v.label}</td>
+                  <td>{v.type}</td>
+                  <td>{v.name}</td>
+                  <td>{v.score}</td>
+                  <td>{v.identifier}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <div>
-            <button onClick={() => inputResultId()}>Put id</button>
-            <button onClick={() => copyClipboard()}>clipboard</button>
-          </div>
         </>
       )}
     </div>
