@@ -1,0 +1,40 @@
+@use "global" as g;
+
+.table {
+  width: 100%;
+
+  th,
+  td {
+    font-size: 1.4rem;
+    color: g.$col-5A5A5A;
+    padding: 0 26px;
+    border-bottom: 1px solid g.$col-D5D5D5;
+    vertical-align: top;
+
+    a {
+      color: g.$col-5A5A5A;
+      text-decoration: underline;
+    }
+  }
+
+  thead {
+    th {
+      height: 40px;
+      font-weight: 100;
+      text-align: left;
+      background: g.$col-DCF3F1;
+    }
+  }
+
+  tbody {
+    td {
+      padding: 11px 26px 17px;
+    }
+
+    tr:last-child {
+      td {
+        border: none;
+      }
+    }
+  }
+}
