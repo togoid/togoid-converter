@@ -1,16 +1,22 @@
 import { useRouter } from "next/router";
 import NProgress from "nprogress";
+import { useUpdateEffect } from "react-use";
 
 const Home = () => {
   const router = useRouter();
 
   const [ids, setIds] = useState<string[]>(
-    router.asPath.match(new RegExp(`[&?]ids=(.*?)(&|$)`))?.[1].split("%2C") ??
-      [],
+    router.asPath
+      .match(new RegExp(`[&?]ids=(.*?)(&|$|#)`))?.[1]
+      .split("%2C")
+      .filter((v) => v) ?? [],
   );
+
   const [routerRoute, setRouterRoute] = useState(
-    router.asPath.match(new RegExp(`[&?]route=(.*?)(&|$)`))?.[1].split("%2C") ??
-      [],
+    router.asPath
+      .match(new RegExp(`[&?]route=(.*?)(&|$|#)`))?.[1]
+      .split("%2C")
+      .filter((v) => v) ?? [],
   );
   const [activeTab, setActiveTab] = useState("EXPLORE");
   const [databaseNodesList, setDatabaseNodesList] = useState<any[][]>([]);
@@ -20,7 +26,7 @@ const Home = () => {
 
   const { datasetConfig, relationConfig } = useConfig(true);
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     router.replace({
       query: {
         route: routerRoute.length ? routerRoute.join(",") : undefined,
