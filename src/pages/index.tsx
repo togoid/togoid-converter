@@ -5,7 +5,7 @@ import { useUpdateEffect } from "react-use";
 const Home = () => {
   const router = useRouter();
 
-  const [ids, setIds] = useState<string[]>(
+  const [ids, setIds] = useState(
     router.asPath
       .match(new RegExp(`[&?]ids=(.*?)(&|$|#)`))?.[1]
       .split("%2C")
@@ -186,7 +186,6 @@ const Home = () => {
    */
   const searchDatabase = (ids: string[], exampleTarget?: string) => {
     setIds(ids);
-    router.replace({ query: ids.length ? { ids: ids.join(",") } : undefined });
 
     const candidates: any[] = [];
     ids.forEach((id) => {
