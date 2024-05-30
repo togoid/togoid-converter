@@ -10,8 +10,8 @@ const Explore = (props: any) => {
       nodes.forEach((v) => {
         candidatePathList.push(
           ...mergePathStyle(
-            `from${i - 1}-${props.route[i - 1].name}`,
-            `to${i}-${v.name}`,
+            `from${i - 1}-${props.route[i - 1]?.relation?.link?.label}-${props.route[i - 1].name}`,
+            `to${i}-${v.relation.link.label}-${v.name}`,
             props.route[i] && props.route[i].name === v.name,
           ),
         );

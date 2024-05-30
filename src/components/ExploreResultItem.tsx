@@ -48,7 +48,7 @@ const ExploreResultItem = (props) => {
   return (
     <div
       ref={ref}
-      id={`to${props.i}-${props.v.name}`}
+      id={`to${props.i}-${props.v.relation?.link.label}-${props.v.name}`}
       className={`radio green ${
         props.i === 0 || props.v.target > 0 ? null : "not_found"
       }`}
@@ -75,7 +75,10 @@ const ExploreResultItem = (props) => {
               : null,
         }}
       >
-        <div id={`from${props.i}-${props.v.name}`} className="dummy" />
+        <div
+          id={`from${props.i}-${props.v.relation?.link.label}-${props.v.name}`}
+          className="dummy"
+        />
         <p
           className="radio__large_label__inner"
           style={{
