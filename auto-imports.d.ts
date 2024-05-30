@@ -22,6 +22,7 @@ declare global {
   const LanguageButton: typeof import('./src/components/LanguageButton')['default']
   const Navigate: typeof import('./src/components/Navigate')['default']
   const NavigateResultItem: typeof import('./src/components/NavigateResultItem')['default']
+  const NavigateResultRelation: typeof import('./src/components/NavigateResultRelation')['default']
   const RelationModal: typeof import('./src/components/RelationModal')['default']
   const ResultModal: typeof import('./src/components/ResultModal')['default']
   const ResultModalAction: typeof import('./src/components/ResultModalAction')['default']

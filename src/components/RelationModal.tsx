@@ -19,7 +19,7 @@ const RelationModal = ({ setIsShowRelationModal, ...props }: Props) => {
           className="modal--through__close"
         />
         <div className="modal--through__description">
-          <p>{props.v.relationDescription}</p>
+          <p>{props.v.relation?.description}</p>
         </div>
       </div>
     </div>

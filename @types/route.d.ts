@@ -3,6 +3,7 @@ type Route = {
   name: string;
   results: string[];
   target: number;
-  link?: string;
+  message?: string;
   source?: number;
+  relation?: { link: any; description: string | undefined };
 };

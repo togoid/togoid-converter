@@ -93,7 +93,7 @@ const Home = () => {
 
   const createNodesList = async (routeTemp: Route[], nodesList: any[][]) => {
     const r = routeTemp[routeTemp.length - 1];
-    const candidateMap = new Map();
+    const candidateMap = new Map<string, Route>();
     Object.entries(relationConfig).forEach(([key, value]) => {
       const keySplit = key.split("-");
       if (keySplit[0] === r.name) {
@@ -105,9 +105,11 @@ const Home = () => {
             category: datasetConfig[name].category,
             source: 0,
             target: 0,
-            link: value[0].forward.display_label,
-            relationDescription: value[0].description,
             results: [],
+            relation: {
+              link: value[0].forward,
+              description: value[0].description,
+            },
           });
         }
       } else if (value[0].reverse && keySplit[1] === r.name) {
@@ -123,9 +125,11 @@ const Home = () => {
             category: datasetConfig[name].category,
             source: 0,
             target: 0,
-            link: value[0].reverse.display_label,
-            relationDescription: value[0].description,
             results: [],
+            relation: {
+              link: value[0].reverse,
+              description: value[0].description,
+            },
           });
         }
       }
@@ -277,8 +281,10 @@ const Home = () => {
               {
                 name,
                 category: datasetConfig[name].category,
-                link: value[0].forward.display_label,
-                relationDescription: value[0].description,
+                relation: {
+                  link: value[0].forward,
+                  description: value[0].description,
+                },
               },
             ]);
           } else {
@@ -286,8 +292,10 @@ const Home = () => {
               {
                 name,
                 category: datasetConfig[name].category,
-                link: value[0].forward.display_label,
-                relationDescription: value[0].description,
+                relation: {
+                  link: value[0].forward,
+                  description: value[0].description,
+                },
               },
             ]);
           }
@@ -301,8 +309,10 @@ const Home = () => {
               {
                 name,
                 category: datasetConfig[name].category,
-                link: value[0].reverse.display_label,
-                relationDescription: value[0].description,
+                relation: {
+                  link: value[0].reverse,
+                  description: value[0].description,
+                },
               },
             ]);
           } else if (!candidateTempMapList[0].has(name)) {
@@ -310,8 +320,10 @@ const Home = () => {
               {
                 name,
                 category: datasetConfig[name].category,
-                link: value[0].reverse.display_label,
-                relationDescription: value[0].description,
+                relation: {
+                  link: value[0].reverse,
+                  description: value[0].description,
+                },
               },
             ]);
           }
@@ -331,8 +343,10 @@ const Home = () => {
                 {
                   name,
                   category: datasetConfig[name].category,
-                  link: value[0].forward.display_label,
-                  relationDescription: value[0].description,
+                  relation: {
+                    link: value[0].forward,
+                    description: value[0].description,
+                  },
                 },
               ]);
             } else {
@@ -341,8 +355,10 @@ const Home = () => {
                 {
                   name,
                   category: datasetConfig[name].category,
-                  link: value[0].forward.display_label,
-                  relationDescription: value[0].description,
+                  relation: {
+                    link: value[0].forward,
+                    description: value[0].description,
+                  },
                 },
               ]);
             }
@@ -360,8 +376,10 @@ const Home = () => {
                 {
                   name,
                   category: datasetConfig[name].category,
-                  link: value[0].reverse.display_label,
-                  relationDescription: value[0].description,
+                  relation: {
+                    link: value[0].reverse,
+                    description: value[0].description,
+                  },
                 },
               ]);
             } else if (!candidateTempMapList[1].has(`${r[0].name}-${name}`)) {
@@ -370,8 +388,10 @@ const Home = () => {
                 {
                   name,
                   category: datasetConfig[name].category,
-                  link: value[0].reverse.display_label,
-                  relationDescription: value[0].description,
+                  relation: {
+                    link: value[0].reverse,
+                    description: value[0].description,
+                  },
                 },
               ]);
             }
@@ -397,8 +417,10 @@ const Home = () => {
                 {
                   name,
                   category: datasetConfig[name].category,
-                  link: value[0].forward.display_label,
-                  relationDescription: value[0].description,
+                  relation: {
+                    link: value[0].forward,
+                    description: value[0].description,
+                  },
                 },
               ]);
             }
@@ -417,8 +439,10 @@ const Home = () => {
                 {
                   name,
                   category: datasetConfig[name].category,
-                  link: value[0].reverse.display_label,
-                  relationDescription: value[0].description,
+                  relation: {
+                    link: value[0].reverse,
+                    description: value[0].description,
+                  },
                 },
               ]);
             }

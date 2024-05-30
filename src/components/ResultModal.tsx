@@ -89,7 +89,7 @@ const ResultModal = ({ setIsShowResultModal, ...props }: Props) => {
                       <div className="modal__path__frame__item" key={i}>
                         {i !== 0 && (
                           <div className="path_label white" id={`link-${i}`}>
-                            {v.link}
+                            {v.relation.link.display_label}
                           </div>
                         )}
                         <div
