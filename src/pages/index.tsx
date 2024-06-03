@@ -47,11 +47,12 @@ const Home = () => {
         } else if (activeTab === "ANNOTATE") {
         } else if (isUseKeepRoute) {
           const r = route;
-          let nodesList: any[][] = [];
+          const nodesList = databaseNodesList.slice();
           for (let i = 0; i < routerRoute.length; i++) {
-            nodesList = await createNodesList(r, databaseNodesList);
+            const result = await createNodesList(r);
+            nodesList.push(result);
             if (i < routerRoute.length - 1) {
-              const v = databaseNodesList[i + 1].find(
+              const v = nodesList[i + 1].find(
                 (element) => element.name === routerRoute[i + 1],
               );
               if (v === undefined || v.target === 0) {
@@ -66,10 +67,9 @@ const Home = () => {
           setRouterRoute(r.map((v) => v.name));
           setIsUseKeepRoute(false);
         } else {
-          const nodesList = await createNodesList(
-            route,
-            databaseNodesList.slice(0, route.length),
-          );
+          const nodesList = databaseNodesList.slice(0, route.length);
+          const result = await createNodesList(route);
+          nodesList.push(result);
 
           setDatabaseNodesList(nodesList);
         }
@@ -91,7 +91,7 @@ const Home = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [datasetConfig]);
 
-  const createNodesList = async (routeTemp: Route[], nodesList: any[][]) => {
+  const createNodesList = async (routeTemp: Route[]) => {
     const beforeRouteName = routeTemp[routeTemp.length - 1].name;
     const candidateList: Route[] = [];
     Object.entries(relationConfig).forEach(([key, valueList]) => {
@@ -136,7 +136,7 @@ const Home = () => {
     });
 
     NProgress.start();
-    nodesList[routeTemp.length] = await Promise.all(
+    const result = await Promise.all(
       candidateList.map(async (v) => {
         const r = [routeTemp[routeTemp.length - 1], v];
         const ids = routeTemp[routeTemp.length - 1].results;
@@ -185,7 +185,7 @@ const Home = () => {
     );
     NProgress.done();
 
-    return nodesList.slice();
+    return result;
   };
 
   /**
