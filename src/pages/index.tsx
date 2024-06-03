@@ -115,8 +115,7 @@ const Home = () => {
         keySplit[1] === beforeRouteName &&
         !relationConfig[`${keySplit[1]}-${keySplit[0]}`]
       ) {
-        // ↑configに逆変換が許可されていて順方向の定義が無ければ、逆方向の変換を候補に含める
-        // 逆方向の変換
+        // configに逆変換が許可されていて順方向の定義が無ければ、逆方向の変換を候補に含める
         valueList.forEach((value) => {
           if (value.reverse) {
             candidateList.push({
@@ -270,186 +269,212 @@ const Home = () => {
 
   const lookupRoute = async (target: string) => {
     const r = route[route.length - 1];
-    const candidateMap = new Map<string, any[]>();
-    const candidateTempMapList = [
-      new Map<string, any[]>(),
-      new Map<string, any[]>(),
-    ];
+    const candidateList: NavigateRoute[][] = [];
+    const candidateTempList: NavigateRoute[][][] = [[], [], []];
 
-    Object.entries(relationConfig).forEach(([key, value]) => {
+    Object.entries(relationConfig).forEach(([key, valueList]) => {
       const keySplit = key.split("-");
       if (keySplit[0] === r.name) {
         const name = keySplit[1];
         if (!route.some((w) => w.name === name)) {
           if (name === target) {
-            candidateMap.set(name, [
-              {
-                name,
-                category: datasetConfig[name].category,
-                relation: {
-                  link: value[0].forward,
-                  description: value[0].description,
+            valueList.forEach((value) => {
+              candidateList.push([
+                {
+                  name,
+                  category: datasetConfig[name].category,
+                  relation: {
+                    link: value.forward,
+                    description: value.description,
+                  },
                 },
-              },
-            ]);
+              ]);
+            });
           } else {
-            candidateTempMapList[0].set(name, [
-              {
-                name,
-                category: datasetConfig[name].category,
-                relation: {
-                  link: value[0].forward,
-                  description: value[0].description,
+            valueList.forEach((value) => {
+              candidateTempList[0].push([
+                {
+                  name,
+                  category: datasetConfig[name].category,
+                  relation: {
+                    link: value.forward,
+                    description: value.description,
+                  },
                 },
-              },
-            ]);
+              ]);
+            });
           }
         }
-      } else if (value[0].reverse && keySplit[1] === r.name) {
-        // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
+      } else if (
+        keySplit[1] === r.name &&
+        !relationConfig[`${keySplit[1]}-${keySplit[0]}`]
+      ) {
+        // configに逆変換が許可されていて順方向の定義が無ければ、逆方向の変換を候補に含める
         const name = keySplit[0];
-        if (!candidateMap.has(name) && !route.some((w) => w.name === name)) {
+        if (!route.some((w) => w.name === name)) {
           if (name === target) {
-            candidateMap.set(name, [
-              {
-                name,
-                category: datasetConfig[name].category,
-                relation: {
-                  link: value[0].reverse,
-                  description: value[0].description,
+            valueList.forEach((value) => {
+              if (value.reverse) {
+                candidateList.push([
+                  {
+                    name,
+                    category: datasetConfig[name].category,
+                    relation: {
+                      link: value.reverse,
+                      description: value.description,
+                    },
+                  },
+                ]);
+              }
+            });
+          } else {
+            valueList.forEach((value) => {
+              candidateTempList[0].push([
+                {
+                  name,
+                  category: datasetConfig[name].category,
+                  relation: {
+                    link: value.reverse,
+                    description: value.description,
+                  },
                 },
-              },
-            ]);
-          } else if (!candidateTempMapList[0].has(name)) {
-            candidateTempMapList[0].set(name, [
-              {
-                name,
-                category: datasetConfig[name].category,
-                relation: {
-                  link: value[0].reverse,
-                  description: value[0].description,
-                },
-              },
-            ]);
+              ]);
+            });
           }
         }
       }
     });
 
-    candidateTempMapList[0].forEach((r) => {
-      Object.entries(relationConfig).forEach(([key, value]) => {
+    candidateTempList[0].forEach((r) => {
+      Object.entries(relationConfig).forEach(([key, valueList]) => {
         const keySplit = key.split("-");
         if (keySplit[0] === r[0].name) {
           const name = keySplit[1];
           if (!route.some((w) => w.name === name)) {
             if (name === target) {
-              candidateMap.set(`${r[0].name}-${name}`, [
-                r[0],
-                {
-                  name,
-                  category: datasetConfig[name].category,
-                  relation: {
-                    link: value[0].forward,
-                    description: value[0].description,
+              valueList.forEach((value) => {
+                candidateList.push([
+                  r[0],
+                  {
+                    name,
+                    category: datasetConfig[name].category,
+                    relation: {
+                      link: value.forward,
+                      description: value.description,
+                    },
                   },
-                },
-              ]);
+                ]);
+              });
             } else {
-              candidateTempMapList[1].set(`${r[0].name}-${name}`, [
-                r[0],
-                {
-                  name,
-                  category: datasetConfig[name].category,
-                  relation: {
-                    link: value[0].forward,
-                    description: value[0].description,
+              valueList.forEach((value) => {
+                candidateTempList[1].push([
+                  r[0],
+                  {
+                    name,
+                    category: datasetConfig[name].category,
+                    relation: {
+                      link: value.forward,
+                      description: value.description,
+                    },
                   },
-                },
-              ]);
+                ]);
+              });
             }
           }
-        } else if (value[0].reverse && keySplit[1] === r[0].name) {
-          // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
+        } else if (
+          keySplit[1] === r[0].name &&
+          !relationConfig[`${keySplit[1]}-${keySplit[0]}`]
+        ) {
           const name = keySplit[0];
-          if (
-            !candidateMap.has(`${r[0].name}-${name}`) &&
-            !route.some((w) => w.name === name)
-          ) {
+          if (!route.some((w) => w.name === name)) {
             if (name === target) {
-              candidateMap.set(`${r[0].name}-${name}`, [
-                r[0],
-                {
-                  name,
-                  category: datasetConfig[name].category,
-                  relation: {
-                    link: value[0].reverse,
-                    description: value[0].description,
-                  },
-                },
-              ]);
-            } else if (!candidateTempMapList[1].has(`${r[0].name}-${name}`)) {
-              candidateTempMapList[1].set(`${r[0].name}-${name}`, [
-                r[0],
-                {
-                  name,
-                  category: datasetConfig[name].category,
-                  relation: {
-                    link: value[0].reverse,
-                    description: value[0].description,
-                  },
-                },
-              ]);
+              valueList.forEach((value) => {
+                if (value.reverse) {
+                  candidateList.push([
+                    r[0],
+                    {
+                      name,
+                      category: datasetConfig[name].category,
+                      relation: {
+                        link: value.reverse,
+                        description: value.description,
+                      },
+                    },
+                  ]);
+                }
+              });
+            } else {
+              valueList.forEach((value) => {
+                if (value.reverse) {
+                  candidateTempList[1].push([
+                    r[0],
+                    {
+                      name,
+                      category: datasetConfig[name].category,
+                      relation: {
+                        link: value.reverse,
+                        description: value.description,
+                      },
+                    },
+                  ]);
+                }
+              });
             }
           }
         }
       });
     });
 
-    if (!candidateMap.size && !candidateTempMapList[1].size) {
+    if (!candidateList.length && !candidateTempList[1].length) {
       return;
     }
 
-    candidateTempMapList[1].forEach((r) => {
-      Object.entries(relationConfig).forEach(([key, value]) => {
+    candidateTempList[1].forEach((r) => {
+      Object.entries(relationConfig).forEach(([key, valueList]) => {
         const keySplit = key.split("-");
         if (keySplit[0] === r[1].name) {
           const name = keySplit[1];
           if (!route.some((w) => w.name === name)) {
             if (name === target) {
-              candidateMap.set(`${r[0].name}-${r[1].name}-${name}`, [
-                r[0],
-                r[1],
-                {
-                  name,
-                  category: datasetConfig[name].category,
-                  relation: {
-                    link: value[0].forward,
-                    description: value[0].description,
+              valueList.forEach((value) => {
+                candidateList.push([
+                  r[0],
+                  r[1],
+                  {
+                    name,
+                    category: datasetConfig[name].category,
+                    relation: {
+                      link: value.forward,
+                      description: value.description,
+                    },
                   },
-                },
-              ]);
+                ]);
+              });
             }
           }
-        } else if (value[0].reverse && keySplit[1] === r[1].name) {
-          // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
+        } else if (
+          keySplit[1] === r[1].name &&
+          !relationConfig[`${keySplit[1]}-${keySplit[0]}`]
+        ) {
           const name = keySplit[0];
-          if (
-            !candidateMap.has(`${r[0].name}-${r[1].name}-${name}`) &&
-            !route.some((w) => w.name === name)
-          ) {
+          if (!route.some((w) => w.name === name)) {
             if (name === target) {
-              candidateMap.set(`${r[0].name}-${r[1].name}-${name}`, [
-                r[0],
-                r[1],
-                {
-                  name,
-                  category: datasetConfig[name].category,
-                  relation: {
-                    link: value[0].reverse,
-                    description: value[0].description,
-                  },
-                },
-              ]);
+              valueList.forEach((value) => {
+                if (value.reverse) {
+                  candidateList.push([
+                    r[0],
+                    r[1],
+                    {
+                      name,
+                      category: datasetConfig[name].category,
+                      relation: {
+                        link: value.reverse,
+                        description: value.description,
+                      },
+                    },
+                  ]);
+                }
+              });
             }
           }
         }
@@ -459,15 +484,16 @@ const Home = () => {
     NProgress.start();
     const result = (
       await Promise.all(
-        Array.from(candidateMap.values(), async (v) => {
+        candidateList.map(async (v) => {
           // 変換結果を取得
           const convert = await executeQuery({
+            // @ts-expect-error
             route: route.concat(v),
             ids: ids,
             report: "target",
             limit: 10000,
           }).catch(() => null);
-          NProgress.inc(1 / candidateMap.size);
+          NProgress.inc(1 / candidateList.length);
 
           if (convert === null) {
             // 変換に失敗したとき
