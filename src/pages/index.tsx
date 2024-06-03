@@ -92,62 +92,52 @@ const Home = () => {
   }, [datasetConfig]);
 
   const createNodesList = async (routeTemp: Route[], nodesList: any[][]) => {
-    const r = routeTemp[routeTemp.length - 1];
-    const candidateMap = new Map<string, Route[]>();
+    const beforeRouteName = routeTemp[routeTemp.length - 1].name;
+    const candidateList: Route[] = [];
     Object.entries(relationConfig).forEach(([key, valueList]) => {
       const keySplit = key.split("-");
-      if (keySplit[0] === r.name) {
-        const name = keySplit[1];
-        if (!routeTemp.find((w) => w.name === name)) {
-          // 順方向の変換
-          candidateMap.set(
-            name,
-            valueList.map((value) => {
-              return {
-                name,
-                category: datasetConfig[name].category,
-                source: 0,
-                target: 0,
-                results: [],
-                relation: {
-                  link: value.forward,
-                  description: value.description,
-                },
-              };
-            }),
-          );
-        }
-      } else if (valueList[0].reverse && keySplit[1] === r.name) {
-        // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
-        const name = keySplit[0];
-        if (
-          !candidateMap.has(name) &&
-          !routeTemp.find((w) => w.name === name)
-        ) {
-          // 逆方向の変換
-          candidateMap.set(
-            name,
-            valueList.map((value) => {
-              return {
-                name,
-                category: datasetConfig[name].category,
-                source: 0,
-                target: 0,
-                results: [],
-                relation: {
-                  link: value.reverse,
-                  description: value.description,
-                },
-              };
-            }),
-          );
-        }
+      if (keySplit[0] === beforeRouteName) {
+        // 順方向の変換
+        valueList.forEach((value) => {
+          candidateList.push({
+            name: keySplit[1],
+            category: datasetConfig[keySplit[1]].category,
+            source: 0,
+            target: 0,
+            results: [],
+            relation: {
+              link: value.forward,
+              description: value.description,
+            },
+          });
+        });
+      } else if (
+        keySplit[1] === beforeRouteName &&
+        !relationConfig[`${keySplit[1]}-${keySplit[0]}`]
+      ) {
+        // ↑configに逆変換が許可されていて順方向の定義が無ければ、逆方向の変換を候補に含める
+        // 逆方向の変換
+        valueList.forEach((value) => {
+          if (value.reverse) {
+            candidateList.push({
+              name: keySplit[0],
+              category: datasetConfig[keySplit[0]].category,
+              source: 0,
+              target: 0,
+              results: [],
+              relation: {
+                link: value.reverse,
+                description: value.description,
+              },
+            });
+          }
+        });
       }
     });
 
     NProgress.start();
     nodesList[routeTemp.length] = await Promise.all(
-      [...candidateMap.values()].flat().map(async (v) => {
+      candidateList.map(async (v) => {
         const r = [routeTemp[routeTemp.length - 1], v];
         const ids = routeTemp[routeTemp.length - 1].results;
         const _v = Object.assign({}, v);
@@ -159,7 +149,7 @@ const Home = () => {
           report: "target",
           limit: 10000,
         }).catch(() => null);
-        NProgress.inc(1 / candidateMap.size);
+        NProgress.inc(1 / candidateList.length);
 
         if (convert === null) {
           _v.message = "ERROR";
