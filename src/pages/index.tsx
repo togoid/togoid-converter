@@ -140,7 +140,7 @@ const Home = () => {
       candidateList.map(async (v) => {
         const r = [routeTemp[routeTemp.length - 1], v];
         const ids = routeTemp[routeTemp.length - 1].results;
-        const _v = Object.assign({}, v);
+        const _v = structuredClone(v);
 
         // 変換結果を取得
         const convert = await executeQuery({
@@ -194,7 +194,7 @@ const Home = () => {
   const searchDatabase = (ids: string[], exampleTarget?: string) => {
     setIds(ids);
 
-    const candidates: any[] = [];
+    const candidateList: Route[] = [];
     ids.forEach((id) => {
       Object.entries(datasetConfig).forEach(([key, value]) => {
         if (
@@ -202,45 +202,47 @@ const Home = () => {
           id.match(value.regex) &&
           Object.keys(relationConfig).some((d) => d.split("-").includes(key))
         ) {
-          const index = candidates.findIndex(
+          const candidate = candidateList.find(
             (databases) => databases.name === key,
           );
-          if (index === -1) {
-            candidates.push({
+          if (candidate) {
+            candidate.target += 1;
+            candidate.results.push(id);
+          } else {
+            candidateList.push({
               name: key,
               category: value.category,
               target: 1,
               results: [id],
             });
-          } else {
-            candidates[index].target += 1;
-            candidates[index].results.push(id);
           }
         }
       });
     });
 
-    if (candidates.length > 0) {
-      setDatabaseNodesList([candidates]);
+    if (candidateList.length) {
+      setDatabaseNodesList([candidateList]);
     } else {
       setDatabaseNodesList([]);
     }
 
     if (exampleTarget) {
       // Examplesで選択したものは必ず見つかる前提
-      setRoute([candidates.find((v) => v.name === exampleTarget)]);
-      setRouterRoute([candidates.find((v) => v.name === exampleTarget).name]);
+      setRoute([candidateList.find((v) => v.name === exampleTarget)!]);
+      setRouterRoute([
+        candidateList.find((v) => v.name === exampleTarget)!.name,
+      ]);
     } else if (
       routerRoute.length &&
-      candidates.some((v) => v.name === routerRoute[0])
+      candidateList.some((v) => v.name === routerRoute[0])
     ) {
       // keepRouteを使用する
-      setRoute([candidates.find((v) => v.name === routerRoute[0])]);
+      setRoute([candidateList.find((v) => v.name === routerRoute[0])!]);
       setIsUseKeepRoute(true);
-    } else if (candidates.length === 1) {
+    } else if (candidateList.length === 1) {
       // listが1件の時は自動で選択する
-      setRoute(candidates);
-      setRouterRoute([candidates[0].name]);
+      setRoute(candidateList);
+      setRouterRoute([candidateList[0].name]);
     } else {
       setRoute([]);
       setRouterRoute([]);
