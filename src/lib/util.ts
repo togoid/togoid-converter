@@ -23,10 +23,13 @@ export const invokeUnparse = (rows: unknown[], extension: "csv" | "tsv") => {
   return PaPa.unparse(rows, { delimiter: delimiterList[extension] });
 };
 
-/**
- * @param {{ route: object[]; ids: string[]; report: string; limit?: number; compact?: boolean }} baseParams
- */
-export const executeQuery = async (baseParams) => {
+export const executeQuery = async (baseParams: {
+  route: Route[];
+  ids: string[];
+  report: string;
+  limit?: number;
+  compact?: boolean;
+}) => {
   const params = new URLSearchParams({
     route: baseParams.route.map((v) => v.name).join(","),
     ids: baseParams.ids.join(","),
