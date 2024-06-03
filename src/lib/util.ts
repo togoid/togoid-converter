@@ -45,12 +45,16 @@ export const executeQuery = async (baseParams) => {
     .then((d) => d.data);
 };
 
-export const executeCountQuery = async (path, ids) => {
+export const executeCountQuery = async (option: {
+  relation: string;
+  ids: string[];
+  link: string;
+}) => {
   return await axios
     .post(
-      `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/count/${path}`,
+      `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/count/${option.relation}`,
       new URLSearchParams({
-        ids: ids,
+        ids: option.ids.join(","),
       }),
     )
     .then((d) => d.data);

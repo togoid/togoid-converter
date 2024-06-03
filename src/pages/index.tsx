@@ -169,9 +169,12 @@ const Home = () => {
         _v.results = convert.results;
         if (_v.results.length) {
           if (_v.results.length < 10000) {
-            const path = `${r[0].name}-${r[1].name}`;
             // 変換結果が0より多く10000未満の時は個数を取得する
-            const count = await executeCountQuery(path, ids).catch(() => null);
+            const count = await executeCountQuery({
+              relation: `${r[0].name}-${r[1].name}`,
+              ids: ids,
+              link: r[1].relation?.link.label,
+            }).catch(() => null);
             if (count === null) {
               _v.message = "ERROR";
             } else {
