@@ -58,6 +58,7 @@ export const executeCountQuery = async (option: {
       `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/count/${option.relation}`,
       new URLSearchParams({
         ids: option.ids.join(","),
+        link: option.link,
       }),
     )
     .then((d) => d.data);
