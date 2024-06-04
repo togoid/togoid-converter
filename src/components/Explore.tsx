@@ -1,8 +1,15 @@
 import { ArrowArea } from "react-arrow-master";
-
 import type { Arrow } from "react-arrow-master";
 
-const Explore = (props: any) => {
+type Props = {
+  databaseNodesList: any[][];
+  route: Route[];
+  ids: string[];
+  setRoute: Function;
+  setRouterRoute: Function;
+};
+
+const Explore = (props: Props) => {
   const candidatePathList = useMemo(() => {
     const candidatePathList: Arrow[] = [];
     props.databaseNodesList.forEach((nodes, i) => {
@@ -12,7 +19,9 @@ const Explore = (props: any) => {
           ...mergePathStyle(
             `from${i - 1}-${props.route[i - 1]?.relation?.link?.label}-${props.route[i - 1].name}`,
             `to${i}-${v.relation.link.label}-${v.name}`,
-            props.route[i] && props.route[i].name === v.name,
+            props.route[i] &&
+              props.route[i].name === v.name &&
+              props.route[i].relation?.link.label === v.relation.link.label,
           ),
         );
       });
@@ -23,6 +32,7 @@ const Explore = (props: any) => {
   }, [props.databaseNodesList]);
 
   const selectDatabase = (database, i) => {
+    console.log(database);
     const r = props.route.slice(0, i);
     r[i] = database;
     props.setRoute(r);
