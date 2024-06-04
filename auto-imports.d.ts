@@ -37,7 +37,7 @@ declare global {
   const atomWithReducer: typeof import('jotai/utils')['atomWithReducer']
   const atomWithReset: typeof import('jotai/utils')['atomWithReset']
   const atomWithStorage: typeof import('jotai/utils')['atomWithStorage']
-  const categories: typeof import('./src/lib/setting')['categories']
+  const categoryColor: typeof import('./src/lib/setting')['categoryColor']
   const colorLegendList: typeof import('./src/lib/setting')['colorLegendList']
   const createJSONStorage: typeof import('jotai/utils')['createJSONStorage']
   const createRef: typeof import('react')['createRef']

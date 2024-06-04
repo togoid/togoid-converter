@@ -1,5 +1,4 @@
 type Route = {
-  category: string;
   name: string;
   results: string[];
   target: number;
@@ -9,7 +8,6 @@ type Route = {
 };
 
 type NavigateRoute = {
-  category: string;
   name: string;
   // results: string[];
   target?: number;

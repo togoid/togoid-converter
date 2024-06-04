@@ -69,13 +69,7 @@ const InformationModal = ({ setIsShowInfomationModal, ...props }: Props) => {
             {[...datasetConfig[props.database].linkTo].map(([v, count], i) => (
               <div
                 className="path_label small green"
-                style={{
-                  // @ts-expect-error
-                  backgroundColor: categories[datasetConfig[v].category]
-                    ? // @ts-expect-error
-                      categories[datasetConfig[v].category].color
-                    : null,
-                }}
+                style={{ backgroundColor: datasetConfig[v].color }}
                 key={i}
               >
                 {datasetConfig[v].label}

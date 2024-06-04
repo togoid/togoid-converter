@@ -101,7 +101,6 @@ const Home = () => {
         valueList.forEach((value) => {
           candidateList.push({
             name: keySplit[1],
-            category: datasetConfig[keySplit[1]].category,
             source: 0,
             target: 0,
             results: [],
@@ -120,7 +119,6 @@ const Home = () => {
           if (value.reverse) {
             candidateList.push({
               name: keySplit[0],
-              category: datasetConfig[keySplit[0]].category,
               source: 0,
               target: 0,
               results: [],
@@ -210,7 +208,6 @@ const Home = () => {
           } else {
             candidateList.push({
               name: key,
-              category: value.category,
               target: 1,
               results: [id],
             });
@@ -282,7 +279,6 @@ const Home = () => {
               candidateList.push([
                 {
                   name,
-                  category: datasetConfig[name].category,
                   relation: {
                     link: value.forward,
                     description: value.description,
@@ -295,7 +291,6 @@ const Home = () => {
               candidateTempList[0].push([
                 {
                   name,
-                  category: datasetConfig[name].category,
                   relation: {
                     link: value.forward,
                     description: value.description,
@@ -318,7 +313,6 @@ const Home = () => {
                 candidateList.push([
                   {
                     name,
-                    category: datasetConfig[name].category,
                     relation: {
                       link: value.reverse,
                       description: value.description,
@@ -332,7 +326,6 @@ const Home = () => {
               candidateTempList[0].push([
                 {
                   name,
-                  category: datasetConfig[name].category,
                   relation: {
                     link: value.reverse,
                     description: value.description,
@@ -357,7 +350,6 @@ const Home = () => {
                   r[0],
                   {
                     name,
-                    category: datasetConfig[name].category,
                     relation: {
                       link: value.forward,
                       description: value.description,
@@ -371,7 +363,6 @@ const Home = () => {
                   r[0],
                   {
                     name,
-                    category: datasetConfig[name].category,
                     relation: {
                       link: value.forward,
                       description: value.description,
@@ -394,7 +385,6 @@ const Home = () => {
                     r[0],
                     {
                       name,
-                      category: datasetConfig[name].category,
                       relation: {
                         link: value.reverse,
                         description: value.description,
@@ -410,7 +400,6 @@ const Home = () => {
                     r[0],
                     {
                       name,
-                      category: datasetConfig[name].category,
                       relation: {
                         link: value.reverse,
                         description: value.description,
@@ -442,7 +431,6 @@ const Home = () => {
                   r[1],
                   {
                     name,
-                    category: datasetConfig[name].category,
                     relation: {
                       link: value.forward,
                       description: value.description,
@@ -466,7 +454,6 @@ const Home = () => {
                     r[1],
                     {
                       name,
-                      category: datasetConfig[name].category,
                       relation: {
                         link: value.reverse,
                         description: value.description,
