@@ -520,7 +520,7 @@ const Home = () => {
     setDatabaseNodesList(nodesList);
   };
 
-  const changeIndexTab = (name) => {
+  const changeIndexTab = (name: string) => {
     if (
       (previousSearchTab === "NAVIGATE" && name === "EXPLORE") ||
       (previousSearchTab === "EXPLORE" && name === "NAVIGATE")
