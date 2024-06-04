@@ -32,7 +32,6 @@ const Explore = (props: Props) => {
   }, [props.databaseNodesList]);
 
   const selectDatabase = (database, i) => {
-    console.log(database);
     const r = props.route.slice(0, i);
     r[i] = database;
     props.setRoute(r);
