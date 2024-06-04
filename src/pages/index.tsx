@@ -49,7 +49,7 @@ const Home = () => {
           const r = route;
           const nodesList = databaseNodesList.slice();
           for (let i = 0; i < routerRoute.length; i++) {
-            const result = await createNodesList(r);
+            const result = await createNodesList(r[r.length - 1]);
             nodesList.push(result);
             if (i < routerRoute.length - 1) {
               const v = nodesList[i + 1].find(
@@ -68,7 +68,7 @@ const Home = () => {
           setIsUseKeepRoute(false);
         } else {
           const nodesList = databaseNodesList.slice(0, route.length);
-          const result = await createNodesList(route);
+          const result = await createNodesList(route[route.length - 1]);
           nodesList.push(result);
 
           setDatabaseNodesList(nodesList);
@@ -91,12 +91,11 @@ const Home = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [datasetConfig]);
 
-  const createNodesList = async (routeTemp: Route[]) => {
-    const beforeRouteName = routeTemp[routeTemp.length - 1].name;
+  const createNodesList = async (beforeRoute: Route) => {
     const candidateList: Route[] = [];
     Object.entries(relationConfig).forEach(([key, valueList]) => {
       const keySplit = key.split("-");
-      if (keySplit[0] === beforeRouteName) {
+      if (keySplit[0] === beforeRoute.name) {
         // 順方向の変換
         valueList.forEach((value) => {
           candidateList.push({
@@ -111,7 +110,7 @@ const Home = () => {
           });
         });
       } else if (
-        keySplit[1] === beforeRouteName &&
+        keySplit[1] === beforeRoute.name &&
         !relationConfig[`${keySplit[1]}-${keySplit[0]}`]
       ) {
         // configに逆変換が許可されていて順方向の定義が無ければ、逆方向の変換を候補に含める
@@ -135,32 +134,28 @@ const Home = () => {
     NProgress.start();
     const result = await Promise.all(
       candidateList.map(async (v) => {
-        const r = [routeTemp[routeTemp.length - 1], v];
-        const ids = routeTemp[routeTemp.length - 1].results;
-        const _v = structuredClone(v);
-
         // 変換結果を取得
         const convert = await executeQuery({
-          route: r,
-          ids: ids,
+          route: [beforeRoute, v],
+          ids: beforeRoute.results,
           report: "target",
           limit: 10000,
         }).catch(() => null);
         NProgress.inc(1 / candidateList.length);
 
+        const _v = structuredClone(v);
         if (convert === null) {
           _v.message = "ERROR";
           return _v;
         }
 
-        _v.results = convert.results;
-        if (_v.results.length) {
-          if (_v.results.length < 10000) {
+        if (convert.results.length) {
+          if (convert.results.length < 10000) {
             // 変換結果が0より多く10000未満の時は個数を取得する
             const count = await executeCountQuery({
-              relation: `${r[0].name}-${r[1].name}`,
-              ids: ids,
-              link: r[1].relation?.link.label,
+              relation: `${beforeRoute.name}-${v.name}`,
+              ids: beforeRoute.results,
+              link: v.relation?.link.label,
             }).catch(() => null);
             if (count === null) {
               _v.message = "ERROR";
@@ -177,6 +172,8 @@ const Home = () => {
           _v.source = 0;
           _v.target = 0;
         }
+
+        _v.results = convert.results;
         return _v;
       }),
     );
