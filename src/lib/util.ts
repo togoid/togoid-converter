@@ -31,6 +31,11 @@ export const executeQuery = async (baseParams: {
   compact?: boolean;
 }) => {
   const params = new URLSearchParams({
+    // route: baseParams.route
+    //   .map((v, i) =>
+    //     i === 0 ? v.name : `,${v.relation?.link.label},${v.name}`,
+    //   )
+    //   .join(","),
     route: baseParams.route.map((v) => v.name).join(","),
     ids: baseParams.ids.join(","),
     report: baseParams.report,
