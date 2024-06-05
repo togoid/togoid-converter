@@ -9,15 +9,15 @@ const previewModeList = new Map([
   ["full", "All including unconverted IDs"],
 ]);
 
-const createPrefixList = (tableHeading) => {
+const createPrefixList = (tableHeading: any[]) => {
   return tableHeading.map((v, i) => {
     v["index"] = i;
     // formatがあれば使う なければ空配列で返す
-    return v.format
-      ? v.format.map((v) => {
-          return { label: v.replace("%s", ""), value: v };
-        })
-      : [];
+    return (
+      v.format?.map((v: any) => {
+        return { label: v.replace("%s", ""), value: v };
+      }) ?? []
+    );
   });
 };
 
