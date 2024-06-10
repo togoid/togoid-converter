@@ -32,9 +32,7 @@ export const executeQuery = async (baseParams: {
 }) => {
   const params = new URLSearchParams({
     route: baseParams.route
-      .map((v, i) =>
-        i === 0 ? v.name : `,${v.relation?.link.label},${v.name}`,
-      )
+      .map((v, i) => (i === 0 ? v.name : `${v.relation?.link.label},${v.name}`))
       .join(","),
     ids: baseParams.ids.join(","),
     report: baseParams.report,
