@@ -178,12 +178,7 @@ const Navigate = (props) => {
                             {v ? (
                               <>
                                 {i !== 0 && (
-                                  <p
-                                    id={`label${i}-${j}`}
-                                    className="label_list label_list__item label_list__item__inner"
-                                  >
-                                    {v.link}
-                                  </p>
+                                  <NavigateResultRelation i={i} j={j} v={v} />
                                 )}
                                 <NavigateResultItem
                                   i={i}

@@ -1,16 +1,22 @@
 import { useRouter } from "next/router";
 import NProgress from "nprogress";
+import { useUpdateEffect } from "react-use";
 
 const Home = () => {
   const router = useRouter();
 
-  const [ids, setIds] = useState<string[]>(
-    router.asPath.match(new RegExp(`[&?]ids=(.*?)(&|$)`))?.[1].split("%2C") ??
-      [],
+  const [ids, setIds] = useState(
+    router.asPath
+      .match(new RegExp(`[&?]ids=(.*?)(&|$|#)`))?.[1]
+      .split("%2C")
+      .filter((v) => v) ?? [],
   );
+
   const [routerRoute, setRouterRoute] = useState(
-    router.asPath.match(new RegExp(`[&?]route=(.*?)(&|$)`))?.[1].split("%2C") ??
-      [],
+    router.asPath
+      .match(new RegExp(`[&?]route=(.*?)(&|$|#)`))?.[1]
+      .split("%2C")
+      .filter((v) => v) ?? [],
   );
   const [activeTab, setActiveTab] = useState("EXPLORE");
   const [databaseNodesList, setDatabaseNodesList] = useState<any[][]>([]);
@@ -20,7 +26,7 @@ const Home = () => {
 
   const { datasetConfig, relationConfig } = useConfig(true);
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     router.replace({
       query: {
         route: routerRoute.length ? routerRoute.join(",") : undefined,
@@ -87,7 +93,7 @@ const Home = () => {
 
   const createNodesList = async (routeTemp: Route[], nodesList: any[][]) => {
     const r = routeTemp[routeTemp.length - 1];
-    const candidateMap = new Map();
+    const candidateMap = new Map<string, Route>();
     Object.entries(relationConfig).forEach(([key, value]) => {
       const keySplit = key.split("-");
       if (keySplit[0] === r.name) {
@@ -99,8 +105,13 @@ const Home = () => {
             category: datasetConfig[name].category,
             source: 0,
             target: 0,
-            link: value.link.forward.label,
             results: [],
+            relation: {
+              link: {
+                display_label: value.link.forward.label,
+              },
+              description: value.description,
+            },
           });
         }
       } else if (value.link.reverse && keySplit[1] === r.name) {
@@ -116,8 +127,13 @@ const Home = () => {
             category: datasetConfig[name].category,
             source: 0,
             target: 0,
-            link: value.link.reverse.label,
             results: [],
+            relation: {
+              link: {
+                display_label: value.link.reverse.label,
+              },
+              description: value.description,
+            },
           });
         }
       }
@@ -178,7 +194,6 @@ const Home = () => {
    */
   const searchDatabase = (ids: string[], exampleTarget?: string) => {
     setIds(ids);
-    router.replace({ query: ids.length ? { ids: ids.join(",") } : undefined });
 
     const candidates: any[] = [];
     ids.forEach((id) => {
@@ -270,7 +285,12 @@ const Home = () => {
               {
                 name,
                 category: datasetConfig[name].category,
-                link: value.link.forward.label,
+                relation: {
+                  link: {
+                    display_label: value.link.forward.label,
+                  },
+                  description: value.description,
+                },
               },
             ]);
           } else {
@@ -278,7 +298,12 @@ const Home = () => {
               {
                 name,
                 category: datasetConfig[name].category,
-                link: value.link.forward.label,
+                relation: {
+                  link: {
+                    display_label: value.link.forward.label,
+                  },
+                  description: value.description,
+                },
               },
             ]);
           }
@@ -292,7 +317,12 @@ const Home = () => {
               {
                 name,
                 category: datasetConfig[name].category,
-                link: value.link.reverse.label,
+                relation: {
+                  link: {
+                    display_label: value.link.reverse.label,
+                  },
+                  description: value.description,
+                },
               },
             ]);
           } else if (!candidateTempMapList[0].has(name)) {
@@ -300,7 +330,12 @@ const Home = () => {
               {
                 name,
                 category: datasetConfig[name].category,
-                link: value.link.reverse.label,
+                relation: {
+                  link: {
+                    display_label: value.link.reverse.label,
+                  },
+                  description: value.description,
+                },
               },
             ]);
           }
@@ -320,7 +355,12 @@ const Home = () => {
                 {
                   name,
                   category: datasetConfig[name].category,
-                  link: value.link.forward.label,
+                  relation: {
+                    link: {
+                      display_label: value.link.forward.label,
+                    },
+                    description: value.description,
+                  },
                 },
               ]);
             } else {
@@ -329,7 +369,12 @@ const Home = () => {
                 {
                   name,
                   category: datasetConfig[name].category,
-                  link: value.link.forward.label,
+                  relation: {
+                    link: {
+                      display_label: value.link.forward.label,
+                    },
+                    description: value.description,
+                  },
                 },
               ]);
             }
@@ -347,7 +392,12 @@ const Home = () => {
                 {
                   name,
                   category: datasetConfig[name].category,
-                  link: value.link.reverse.label,
+                  relation: {
+                    link: {
+                      display_label: value.link.reverse.label,
+                    },
+                    description: value.description,
+                  },
                 },
               ]);
             } else if (!candidateTempMapList[1].has(`${r[0].name}-${name}`)) {
@@ -356,7 +406,12 @@ const Home = () => {
                 {
                   name,
                   category: datasetConfig[name].category,
-                  link: value.link.reverse.label,
+                  relation: {
+                    link: {
+                      display_label: value.link.reverse.label,
+                    },
+                    description: value.description,
+                  },
                 },
               ]);
             }
@@ -382,7 +437,12 @@ const Home = () => {
                 {
                   name,
                   category: datasetConfig[name].category,
-                  link: value.link.forward.label,
+                  relation: {
+                    link: {
+                      display_label: value.link.forward.label,
+                    },
+                    description: value.description,
+                  },
                 },
               ]);
             }
@@ -401,7 +461,12 @@ const Home = () => {
                 {
                   name,
                   category: datasetConfig[name].category,
-                  link: value.link.reverse.label,
+                  relation: {
+                    link: {
+                      display_label: value.link.reverse.label,
+                    },
+                    description: value.description,
+                  },
                 },
               ]);
             }
