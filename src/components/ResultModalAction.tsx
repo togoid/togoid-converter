@@ -348,6 +348,13 @@ const ResultModalAction = (props) => {
                         ))}
                         <option value="url">URL</option>
                       </select>
+
+                      <input
+                        id={"showLabels" + i}
+                        type="checkbox"
+                        className="c-switch"
+                      />
+                      <label htmlFor={"showLabels" + i}>Show Labels</label>
                     </fieldset>
                   </th>
                 );
