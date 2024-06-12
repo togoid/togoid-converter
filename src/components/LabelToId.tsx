@@ -117,7 +117,7 @@ const LabelToId = () => {
                       option: (css) => ({ ...css, width: "300px" }),
                     }}
                     options={taxonomyList.map((v) => ({
-                      value: "",
+                      value: v[0],
                       label: `${v[1]} (ID: ${v[0]}, ${v[2]}, ${v[3]})`,
                     }))}
                     placeholder="Select a species"
