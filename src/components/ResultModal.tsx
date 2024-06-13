@@ -97,11 +97,7 @@ const ResultModal = ({ setIsShowResultModal, ...props }: Props) => {
                           className="path_label green"
                           id={`label-${i}`}
                           style={{
-                            // @ts-expect-error
-                            backgroundColor: categories[v.category]
-                              ? // @ts-expect-error
-                                categories[v.category].color
-                              : null,
+                            backgroundColor: datasetConfig[v.name].color,
                           }}
                         >
                           {i !== 0 && props.convertedCount[i].source && (

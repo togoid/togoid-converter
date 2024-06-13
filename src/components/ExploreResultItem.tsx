@@ -48,7 +48,7 @@ const ExploreResultItem = (props) => {
   return (
     <div
       ref={ref}
-      id={`to${props.i}-${props.v.name}`}
+      id={`to${props.i}-${props.v.relation?.link.label}-${props.v.name}`}
       className={`radio green ${
         props.i === 0 || props.v.target > 0 ? null : "not_found"
       }`}
@@ -56,26 +56,30 @@ const ExploreResultItem = (props) => {
       <input
         type="radio"
         name={`result${props.i}`}
-        id={`result${props.i}-${props.v.name}`}
+        id={`result${props.i}-${props.v.relation?.link.label}-${props.v.name}`}
         className="radio__input"
         checked={Boolean(
-          props.route[props.i] && props.route[props.i].name === props.v.name,
+          props.route[props.i] &&
+            props.route[props.i].name === props.v.name &&
+            props.route[props.i].relation?.link.label ===
+              props.v.relation?.link.label,
         )}
         onChange={() => props.selectDatabase(props.v, props.i)}
         disabled={props.i > 0 && !props.v.target}
       />
       <label
-        htmlFor={`result${props.i}-${props.v.name}`}
+        htmlFor={`result${props.i}-${props.v.relation?.link.label}-${props.v.name}`}
         className="radio__large_label green"
         style={{
           backgroundColor: isActionButtonVisible
             ? "#000000"
-            : categories[props.v.category]
-              ? categories[props.v.category].color
-              : null,
+            : datasetConfig[props.v.name].color,
         }}
       >
-        <div id={`from${props.i}-${props.v.name}`} className="dummy" />
+        <div
+          id={`from${props.i}-${props.v.relation?.link.label}-${props.v.name}`}
+          className="dummy"
+        />
         <p
           className="radio__large_label__inner"
           style={{
