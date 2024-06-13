@@ -20,6 +20,7 @@ declare global {
   const LabelToId: typeof import('./src/components/LabelToId')['default']
   const LabelToIdSpecies: typeof import('./src/components/LabelToIdSpecies')['default']
   const LabelToIdTable: typeof import('./src/components/LabelToIdTable')['default']
+  const LabelToIdThreshold: typeof import('./src/components/LabelToIdThreshold')['default']
   const LanguageButton: typeof import('./src/components/LanguageButton')['default']
   const Navigate: typeof import('./src/components/Navigate')['default']
   const NavigateResultItem: typeof import('./src/components/NavigateResultItem')['default']
