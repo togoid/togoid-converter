@@ -23,12 +23,17 @@ export const invokeUnparse = (rows: unknown[], extension: "csv" | "tsv") => {
   return PaPa.unparse(rows, { delimiter: delimiterList[extension] });
 };
 
-/**
- * @param {{ route: object[]; ids: string[]; report: string; limit?: number; compact?: boolean }} baseParams
- */
-export const executeQuery = async (baseParams) => {
+export const executeQuery = async (baseParams: {
+  route: Route[];
+  ids: string[];
+  report: string;
+  limit?: number;
+  compact?: boolean;
+}) => {
   const params = new URLSearchParams({
-    route: baseParams.route.map((v) => v.name).join(","),
+    route: baseParams.route
+      .map((v, i) => (i === 0 ? v.name : `${v.relation?.link.label},${v.name}`))
+      .join(","),
     ids: baseParams.ids.join(","),
     report: baseParams.report,
     format: "json",
@@ -45,12 +50,17 @@ export const executeQuery = async (baseParams) => {
     .then((d) => d.data);
 };
 
-export const executeCountQuery = async (path, ids) => {
+export const executeCountQuery = async (option: {
+  relation: string;
+  ids: string[];
+  link: string;
+}) => {
   return await axios
     .post(
-      `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/count/${path}`,
+      `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/count/${option.relation}`,
       new URLSearchParams({
-        ids: ids,
+        ids: option.ids.join(","),
+        link: option.link,
       }),
     )
     .then((d) => d.data);
@@ -73,19 +83,6 @@ export const getPathStyle = (
   isRoute: boolean,
   head: HeadStyleAlias,
 ): Arrow => {
-  const style = isRoute
-    ? ({
-        color: "#1A8091",
-        head: head,
-        arrow: "smooth",
-        width: 2,
-      } as const)
-    : ({
-        color: "#dddddd",
-        head: head,
-        arrow: "smooth",
-        width: 1.5,
-      } as const);
   return {
     from: {
       id: fromId,
@@ -97,6 +94,18 @@ export const getPathStyle = (
       posX: "left",
       posY: "middle",
     },
-    style: style,
+    style: isRoute
+      ? ({
+          color: "#1A8091",
+          head: head,
+          arrow: "smooth",
+          width: 2,
+        } as const)
+      : ({
+          color: "#dddddd",
+          head: head,
+          arrow: "smooth",
+          width: 1.5,
+        } as const),
   };
 };

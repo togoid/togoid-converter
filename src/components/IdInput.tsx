@@ -1,4 +1,4 @@
-const IdInput = (props) => {
+const IdInput = (props: any) => {
   const [text, setText] = useAtom(textAtom);
 
   useEffect(() => {
@@ -33,9 +33,9 @@ const IdInput = (props) => {
     // @ts-expect-error
     inputRef.current.click();
   };
-  const inputRef = useRef();
+  const inputRef = useRef(null);
 
-  const readTextFile = (e) => {
+  const readTextFile = (e: any) => {
     const file = e.target.files[0];
     const reader = new FileReader();
     reader.readAsText(file);
@@ -80,7 +80,6 @@ const IdInput = (props) => {
           />
           <input
             type="file"
-            // @ts-expect-error
             ref={inputRef}
             style={{ display: "none" }}
             onChange={readTextFile}

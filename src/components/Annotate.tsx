@@ -29,7 +29,7 @@ const Annotate = (props) => {
                   v.name === props.route[0]?.name ? "active" : ""
                 }`}
                 style={{
-                  backgroundColor: categories[v.category]?.color,
+                  backgroundColor: categoryColor[v.category],
                 }}
                 onClick={() => selectDataset(v)}
               >

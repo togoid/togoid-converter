@@ -1,7 +1,11 @@
 import { printf } from "fast-printf";
 import useSWRImmutable from "swr/immutable";
 
-const createBaseTable = (tableRows, tableHeading, prefixList) => {
+const createBaseTable = (
+  tableRows: any[][],
+  tableHeading: any[],
+  prefixList: any[],
+) => {
   const baseTable = tableRows.map((v) => {
     return v.map((w, i) => {
       const formatIdObj = {};
@@ -22,7 +26,11 @@ const createBaseTable = (tableRows, tableHeading, prefixList) => {
   return baseTable;
 };
 
-const createCompactBaseTable = (tableRows, tableHeading, prefixList) => {
+const createCompactBaseTable = (
+  tableRows: any[][],
+  tableHeading: any[],
+  prefixList: any[],
+) => {
   const baseTable = tableRows.map((v) => {
     return v.map((w, i) => {
       const formatIdObj = {};
@@ -50,7 +58,7 @@ const createCompactBaseTable = (tableRows, tableHeading, prefixList) => {
 
 const fetcher = async (
   key: {
-    route: object[];
+    route: Route[];
     ids: string[];
     report: string;
     limit: number;

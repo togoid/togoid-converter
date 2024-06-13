@@ -16,7 +16,7 @@ const configFetcher = async () => {
     [key: string]: { [key: string]: any };
   };
   const statisticConfig = res[3].data as {
-    [key: string]: { [key: string]: any };
+    [key: string]: { count: number; last_updated_at: string };
   };
 
   const datasetConfig = Object.entries(res[0].data).reduce(
@@ -36,12 +36,14 @@ const configFetcher = async () => {
         }
       });
 
-      return linkTo.size
-        ? {
-            ...prev,
-            [key]: { ...value, linkTo },
-          }
-        : prev;
+      // @ts-expect-error
+      const color = categoryColor[value.category];
+
+      return {
+        ...prev,
+        // @ts-expect-error
+        [key]: { ...value, linkTo, color },
+      };
     },
     {} as { [key: string]: { [key: string]: any } },
   );
@@ -50,7 +52,6 @@ const configFetcher = async () => {
     datasetConfig,
     relationConfig,
     descriptionConfig,
-    statisticConfig,
   };
 };
 
@@ -59,7 +60,7 @@ const configFetcher = async () => {
  */
 const useConfig = (isFetch?: boolean) => {
   const {
-    data: { datasetConfig, relationConfig, descriptionConfig, statisticConfig },
+    data: { datasetConfig, relationConfig, descriptionConfig },
   } = useSWR("config", isFetch ? configFetcher : null, {
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
@@ -67,7 +68,6 @@ const useConfig = (isFetch?: boolean) => {
       datasetConfig: {},
       relationConfig: {},
       descriptionConfig: {},
-      statisticConfig: {},
     },
   });
 
@@ -75,7 +75,6 @@ const useConfig = (isFetch?: boolean) => {
     datasetConfig,
     relationConfig,
     descriptionConfig,
-    statisticConfig,
   };
 };
 

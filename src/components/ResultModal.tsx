@@ -89,7 +89,7 @@ const ResultModal = ({ setIsShowResultModal, ...props }: Props) => {
                       <div className="modal__path__frame__item" key={i}>
                         {i !== 0 && (
                           <div className="path_label white" id={`link-${i}`}>
-                            {v.link}
+                            {v.relation.link.display_label}
                           </div>
                         )}
                         <div
@@ -97,11 +97,7 @@ const ResultModal = ({ setIsShowResultModal, ...props }: Props) => {
                           className="path_label green"
                           id={`label-${i}`}
                           style={{
-                            // @ts-expect-error
-                            backgroundColor: categories[v.category]
-                              ? // @ts-expect-error
-                                categories[v.category].color
-                              : null,
+                            backgroundColor: datasetConfig[v.name].color,
                           }}
                         >
                           {i !== 0 && props.convertedCount[i].source && (
