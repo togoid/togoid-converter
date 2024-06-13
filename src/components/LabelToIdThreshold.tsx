@@ -1,7 +1,3 @@
-import useSWRImmutable from "swr/immutable";
-import axios from "axios";
-import Select from "react-select";
-
 type Props = {
   threshold: Signal<number>;
 };

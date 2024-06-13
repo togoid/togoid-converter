@@ -1,5 +1,3 @@
-import useSWRImmutable from "swr/immutable";
-import axios from "axios";
 import Select from "react-select";
 
 const LabelToId = () => {
@@ -7,13 +5,13 @@ const LabelToId = () => {
 
   const { datasetConfig } = useConfig();
 
-  const [dataset, setDataset] = useState();
+  const [dataset, setDataset] = useState<any>();
   const species = useSignal<string | undefined>(undefined);
-  const threshold = useSignal<number>(0.5);
-  const [selectDictionaryList, setSelectDictionaryList] = useState<
-    (string | false)[]
-  >([]);
-  const [isShowTable, setIsShowTable] = useState(false);
+  const threshold = useSignal(0.5);
+  const isShowTable = useSignal(false);
+  const [selectDictionaryList, setSelectDictionaryList] = useState<{
+    [key: string]: boolean;
+  }>({});
   const [pubdictionariesParam, setPubdictionariesParam] = useState({
     labels: "",
     dictionaries: "",
@@ -23,20 +21,15 @@ const LabelToId = () => {
   });
   const text = useAtomValue(textAtom);
 
-  const { data: taxonomyList } = useSWRImmutable("taxonomy", async () => {
-    const res = await axios.get<string[][]>(
-      `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/taxonomy`,
-    );
-
-    return res.data;
-  });
-
   const handleSelectDropDown = (value: any) => {
-    setIsShowTable(false);
+    isShowTable.value = false;
     species.value = undefined;
     setDataset(value);
+
     setSelectDictionaryList(
-      value.label_resolver.dictionaries.map((v) => v.dictionary),
+      value.label_resolver.dictionaries.reduce((prev: any, curr: any) => {
+        return { ...prev, [curr.dictionary]: true };
+      }, {}),
     );
   };
 
@@ -50,10 +43,13 @@ const LabelToId = () => {
       .map((v) => v.trim().replace(/\s+/g, "+"))
       .join("|");
 
-    // exanple: ovarian+cancer
+    // exanple: ovarian cancer
     setPubdictionariesParam({
       labels: labels,
-      dictionaries: selectDictionaryList.filter((v) => v).join(","),
+      dictionaries: Object.entries(selectDictionaryList)
+        .filter(([_, value]) => value)
+        .map(([key, _]) => key)
+        .join(","),
       tag: dataset?.label_resolver?.taxonomy ? species.value : undefined,
       threshold: dataset?.label_resolver?.threshold
         ? threshold.value
@@ -61,7 +57,7 @@ const LabelToId = () => {
       verbose: true,
     });
 
-    setIsShowTable(true);
+    isShowTable.value = true;
   };
 
   return (
@@ -95,7 +91,7 @@ const LabelToId = () => {
           />
         </div>
 
-        {taxonomyList?.length && dataset && (
+        {dataset && (
           <>
             {dataset?.label_resolver?.taxonomy && (
               <LabelToIdSpecies species={species} />
@@ -106,23 +102,20 @@ const LabelToId = () => {
             <fieldset className="labels">
               <legend className="label">Select label types</legend>
               <div className="labels__wrapper">
-                {dataset.label_resolver.dictionaries?.map((v, i) => (
+                {dataset.label_resolver.dictionaries?.map((v: any) => (
                   <Fragment key={v.label}>
                     <input
                       type="checkbox"
                       id={v.label}
                       value={v.dictionary}
                       className="checkbox"
-                      checked={Boolean(selectDictionaryList[i])}
-                      onChange={(e) =>
-                        setSelectDictionaryList(
-                          selectDictionaryList.toSpliced(
-                            i,
-                            1,
-                            e.target.checked ? e.target.value : false,
-                          ),
-                        )
-                      }
+                      checked={selectDictionaryList[v.dictionary]}
+                      onChange={(e) => {
+                        setSelectDictionaryList({
+                          ...selectDictionaryList,
+                          [v.dictionary]: e.target.checked,
+                        });
+                      }}
                     />
                     <label htmlFor={v.label} className="checkbox-label">
                       {v.label}
