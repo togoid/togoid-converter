@@ -64,14 +64,31 @@ const LabelToIdSpecies = ({ species }: Props) => {
               value: v[0],
               label: `${v[1]} (ID: ${v[0]}, ${v[2]}, ${v[3]})`,
             }))}
+            value={
+              [taxonomyList.find((v) => v[0] === species.value)]?.map((v) =>
+                v
+                  ? {
+                      value: v[0],
+                      label: `${v[1]} (ID: ${v[0]}, ${v[2]}, ${v[3]})`,
+                    }
+                  : "",
+              )[0]
+            }
             placeholder="Select a species"
-            onChange={(e) => handleSelectSpecies(e!.value)}
+            onChange={(e) => {
+              if (typeof e !== "string") handleSelectSpecies(e!.value);
+            }}
           />
         )}
       </div>
 
       <span className="between-text">OR</span>
-      <input type="text" className="keyword" />
+      <input
+        type="text"
+        className="keyword"
+        value={species.value}
+        onChange={(e) => handleSelectSpecies(e.target.value)}
+      />
     </>
   );
 };
