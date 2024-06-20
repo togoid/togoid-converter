@@ -201,7 +201,15 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
                       <td>{v.score}</td>
                     </>
                   )}
-                  <td>{v.identifier}</td>
+                  <td>
+                    <a
+                      href={dataset.prefix + v.identifier}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {v.identifier}
+                    </a>
+                  </td>
                 </tr>
               ))}
             </tbody>
