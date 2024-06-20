@@ -277,63 +277,21 @@ const Home = () => {
     Object.entries(relationConfig).forEach(([key, valueList]) => {
       const keySplit = key.split("-");
       if (keySplit[0] === route[0].name) {
-        if (keySplit[1] === target) {
-          valueList.forEach((value) => {
-            candidateList.push([
-              {
-                name: keySplit[1],
-                relation: {
-                  link: value.forward,
-                  description: value.description,
-                },
-              },
-            ]);
-          });
-        } else {
-          valueList.forEach((value) => {
-            candidateTempList[0].push([
-              {
-                name: keySplit[1],
-                relation: {
-                  link: value.forward,
-                  description: value.description,
-                },
-              },
-            ]);
-          });
-        }
+        (keySplit[1] === target ? candidateList : candidateTempList[0]).push(
+          ...createCandidateList(keySplit[1], valueList, "forward"),
+        );
       } else if (
         keySplit[1] === route[0].name &&
         !relationConfig[`${keySplit[1]}-${keySplit[0]}`]
       ) {
         // configに逆変換が許可されていて順方向の定義が無ければ、逆方向の変換を候補に含める
-        if (keySplit[0] === target) {
-          valueList.forEach((value) => {
-            if (value.reverse) {
-              candidateList.push([
-                {
-                  name: keySplit[0],
-                  relation: {
-                    link: value.reverse,
-                    description: value.description,
-                  },
-                },
-              ]);
-            }
-          });
-        } else {
-          valueList.forEach((value) => {
-            candidateTempList[0].push([
-              {
-                name: keySplit[0],
-                relation: {
-                  link: value.reverse,
-                  description: value.description,
-                },
-              },
-            ]);
-          });
+        const valueReverseList = valueList.filter((v) => v.reverse);
+        if (!valueReverseList.length) {
+          return;
         }
+        (keySplit[0] === target ? candidateList : candidateTempList[0]).push(
+          ...createCandidateList(keySplit[0], valueReverseList, "reverse"),
+        );
       }
     });
 
@@ -344,33 +302,9 @@ const Home = () => {
           if (keySplit[1] === route[0].name) {
             return;
           }
-          if (keySplit[1] === target) {
-            valueList.forEach((value) => {
-              candidateList.push([
-                r[0],
-                {
-                  name: keySplit[1],
-                  relation: {
-                    link: value.forward,
-                    description: value.description,
-                  },
-                },
-              ]);
-            });
-          } else {
-            valueList.forEach((value) => {
-              candidateTempList[1].push([
-                r[0],
-                {
-                  name: keySplit[1],
-                  relation: {
-                    link: value.forward,
-                    description: value.description,
-                  },
-                },
-              ]);
-            });
-          }
+          (keySplit[1] === target ? candidateList : candidateTempList[1]).push(
+            ...createCandidateList(keySplit[1], valueList, "forward", r),
+          );
         } else if (
           keySplit[1] === r[0].name &&
           !relationConfig[`${keySplit[1]}-${keySplit[0]}`]
@@ -378,37 +312,13 @@ const Home = () => {
           if (keySplit[0] === route[0].name) {
             return;
           }
-          if (keySplit[0] === target) {
-            valueList.forEach((value) => {
-              if (value.reverse) {
-                candidateList.push([
-                  r[0],
-                  {
-                    name: keySplit[0],
-                    relation: {
-                      link: value.reverse,
-                      description: value.description,
-                    },
-                  },
-                ]);
-              }
-            });
-          } else {
-            valueList.forEach((value) => {
-              if (value.reverse) {
-                candidateTempList[1].push([
-                  r[0],
-                  {
-                    name: keySplit[0],
-                    relation: {
-                      link: value.reverse,
-                      description: value.description,
-                    },
-                  },
-                ]);
-              }
-            });
+          const valueReverseList = valueList.filter((v) => v.reverse);
+          if (!valueReverseList.length) {
+            return;
           }
+          (keySplit[0] === target ? candidateList : candidateTempList[1]).push(
+            ...createCandidateList(keySplit[0], valueReverseList, "reverse", r),
+          );
         }
       });
     });
@@ -422,40 +332,27 @@ const Home = () => {
         const keySplit = key.split("-");
         if (keySplit[0] === r[1].name) {
           if (keySplit[1] === target) {
-            valueList.forEach((value) => {
-              candidateList.push([
-                r[0],
-                r[1],
-                {
-                  name: keySplit[1],
-                  relation: {
-                    link: value.forward,
-                    description: value.description,
-                  },
-                },
-              ]);
-            });
+            candidateList.push(
+              ...createCandidateList(keySplit[1], valueList, "forward", r),
+            );
           }
         } else if (
           keySplit[1] === r[1].name &&
           !relationConfig[`${keySplit[1]}-${keySplit[0]}`]
         ) {
           if (keySplit[0] === target) {
-            valueList.forEach((value) => {
-              if (value.reverse) {
-                candidateList.push([
-                  r[0],
-                  r[1],
-                  {
-                    name: keySplit[0],
-                    relation: {
-                      link: value.reverse,
-                      description: value.description,
-                    },
-                  },
-                ]);
-              }
-            });
+            const valueReverseList = valueList.filter((v) => v.reverse);
+            if (!valueReverseList.length) {
+              return;
+            }
+            candidateList.push(
+              ...createCandidateList(
+                keySplit[0],
+                valueReverseList,
+                "reverse",
+                r,
+              ),
+            );
           }
         }
       });
@@ -514,6 +411,24 @@ const Home = () => {
     });
 
     setDatabaseNodesList(nodesList);
+  };
+
+  const createCandidateList = (
+    name: string,
+    valueList: (typeof relationConfig)[number],
+    direction: "forward" | "reverse",
+    beforeRoute?: NavigateRoute[],
+  ) => {
+    return valueList.map((value) => {
+      const obj = {
+        name,
+        relation: {
+          link: value[direction],
+          description: value.description,
+        },
+      };
+      return beforeRoute ? [...beforeRoute, obj] : [obj];
+    });
   };
 
   const changeIndexTab = (name: string) => {
