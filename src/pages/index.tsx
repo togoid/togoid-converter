@@ -49,11 +49,16 @@ const Home = () => {
           const r = route;
           const nodesList = databaseNodesList.slice();
           for (let i = 0; i < routerRoute.length; i++) {
+            if (i % 2 === 1) {
+              continue;
+            }
             const result = await createNodesList(r[r.length - 1]);
             nodesList.push(result);
-            if (i < routerRoute.length - 1) {
-              const v = nodesList[i + 1].find(
-                (element) => element.name === routerRoute[i + 1],
+            if (i < routerRoute.length) {
+              const v = nodesList[i / 2 + 1].find(
+                (element) =>
+                  element.name === routerRoute[i + 2] &&
+                  element.relation.link.label === routerRoute[i + 1],
               );
               if (v === undefined || v.target === 0) {
                 break;
@@ -64,7 +69,11 @@ const Home = () => {
 
           setDatabaseNodesList(nodesList);
           setRoute(r);
-          setRouterRoute(r.map((v) => v.name));
+          setRouterRoute(
+            r.flatMap((v, i) =>
+              i === 0 ? [v.name] : [v.relation?.link.label, v.name],
+            ),
+          );
           setIsUseKeepRoute(false);
         } else {
           const nodesList = databaseNodesList.slice(0, route.length);
