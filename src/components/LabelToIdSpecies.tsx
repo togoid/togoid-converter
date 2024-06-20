@@ -17,6 +17,15 @@ const LabelToIdSpecies = ({ species }: Props) => {
     return res.data;
   });
 
+  const optionList = useMemo(
+    () =>
+      taxonomyList?.map((v) => ({
+        value: v[0],
+        label: `${v[1]} (ID: ${v[0]}, ${v[2]}, ${v[3]})`,
+      })),
+    [taxonomyList],
+  );
+
   const handleSelectSpecies = (value: any) => {
     species.value = value;
   };
@@ -46,7 +55,7 @@ const LabelToIdSpecies = ({ species }: Props) => {
             </div>
           </details>
         </label>
-        {taxonomyList && (
+        {optionList && (
           <Select
             id="selectSpecies"
             styles={{
@@ -60,23 +69,11 @@ const LabelToIdSpecies = ({ species }: Props) => {
               }),
               option: (css) => ({ ...css, width: "300px" }),
             }}
-            options={taxonomyList.map((v) => ({
-              value: v[0],
-              label: `${v[1]} (ID: ${v[0]}, ${v[2]}, ${v[3]})`,
-            }))}
-            value={
-              [taxonomyList.find((v) => v[0] === species.value)]?.map((v) =>
-                v
-                  ? {
-                      value: v[0],
-                      label: `${v[1]} (ID: ${v[0]}, ${v[2]}, ${v[3]})`,
-                    }
-                  : "",
-              )[0]
-            }
+            options={optionList}
+            value={optionList.find((v) => v.value === species.value) ?? null}
             placeholder="Select a species"
             onChange={(e) => {
-              if (typeof e !== "string") handleSelectSpecies(e!.value);
+              if (e!.value !== null) handleSelectSpecies(e!.value);
             }}
           />
         )}
