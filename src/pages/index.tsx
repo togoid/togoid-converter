@@ -271,20 +271,85 @@ const Home = () => {
   };
 
   const lookupRoute = async (target: string) => {
-    const r = route[route.length - 1];
     const candidateList: NavigateRoute[][] = [];
-    const candidateTempList: NavigateRoute[][][] = [[], [], []];
+    const candidateTempList: NavigateRoute[][][] = [[], []];
 
     Object.entries(relationConfig).forEach(([key, valueList]) => {
       const keySplit = key.split("-");
-      if (keySplit[0] === r.name) {
-        const name = keySplit[1];
-        if (!route.some((w) => w.name === name)) {
-          if (name === target) {
-            valueList.forEach((value) => {
+      if (keySplit[0] === route[0].name) {
+        if (keySplit[1] === target) {
+          valueList.forEach((value) => {
+            candidateList.push([
+              {
+                name: keySplit[1],
+                relation: {
+                  link: value.forward,
+                  description: value.description,
+                },
+              },
+            ]);
+          });
+        } else {
+          valueList.forEach((value) => {
+            candidateTempList[0].push([
+              {
+                name: keySplit[1],
+                relation: {
+                  link: value.forward,
+                  description: value.description,
+                },
+              },
+            ]);
+          });
+        }
+      } else if (
+        keySplit[1] === route[0].name &&
+        !relationConfig[`${keySplit[1]}-${keySplit[0]}`]
+      ) {
+        // configに逆変換が許可されていて順方向の定義が無ければ、逆方向の変換を候補に含める
+        if (keySplit[0] === target) {
+          valueList.forEach((value) => {
+            if (value.reverse) {
               candidateList.push([
                 {
-                  name,
+                  name: keySplit[0],
+                  relation: {
+                    link: value.reverse,
+                    description: value.description,
+                  },
+                },
+              ]);
+            }
+          });
+        } else {
+          valueList.forEach((value) => {
+            candidateTempList[0].push([
+              {
+                name: keySplit[0],
+                relation: {
+                  link: value.reverse,
+                  description: value.description,
+                },
+              },
+            ]);
+          });
+        }
+      }
+    });
+
+    candidateTempList[0].forEach((r) => {
+      Object.entries(relationConfig).forEach(([key, valueList]) => {
+        const keySplit = key.split("-");
+        if (keySplit[0] === r[0].name) {
+          if (keySplit[1] === route[0].name) {
+            return;
+          }
+          if (keySplit[1] === target) {
+            valueList.forEach((value) => {
+              candidateList.push([
+                r[0],
+                {
+                  name: keySplit[1],
                   relation: {
                     link: value.forward,
                     description: value.description,
@@ -294,9 +359,10 @@ const Home = () => {
             });
           } else {
             valueList.forEach((value) => {
-              candidateTempList[0].push([
+              candidateTempList[1].push([
+                r[0],
                 {
-                  name,
+                  name: keySplit[1],
                   relation: {
                     link: value.forward,
                     description: value.description,
@@ -305,20 +371,20 @@ const Home = () => {
               ]);
             });
           }
-        }
-      } else if (
-        keySplit[1] === r.name &&
-        !relationConfig[`${keySplit[1]}-${keySplit[0]}`]
-      ) {
-        // configに逆変換が許可されていて順方向の定義が無ければ、逆方向の変換を候補に含める
-        const name = keySplit[0];
-        if (!route.some((w) => w.name === name)) {
-          if (name === target) {
+        } else if (
+          keySplit[1] === r[0].name &&
+          !relationConfig[`${keySplit[1]}-${keySplit[0]}`]
+        ) {
+          if (keySplit[0] === route[0].name) {
+            return;
+          }
+          if (keySplit[0] === target) {
             valueList.forEach((value) => {
               if (value.reverse) {
                 candidateList.push([
+                  r[0],
                   {
-                    name,
+                    name: keySplit[0],
                     relation: {
                       link: value.reverse,
                       description: value.description,
@@ -329,92 +395,19 @@ const Home = () => {
             });
           } else {
             valueList.forEach((value) => {
-              candidateTempList[0].push([
-                {
-                  name,
-                  relation: {
-                    link: value.reverse,
-                    description: value.description,
-                  },
-                },
-              ]);
-            });
-          }
-        }
-      }
-    });
-
-    candidateTempList[0].forEach((r) => {
-      Object.entries(relationConfig).forEach(([key, valueList]) => {
-        const keySplit = key.split("-");
-        if (keySplit[0] === r[0].name) {
-          const name = keySplit[1];
-          if (!route.some((w) => w.name === name)) {
-            if (name === target) {
-              valueList.forEach((value) => {
-                candidateList.push([
-                  r[0],
-                  {
-                    name,
-                    relation: {
-                      link: value.forward,
-                      description: value.description,
-                    },
-                  },
-                ]);
-              });
-            } else {
-              valueList.forEach((value) => {
+              if (value.reverse) {
                 candidateTempList[1].push([
                   r[0],
                   {
-                    name,
+                    name: keySplit[0],
                     relation: {
-                      link: value.forward,
+                      link: value.reverse,
                       description: value.description,
                     },
                   },
                 ]);
-              });
-            }
-          }
-        } else if (
-          keySplit[1] === r[0].name &&
-          !relationConfig[`${keySplit[1]}-${keySplit[0]}`]
-        ) {
-          const name = keySplit[0];
-          if (!route.some((w) => w.name === name)) {
-            if (name === target) {
-              valueList.forEach((value) => {
-                if (value.reverse) {
-                  candidateList.push([
-                    r[0],
-                    {
-                      name,
-                      relation: {
-                        link: value.reverse,
-                        description: value.description,
-                      },
-                    },
-                  ]);
-                }
-              });
-            } else {
-              valueList.forEach((value) => {
-                if (value.reverse) {
-                  candidateTempList[1].push([
-                    r[0],
-                    {
-                      name,
-                      relation: {
-                        link: value.reverse,
-                        description: value.description,
-                      },
-                    },
-                  ]);
-                }
-              });
-            }
+              }
+            });
           }
         }
       });
@@ -428,47 +421,41 @@ const Home = () => {
       Object.entries(relationConfig).forEach(([key, valueList]) => {
         const keySplit = key.split("-");
         if (keySplit[0] === r[1].name) {
-          const name = keySplit[1];
-          if (!route.some((w) => w.name === name)) {
-            if (name === target) {
-              valueList.forEach((value) => {
-                candidateList.push([
-                  r[0],
-                  r[1],
-                  {
-                    name,
-                    relation: {
-                      link: value.forward,
-                      description: value.description,
-                    },
+          if (keySplit[1] === target) {
+            valueList.forEach((value) => {
+              candidateList.push([
+                r[0],
+                r[1],
+                {
+                  name: keySplit[1],
+                  relation: {
+                    link: value.forward,
+                    description: value.description,
                   },
-                ]);
-              });
-            }
+                },
+              ]);
+            });
           }
         } else if (
           keySplit[1] === r[1].name &&
           !relationConfig[`${keySplit[1]}-${keySplit[0]}`]
         ) {
-          const name = keySplit[0];
-          if (!route.some((w) => w.name === name)) {
-            if (name === target) {
-              valueList.forEach((value) => {
-                if (value.reverse) {
-                  candidateList.push([
-                    r[0],
-                    r[1],
-                    {
-                      name,
-                      relation: {
-                        link: value.reverse,
-                        description: value.description,
-                      },
+          if (keySplit[0] === target) {
+            valueList.forEach((value) => {
+              if (value.reverse) {
+                candidateList.push([
+                  r[0],
+                  r[1],
+                  {
+                    name: keySplit[0],
+                    relation: {
+                      link: value.reverse,
+                      description: value.description,
                     },
-                  ]);
-                }
-              });
-            }
+                  },
+                ]);
+              }
+            });
           }
         }
       });
