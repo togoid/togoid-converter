@@ -133,7 +133,7 @@ const LabelToId = () => {
           </>
         )}
       </div>
-      {isShowTable && (
+      {isShowTable.value && (
         <LabelToIdTable
           pubdictionariesParam={pubdictionariesParam}
           dataset={dataset}
