@@ -3,18 +3,20 @@ import useSWR from "swr";
 
 const configFetcher = async () => {
   const res = await Promise.all([
-    axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/dataset`),
-    axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/relation`),
-    axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/descriptions`),
+    axios.get<Datasetconfig>(
+      `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/dataset`,
+    ),
+    axios.get<RelationConfig>(
+      `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/relation`,
+    ),
+    axios.get<DescriptionConfig>(
+      `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/descriptions`,
+    ),
     axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/statistics`),
   ]);
 
-  const relationConfig = res[1].data as {
-    [key: string]: { forward: any; reverse?: any; description?: string }[];
-  };
-  const descriptionConfig = res[2].data as {
-    [key: string]: { [key: string]: any };
-  };
+  const relationConfig = res[1].data;
+  const descriptionConfig = res[2].data;
   const statisticConfig = res[3].data as {
     [key: string]: { count: number; last_updated_at: string };
   };
@@ -38,11 +40,10 @@ const configFetcher = async () => {
 
       return {
         ...prev,
-        // @ts-expect-error
         [key]: { ...value, linkTo },
       };
     },
-    {} as { [key: string]: { [key: string]: any } },
+    {} as Datasetconfig,
   );
 
   return {
