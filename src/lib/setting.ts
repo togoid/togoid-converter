@@ -53,7 +53,6 @@ export const colorLegendList = [
 
 export const categoryColor = colorLegendList.reduce(
   (prev, curr) => {
-    console.log("test");
     curr.categoryList.forEach((v) => {
       prev[v] = curr.color;
     });
