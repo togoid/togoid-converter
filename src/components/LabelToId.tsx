@@ -15,7 +15,7 @@ const LabelToId = () => {
   const [pubdictionariesParam, setPubdictionariesParam] = useState({
     labels: "",
     dictionaries: "",
-    tag: undefined as string | undefined,
+    tags: undefined as string | undefined,
     threshold: undefined as number | undefined,
     verbose: true,
   });
@@ -52,7 +52,7 @@ const LabelToId = () => {
         .filter(([_, value]) => value)
         .map(([key, _]) => key)
         .join(","),
-      tag: dataset?.label_resolver?.taxonomy ? species.value : undefined,
+      tags: dataset?.label_resolver?.taxonomy ? species.value : undefined,
       threshold: dataset?.label_resolver?.threshold
         ? threshold.value
         : undefined,

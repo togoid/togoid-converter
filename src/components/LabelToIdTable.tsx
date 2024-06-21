@@ -6,7 +6,7 @@ type Props = {
   pubdictionariesParam: {
     labels: string;
     dictionaries: string;
-    tag?: string;
+    tags?: string;
     threshold?: number;
     verbose: boolean;
   };
@@ -94,7 +94,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
     }
 
     const table = tableData.map((v) => {
-      if (pubdictionariesParam.tag !== undefined) {
+      if (pubdictionariesParam.tags !== undefined) {
         return {
           Input: v.label,
           "Match type": v.type,
@@ -123,7 +123,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
     }
 
     const table = tableData.map((v) => {
-      if (pubdictionariesParam.tag !== undefined) {
+      if (pubdictionariesParam.tags !== undefined) {
         return {
           Input: v.label,
           "Match type": v.type,
@@ -177,7 +177,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
               <tr>
                 <th>Input</th>
                 <th>Match type</th>
-                {pubdictionariesParam.tag !== undefined && <th>Symbol</th>}
+                {pubdictionariesParam.tags !== undefined && <th>Symbol</th>}
                 {pubdictionariesParam.threshold !== undefined && (
                   <>
                     <th>Name</th>
@@ -192,7 +192,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
                 <tr key={i}>
                   <td>{v.label}</td>
                   <td>{v.type}</td>
-                  {pubdictionariesParam.tag !== undefined && (
+                  {pubdictionariesParam.tags !== undefined && (
                     <td>{v.symbol}</td>
                   )}
                   {pubdictionariesParam.threshold !== undefined && (
