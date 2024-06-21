@@ -97,7 +97,8 @@ const ResultModal = ({ setIsShowResultModal, ...props }: Props) => {
                           className="path_label green"
                           id={`label-${i}`}
                           style={{
-                            backgroundColor: datasetConfig[v.name].color,
+                            backgroundColor:
+                              categoryColor[datasetConfig[v.name].category],
                           }}
                         >
                           {i !== 0 && props.convertedCount[i].source && (

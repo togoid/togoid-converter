@@ -197,7 +197,8 @@ const Datasets = ({ executeExamples }: Props) => {
                     <span
                       className="title__square"
                       style={{
-                        backgroundColor: datasetConfig[key].color,
+                        backgroundColor:
+                          categoryColor[datasetConfig[key].category],
                       }}
                     />
                     <span className="title__text">
@@ -250,7 +251,8 @@ const Datasets = ({ executeExamples }: Props) => {
                             <div
                               className="path_label small green"
                               style={{
-                                backgroundColor: datasetConfig[l].color,
+                                backgroundColor:
+                                  categoryColor[datasetConfig[l].category],
                               }}
                               key={i}
                             >

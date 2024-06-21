@@ -69,7 +69,9 @@ const InformationModal = ({ setIsShowInfomationModal, ...props }: Props) => {
             {[...datasetConfig[props.database].linkTo].map(([v, count], i) => (
               <div
                 className="path_label small green"
-                style={{ backgroundColor: datasetConfig[v].color }}
+                style={{
+                  backgroundColor: categoryColor[datasetConfig[v].category],
+                }}
                 key={i}
               >
                 {datasetConfig[v].label}
