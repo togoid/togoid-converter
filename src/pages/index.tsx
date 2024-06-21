@@ -390,7 +390,7 @@ const Home = () => {
           }
         }),
       )
-    ).filter((v): v is NonNullable<typeof v> => v !== null);
+    ).filter((v) => v !== null);
     NProgress.done();
 
     const nodesList: any[][] = [databaseNodesList[0], [], [], []];

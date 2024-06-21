@@ -73,7 +73,7 @@ const ExploreResultItem = (props) => {
         style={{
           backgroundColor: isActionButtonVisible
             ? "#000000"
-            : datasetConfig[props.v.name].color,
+            : categoryColor[datasetConfig[props.v.name].category],
         }}
       >
         <div

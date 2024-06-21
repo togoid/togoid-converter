@@ -36,13 +36,10 @@ const configFetcher = async () => {
         }
       });
 
-      // @ts-expect-error
-      const color = categoryColor[value.category];
-
       return {
         ...prev,
         // @ts-expect-error
-        [key]: { ...value, linkTo, color },
+        [key]: { ...value, linkTo },
       };
     },
     {} as { [key: string]: { [key: string]: any } },

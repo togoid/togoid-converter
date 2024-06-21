@@ -62,7 +62,7 @@ const NavigateResultItem = (props) => {
               opacity: isActionButtonVisible ? 0.7 : 1,
               backgroundColor: isActionButtonVisible
                 ? "#000000"
-                : datasetConfig[props.v.name].color,
+                : categoryColor[datasetConfig[props.v.name].category],
             }}
           >
             <div id={`from${props.i}-${props.v.name}`} className="dummy" />
@@ -88,7 +88,7 @@ const NavigateResultItem = (props) => {
             opacity: isActionButtonVisible ? 0.7 : 1,
             backgroundColor: isActionButtonVisible
               ? "#000000"
-              : datasetConfig[props.v.name].color,
+              : categoryColor[datasetConfig[props.v.name].category],
           }}
         >
           <div id={`from${props.i}-${props.j}`} className="dummy" />
