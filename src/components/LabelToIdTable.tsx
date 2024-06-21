@@ -26,39 +26,57 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
         },
       );
 
-      const tableBaseData = res.data[pubdictionariesParam.labels] as any[];
+      const labelList = pubdictionariesParam.labels.split("|");
 
-      const preferredDictionary = dataset.label_resolver.dictionaries.find(
-        (v: any) => v.preferred,
-      )?.dictionary;
+      return (
+        await Promise.all(
+          labelList.map(async (label) => {
+            const tableBaseData = res.data[label] as any[];
 
-      const synonymIdList = tableBaseData
-        .filter((v: any) => v.dictionary !== preferredDictionary)
-        .map((v) => v.identifier);
+            const preferredDictionary =
+              dataset.label_resolver.dictionaries.find(
+                (v: any) => v.preferred,
+              )?.dictionary;
 
-      const res2 = synonymIdList.length
-        ? await axios.get<any>("https://pubdictionaries.org/find_terms.json", {
-            params: {
-              ids: synonymIdList.join("|"),
-              dictionaries: preferredDictionary,
-            },
-          })
-        : null;
+            const synonymIdList = tableBaseData
+              .filter((v: any) => v.dictionary !== preferredDictionary)
+              .map((v) => v.identifier);
 
-      return tableBaseData.map((v) => {
-        return {
-          label: v.label,
-          type: dataset.label_resolver.dictionaries.find(
-            (w: any) => w.dictionary === v.dictionary,
-          )?.label,
-          name:
-            res2?.data[v.identifier] && v.dictionary !== preferredDictionary
-              ? res2.data[v.identifier][0].label
-              : v.name,
-          score: v.score,
-          identifier: v.identifier,
-        };
-      });
+            const res2 = synonymIdList.length
+              ? await axios.get<any>(
+                  "https://pubdictionaries.org/find_terms.json",
+                  {
+                    params: {
+                      ids: synonymIdList.join("|"),
+                      dictionaries: preferredDictionary,
+                    },
+                  },
+                )
+              : null;
+
+            return tableBaseData.map((v) => {
+              return {
+                label: v.label,
+                type: dataset.label_resolver.dictionaries.find(
+                  (w: any) => w.dictionary === v.dictionary,
+                )?.label,
+                symbol:
+                  res2?.data[v.identifier] &&
+                  v.dictionary !== preferredDictionary
+                    ? res2.data[v.identifier][0].label
+                    : v.name,
+                name:
+                  res2?.data[v.identifier] &&
+                  v.dictionary !== preferredDictionary
+                    ? res2.data[v.identifier][0].label
+                    : v.name,
+                score: v.score,
+                identifier: v.identifier,
+              };
+            });
+          }),
+        )
+      ).flat();
     },
   );
 
@@ -76,13 +94,22 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
     }
 
     const table = tableData.map((v) => {
-      return {
-        Input: v.label,
-        "Match type": v.type,
-        Name: v.name,
-        Score: v.score,
-        ID: v.identifier,
-      };
+      if (pubdictionariesParam.tag !== undefined) {
+        return {
+          Input: v.label,
+          "Match type": v.type,
+          Symbol: v.symbol,
+          ID: v.identifier,
+        };
+      } else {
+        return {
+          Input: v.label,
+          "Match type": v.type,
+          Name: v.name,
+          Score: v.score,
+          ID: v.identifier,
+        };
+      }
     });
     const text = invokeUnparse(table, "tsv");
     copy(text, {
@@ -96,13 +123,22 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
     }
 
     const table = tableData.map((v) => {
-      return {
-        Input: v.label,
-        "Match type": v.type,
-        Name: v.name,
-        Score: v.score,
-        ID: v.identifier,
-      };
+      if (pubdictionariesParam.tag !== undefined) {
+        return {
+          Input: v.label,
+          "Match type": v.type,
+          Symbol: v.symbol,
+          ID: v.identifier,
+        };
+      } else {
+        return {
+          Input: v.label,
+          "Match type": v.type,
+          Name: v.name,
+          Score: v.score,
+          ID: v.identifier,
+        };
+      }
     });
     exportCsvTsv(table, extension, `result.${extension}`);
   };
@@ -141,8 +177,13 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
               <tr>
                 <th>Input</th>
                 <th>Match type</th>
-                <th>Name</th>
-                <th>Score</th>
+                {pubdictionariesParam.tag !== undefined && <th>Symbol</th>}
+                {pubdictionariesParam.threshold !== undefined && (
+                  <>
+                    <th>Name</th>
+                    <th>Score</th>
+                  </>
+                )}
                 <th>ID</th>
               </tr>
             </thead>
@@ -151,9 +192,24 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
                 <tr key={i}>
                   <td>{v.label}</td>
                   <td>{v.type}</td>
-                  <td>{v.name}</td>
-                  <td>{v.score}</td>
-                  <td>{v.identifier}</td>
+                  {pubdictionariesParam.tag !== undefined && (
+                    <td>{v.symbol}</td>
+                  )}
+                  {pubdictionariesParam.threshold !== undefined && (
+                    <>
+                      <td>{v.name}</td>
+                      <td>{v.score}</td>
+                    </>
+                  )}
+                  <td>
+                    <a
+                      href={dataset.prefix + v.identifier}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {v.identifier}
+                    </a>
+                  </td>
                 </tr>
               ))}
             </tbody>

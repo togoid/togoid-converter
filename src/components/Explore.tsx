@@ -35,7 +35,11 @@ const Explore = (props: Props) => {
     const r = props.route.slice(0, i);
     r[i] = database;
     props.setRoute(r);
-    props.setRouterRoute(r.map((v: any) => v.name));
+    props.setRouterRoute(
+      r.flatMap((v: any, i: number) =>
+        i === 0 ? [v.name] : [v.relation.link.label, v.name],
+      ),
+    );
     return r;
   };
 
