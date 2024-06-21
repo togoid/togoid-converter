@@ -34,6 +34,8 @@ const LabelToId = () => {
   };
 
   const handleExecute = () => {
+    isShowTable.value = false;
+
     const labels = text
       .replace(/[Ａ-Ｚａ-ｚ０-９]/g, (s) =>
         String.fromCharCode(s.charCodeAt(0) - 0xfee0),
