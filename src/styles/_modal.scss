@@ -292,6 +292,12 @@
             margin: 0 0 5px;
           }
         }
+
+        .c-switch {
+          & + label {
+            margin: 8px 0 0;
+          }
+        }
       }
     }
 
