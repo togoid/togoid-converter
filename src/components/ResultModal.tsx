@@ -85,11 +85,11 @@ const ResultModal = ({ setIsShowResultModal, ...props }: Props) => {
               <div className="modal__path__frame__inner">
                 <ArrowArea arrows={routePath}>
                   <div className="modal__path__frame__inner">
-                    {props.route.map((v: any, i: number) => (
+                    {props.route.map((v, i) => (
                       <div className="modal__path__frame__item" key={i}>
                         {i !== 0 && (
                           <div className="path_label white" id={`link-${i}`}>
-                            {v.relation.link.display_label}
+                            {v.relation?.link.display_label}
                           </div>
                         )}
                         <div
