@@ -44,5 +44,5 @@
     "typescript": "5.5.2",
     "unplugin-auto-import": "0.17.6"
   },
-  "packageManager": "yarn@4.3.0"
+  "packageManager": "yarn@4.3.1"
 }
