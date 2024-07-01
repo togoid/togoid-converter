@@ -9,19 +9,23 @@ const previewModeList = new Map([
   ["full", "All including unconverted IDs"],
 ]);
 
-const createPrefixList = (tableHeading: any[]) => {
+const createPrefixList = (tableHeading: { [key: string]: any }[]) => {
   return tableHeading.map((v, i) => {
     v["index"] = i;
     // formatがあれば使う なければ空配列で返す
-    return (
-      v.format?.map((v: any) => {
-        return { label: v.replace("%s", ""), value: v };
-      }) ?? []
-    );
+    return (v.format?.map((v: any) => {
+      return { label: v.replace("%s", ""), value: v };
+    }) ?? []) as any[];
   });
 };
 
-const ResultModalAction = (props) => {
+type Props = {
+  route: Route[];
+  ids: any;
+  lastTargetCount: any;
+};
+
+const ResultModalAction = (props: Props) => {
   const { datasetConfig } = useConfig();
 
   const [previewMode, setPreviewMode] = useState("all");
@@ -156,13 +160,29 @@ const ResultModalAction = (props) => {
   };
 
   const copyClipboardURL = () => {
-    const routeName = props.route.map((v) => v.name).join();
-    const text = `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert?ids=${
-      props.ids
-    }&route=${routeName}&report=${previewMode}${
-      isCompact ? "&compact=1" : ""
-    }&format=csv`;
-    copy(text, {
+    const text = getConvertUrlSearchParams({
+      route: props.route,
+      ids: props.ids,
+      report: previewMode,
+      format: "csv",
+      compact: isCompact,
+    }).toString();
+
+    copy(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert?${text}`, {
+      format: "text/plain",
+    });
+  };
+
+  const copyClipboardCurl = () => {
+    const text = getConvertUrlSearchParams({
+      route: props.route,
+      ids: props.ids,
+      report: previewMode,
+      format: "csv",
+      compact: isCompact,
+    }).toString();
+
+    copy(`curl "${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert?${text}"`, {
       format: "text/plain",
     });
   };
@@ -299,6 +319,9 @@ const ResultModalAction = (props) => {
                   <ResultModalClipboardButton copyFunction={copyClipboardURL}>
                     Copy API URL
                   </ResultModalClipboardButton>
+                  <ResultModalClipboardButton copyFunction={copyClipboardCurl}>
+                    Copy API curl
+                  </ResultModalClipboardButton>
                 </div>
                 {props.lastTargetCount === "10000+" && (
                   <div>
@@ -348,6 +371,13 @@ const ResultModalAction = (props) => {
                         ))}
                         <option value="url">URL</option>
                       </select>
+
+                      <input
+                        id={"showLabels" + i}
+                        type="checkbox"
+                        className="c-switch"
+                      />
+                      <label htmlFor={"showLabels" + i}>Show Labels</label>
                     </fieldset>
                   </th>
                 );

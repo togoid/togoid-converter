@@ -4,11 +4,11 @@ import useSWRImmutable from "swr/immutable";
 const createBaseTable = (
   tableRows: any[][],
   tableHeading: any[],
-  prefixList: any[],
+  prefixList: any[][],
 ) => {
   const baseTable = tableRows.map((v) => {
     return v.map((w, i) => {
-      const formatIdObj = {};
+      const formatIdObj: { [key: string]: any } = {};
 
       // prefixがある場合
       prefixList[i].forEach((x) => {
@@ -29,24 +29,24 @@ const createBaseTable = (
 const createCompactBaseTable = (
   tableRows: any[][],
   tableHeading: any[],
-  prefixList: any[],
+  prefixList: any[][],
 ) => {
   const baseTable = tableRows.map((v) => {
     return v.map((w, i) => {
-      const formatIdObj = {};
+      const formatIdObj: { [key: string]: any } = {};
 
       const idSplitList = w ? w.split(" ") : [];
       // prefixがある場合
       prefixList[i].forEach((x) => {
         formatIdObj[x.value] = w
-          ? idSplitList.map((y) => printf(x.value, y))
+          ? idSplitList.map((y: any) => printf(x.value, y))
           : [];
       });
 
       // idとurlは必ず作成する
       formatIdObj["id"] = idSplitList;
       formatIdObj["url"] = w
-        ? idSplitList.map((x) => tableHeading[i].prefix + x)
+        ? idSplitList.map((x: any) => tableHeading[i].prefix + x)
         : [];
 
       return formatIdObj;
@@ -80,7 +80,7 @@ const useResultModalPreview = (
   route: any[],
   ids: any[],
   tableHeading: any[],
-  prefixList: any[],
+  prefixList: any[][],
 ) => {
   const [filterTable, setFilterTable] = useState({});
 

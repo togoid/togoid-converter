@@ -49,6 +49,7 @@ declare global {
   const forwardRef: typeof import('react')['forwardRef']
   const freezeAtom: typeof import('jotai/utils')['freezeAtom']
   const freezeAtomCreator: typeof import('jotai/utils')['freezeAtomCreator']
+  const getConvertUrlSearchParams: typeof import('./src/lib/util')['getConvertUrlSearchParams']
   const getPathStyle: typeof import('./src/lib/util')['getPathStyle']
   const invokeUnparse: typeof import('./src/lib/util')['invokeUnparse']
   const lazy: typeof import('react')['lazy']

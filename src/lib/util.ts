@@ -23,10 +23,11 @@ export const invokeUnparse = (rows: unknown[], extension: "csv" | "tsv") => {
   return PaPa.unparse(rows, { delimiter: delimiterList[extension] });
 };
 
-export const executeQuery = async (baseParams: {
+export const getConvertUrlSearchParams = (baseParams: {
   route: Route[];
   ids: string[];
   report: string;
+  format: "csv" | "json";
   limit?: number;
   compact?: boolean;
 }) => {
@@ -36,7 +37,7 @@ export const executeQuery = async (baseParams: {
       .join(","),
     ids: baseParams.ids.join(","),
     report: baseParams.report,
-    format: "json",
+    format: baseParams.format,
   });
   if (baseParams.limit) {
     params.set("limit", String(baseParams.limit));
@@ -45,8 +46,21 @@ export const executeQuery = async (baseParams: {
     params.set("compact", "1");
   }
 
+  return params;
+};
+
+export const executeQuery = async (baseParams: {
+  route: Route[];
+  ids: string[];
+  report: string;
+  limit?: number;
+  compact?: boolean;
+}) => {
   return await axios
-    .post(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert`, params)
+    .post(
+      `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert`,
+      getConvertUrlSearchParams({ ...baseParams, format: "json" }),
+    )
     .then((d) => d.data);
 };
 

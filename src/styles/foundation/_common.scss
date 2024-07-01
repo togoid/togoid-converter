@@ -104,3 +104,59 @@
   }
 }
 
+.c-switch {
+  @include g.visuallyHidden;
+
+  & + label {
+    position: relative;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    font: {
+      family: g.$ff-oswald;
+      size: 1.2rem;
+    }
+
+    color: g.$col-5A5A5A;
+    cursor: pointer;
+
+    &::before,
+    &::after {
+      content: "";
+    }
+
+    &::before {
+      width: 56px;
+      height: 27px;
+      border-radius: 14px;
+      background-color: g.$col-C6C6C6;
+    }
+
+    &::after {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 21px;
+      height: 21px;
+      transition: left 0.1s ease-in-out;
+      box-shadow: 0 3px 6px rgb(g.$col-000, 0.16);
+      border-radius: 50%;
+      border: 3px solid g.$col-C6C6C6;
+      background-color: g.$col-FFF;
+    }
+  }
+
+  &:checked {
+    & + label {
+      &::before {
+        background-color: g.$col-249EB3;
+      }
+
+      &::after {
+        left: calc(56px - 27px);
+        border-color: g.$col-249EB3;
+      }
+    }
+  }
+}
+
