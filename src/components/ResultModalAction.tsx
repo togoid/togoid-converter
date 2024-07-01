@@ -160,29 +160,29 @@ const ResultModalAction = (props: Props) => {
   };
 
   const copyClipboardURL = () => {
-    const routeName = props.route
-      .map((v, i) => (i === 0 ? v.name : `${v.relation?.link.label},${v.name}`))
-      .join(",");
-    const text = `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert?ids=${
-      props.ids
-    }&route=${routeName}&report=${previewMode}${
-      isCompact ? "&compact=1" : ""
-    }&format=csv`;
-    copy(text, {
+    const text = getConvertUrlSearchParams({
+      route: props.route,
+      ids: props.ids,
+      report: previewMode,
+      format: "csv",
+      compact: isCompact,
+    }).toString();
+
+    copy(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert?${text}`, {
       format: "text/plain",
     });
   };
 
   const copyClipboardCurl = () => {
-    const routeName = props.route
-      .map((v, i) => (i === 0 ? v.name : `${v.relation?.link.label},${v.name}`))
-      .join(",");
-    const text = `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert?ids=${
-      props.ids
-    }&route=${routeName}&report=${previewMode}${
-      isCompact ? "&compact=1" : ""
-    }&format=csv`;
-    copy(`curl "${text}"`, {
+    const text = getConvertUrlSearchParams({
+      route: props.route,
+      ids: props.ids,
+      report: previewMode,
+      format: "csv",
+      compact: isCompact,
+    }).toString();
+
+    copy(`curl "${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert?${text}"`, {
       format: "text/plain",
     });
   };
