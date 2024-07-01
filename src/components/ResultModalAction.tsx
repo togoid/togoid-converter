@@ -160,13 +160,29 @@ const ResultModalAction = (props: Props) => {
   };
 
   const copyClipboardURL = () => {
-    const routeName = props.route.map((v) => v.name).join();
+    const routeName = props.route
+      .map((v, i) => (i === 0 ? v.name : `${v.relation?.link.label},${v.name}`))
+      .join(",");
     const text = `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert?ids=${
       props.ids
     }&route=${routeName}&report=${previewMode}${
       isCompact ? "&compact=1" : ""
     }&format=csv`;
     copy(text, {
+      format: "text/plain",
+    });
+  };
+
+  const copyClipboardCurl = () => {
+    const routeName = props.route
+      .map((v, i) => (i === 0 ? v.name : `${v.relation?.link.label},${v.name}`))
+      .join(",");
+    const text = `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert?ids=${
+      props.ids
+    }&route=${routeName}&report=${previewMode}${
+      isCompact ? "&compact=1" : ""
+    }&format=csv`;
+    copy(`curl "${text}"`, {
       format: "text/plain",
     });
   };
@@ -302,6 +318,9 @@ const ResultModalAction = (props: Props) => {
                   </ResultModalClipboardButton>
                   <ResultModalClipboardButton copyFunction={copyClipboardURL}>
                     Copy API URL
+                  </ResultModalClipboardButton>
+                  <ResultModalClipboardButton copyFunction={copyClipboardCurl}>
+                    Copy API curl
                   </ResultModalClipboardButton>
                 </div>
                 {props.lastTargetCount === "10000+" && (
