@@ -1,6 +1,7 @@
 import useSWRImmutable from "swr/immutable";
 import axios from "axios";
 import copy from "copy-to-clipboard";
+import NProgress from "nprogress";
 
 type Props = {
   pubdictionariesParam: {
@@ -19,6 +20,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
   const { data: tableData } = useSWRImmutable(
     pubdictionariesParam,
     async (key) => {
+      NProgress.start();
       const res = await axios.get<any>(
         "https://pubdictionaries.org/find_ids.json",
         {
@@ -28,7 +30,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
 
       const labelList = pubdictionariesParam.labels.split("|");
 
-      return (
+      const result = (
         await Promise.all(
           labelList.map(async (label) => {
             const tableBaseData = res.data[label] as any[];
@@ -77,6 +79,9 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
           }),
         )
       ).flat();
+
+      NProgress.done();
+      return result;
     },
   );
 
