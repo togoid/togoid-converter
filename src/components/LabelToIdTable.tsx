@@ -1,6 +1,7 @@
 import useSWRImmutable from "swr/immutable";
 import axios from "axios";
 import copy from "copy-to-clipboard";
+import NProgress from "nprogress";
 
 type Props = {
   pubdictionariesParam: {
@@ -19,6 +20,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
   const { data: tableData } = useSWRImmutable(
     pubdictionariesParam,
     async (key) => {
+      NProgress.start();
       const res = await axios.get<any>(
         "https://pubdictionaries.org/find_ids.json",
         {
@@ -28,7 +30,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
 
       const labelList = pubdictionariesParam.labels.split("|");
 
-      return (
+      const result = (
         await Promise.all(
           labelList.map(async (label) => {
             const tableBaseData = res.data[label] as any[];
@@ -77,6 +79,9 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
           }),
         )
       ).flat();
+
+      NProgress.done();
+      return result;
     },
   );
 
@@ -177,8 +182,8 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
               <tr>
                 <th>Input</th>
                 <th>Match type</th>
-                {pubdictionariesParam.tags !== undefined && <th>Symbol</th>}
-                {pubdictionariesParam.threshold !== undefined && (
+                {dataset?.label_resolver?.taxonomy && <th>Symbol</th>}
+                {dataset?.label_resolver?.threshold && (
                   <>
                     <th>Name</th>
                     <th>Score</th>
@@ -192,10 +197,8 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
                 <tr key={i}>
                   <td>{v.label}</td>
                   <td>{v.type}</td>
-                  {pubdictionariesParam.tags !== undefined && (
-                    <td>{v.symbol}</td>
-                  )}
-                  {pubdictionariesParam.threshold !== undefined && (
+                  {dataset?.label_resolver?.taxonomy && <td>{v.symbol}</td>}
+                  {dataset?.label_resolver?.threshold && (
                     <>
                       <td>{v.name}</td>
                       <td>{v.score}</td>

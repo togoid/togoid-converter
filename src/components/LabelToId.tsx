@@ -53,9 +53,7 @@ const LabelToId = () => {
         .map(([key, _]) => key)
         .join(","),
       tags: dataset?.label_resolver?.taxonomy ? species.value : undefined,
-      threshold: dataset?.label_resolver?.threshold
-        ? threshold.value
-        : undefined,
+      threshold: dataset?.label_resolver?.threshold ? threshold.value : 1,
       verbose: true,
     });
 

@@ -6,16 +6,16 @@ const Home = () => {
   const router = useRouter();
 
   const [ids, setIds] = useState(
-    router.asPath
+    decodeURIComponent(router.asPath)
       .match(new RegExp(`[&?]ids=(.*?)(&|$|#)`))?.[1]
-      .split("%2C")
+      .split(",")
       .filter((v) => v) ?? [],
   );
 
   const [routerRoute, setRouterRoute] = useState(
-    router.asPath
+    decodeURIComponent(router.asPath)
       .match(new RegExp(`[&?]route=(.*?)(&|$|#)`))?.[1]
-      .split("%2C")
+      .split(",")
       .filter((v) => v) ?? [],
   );
   const [activeTab, setActiveTab] = useState("EXPLORE");
