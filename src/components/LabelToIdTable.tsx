@@ -182,8 +182,8 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
               <tr>
                 <th>Input</th>
                 <th>Match type</th>
-                {pubdictionariesParam.tags !== undefined && <th>Symbol</th>}
-                {pubdictionariesParam.threshold !== undefined && (
+                {dataset?.label_resolver?.taxonomy && <th>Symbol</th>}
+                {dataset?.label_resolver?.threshold && (
                   <>
                     <th>Name</th>
                     <th>Score</th>
@@ -197,10 +197,8 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
                 <tr key={i}>
                   <td>{v.label}</td>
                   <td>{v.type}</td>
-                  {pubdictionariesParam.tags !== undefined && (
-                    <td>{v.symbol}</td>
-                  )}
-                  {pubdictionariesParam.threshold !== undefined && (
+                  {dataset?.label_resolver?.taxonomy && <td>{v.symbol}</td>}
+                  {dataset?.label_resolver?.threshold && (
                     <>
                       <td>{v.name}</td>
                       <td>{v.score}</td>
