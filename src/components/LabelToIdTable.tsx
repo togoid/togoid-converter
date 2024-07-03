@@ -63,15 +63,13 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
                   (w: any) => w.dictionary === v.dictionary,
                 )?.label,
                 symbol:
-                  res2?.data[v.identifier] &&
-                  v.dictionary !== preferredDictionary
-                    ? res2.data[v.identifier][0].label
-                    : v.name,
+                  v.dictionary === preferredDictionary
+                    ? v.label
+                    : res2?.data[v.identifier][0].label,
                 name:
-                  res2?.data[v.identifier] &&
-                  v.dictionary !== preferredDictionary
-                    ? res2.data[v.identifier][0].label
-                    : v.name,
+                  v.dictionary === preferredDictionary
+                    ? v.label
+                    : res2?.data[v.identifier][0].label,
                 score: v.score,
                 identifier: v.identifier,
               };
@@ -99,7 +97,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
     }
 
     const table = tableData.map((v) => {
-      if (pubdictionariesParam.tags !== undefined) {
+      if (dataset?.label_resolver?.taxonomy) {
         return {
           Input: v.label,
           "Match type": v.type,
@@ -128,7 +126,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
     }
 
     const table = tableData.map((v) => {
-      if (pubdictionariesParam.tags !== undefined) {
+      if (dataset?.label_resolver?.taxonomy) {
         return {
           Input: v.label,
           "Match type": v.type,
