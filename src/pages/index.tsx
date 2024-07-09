@@ -175,7 +175,7 @@ const Home = () => {
           } else {
             // targetが0のままでは変換が0個と同じ扱いになってしまうため1以上にしておく
             _v.target = 1;
-            _v.message = `${_v.results.length}+`;
+            _v.message = `${convert.results.length}+`;
           }
         } else {
           _v.source = 0;
