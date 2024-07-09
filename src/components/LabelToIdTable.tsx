@@ -34,73 +34,92 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
 
       const labelList = pubdictionariesParam.labels.split("|");
 
-      const result = (
-        await Promise.all(
-          labelList.map(async (label) => {
-            const tableBaseData = res.data[label] as any[];
+      const result = await Promise.all(
+        labelList.map(async (label) => {
+          const tableBaseData = res.data[label] as any[];
 
-            const preferredDictionary =
-              dataset.label_resolver.dictionaries.find(
-                (v: any) => v.preferred,
-              )?.dictionary;
+          const preferredDictionary = dataset.label_resolver.dictionaries.find(
+            (v: any) => v.preferred,
+          )?.dictionary;
 
-            const synonymIdList = tableBaseData
-              .filter((v: any) => v.dictionary !== preferredDictionary)
-              .map((v) => v.identifier);
+          const synonymIdList = tableBaseData
+            .filter((v: any) => v.dictionary !== preferredDictionary)
+            .map((v) => v.identifier);
 
-            const res2 = synonymIdList.length
-              ? await axios.get<any>(
-                  "https://pubdictionaries.org/find_terms.json",
-                  {
-                    params: {
-                      ids: synonymIdList.join("|"),
-                      dictionaries: preferredDictionary,
-                    },
+          const res2 = synonymIdList.length
+            ? await axios.get<any>(
+                "https://pubdictionaries.org/find_terms.json",
+                {
+                  params: {
+                    ids: synonymIdList.join("|"),
+                    dictionaries: preferredDictionary,
                   },
-                )
-              : null;
+                },
+              )
+            : null;
 
-            return tableBaseData.map((v) => {
-              return {
-                label: v.label,
-                type: dataset.label_resolver.dictionaries.find(
-                  (w: any) => w.dictionary === v.dictionary,
-                )?.label,
-                symbol:
-                  v.dictionary === preferredDictionary
-                    ? v.label
-                    : res2?.data[v.identifier][0].label,
-                name:
-                  v.dictionary === preferredDictionary
-                    ? v.label
-                    : res2?.data[v.identifier][0].label,
-                score: v.score,
-                identifier: v.identifier,
-              };
-            });
-          }),
-        )
-      ).flat();
+          return tableBaseData.map((v) => {
+            return {
+              label: v.label,
+              type: dataset.label_resolver.dictionaries.find(
+                (w: any) => w.dictionary === v.dictionary,
+              )?.label,
+              symbol:
+                v.dictionary === preferredDictionary
+                  ? v.label
+                  : res2?.data[v.identifier][0].label,
+              name:
+                v.dictionary === preferredDictionary
+                  ? v.label
+                  : res2?.data[v.identifier][0].label,
+              score: v.score,
+              identifier: v.identifier,
+            };
+          });
+        }),
+      );
 
       NProgress.done();
       return result;
     },
   );
 
-  const inputResultId = () => {
+  const tableDataMod = useSignal<NonNullable<typeof tableData>[number]>([]);
+  useEffect(() => {
     if (!tableData) {
       return;
     }
 
-    setText(tableData.map((v) => v.identifier).join("\n"));
+    if (report.value === "matched") {
+      tableDataMod.value = tableData.flat();
+    } else {
+      const labelList = pubdictionariesParam.labels.split("|");
+      tableDataMod.value = tableData.flatMap((v, i) => {
+        return v.length
+          ? v
+          : {
+              label: labelList[i],
+              type: "Unmatched",
+              symbol: "",
+              name: "",
+              score: "",
+              identifier: "",
+            };
+      });
+    }
+  }, [report.value, tableData]);
+
+  const inputResultId = () => {
+    setText(
+      tableDataMod.value
+        .filter((v) => v.identifier)
+        .map((v) => v.identifier)
+        .join("\n"),
+    );
   };
 
   const copyClipboard = async () => {
-    if (!tableData) {
-      return;
-    }
-
-    const table = tableData.map((v) => {
+    const table = tableDataMod.value.map((v) => {
       if (dataset?.label_resolver?.taxonomy) {
         return {
           Input: v.label,
@@ -125,11 +144,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
   };
 
   const handleExportCsvTsv = async (extension: "csv" | "tsv") => {
-    if (!tableData) {
-      return;
-    }
-
-    const table = tableData.map((v) => {
+    const table = tableDataMod.value.map((v) => {
       if (dataset?.label_resolver?.taxonomy) {
         return {
           Input: v.label,
@@ -152,7 +167,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
 
   return (
     <div className="label-to-id-table">
-      {tableData && (
+      {tableDataMod.value.length && (
         <>
           <div className="buttons">
             <p className="heading">Report</p>
@@ -226,7 +241,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
               </tr>
             </thead>
             <tbody>
-              {tableData.map((v, i) => (
+              {tableDataMod.value.map((v, i) => (
                 <tr key={i}>
                   <td>{v.label}</td>
                   <td>{v.type}</td>
