@@ -15,7 +15,11 @@ type Props = {
 };
 
 const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
+  useSignals();
+
   const setText = useSetAtom(textAtom);
+
+  const report = useSignal<"matched" | "unmatched">("matched");
 
   const { data: tableData } = useSWRImmutable(
     pubdictionariesParam,
@@ -150,6 +154,37 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
     <div className="label-to-id-table">
       {tableData && (
         <>
+          <div className="buttons">
+            <p className="heading">Report</p>
+            <div className="radio">
+              <input
+                id="matched"
+                name="matched"
+                type="radio"
+                className="radio__input"
+                style={{ width: "20px", height: "20px" }}
+                onChange={() => (report.value = "matched")}
+                checked={report.value === "matched"}
+              />
+              <label htmlFor="matched" className="radio__label">
+                Matched labels
+              </label>
+            </div>
+            <div className="radio">
+              <input
+                id="unmatched"
+                name="unmatched"
+                type="radio"
+                className="radio__input"
+                style={{ width: "20px", height: "20px" }}
+                onChange={() => (report.value = "unmatched")}
+                checked={report.value === "unmatched"}
+              />
+              <label htmlFor="unmatched" className="radio__label">
+                Include unmatched labels
+              </label>
+            </div>
+          </div>
           <div className="buttons">
             <p className="heading">Action</p>
             <button onClick={() => inputResultId()} className="button search">
