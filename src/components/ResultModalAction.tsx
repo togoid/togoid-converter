@@ -25,7 +25,7 @@ const ResultModalAction = (props: Props) => {
   );
 
   const tableHead = useMemo(
-    () => props.route.map((v) => datasetConfig[v.name]),
+    () => props.route.map((v, i) => ({ ...datasetConfig[v.name], index: i })),
     [],
   );
 

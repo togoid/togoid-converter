@@ -1,13 +1,3 @@
-const createPrefixList = (tableHead: { [key: string]: any }[]) => {
-  return tableHead.map((v, i) => {
-    v["index"] = i;
-    // formatがあれば使う なければ空配列で返す
-    return (v.format?.map((v: any) => {
-      return { label: v.replace("%s", ""), value: v };
-    }) ?? []) as any[];
-  });
-};
-
 type Props = {
   route: Route[];
   ids: string[];
@@ -27,15 +17,12 @@ const ResultModalActionTable = ({
   lineMode,
   setLineMode,
 }: Props) => {
-  const prefixList = useMemo(() => createPrefixList(tableHead), []);
-
   const filterTable = useResultModalPreview(
     previewMode,
     isCompact,
     route,
     ids,
     tableHead,
-    prefixList,
   );
 
   return (
@@ -61,9 +48,9 @@ const ResultModalActionTable = ({
                       }
                     >
                       <option value="id">ID</option>
-                      {prefixList[v.index].map((w) => (
-                        <option key={w.label} value={w.value}>
-                          ID ({w.label})
+                      {v.format?.map((w) => (
+                        <option key={w} value={w}>
+                          ID ({w.replace("%s", "")})
                         </option>
                       ))}
                       <option value="url">URL</option>

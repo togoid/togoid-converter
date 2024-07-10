@@ -1,18 +1,14 @@
 import { printf } from "fast-printf";
 import useSWRImmutable from "swr/immutable";
 
-const createBaseTable = (
-  tableRows: any[][],
-  tableHead: any[],
-  prefixList: any[][],
-) => {
+const createBaseTable = (tableRows: any[][], tableHead: any[]) => {
   const baseTable = tableRows.map((v) => {
     return v.map((w, i) => {
       const formatIdObj: { [key: string]: any } = {};
 
       // prefixがある場合
-      prefixList[i].forEach((x) => {
-        formatIdObj[x.value] = w ? printf(x.value, w) : null;
+      tableHead[i].format?.forEach((x) => {
+        formatIdObj[x] = w ? printf(x, w) : null;
       });
 
       // idとurlは必ず作成する
@@ -26,21 +22,15 @@ const createBaseTable = (
   return baseTable;
 };
 
-const createCompactBaseTable = (
-  tableRows: any[][],
-  tableHead: any[],
-  prefixList: any[][],
-) => {
+const createCompactBaseTable = (tableRows: any[][], tableHead: any[]) => {
   const baseTable = tableRows.map((v) => {
     return v.map((w, i) => {
       const formatIdObj: { [key: string]: any } = {};
 
       const idSplitList = w ? w.split(" ") : [];
       // prefixがある場合
-      prefixList[i].forEach((x) => {
-        formatIdObj[x.value] = w
-          ? idSplitList.map((y: any) => printf(x.value, y))
-          : [];
+      tableHead[i].format?.forEach((x) => {
+        formatIdObj[x] = w ? idSplitList.map((y: any) => printf(x, y)) : [];
       });
 
       // idとurlは必ず作成する
@@ -65,13 +55,12 @@ const fetcher = async (
     compact: boolean;
   },
   tableHead: any[],
-  prefixList: any[],
 ) => {
   const data = await executeQuery(key);
 
   return key.compact
-    ? createCompactBaseTable(data.results, tableHead, prefixList)
-    : createBaseTable(data.results, tableHead, prefixList);
+    ? createCompactBaseTable(data.results, tableHead)
+    : createBaseTable(data.results, tableHead);
 };
 
 const useResultModalPreview = (
@@ -80,7 +69,6 @@ const useResultModalPreview = (
   route: any[],
   ids: any[],
   tableHead: any[],
-  prefixList: any[][],
 ) => {
   const [filterTable, setFilterTable] = useState({});
 
@@ -92,7 +80,7 @@ const useResultModalPreview = (
       limit: 100,
       compact: isCompact,
     },
-    (key) => fetcher(key, tableHead, prefixList),
+    (key) => fetcher(key, tableHead),
   );
 
   useEffect(() => {
