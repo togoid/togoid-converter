@@ -29,25 +29,25 @@ const ResultModalAction = (props: Props) => {
     [],
   );
 
-  const createExportTable = (tableHeading, tableRows) => {
+  const createExportTable = (tableRows: any[][]) => {
     if (previewMode === "all") {
       // all
       const rows = tableRows.map((v) =>
-        v.map((w, i) => [joinPrefix(w, lineMode[i], tableHeading[i].prefix)]),
+        v.map((w, i) => [joinPrefix(w, lineMode[i], tableHead[i].prefix)]),
       );
 
-      return { heading: tableHeading, rows };
+      return { heading: tableHead, rows };
     } else if (previewMode === "pair") {
       // origin and targets
       return {
-        heading: [tableHeading[0], tableHeading[tableHeading.length - 1]],
+        heading: [tableHead[0], tableHead[tableHead.length - 1]],
         rows: tableRows.map((v) => [
-          [joinPrefix(v[0], lineMode[0], tableHeading[0].prefix)],
+          [joinPrefix(v[0], lineMode[0], tableHead[0].prefix)],
           [
             joinPrefix(
               v[v.length - 1],
               lineMode[lineMode.length - 1],
-              tableHeading[tableHeading.length - 1].prefix,
+              tableHead[tableHead.length - 1].prefix,
             ),
           ],
         ]),
@@ -55,14 +55,14 @@ const ResultModalAction = (props: Props) => {
     } else if (previewMode === "target") {
       // target
       return {
-        heading: [tableHeading[tableHeading.length - 1]],
+        heading: [tableHead[tableHead.length - 1]],
         rows: isCompact
           ? [
               [
                 joinPrefix(
                   tableRows,
                   lineMode[lineMode.length - 1],
-                  tableHeading[tableHeading.length - 1].prefix,
+                  tableHead[tableHead.length - 1].prefix,
                 ),
               ],
             ]
@@ -70,7 +70,7 @@ const ResultModalAction = (props: Props) => {
               joinPrefix(
                 v,
                 lineMode[lineMode.length - 1],
-                tableHeading[tableHeading.length - 1].prefix,
+                tableHead[tableHead.length - 1].prefix,
               ),
             ]),
       };
@@ -78,11 +78,11 @@ const ResultModalAction = (props: Props) => {
       // full
       const rows = tableRows.map((v) =>
         v.map((w, i) => [
-          w ? joinPrefix(w, lineMode[i], tableHeading[i].prefix) : null,
+          w ? joinPrefix(w, lineMode[i], tableHead[i].prefix) : null,
         ]),
       );
 
-      return { heading: tableHeading, rows };
+      return { heading: tableHead, rows };
     }
   };
 
@@ -112,7 +112,7 @@ const ResultModalAction = (props: Props) => {
       compact: isCompact,
     });
 
-    const { rows } = createExportTable(tableHead, d.results);
+    const { rows } = createExportTable(d.results);
     const text = invokeUnparse(rows, "tsv");
 
     copy(text, {
@@ -128,7 +128,7 @@ const ResultModalAction = (props: Props) => {
       compact: isCompact,
     });
 
-    const { heading, rows } = createExportTable(tableHead, d.results);
+    const { heading, rows } = createExportTable(d.results);
     const h = heading.map((v) => v.label);
     exportCsvTsv([h, ...rows], extension, `result.${extension}`);
   };
