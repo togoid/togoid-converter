@@ -1,10 +1,19 @@
+const createPrefixList = (tableHeading: { [key: string]: any }[]) => {
+  return tableHeading.map((v, i) => {
+    v["index"] = i;
+    // formatがあれば使う なければ空配列で返す
+    return (v.format?.map((v: any) => {
+      return { label: v.replace("%s", ""), value: v };
+    }) ?? []) as any[];
+  });
+};
+
 type Props = {
   route: Route[];
-  ids: any;
+  ids: string[];
   previewMode: string;
   isCompact: boolean;
   tableHead: any[];
-  prefixList: any[];
   lineMode: string[];
   setLineMode: Dispatch<SetStateAction<string[]>>;
 };
@@ -15,10 +24,11 @@ const ResultModalActionTable = ({
   previewMode,
   isCompact,
   tableHead,
-  prefixList,
   lineMode,
   setLineMode,
 }: Props) => {
+  const prefixList = useMemo(() => createPrefixList(tableHead), []);
+
   const filterTable = useResultModalPreview(
     previewMode,
     isCompact,

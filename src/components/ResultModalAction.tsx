@@ -9,16 +9,6 @@ const previewModeList = new Map([
   ["full", "All including unconverted IDs"],
 ]);
 
-const createPrefixList = (tableHeading: { [key: string]: any }[]) => {
-  return tableHeading.map((v, i) => {
-    v["index"] = i;
-    // formatがあれば使う なければ空配列で返す
-    return (v.format?.map((v: any) => {
-      return { label: v.replace("%s", ""), value: v };
-    }) ?? []) as any[];
-  });
-};
-
 type Props = {
   route: Route[];
   ids: any;
@@ -38,7 +28,6 @@ const ResultModalAction = (props: Props) => {
     () => props.route.map((v) => datasetConfig[v.name]),
     [],
   );
-  const prefixList = useMemo(() => createPrefixList(tableHead), []);
 
   const createExportTable = (tableHeading, tableRows) => {
     if (previewMode === "all") {
@@ -332,7 +321,6 @@ const ResultModalAction = (props: Props) => {
         previewMode={previewMode}
         isCompact={isCompact}
         tableHead={tableHead}
-        prefixList={prefixList}
         lineMode={lineMode}
         setLineMode={setLineMode}
       />
