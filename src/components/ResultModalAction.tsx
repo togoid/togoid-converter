@@ -30,7 +30,7 @@ const ResultModalAction = (props: Props) => {
 
   const [previewMode, setPreviewMode] = useState("all");
   const [isCompact, setIsCompact] = useState(false);
-  const [lineMode, setLineMode] = useState(
+  const [lineMode, setLineMode] = useState<string[]>(
     Array(props.route.length).fill("id"),
   );
 
@@ -39,13 +39,6 @@ const ResultModalAction = (props: Props) => {
     [],
   );
   const prefixList = useMemo(() => createPrefixList(tableHead), []);
-
-  const handleSelectPrefix = (e) => {
-    const newLineMode = lineMode.slice();
-    newLineMode[e.target.id] = e.target.value;
-
-    setLineMode(newLineMode);
-  };
 
   const createExportTable = (tableHeading, tableRows) => {
     if (previewMode === "all") {
@@ -341,7 +334,7 @@ const ResultModalAction = (props: Props) => {
         tableHead={tableHead}
         prefixList={prefixList}
         lineMode={lineMode}
-        handleSelectPrefix={handleSelectPrefix}
+        setLineMode={setLineMode}
       />
     </>
   );

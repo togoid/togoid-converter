@@ -6,7 +6,7 @@ type Props = {
   tableHead: any[];
   prefixList: any[];
   lineMode: string[];
-  handleSelectPrefix: (e: any) => any;
+  setLineMode: Dispatch<SetStateAction<string[]>>;
 };
 
 const ResultModalActionTable = ({
@@ -17,7 +17,7 @@ const ResultModalActionTable = ({
   tableHead,
   prefixList,
   lineMode,
-  handleSelectPrefix,
+  setLineMode,
 }: Props) => {
   const filterTable = useResultModalPreview(
     previewMode,
@@ -43,8 +43,12 @@ const ResultModalActionTable = ({
                     <select
                       id={v.index}
                       className="select white"
-                      onChange={(e) => handleSelectPrefix(e)}
                       value={lineMode[v.index]}
+                      onChange={(e) =>
+                        setLineMode(
+                          lineMode.toSpliced(v.index, 1, e.target.value),
+                        )
+                      }
                     >
                       <option value="id">ID</option>
                       {prefixList[v.index].map((w) => (
