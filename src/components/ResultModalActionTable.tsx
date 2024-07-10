@@ -1,5 +1,5 @@
-const createPrefixList = (tableHeading: { [key: string]: any }[]) => {
-  return tableHeading.map((v, i) => {
+const createPrefixList = (tableHead: { [key: string]: any }[]) => {
+  return tableHead.map((v, i) => {
     v["index"] = i;
     // formatがあれば使う なければ空配列で返す
     return (v.format?.map((v: any) => {
