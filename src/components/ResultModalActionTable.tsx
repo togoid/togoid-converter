@@ -29,8 +29,8 @@ const ResultModalActionTable = ({
     <table className="table">
       <thead>
         <tr>
-          {filterTable?.rows?.length > 0 &&
-            filterTable.heading.map((v, i) => {
+          {filterTable?.rows?.length &&
+            filterTable.heading!.map((v, i) => {
               return (
                 <th key={i}>
                   <fieldset>
@@ -69,7 +69,7 @@ const ResultModalActionTable = ({
         </tr>
       </thead>
       <tbody>
-        {filterTable?.rows?.length > 0
+        {filterTable?.rows?.length
           ? filterTable.rows.map((data, i) => (
               <tr key={i}>
                 {data.map((d, j) => (
@@ -80,14 +80,14 @@ const ResultModalActionTable = ({
                       d.url.map((f, k) => (
                         <Fragment key={k}>
                           <a href={f} target="_blank" rel="noreferrer">
-                            {d[lineMode[filterTable.heading[j].index]][k]}
+                            {d[lineMode[filterTable.heading![j].index]][k]}
                           </a>
                           <br />
                         </Fragment>
                       ))
                     ) : (
                       <a href={d.url} target="_blank" rel="noreferrer">
-                        {d[lineMode[filterTable.heading[j].index]]}
+                        {d[lineMode[filterTable.heading![j].index]]}
                       </a>
                     )}
                   </td>

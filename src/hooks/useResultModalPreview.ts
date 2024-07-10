@@ -70,7 +70,9 @@ const useResultModalPreview = (
   ids: any[],
   tableHead: any[],
 ) => {
-  const [filterTable, setFilterTable] = useState({});
+  const [filterTable, setFilterTable] = useState<
+    Partial<ReturnType<typeof editTable>>
+  >({});
 
   const { data: baseTable } = useSWRImmutable(
     {
@@ -90,7 +92,7 @@ const useResultModalPreview = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [baseTable, previewMode]);
 
-  const editTable = (): { heading: any[]; rows: any[] } => {
+  const editTable = (): { heading: any[]; rows: any[][] } => {
     if (previewMode === "all") {
       // all
       const rows = baseTable.filter((v) => v[v.length - 1].url);
@@ -133,7 +135,7 @@ const useResultModalPreview = (
     return { heading: [], rows: [] };
   };
 
-  const editCompactTable = (): { heading: any[]; rows: any[] } => {
+  const editCompactTable = (): { heading: any[]; rows: any[][] } => {
     if (previewMode === "all") {
       // all
       return {
