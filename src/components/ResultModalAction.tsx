@@ -295,7 +295,7 @@ const ResultModalAction = (props: Props) => {
                 Copy API URL
               </ResultModalClipboardButton>
               <ResultModalClipboardButton copyFunction={copyClipboardCurl}>
-                Copy API curl
+                Copy CURL
               </ResultModalClipboardButton>
             </div>
             {props.lastTargetCount === "10000+" && (
