@@ -21,7 +21,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
 
   const report = useSignal<"matched" | "unmatched">("matched");
 
-  const { data: tableData } = useSWRImmutable(
+  const { data: tableData, isLoading } = useSWRImmutable(
     pubdictionariesParam,
     async (key) => {
       NProgress.start();
@@ -167,7 +167,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
 
   return (
     <div className="label-to-id-table">
-      {tableDataMod.value.length && (
+      {(!isLoading || Boolean(tableDataMod.value.length)) && (
         <>
           <div className="buttons">
             <p className="heading">Report</p>
@@ -200,71 +200,78 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
               </label>
             </div>
           </div>
-          <div className="buttons">
-            <p className="heading">Action</p>
-            <button onClick={() => inputResultId()} className="button search">
-              Copy to Search
-            </button>
-            <button
-              onClick={() => copyClipboard()}
-              className="button clipboard"
-            >
-              Copy to Clipboard
-            </button>
-            <button
-              className="button"
-              onClick={() => handleExportCsvTsv("csv")}
-            >
-              Download as CSV
-            </button>
-            <button
-              className="button"
-              onClick={() => handleExportCsvTsv("tsv")}
-            >
-              Download as TSV
-            </button>
-          </div>
-          <table className="table">
-            <caption className="heading">Showing</caption>
-            <thead>
-              <tr>
-                <th>Input</th>
-                <th>Match type</th>
-                {dataset?.label_resolver?.taxonomy && <th>Symbol</th>}
-                {dataset?.label_resolver?.threshold && (
-                  <>
-                    <th>Name</th>
-                    <th>Score</th>
-                  </>
-                )}
-                <th>ID</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tableDataMod.value.map((v, i) => (
-                <tr key={i}>
-                  <td>{v.label}</td>
-                  <td>{v.type}</td>
-                  {dataset?.label_resolver?.taxonomy && <td>{v.symbol}</td>}
-                  {dataset?.label_resolver?.threshold && (
-                    <>
-                      <td>{v.name}</td>
-                      <td>{v.score}</td>
-                    </>
-                  )}
-                  <td>
-                    <a
-                      href={dataset.prefix + v.identifier}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {v.identifier}
-                    </a>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          {Boolean(tableDataMod.value.length) && (
+            <>
+              <div className="buttons">
+                <p className="heading">Action</p>
+                <button
+                  onClick={() => inputResultId()}
+                  className="button search"
+                >
+                  Copy to Search
+                </button>
+                <button
+                  onClick={() => copyClipboard()}
+                  className="button clipboard"
+                >
+                  Copy to Clipboard
+                </button>
+                <button
+                  className="button"
+                  onClick={() => handleExportCsvTsv("csv")}
+                >
+                  Download as CSV
+                </button>
+                <button
+                  className="button"
+                  onClick={() => handleExportCsvTsv("tsv")}
+                >
+                  Download as TSV
+                </button>
+              </div>
+              <table className="table">
+                <caption className="heading">Showing</caption>
+                <thead>
+                  <tr>
+                    <th>Input</th>
+                    <th>Match type</th>
+                    {dataset?.label_resolver?.taxonomy && <th>Symbol</th>}
+                    {dataset?.label_resolver?.threshold && (
+                      <>
+                        <th>Name</th>
+                        <th>Score</th>
+                      </>
+                    )}
+                    <th>ID</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tableDataMod.value.map((v, i) => (
+                    <tr key={i}>
+                      <td>{v.label}</td>
+                      <td>{v.type}</td>
+                      {dataset?.label_resolver?.taxonomy && <td>{v.symbol}</td>}
+                      {dataset?.label_resolver?.threshold && (
+                        <>
+                          <td>{v.name}</td>
+                          <td>{v.score}</td>
+                        </>
+                      )}
+                      <td>
+                        <a
+                          href={dataset.prefix + v.identifier}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {v.identifier}
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
         </>
       )}
     </div>
