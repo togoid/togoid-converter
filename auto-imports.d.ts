@@ -64,6 +64,7 @@ declare global {
   const textAtom: typeof import('./src/atoms/text')['textAtom']
   const topExamples: typeof import('./src/lib/examples')['topExamples']
   const useAnnotate: typeof import('./src/hooks/useAnnotate')['default']
+  const useAnnotateConfig: typeof import('./src/hooks/useAnnotateConfig')['default']
   const useAtom: typeof import('jotai')['useAtom']
   const useAtomCallback: typeof import('jotai/utils')['useAtomCallback']
   const useAtomValue: typeof import('jotai')['useAtomValue']
