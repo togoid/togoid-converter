@@ -21,6 +21,7 @@ const nextConfig = {
           { react: ["Fragment"] },
           {
             "@preact/signals-react": [
+              "signal",
               "useSignal",
               "useComputed",
               "useSignalEffect",

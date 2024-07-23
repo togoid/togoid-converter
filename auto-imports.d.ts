@@ -58,6 +58,7 @@ declare global {
   const memo: typeof import('react')['memo']
   const mergePathStyle: typeof import('./src/lib/util')['mergePathStyle']
   const selectAtom: typeof import('jotai/utils')['selectAtom']
+  const signal: typeof import('@preact/signals-react')['signal']
   const splitAtom: typeof import('jotai/utils')['splitAtom']
   const startTransition: typeof import('react')['startTransition']
   const textAtom: typeof import('./src/atoms/text')['textAtom']
