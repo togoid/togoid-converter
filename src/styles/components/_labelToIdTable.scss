@@ -66,14 +66,33 @@
 
    thead {
      th {
-       height: 40px;
        font: {
          family: g.$ff-oswald;
          size: 1rem;
        }
 
        color: g.$col-707070;
+       padding: 8px 26px;
        vertical-align: middle;
+
+       .id-select {
+         display: flex;
+         gap: 5px;
+         flex-direction: column;
+       }
+
+       .select {
+         height: 22px;
+         font-family: g.$ff-oswald;
+         padding: 0 9px;
+         border-radius: 5px;
+         border-color: g.$col-707070;
+
+         &__label {
+           display: block;
+           font-size: 1rem;
+         }
+       }
      }
    }
  }
