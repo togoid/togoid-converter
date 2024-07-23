@@ -242,16 +242,27 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
                         <th>Score</th>
                       </>
                     )}
-                    <th>ID</th>
+                    <th>
+                      <div className="id-select">
+                        <label htmlFor="idSelect" className="select__label">
+                          ID
+                        </label>
+                        <select id="idSelect" className="select white">
+                          <option value="">dummy01</option>
+                          <option value="">dummy02</option>
+                          <option value="">dummy03</option>
+                        </select>
+                      </div>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {tableDataMod.value.map((v, i) => (
-                    <tr key={i}>
-                      <td>{v.label}</td>
-                      <td>{v.type}</td>
-                      {dataset?.label_resolver?.taxonomy && <td>{v.symbol}</td>}
-                      {dataset?.label_resolver?.threshold && (
+                {tableDataMod.value.map((v, i) => (
+                  <tr key={i}>
+                    <td>{v.label}</td>
+                    <td>{v.type}</td>
+                    {dataset?.label_resolver?.taxonomy && <td>{v.symbol}</td>}
+                    {dataset?.label_resolver?.threshold && (
                         <>
                           <td>{v.name}</td>
                           <td>{v.score}</td>
