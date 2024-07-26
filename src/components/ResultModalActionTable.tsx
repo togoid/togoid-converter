@@ -58,7 +58,7 @@ const ResultModalActionTable = ({
                       <option value="url">URL</option>
                     </select>
 
-                    {annotateConfig.includes(v.name) && (
+                    {annotateConfig?.includes(v.name) && (
                       <>
                         <input
                           id={"showLabels" + i}
