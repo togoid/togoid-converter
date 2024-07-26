@@ -3,15 +3,17 @@ import axios from "axios";
 import copy from "copy-to-clipboard";
 import NProgress from "nprogress";
 
+const report = signal<"matched" | "unmatched">("matched");
+
 type Props = {
-  pubdictionariesParam: {
+  pubdictionariesParam: Signal<{
     labels: string;
     dictionaries: string;
     tags?: string;
     threshold?: number;
     verbose: boolean;
-  };
-  dataset: any;
+  }>;
+  dataset: Signal<Datasetconfig>;
 };
 
 const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
@@ -19,10 +21,8 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
 
   const setText = useSetAtom(textAtom);
 
-  const report = useSignal<"matched" | "unmatched">("matched");
-
   const { data: tableData, isLoading } = useSWRImmutable(
-    pubdictionariesParam,
+    pubdictionariesParam.value,
     async (key) => {
       NProgress.start();
       const res = await axios.get<any>(
@@ -32,15 +32,16 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
         },
       );
 
-      const labelList = pubdictionariesParam.labels.split("|");
+      const labelList = pubdictionariesParam.value.labels.split("|");
 
       const result = await Promise.all(
         labelList.map(async (label) => {
           const tableBaseData = res.data[label] as any[];
 
-          const preferredDictionary = dataset.label_resolver.dictionaries.find(
-            (v: any) => v.preferred,
-          )?.dictionary;
+          const preferredDictionary =
+            dataset.value.label_resolver.dictionaries.find(
+              (v: any) => v.preferred,
+            )?.dictionary;
 
           const synonymIdList = tableBaseData
             .filter((v: any) => v.dictionary !== preferredDictionary)
@@ -61,7 +62,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
           return tableBaseData.map((v) => {
             return {
               label: v.label,
-              type: dataset.label_resolver.dictionaries.find(
+              type: dataset.value.label_resolver.dictionaries.find(
                 (w: any) => w.dictionary === v.dictionary,
               )?.label,
               symbol:
@@ -93,7 +94,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
     if (report.value === "matched") {
       tableDataMod.value = tableData.flat();
     } else {
-      const labelList = pubdictionariesParam.labels.split("|");
+      const labelList = pubdictionariesParam.value.labels.split("|");
       tableDataMod.value = tableData.flatMap((v, i) => {
         return v.length
           ? v
@@ -120,7 +121,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
 
   const copyClipboard = async () => {
     const table = tableDataMod.value.map((v) => {
-      if (dataset?.label_resolver?.taxonomy) {
+      if (dataset.value?.label_resolver?.taxonomy) {
         return {
           Input: v.label,
           "Match type": v.type,
@@ -145,7 +146,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
 
   const handleExportCsvTsv = async (extension: "csv" | "tsv") => {
     const table = tableDataMod.value.map((v) => {
-      if (dataset?.label_resolver?.taxonomy) {
+      if (dataset.value?.label_resolver?.taxonomy) {
         return {
           Input: v.label,
           "Match type": v.type,
@@ -235,14 +236,25 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
                   <tr>
                     <th>Input</th>
                     <th>Match type</th>
-                    {dataset?.label_resolver?.taxonomy && <th>Symbol</th>}
-                    {dataset?.label_resolver?.threshold && (
+                    {dataset.value?.label_resolver?.taxonomy && <th>Symbol</th>}
+                    {dataset.value?.label_resolver?.threshold && (
                       <>
                         <th>Name</th>
                         <th>Score</th>
                       </>
                     )}
-                    <th>ID</th>
+                    <th>
+                      <div className="id-select">
+                        <label htmlFor="idSelect" className="select__label">
+                          ID
+                        </label>
+                        <select id="idSelect" className="select white">
+                          <option value="">dummy01</option>
+                          <option value="">dummy02</option>
+                          <option value="">dummy03</option>
+                        </select>
+                      </div>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -250,8 +262,10 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
                     <tr key={i}>
                       <td>{v.label}</td>
                       <td>{v.type}</td>
-                      {dataset?.label_resolver?.taxonomy && <td>{v.symbol}</td>}
-                      {dataset?.label_resolver?.threshold && (
+                      {dataset.value?.label_resolver?.taxonomy && (
+                        <td>{v.symbol}</td>
+                      )}
+                      {dataset.value?.label_resolver?.threshold && (
                         <>
                           <td>{v.name}</td>
                           <td>{v.score}</td>
@@ -259,7 +273,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
                       )}
                       <td>
                         <a
-                          href={dataset.prefix + v.identifier}
+                          href={dataset.value.prefix + v.identifier}
                           target="_blank"
                           rel="noreferrer"
                         >

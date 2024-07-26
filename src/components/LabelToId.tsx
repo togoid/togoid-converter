@@ -1,35 +1,36 @@
 import Select from "react-select";
 
+const dataset = signal<Datasetconfig>();
+const species = signal<string>();
+const threshold = signal(0.5);
+const selectDictionaryList = signal<{ [key: string]: boolean }>({});
+const isShowTable = signal(false);
+const pubdictionariesParam = signal({
+  labels: "",
+  dictionaries: "",
+  tags: undefined as string | undefined,
+  threshold: undefined as number | undefined,
+  verbose: true,
+});
+
 const LabelToId = () => {
   useSignals();
 
   const { datasetConfig } = useConfig();
 
-  const [dataset, setDataset] = useState<any>();
-  const species = useSignal<string | undefined>(undefined);
-  const threshold = useSignal(0.5);
-  const isShowTable = useSignal(false);
-  const [selectDictionaryList, setSelectDictionaryList] = useState<{
-    [key: string]: boolean;
-  }>({});
-  const [pubdictionariesParam, setPubdictionariesParam] = useState({
-    labels: "",
-    dictionaries: "",
-    tags: undefined as string | undefined,
-    threshold: undefined as number | undefined,
-    verbose: true,
-  });
   const text = useAtomValue(textAtom);
 
   const handleSelectDropDown = (value: any) => {
     isShowTable.value = false;
     species.value = undefined;
-    setDataset(value);
+    threshold.value = 0.5;
+    dataset.value = value;
 
-    setSelectDictionaryList(
-      value.label_resolver.dictionaries.reduce((prev: any, curr: any) => {
+    selectDictionaryList.value = value.label_resolver.dictionaries.reduce(
+      (prev: any, curr: any) => {
         return { ...prev, [curr.dictionary]: true };
-      }, {}),
+      },
+      {},
     );
   };
 
@@ -46,16 +47,16 @@ const LabelToId = () => {
       .join("|");
 
     // exanple: ovarian cancer
-    setPubdictionariesParam({
+    pubdictionariesParam.value = {
       labels: labels,
-      dictionaries: Object.entries(selectDictionaryList)
+      dictionaries: Object.entries(selectDictionaryList.value)
         .filter(([_, value]) => value)
         .map(([key, _]) => key)
         .join(","),
-      tags: dataset?.label_resolver?.taxonomy ? species.value : undefined,
-      threshold: dataset?.label_resolver?.threshold ? threshold.value : 1,
+      tags: dataset.value?.label_resolver?.taxonomy ? species.value : undefined,
+      threshold: dataset.value?.label_resolver?.threshold ? threshold.value : 1,
       verbose: true,
-    });
+    };
 
     isShowTable.value = true;
   };
@@ -86,35 +87,36 @@ const LabelToId = () => {
                 value: value,
                 label: value.label,
               }))}
+            value={dataset.value}
             placeholder="Select a dataset"
             onChange={(e) => handleSelectDropDown(e!.value)}
           />
         </div>
 
-        {dataset && (
+        {dataset.value && (
           <>
-            {dataset?.label_resolver?.taxonomy && (
+            {dataset.value?.label_resolver?.taxonomy && (
               <LabelToIdSpecies species={species} />
             )}
-            {dataset?.label_resolver?.threshold && (
+            {dataset.value?.label_resolver?.threshold && (
               <LabelToIdThreshold threshold={threshold} />
             )}
             <fieldset className="labels">
               <legend className="label">Select label types</legend>
               <div className="labels__wrapper">
-                {dataset.label_resolver.dictionaries?.map((v: any) => (
+                {dataset.value.label_resolver.dictionaries?.map((v: any) => (
                   <Fragment key={v.label}>
                     <input
                       type="checkbox"
                       id={v.label}
                       value={v.dictionary}
                       className="checkbox"
-                      checked={selectDictionaryList[v.dictionary]}
+                      checked={selectDictionaryList.value[v.dictionary]}
                       onChange={(e) => {
-                        setSelectDictionaryList({
-                          ...selectDictionaryList,
+                        selectDictionaryList.value = {
+                          ...selectDictionaryList.value,
                           [v.dictionary]: e.target.checked,
-                        });
+                        };
                       }}
                     />
                     <label htmlFor={v.label} className="checkbox-label">
@@ -134,7 +136,7 @@ const LabelToId = () => {
       {isShowTable.value && (
         <LabelToIdTable
           pubdictionariesParam={pubdictionariesParam}
-          dataset={dataset}
+          dataset={dataset as Signal<NonNullable<typeof dataset.value>>}
         />
       )}
     </div>

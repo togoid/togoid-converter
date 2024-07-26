@@ -131,7 +131,10 @@ const Home = () => {
               target: 0,
               results: [],
               relation: {
-                link: value.reverse,
+                link: {
+                  display_label: value.reverse.display_label,
+                  label: value.forward.label, // 必ずforward側を使う
+                },
                 description: value.description,
               },
             });
@@ -423,7 +426,10 @@ const Home = () => {
       const obj = {
         name,
         relation: {
-          link: value[direction],
+          link: {
+            display_label: value[direction].display_label,
+            label: value.forward.label, // labelは必ずforward側を使う
+          },
           description: value.description,
         },
       };

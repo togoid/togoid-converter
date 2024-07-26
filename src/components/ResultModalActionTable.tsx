@@ -25,6 +25,8 @@ const ResultModalActionTable = ({
     tableHead,
   );
 
+  const { annotateConfig } = useAnnotateConfig();
+
   return (
     <table className="table">
       <thead>
@@ -56,12 +58,16 @@ const ResultModalActionTable = ({
                       <option value="url">URL</option>
                     </select>
 
-                    <input
-                      id={"showLabels" + i}
-                      type="checkbox"
-                      className="c-switch"
-                    />
-                    <label htmlFor={"showLabels" + i}>Show Labels</label>
+                    {annotateConfig?.includes(v.name) && (
+                      <>
+                        <input
+                          id={"showLabels" + i}
+                          type="checkbox"
+                          className="c-switch"
+                        />
+                        <label htmlFor={"showLabels" + i}>Show Labels</label>
+                      </>
+                    )}
                   </fieldset>
                 </th>
               );
