@@ -86,17 +86,25 @@ export const mergePathStyle = (
   isRoute: boolean,
 ) => {
   const toLabelId = toId.replace(/^to/, "label");
-  const toLabelPath = getPathStyle(fromId, toLabelId, isRoute, "none");
-  const fromLabelPath = getPathStyle(toLabelId, toId, isRoute, "default");
+  const toLabelPath = getPathStyle(fromId, toLabelId, {
+    head: "none",
+    isRoute,
+  });
+  const fromLabelPath = getPathStyle(toLabelId, toId, {
+    head: "default",
+    isRoute,
+  });
   return [toLabelPath, fromLabelPath];
 };
 
 export const getPathStyle = (
   fromId: string,
   toId: string,
-  isRoute: boolean,
-  head: HeadStyleAlias,
-  isResult: boolean = false,
+  options: {
+    head: HeadStyleAlias;
+    isResult?: boolean;
+    isRoute?: boolean;
+  },
 ): Arrow => {
   return {
     from: {
@@ -109,23 +117,23 @@ export const getPathStyle = (
       posX: "left",
       posY: "middle",
     },
-    style: isResult
-      ? {
+    style: options.isResult
+      ? ({
           color: "#1A8091",
-          head: head,
+          head: options.head,
           arrow: "smooth",
           width: 1.5,
-        }
-      : isRoute
+        } as const)
+      : options.isRoute
         ? ({
             color: "#1A8091",
-            head: head,
+            head: options.head,
             arrow: "smooth",
             width: 2,
           } as const)
         : ({
             color: "#dddddd",
-            head: head,
+            head: options.head,
             arrow: "smooth",
             width: 1.5,
           } as const),

@@ -1,8 +1,7 @@
 import { useClickAway } from "react-use";
 import { ArrowArea } from "react-arrow-master";
-import ResultModalAction from "@/components/ResultModalAction";
 
-import type { Arrow, HeadStyleAlias } from "react-arrow-master";
+import type { Arrow } from "react-arrow-master";
 
 type Props = {
   route: Route[];
@@ -18,25 +17,25 @@ const ResultModal = ({ setIsShowResultModal, ...props }: Props) => {
     () =>
       props.route.flatMap((_, i) => {
         if (i === 0) {
-          return getPathStyle(
-            `label-${i}`,
-            `link-${i + 1}`,
-            false,
-            "none",
-            true,
-          );
+          return getPathStyle(`label-${i}`, `link-${i + 1}`, {
+            head: "none",
+            isResult: true,
+          });
         } else if (i === props.route.length - 1) {
-          return getPathStyle(
-            `link-${i}`,
-            `label-${i}`,
-            false,
-            "default",
-            true,
-          );
+          return getPathStyle(`link-${i}`, `label-${i}`, {
+            head: "default",
+            isResult: true,
+          });
         } else {
           return [
-            getPathStyle(`link-${i}`, `label-${i}`, false, "default", true),
-            getPathStyle(`label-${i}`, `link-${i + 1}`, false, "none", true),
+            getPathStyle(`link-${i}`, `label-${i}`, {
+              head: "default",
+              isResult: true,
+            }),
+            getPathStyle(`label-${i}`, `link-${i + 1}`, {
+              head: "none",
+              isResult: true,
+            }),
           ];
         }
       }),

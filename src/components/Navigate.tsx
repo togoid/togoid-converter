@@ -28,12 +28,10 @@ const Navigate = (props: Props) => {
 
     if (isShowDropdown) {
       candidatePaths.push(
-        getPathStyle(
-          `from${0}-${props.route[0].name}`,
-          `nodeOther`,
-          false,
-          "default",
-        ),
+        getPathStyle(`from${0}-${props.route[0].name}`, `nodeOther`, {
+          head: "default",
+          isRoute: false,
+        }),
       );
     } else if (props.route.length) {
       props.databaseNodesList.forEach((nodes, i) => {
@@ -43,18 +41,14 @@ const Navigate = (props: Props) => {
           nodes.forEach((v, j) => {
             if (v === null) {
               candidatePaths.push(
-                getPathStyle(
-                  `from0-${props.route[0].name}`,
-                  `label1-${j}`,
-                  j === offsetRoute,
-                  "none",
-                ),
-                getPathStyle(
-                  `label1-${j}`,
-                  `label1-${j}`,
-                  j === offsetRoute,
-                  "none",
-                ),
+                getPathStyle(`from0-${props.route[0].name}`, `label1-${j}`, {
+                  head: "none",
+                  isRoute: j === offsetRoute,
+                }),
+                getPathStyle(`label1-${j}`, `label1-${j}`, {
+                  head: "none",
+                  isRoute: j === offsetRoute,
+                }),
               );
             } else {
               candidatePaths.push(
