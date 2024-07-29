@@ -96,6 +96,7 @@ export const getPathStyle = (
   toId: string,
   isRoute: boolean,
   head: HeadStyleAlias,
+  isResult: boolean = false,
 ): Arrow => {
   return {
     from: {
@@ -108,18 +109,25 @@ export const getPathStyle = (
       posX: "left",
       posY: "middle",
     },
-    style: isRoute
-      ? ({
+    style: isResult
+      ? {
           color: "#1A8091",
           head: head,
           arrow: "smooth",
-          width: 2,
-        } as const)
-      : ({
-          color: "#dddddd",
-          head: head,
-          arrow: "smooth",
           width: 1.5,
-        } as const),
+        }
+      : isRoute
+        ? ({
+            color: "#1A8091",
+            head: head,
+            arrow: "smooth",
+            width: 2,
+          } as const)
+        : ({
+            color: "#dddddd",
+            head: head,
+            arrow: "smooth",
+            width: 1.5,
+          } as const),
   };
 };

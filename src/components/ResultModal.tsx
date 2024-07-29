@@ -14,42 +14,29 @@ type Props = {
 const ResultModal = ({ setIsShowResultModal, ...props }: Props) => {
   const { datasetConfig } = useConfig();
 
-  const getResultPathStyle = (
-    from: string,
-    to: string,
-    head: HeadStyleAlias,
-  ): Arrow => {
-    return {
-      from: {
-        id: from,
-        posX: "right",
-        posY: "middle",
-      },
-      to: {
-        id: to,
-        posX: "left",
-        posY: "middle",
-      },
-      style: {
-        color: "#1A8091",
-        head: head,
-        arrow: "smooth",
-        width: 1.5,
-      },
-    };
-  };
-
   const routePath = useMemo<Arrow[]>(
     () =>
       props.route.flatMap((_, i) => {
         if (i === 0) {
-          return getResultPathStyle(`label-${i}`, `link-${i + 1}`, "none");
+          return getPathStyle(
+            `label-${i}`,
+            `link-${i + 1}`,
+            false,
+            "none",
+            true,
+          );
         } else if (i === props.route.length - 1) {
-          return getResultPathStyle(`link-${i}`, `label-${i}`, "default");
+          return getPathStyle(
+            `link-${i}`,
+            `label-${i}`,
+            false,
+            "default",
+            true,
+          );
         } else {
           return [
-            getResultPathStyle(`link-${i}`, `label-${i}`, "default"),
-            getResultPathStyle(`label-${i}`, `link-${i + 1}`, "none"),
+            getPathStyle(`link-${i}`, `label-${i}`, false, "default", true),
+            getPathStyle(`label-${i}`, `link-${i + 1}`, false, "none", true),
           ];
         }
       }),
