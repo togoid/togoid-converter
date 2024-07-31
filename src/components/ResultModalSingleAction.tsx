@@ -1,5 +1,6 @@
 import copy from "copy-to-clipboard";
 import { printf } from "fast-printf";
+import axios from "axios";
 
 type Props = {
   route: Route[];
@@ -10,8 +11,6 @@ type Props = {
 const ResultModalAction = (props: Props) => {
   const { datasetConfig } = useConfig();
 
-  const [previewMode, setPreviewMode] = useState("all");
-  const [isCompact, setIsCompact] = useState(false);
   const [lineMode, setLineMode] = useState<string[]>(
     Array(props.route.length).fill("id"),
   );
@@ -19,7 +18,7 @@ const ResultModalAction = (props: Props) => {
     Array(props.route.length).fill(false),
   );
 
-  const tableHead = useMemo(
+  const tableHead = useMemo<any[]>(
     () =>
       props.route.map((v, i) => ({
         ...datasetConfig[v.name],
@@ -29,64 +28,43 @@ const ResultModalAction = (props: Props) => {
     [],
   );
 
-  const createExportTable = (tableRows: any[][]) => {
-    if (previewMode === "all") {
-      // all
-      const rows = tableRows.map((v) =>
-        v.map((w, i) => [joinPrefix(w, lineMode[i], tableHead[i].prefix)]),
-      );
+  const createExportTable = async (idList: string[]) => {
+    if (isShowLabelList[0]) {
+      const head = tableHead.flatMap((v) => [v.label, ""]);
 
-      return { heading: tableHead, rows };
-    } else if (previewMode === "pair") {
-      // origin and targets
-      return {
-        heading: [tableHead[0], tableHead[tableHead.length - 1]],
-        rows: tableRows.map((v) => [
-          [joinPrefix(v[0], lineMode[0], tableHead[0].prefix)],
-          [
-            joinPrefix(
-              v[v.length - 1],
-              lineMode[lineMode.length - 1],
-              tableHead[tableHead.length - 1].prefix,
-            ),
-          ],
-        ]),
-      };
-    } else if (previewMode === "target") {
-      // target
-      return {
-        heading: [tableHead[tableHead.length - 1]],
-        rows: isCompact
-          ? [
-              [
-                joinPrefix(
-                  tableRows,
-                  lineMode[lineMode.length - 1],
-                  tableHead[tableHead.length - 1].prefix,
-                ),
-              ],
-            ]
-          : tableRows.map((v) => [
-              joinPrefix(
-                v,
-                lineMode[lineMode.length - 1],
-                tableHead[tableHead.length - 1].prefix,
-              ),
-            ]),
-      };
-    } else if (previewMode === "full") {
-      // full
-      const rows = tableRows.map((v) =>
-        v.map((w, i) => [
-          w ? joinPrefix(w, lineMode[i], tableHead[i].prefix) : null,
-        ]),
-      );
+      const response = await axios({
+        url: "https://rdfportal.org/grasp-togoid",
+        method: "POST",
+        data: {
+          query: `query {
+            ${tableHead[0].name}(id: ${JSON.stringify(idList)}) {
+              iri
+              id
+              label
+            }
+          }`,
+        },
+      });
 
-      return { heading: tableHead, rows };
+      const row = idList.map((v, i) => {
+        return [
+          joinPrefix(v, lineMode[0], tableHead[0].prefix),
+          (Object.values(response.data.data)[0] as any)[i].label,
+        ];
+      });
+
+      return { head: head, row: row };
+    } else {
+      const head = tableHead.map((v) => v.label);
+      const row = idList.map((v) => {
+        return [joinPrefix(v, lineMode[0], tableHead[0].prefix)];
+      });
+
+      return { head: head, row: row };
     }
   };
 
-  const joinPrefix = (id, mode, prefix) => {
+  const joinPrefix = (id: string, mode: string, prefix: string) => {
     // nullチェックが必要な場合は関数に渡す前にチェックすること
     // compactの際の処理を共通化させるためにsplitする
     if (mode === "id") {
@@ -105,32 +83,18 @@ const ResultModalAction = (props: Props) => {
   };
 
   const copyClipboard = async () => {
-    const d = await executeQuery({
-      route: props.route,
-      ids: props.ids,
-      report: previewMode,
-      compact: isCompact,
-    });
-
-    const { rows } = createExportTable(d.results);
-    const text = invokeUnparse(rows, "tsv");
+    const { row } = await createExportTable(props.route[0].results);
+    const text = invokeUnparse(row, "tsv");
 
     copy(text, {
       format: "text/plain",
     });
   };
 
-  const handleExportCsvTsv = async (extension) => {
-    const d = await executeQuery({
-      route: props.route,
-      ids: props.ids,
-      report: previewMode,
-      compact: isCompact,
-    });
+  const handleExportCsvTsv = async (extension: "csv" | "tsv") => {
+    const { head, row } = await createExportTable(props.route[0].results);
 
-    const { heading, rows } = createExportTable(d.results);
-    const h = heading.map((v) => v.label);
-    exportCsvTsv([h, ...rows], extension, `result.${extension}`);
+    exportCsvTsv([head, ...row], extension, `result.${extension}`);
   };
 
   return (
