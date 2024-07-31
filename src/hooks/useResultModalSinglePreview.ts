@@ -1,5 +1,5 @@
-// import useSWRImmutable from "swr/immutable";
-import useSWR from "swr";
+import useSWRImmutable from "swr/immutable";
+// import useSWR from "swr";
 import axios from "axios";
 
 const useResultModalSinglePreview = (
@@ -8,7 +8,7 @@ const useResultModalSinglePreview = (
   isShowLabelList: boolean[],
   lineMode: string[],
 ) => {
-  const { data: baseTable } = useSWR(
+  const { data: baseTable } = useSWRImmutable(
     {
       route: route,
     },
@@ -17,15 +17,17 @@ const useResultModalSinglePreview = (
     },
   );
 
-  const [labelList, setLabelList] = useState<any[]>();
-
-  useEffect(() => {
-    const func = async () => {
-      if (!baseTable) {
+  const { data: labelList } = useSWRImmutable(
+    {
+      baseTable: baseTable,
+      isShowLabelSome: isShowLabelList.some((v) => v),
+    },
+    async () => {
+      if (!(baseTable && isShowLabelList.some((v) => v))) {
         return;
       }
 
-      const res = await Promise.all(
+      return await Promise.all(
         baseTable.map(async (v, i) => {
           if (!isShowLabelList[i]) {
             return null;
@@ -47,15 +49,11 @@ const useResultModalSinglePreview = (
           return Object.values(response.data.data)[0];
         }),
       );
+    },
+  );
 
-      setLabelList(res);
-    };
-
-    func();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [baseTable, isShowLabelList]);
-
-  const [filterTable, setFilterTable] = useState<any>();
+  const [filterTable, setFilterTable] =
+    useState<ReturnType<typeof editTable>>();
 
   useEffect(() => {
     if (baseTable) {
@@ -69,6 +67,7 @@ const useResultModalSinglePreview = (
       const head = tableHead.map((v) => [v, null]);
       const row = table.map((v, i) =>
         v.map((w, j) => {
+          // @ts-expect-error
           return [w, labelList?.[i]?.[j]?.label];
         }),
       );
