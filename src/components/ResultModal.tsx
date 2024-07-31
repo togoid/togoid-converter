@@ -109,13 +109,23 @@ const ResultModal = ({ setIsShowResultModal, ...props }: Props) => {
             </div>
           </div>
 
-          <ResultModalAction
-            route={props.route}
-            ids={props.ids}
-            lastTargetCount={
-              props.convertedCount[props.convertedCount.length - 1].target
-            }
-          />
+          {props.route.length > 1 ? (
+            <ResultModalAction
+              route={props.route}
+              ids={props.ids}
+              lastTargetCount={
+                props.convertedCount[props.convertedCount.length - 1].target
+              }
+            />
+          ) : (
+            <ResultModalSingleAction
+              route={props.route}
+              ids={props.ids}
+              lastTargetCount={
+                props.convertedCount[props.convertedCount.length - 1].target
+              }
+            />
+          )}
         </div>
       </div>
     </div>

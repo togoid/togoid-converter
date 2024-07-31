@@ -30,6 +30,8 @@ declare global {
   const ResultModalAction: typeof import('./src/components/ResultModalAction')['default']
   const ResultModalActionTable: typeof import('./src/components/ResultModalActionTable')['default']
   const ResultModalClipboardButton: typeof import('./src/components/ResultModalClipboardButton')['default']
+  const ResultModalSingleAction: typeof import('./src/components/ResultModalSingleAction')['default']
+  const ResultModalSingleActionTable: typeof import('./src/components/ResultModalSingleActionTable')['default']
   const TabWrapper: typeof import('./src/components/TabWrapper')['default']
   const annotateTargetList: typeof import('./src/lib/annotate-target')['annotateTargetList']
   const atom: typeof import('jotai')['atom']

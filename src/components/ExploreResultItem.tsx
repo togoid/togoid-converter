@@ -105,7 +105,7 @@ const ExploreResultItem = (props) => {
       </label>
       {isActionButtonVisible && (
         <div className="action_icons">
-          {props.i > 0 && props.v.target > 0 && (
+          {props.v.target > 0 && (
             <button
               onClick={() => openResultModal()}
               className="action_icons__item"
