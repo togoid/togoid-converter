@@ -88,6 +88,7 @@ declare global {
   const useRef: typeof import('react')['useRef']
   const useResetAtom: typeof import('jotai/utils')['useResetAtom']
   const useResultModalPreview: typeof import('./src/hooks/useResultModalPreview')['default']
+  const useResultModalSinglePreview: typeof import('./src/hooks/useResultModalSinglePreview')['default']
   const useSetAtom: typeof import('jotai')['useSetAtom']
   const useSignal: typeof import('@preact/signals-react')['useSignal']
   const useSignalEffect: typeof import('@preact/signals-react')['useSignalEffect']
