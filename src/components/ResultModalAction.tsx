@@ -162,7 +162,7 @@ const ResultModalAction = (props: Props) => {
     }).toString();
 
     copy(
-      `curl -X POST "${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert?${text}"`,
+      `curl -X POST -d "${text}" "${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert"`,
       {
         format: "text/plain",
       },
