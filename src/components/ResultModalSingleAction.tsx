@@ -8,7 +8,7 @@ type Props = {
   lastTargetCount: any;
 };
 
-const ResultModalAction = (props: Props) => {
+const ResultModalSingleAction = (props: Props) => {
   const { datasetConfig } = useConfig();
 
   const [lineMode, setLineMode] = useState<string[]>(
@@ -177,4 +177,4 @@ const ResultModalAction = (props: Props) => {
   );
 };
 
-export default ResultModalAction;
+export default ResultModalSingleAction;

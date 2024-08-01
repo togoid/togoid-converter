@@ -9,7 +9,7 @@ type Props = {
   setIsShowLabelList: Dispatch<SetStateAction<boolean[]>>;
 };
 
-const ResultModalActionTable = ({
+const ResultModalSingleActionTable = ({
   route,
   tableHead,
   lineMode,
@@ -118,4 +118,4 @@ const ResultModalActionTable = ({
   );
 };
 
-export default ResultModalActionTable;
+export default ResultModalSingleActionTable;
