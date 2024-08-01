@@ -2,6 +2,7 @@ import useSWRImmutable from "swr/immutable";
 import axios from "axios";
 import copy from "copy-to-clipboard";
 import NProgress from "nprogress";
+import { printf } from "fast-printf";
 
 const report = signal<"matched" | "unmatched">("matched");
 
@@ -18,6 +19,10 @@ type Props = {
 
 const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
   useSignals();
+
+  const lineMode = useSignal(
+    dataset.value.format ? dataset.value.format[0] : "ID",
+  );
 
   const setText = useSetAtom(textAtom);
 
@@ -114,30 +119,13 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
     setText(
       tableDataMod.value
         .filter((v) => v.identifier)
-        .map((v) => v.identifier)
+        .map((v) => joinPrefix(v.identifier, lineMode.value))
         .join("\n"),
     );
   };
 
   const copyClipboard = async () => {
-    const table = tableDataMod.value.map((v) => {
-      if (dataset.value?.label_resolver?.taxonomy) {
-        return {
-          Input: v.label,
-          "Match type": v.type,
-          Symbol: v.symbol,
-          ID: v.identifier,
-        };
-      } else {
-        return {
-          Input: v.label,
-          "Match type": v.type,
-          Name: v.name,
-          Score: v.score,
-          ID: v.identifier,
-        };
-      }
-    });
+    const table = createExportTable();
     const text = invokeUnparse(table, "tsv");
     copy(text, {
       format: "text/plain",
@@ -145,13 +133,20 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
   };
 
   const handleExportCsvTsv = async (extension: "csv" | "tsv") => {
-    const table = tableDataMod.value.map((v) => {
+    const table = createExportTable();
+    exportCsvTsv(table, extension, `result.${extension}`);
+  };
+
+  const createExportTable = () => {
+    return tableDataMod.value.map((v) => {
+      const id = v.identifier ? joinPrefix(v.identifier, lineMode.value) : "";
+
       if (dataset.value?.label_resolver?.taxonomy) {
         return {
           Input: v.label,
           "Match type": v.type,
           Symbol: v.symbol,
-          ID: v.identifier,
+          ID: id,
         };
       } else {
         return {
@@ -159,11 +154,20 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
           "Match type": v.type,
           Name: v.name,
           Score: v.score,
-          ID: v.identifier,
+          ID: id,
         };
       }
     });
-    exportCsvTsv(table, extension, `result.${extension}`);
+  };
+
+  const joinPrefix = (id: string, lineMode: string) => {
+    if (lineMode === "id") {
+      return id;
+    } else if (lineMode === "url") {
+      return dataset.value.prefix + id;
+    } else {
+      return printf(lineMode, id);
+    }
   };
 
   return (
@@ -248,10 +252,24 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
                         <label htmlFor="idSelect" className="select__label">
                           ID
                         </label>
-                        <select id="idSelect" className="select white">
-                          <option value="">dummy01</option>
-                          <option value="">dummy02</option>
-                          <option value="">dummy03</option>
+                        <select
+                          id="idSelect"
+                          className="select white"
+                          value={lineMode.value}
+                          onChange={(e) => (lineMode.value = e.target.value)}
+                        >
+                          {dataset.value.format ? (
+                            dataset.value.format.map((w: string) => (
+                              <option key={w} value={w}>
+                                {w === "%s"
+                                  ? "ID"
+                                  : `ID (${w.replace("%s", "")})`}
+                              </option>
+                            ))
+                          ) : (
+                            <option value="id">ID</option>
+                          )}
+                          <option value="url">URL</option>
                         </select>
                       </div>
                     </th>
@@ -272,13 +290,15 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
                         </>
                       )}
                       <td>
-                        <a
-                          href={dataset.value.prefix + v.identifier}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {v.identifier}
-                        </a>
+                        {v.identifier && (
+                          <a
+                            href={joinPrefix(v.identifier, "url")}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {joinPrefix(v.identifier, lineMode.value)}
+                          </a>
+                        )}
                       </td>
                     </tr>
                   ))}
