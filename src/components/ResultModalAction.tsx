@@ -1,5 +1,4 @@
 import copy from "copy-to-clipboard";
-import { printf } from "fast-printf";
 
 // 定数
 const previewModeList = new Map([
@@ -34,11 +33,13 @@ const ResultModalAction = (props: Props) => {
     [],
   );
 
-  const createExportTable = (tableRows: any[][]) => {
+  const createExportTable = (tableRows: string[][]) => {
     if (previewMode === "all") {
       // all
       const rows = tableRows.map((v) =>
-        v.map((w, i) => [joinPrefix(w, lineMode[i], tableHead[i].prefix)]),
+        v.map((w, i) => [
+          joinPrefix(w, lineMode[i], tableHead[i].prefix, isCompact),
+        ]),
       );
 
       return { heading: tableHead, rows };
@@ -47,12 +48,13 @@ const ResultModalAction = (props: Props) => {
       return {
         heading: [tableHead[0], tableHead[tableHead.length - 1]],
         rows: tableRows.map((v) => [
-          [joinPrefix(v[0], lineMode[0], tableHead[0].prefix)],
+          [joinPrefix(v[0], lineMode[0], tableHead[0].prefix, isCompact)],
           [
             joinPrefix(
               v[v.length - 1],
               lineMode[lineMode.length - 1],
               tableHead[tableHead.length - 1].prefix,
+              isCompact,
             ),
           ],
         ]),
@@ -68,6 +70,7 @@ const ResultModalAction = (props: Props) => {
                   tableRows,
                   lineMode[lineMode.length - 1],
                   tableHead[tableHead.length - 1].prefix,
+                  isCompact,
                 ),
               ],
             ]
@@ -76,6 +79,7 @@ const ResultModalAction = (props: Props) => {
                 v,
                 lineMode[lineMode.length - 1],
                 tableHead[tableHead.length - 1].prefix,
+                isCompact,
               ),
             ]),
       };
@@ -83,29 +87,11 @@ const ResultModalAction = (props: Props) => {
       // full
       const rows = tableRows.map((v) =>
         v.map((w, i) => [
-          w ? joinPrefix(w, lineMode[i], tableHead[i].prefix) : null,
+          w ? joinPrefix(w, lineMode[i], tableHead[i].prefix, isCompact) : null,
         ]),
       );
 
       return { heading: tableHead, rows };
-    }
-  };
-
-  const joinPrefix = (id, mode, prefix) => {
-    // nullチェックが必要な場合は関数に渡す前にチェックすること
-    // compactの際の処理を共通化させるためにsplitする
-    if (mode === "id") {
-      return id;
-    } else if (mode === "url") {
-      return id
-        .split(" ")
-        .map((v) => prefix + v)
-        .join(" ");
-    } else {
-      return id
-        .split(" ")
-        .map((v) => printf(mode, v))
-        .join(" ");
     }
   };
 
@@ -117,7 +103,7 @@ const ResultModalAction = (props: Props) => {
       compact: isCompact,
     });
 
-    const { rows } = createExportTable(d.results);
+    const { rows } = createExportTable(d.results)!;
     const text = invokeUnparse(rows, "tsv");
 
     copy(text, {
@@ -133,7 +119,7 @@ const ResultModalAction = (props: Props) => {
       compact: isCompact,
     });
 
-    const { heading, rows } = createExportTable(d.results);
+    const { heading, rows } = createExportTable(d.results)!;
     const h = heading.map((v) => v.label);
     exportCsvTsv([h, ...rows], extension, `result.${extension}`);
   };

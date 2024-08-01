@@ -55,6 +55,7 @@ declare global {
   const getConvertUrlSearchParams: typeof import('./src/lib/util')['getConvertUrlSearchParams']
   const getPathStyle: typeof import('./src/lib/util')['getPathStyle']
   const invokeUnparse: typeof import('./src/lib/util')['invokeUnparse']
+  const joinPrefix: typeof import('./src/lib/util')['joinPrefix']
   const lazy: typeof import('react')['lazy']
   const loadable: typeof import('jotai/utils')['loadable']
   const memo: typeof import('react')['memo']

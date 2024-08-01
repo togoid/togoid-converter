@@ -2,7 +2,6 @@ import useSWRImmutable from "swr/immutable";
 import axios from "axios";
 import copy from "copy-to-clipboard";
 import NProgress from "nprogress";
-import { printf } from "fast-printf";
 
 const report = signal<"matched" | "unmatched">("matched");
 
@@ -119,7 +118,10 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
     setText(
       tableDataMod.value
         .filter((v) => v.identifier)
-        .map((v) => joinPrefix(v.identifier, lineMode.value))
+        .map((v) =>
+          // @ts-expect-error
+          joinPrefix(v.identifier, lineMode.value, dataset.value.prefix),
+        )
         .join("\n"),
     );
   };
@@ -139,7 +141,10 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
 
   const createExportTable = () => {
     return tableDataMod.value.map((v) => {
-      const id = v.identifier ? joinPrefix(v.identifier, lineMode.value) : "";
+      const id = v.identifier
+        ? // @ts-expect-error
+          joinPrefix(v.identifier, lineMode.value, dataset.value.prefix)
+        : "";
 
       if (dataset.value?.label_resolver?.taxonomy) {
         return {
@@ -158,16 +163,6 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
         };
       }
     });
-  };
-
-  const joinPrefix = (id: string, lineMode: string) => {
-    if (lineMode === "id") {
-      return id;
-    } else if (lineMode === "url") {
-      return dataset.value.prefix + id;
-    } else {
-      return printf(lineMode, id);
-    }
   };
 
   return (
@@ -292,11 +287,21 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
                       <td>
                         {v.identifier && (
                           <a
-                            href={joinPrefix(v.identifier, "url")}
+                            href={joinPrefix(
+                              v.identifier,
+                              "url",
+                              // @ts-expect-error
+                              dataset.value.prefix,
+                            )}
                             target="_blank"
                             rel="noreferrer"
                           >
-                            {joinPrefix(v.identifier, lineMode.value)}
+                            {joinPrefix(
+                              v.identifier,
+                              lineMode.value,
+                              // @ts-expect-error
+                              dataset.value.prefix,
+                            )}
                           </a>
                         )}
                       </td>

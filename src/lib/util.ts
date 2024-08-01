@@ -1,6 +1,7 @@
 import PaPa from "papaparse";
 import { saveAs } from "file-saver";
 import axios from "axios";
+import { printf } from "fast-printf";
 
 import type { Arrow, HeadStyleAlias } from "react-arrow-master";
 
@@ -57,7 +58,11 @@ export const executeQuery = async (baseParams: {
   compact?: boolean;
 }) => {
   return await axios
-    .post(
+    .post<{
+      ids: string[];
+      results: string[][];
+      route: string[];
+    }>(
       `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert`,
       getConvertUrlSearchParams({ ...baseParams, format: "json" }),
     )
@@ -138,4 +143,29 @@ export const getPathStyle = (
             width: 1.5,
           } as const),
   };
+};
+
+export const joinPrefix = (
+  id: string,
+  mode: string,
+  prefix: string,
+  isCompact?: boolean,
+) => {
+  if (mode === "id") {
+    return id;
+  } else if (mode === "url") {
+    return isCompact
+      ? id
+          .split(" ")
+          .map((v) => prefix + v)
+          .join(" ")
+      : prefix + id;
+  } else {
+    return isCompact
+      ? id
+          .split(" ")
+          .map((v) => printf(mode, v))
+          .join(" ")
+      : printf(mode, id);
+  }
 };
