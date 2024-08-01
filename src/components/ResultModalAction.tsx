@@ -67,6 +67,7 @@ const ResultModalAction = (props: Props) => {
           ? [
               [
                 joinPrefix(
+                  // @ts-expect-error
                   tableRows,
                   lineMode[lineMode.length - 1],
                   tableHead[tableHead.length - 1].prefix,
@@ -76,6 +77,7 @@ const ResultModalAction = (props: Props) => {
             ]
           : tableRows.map((v) => [
               joinPrefix(
+                // @ts-expect-error
                 v,
                 lineMode[lineMode.length - 1],
                 tableHead[tableHead.length - 1].prefix,
@@ -111,7 +113,7 @@ const ResultModalAction = (props: Props) => {
     });
   };
 
-  const handleExportCsvTsv = async (extension) => {
+  const handleExportCsvTsv = async (extension: "csv" | "tsv") => {
     const d = await executeQuery({
       route: props.route,
       ids: props.ids,
@@ -167,7 +169,7 @@ const ResultModalAction = (props: Props) => {
                 .map(([key, value], i) => (
                   <div className="radio" key={i}>
                     <input
-                      id={i}
+                      id={String(i)}
                       key={i}
                       value={key}
                       name="report"
@@ -176,7 +178,7 @@ const ResultModalAction = (props: Props) => {
                       checked={previewMode === key}
                       onChange={() => setPreviewMode(key)}
                     />
-                    <label htmlFor={i} className="radio__label">
+                    <label htmlFor={String(i)} className="radio__label">
                       {value}
                     </label>
                   </div>
@@ -185,7 +187,7 @@ const ResultModalAction = (props: Props) => {
             <div className="report__inner">
               <div className="radio" key={previewModeList.size - 1}>
                 <input
-                  id={previewModeList.size - 1}
+                  id={String(previewModeList.size - 1)}
                   key={previewModeList.size - 1}
                   value="full"
                   name="report"
@@ -195,7 +197,7 @@ const ResultModalAction = (props: Props) => {
                   onChange={() => setPreviewMode("full")}
                 />
                 <label
-                  htmlFor={previewModeList.size - 1}
+                  htmlFor={String(previewModeList.size - 1)}
                   className="radio__label"
                 >
                   {previewModeList.get("full")}

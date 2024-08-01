@@ -1,7 +1,7 @@
 import { createPortal } from "react-dom";
 import { useHoverDirty } from "react-use";
 
-const ExploreResultItem = (props) => {
+const ExploreResultItem = (props: any) => {
   const { datasetConfig } = useConfig();
 
   const [isShowResultModal, setIsShowResultModal] = useState(false);

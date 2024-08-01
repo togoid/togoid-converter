@@ -13,7 +13,7 @@ type Props = {
     threshold?: number;
     verbose: boolean;
   }>;
-  dataset: Signal<Datasetconfig>;
+  dataset: Signal<DatasetConfig[number]>;
 };
 
 const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
@@ -119,7 +119,6 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
       tableDataMod.value
         .filter((v) => v.identifier)
         .map((v) =>
-          // @ts-expect-error
           joinPrefix(v.identifier, lineMode.value, dataset.value.prefix),
         )
         .join("\n"),
@@ -142,8 +141,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
   const createExportTable = () => {
     return tableDataMod.value.map((v) => {
       const id = v.identifier
-        ? // @ts-expect-error
-          joinPrefix(v.identifier, lineMode.value, dataset.value.prefix)
+        ? joinPrefix(v.identifier, lineMode.value, dataset.value.prefix)
         : "";
 
       if (dataset.value?.label_resolver?.taxonomy) {
@@ -290,7 +288,6 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
                             href={joinPrefix(
                               v.identifier,
                               "url",
-                              // @ts-expect-error
                               dataset.value.prefix,
                             )}
                             target="_blank"
@@ -299,7 +296,6 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
                             {joinPrefix(
                               v.identifier,
                               lineMode.value,
-                              // @ts-expect-error
                               dataset.value.prefix,
                             )}
                           </a>
