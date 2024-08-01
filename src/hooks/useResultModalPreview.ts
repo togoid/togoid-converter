@@ -87,48 +87,51 @@ const useResultModalPreview = (
 
   useEffect(() => {
     if (baseTable) {
-      setFilterTable(isCompact ? editCompactTable() : editTable());
+      setFilterTable(isCompact ? editCompactTable() : editTable(baseTable));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [baseTable, previewMode]);
 
-  const editTable = (): { heading: any[]; rows: any[][] } => {
+  const editTable = (
+    table: {
+      [key: string]: any;
+    }[][],
+  ): { heading: any[]; rows: any[][] } => {
     if (previewMode === "all") {
       // all
-      const rows = baseTable.filter((v) => v[v.length - 1].url);
+      const rows = table.filter((v) => v[v.length - 1].id);
       return { heading: tableHead, rows };
     } else if (previewMode === "pair") {
       // origin and targets
       // 重複は消す
       return {
         heading: [tableHead[0], tableHead[tableHead.length - 1]],
-        rows: baseTable
-          .filter((v) => v[v.length - 1].url)
-          .map((v) => [v[0], v[v.length - 1]])
-          .filter(
-            (v, i, self) =>
-              self.findIndex(
-                (w) =>
-                  w[0].url === v[0].url &&
-                  w[w.length - 1].url === v[v.length - 1].url,
-              ) === i,
+        rows: Array.from(
+          new Set(
+            table
+              .filter((v) => v[v.length - 1].id)
+              .map((v) => JSON.stringify([v[0], v[v.length - 1]])),
           ),
+          (v) => JSON.parse(v),
+        ),
       };
     } else if (previewMode === "target") {
       // target
       // 重複は消す
       return {
         heading: [tableHead[tableHead.length - 1]],
-        rows: baseTable
-          .filter((v) => v[v.length - 1].url)
-          .map((v) => [v[v.length - 1]])
-          .filter(
-            (v, i, self) => self.findIndex((w) => w[0].url === v[0].url) === i,
+        rows: Array.from(
+          new Set(
+            table
+              .filter((v) => v[v.length - 1].id)
+              .map((v) => JSON.stringify([v[v.length - 1]])),
           ),
+          (v) => JSON.parse(v),
+        ),
       };
     } else if (previewMode === "full") {
       // full
-      return { heading: tableHead, rows: baseTable };
+      return { heading: tableHead, rows: table };
     }
 
     // ここには来ない
