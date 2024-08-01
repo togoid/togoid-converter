@@ -106,7 +106,7 @@ const ResultModalActionTable = ({
                     ) : (
                       <a
                         href={joinPrefix(
-                          d.id,
+                          d,
                           "url",
                           filterTable.heading![j].prefix,
                         )}
@@ -114,7 +114,7 @@ const ResultModalActionTable = ({
                         rel="noreferrer"
                       >
                         {joinPrefix(
-                          d.id,
+                          d,
                           lineMode[filterTable.heading![j].index],
                           filterTable.heading![j].prefix,
                         )}

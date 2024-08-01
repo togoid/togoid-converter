@@ -1,25 +1,8 @@
 import { printf } from "fast-printf";
 import useSWRImmutable from "swr/immutable";
 
-const createBaseTable = (tableRows: any[][], tableHead: any[]) => {
-  const baseTable = tableRows.map((v) => {
-    return v.map((w, i) => {
-      const formatIdObj: { [key: string]: any } = {};
-
-      // prefixがある場合
-      tableHead[i].format?.forEach((x) => {
-        formatIdObj[x] = w ? printf(x, w) : null;
-      });
-
-      // idとurlは必ず作成する
-      formatIdObj["id"] = w ?? null;
-      formatIdObj["url"] = w ? tableHead[i].prefix + w : null;
-
-      return formatIdObj;
-    });
-  });
-
-  return baseTable;
+const createBaseTable = (tableRows: any[][]) => {
+  return tableRows;
 };
 
 const createCompactBaseTable = (tableRows: any[][], tableHead: any[]) => {
@@ -99,7 +82,7 @@ const useResultModalPreview = (
   ): { heading: any[]; rows: any[][] } => {
     if (previewMode === "all") {
       // all
-      const rows = table.filter((v) => v[v.length - 1].id);
+      const rows = table.filter((v) => v[v.length - 1]);
       return { heading: tableHead, rows };
     } else if (previewMode === "pair") {
       // origin and targets
@@ -109,7 +92,7 @@ const useResultModalPreview = (
         rows: Array.from(
           new Set(
             table
-              .filter((v) => v[v.length - 1].id)
+              .filter((v) => v[v.length - 1])
               .map((v) => JSON.stringify([v[0], v[v.length - 1]])),
           ),
           (v) => JSON.parse(v),
@@ -123,7 +106,7 @@ const useResultModalPreview = (
         rows: Array.from(
           new Set(
             table
-              .filter((v) => v[v.length - 1].id)
+              .filter((v) => v[v.length - 1])
               .map((v) => JSON.stringify([v[v.length - 1]])),
           ),
           (v) => JSON.parse(v),
