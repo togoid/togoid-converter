@@ -81,19 +81,43 @@ const ResultModalActionTable = ({
                 {data.map((d, j) => (
                   <td key={j}>
                     {isCompact ? (
-                      d.url &&
-                      Array.isArray(d.url) &&
-                      d.url.map((f, k) => (
+                      d.id &&
+                      Array.isArray(d.id) &&
+                      d.id.map((f, k) => (
                         <Fragment key={k}>
-                          <a href={f} target="_blank" rel="noreferrer">
-                            {d[lineMode[filterTable.heading![j].index]][k]}
+                          <a
+                            href={joinPrefix(
+                              f,
+                              "url",
+                              filterTable.heading![j].prefix,
+                            )}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {joinPrefix(
+                              f,
+                              lineMode[filterTable.heading![j].index],
+                              filterTable.heading![j].prefix,
+                            )}
                           </a>
                           <br />
                         </Fragment>
                       ))
                     ) : (
-                      <a href={d.url} target="_blank" rel="noreferrer">
-                        {d[lineMode[filterTable.heading![j].index]]}
+                      <a
+                        href={joinPrefix(
+                          d.id,
+                          "url",
+                          filterTable.heading![j].prefix,
+                        )}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {joinPrefix(
+                          d.id,
+                          lineMode[filterTable.heading![j].index],
+                          filterTable.heading![j].prefix,
+                        )}
                       </a>
                     )}
                   </td>
