@@ -68,6 +68,13 @@ const ResultModalSingleAction = (props: Props) => {
     exportCsvTsv([head, ...row], extension, `result.${extension}`);
   };
 
+  const { filterTable, labelList } = useResultModalSinglePreview(
+    props.route,
+    tableHead,
+    isShowLabelList,
+    lineMode,
+  );
+
   return (
     <>
       <div className="modal__top">
@@ -136,13 +143,15 @@ const ResultModalSingleAction = (props: Props) => {
         </div>
       </div>
 
-      <ResultModalSingleActionTable
-        route={props.route}
+      <ResultModalActionTable
+        isCompact={false}
         tableHead={tableHead}
         lineMode={lineMode}
         setLineMode={setLineMode}
         isShowLabelList={isShowLabelList}
         setIsShowLabelList={setIsShowLabelList}
+        filterTable={filterTable}
+        labelList={labelList}
       />
     </>
   );

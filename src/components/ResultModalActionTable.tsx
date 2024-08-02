@@ -1,7 +1,4 @@
 type Props = {
-  route: Route[];
-  ids: string[];
-  previewMode: string;
   isCompact: boolean;
   tableHead: {
     index: number;
@@ -21,28 +18,20 @@ type Props = {
   setLineMode: Dispatch<SetStateAction<string[]>>;
   isShowLabelList: boolean[];
   setIsShowLabelList: Dispatch<SetStateAction<boolean[]>>;
+  filterTable: ReturnType<typeof useResultModalPreview>["filterTable"];
+  labelList: ReturnType<typeof useResultModalPreview>["labelList"];
 };
 
 const ResultModalActionTable = ({
-  route,
-  ids,
-  previewMode,
   isCompact,
   tableHead,
   lineMode,
   setLineMode,
   isShowLabelList,
   setIsShowLabelList,
+  filterTable,
+  labelList,
 }: Props) => {
-  const { filterTable, labelList } = useResultModalPreview(
-    previewMode,
-    isCompact,
-    route,
-    ids,
-    tableHead,
-    isShowLabelList,
-  );
-
   const { annotateConfig } = useAnnotateConfig();
 
   return (
@@ -103,7 +92,7 @@ const ResultModalActionTable = ({
         </tr>
       </thead>
       <tbody>
-        {filterTable?.rows?.length
+        {filterTable?.heading?.length && filterTable?.rows?.length
           ? filterTable.rows.map((data, i) => (
               <tr key={i}>
                 {data.map((d, j) => (

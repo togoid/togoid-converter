@@ -59,13 +59,22 @@ const useResultModalSinglePreview = (
   );
 
   const [filterTable, setFilterTable] = useState<{
-    head: typeof tableHead;
-    row: string[][];
+    heading: typeof tableHead;
+    rows: string[][];
   }>();
 
   useEffect(() => {
     if (baseTable) {
-      setFilterTable({ head: tableHead, row: baseTable });
+      const arr: string[][] = [];
+      baseTable.forEach((v) => {
+        v.forEach((w) => {
+          arr.push([w]);
+        });
+      });
+      setFilterTable({
+        heading: tableHead,
+        rows: arr,
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [baseTable, labelList, isShowLabelList, lineMode]);

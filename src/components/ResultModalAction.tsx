@@ -160,6 +160,15 @@ const ResultModalAction = (props: Props) => {
     );
   };
 
+  const { filterTable, labelList } = useResultModalPreview(
+    previewMode,
+    isCompact,
+    props.route,
+    props.ids,
+    tableHead,
+    isShowLabelList,
+  );
+
   return (
     <>
       <div className="modal__top">
@@ -312,15 +321,14 @@ const ResultModalAction = (props: Props) => {
       </div>
 
       <ResultModalActionTable
-        route={props.route}
-        ids={props.ids}
-        previewMode={previewMode}
         isCompact={isCompact}
         tableHead={tableHead}
         lineMode={lineMode}
         setLineMode={setLineMode}
         isShowLabelList={isShowLabelList}
         setIsShowLabelList={setIsShowLabelList}
+        filterTable={filterTable}
+        labelList={labelList}
       />
     </>
   );
