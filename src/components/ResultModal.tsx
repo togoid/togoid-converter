@@ -1,12 +1,11 @@
 import { useClickAway } from "react-use";
 import { ArrowArea } from "react-arrow-master";
-import ResultModalAction from "@/components/ResultModalAction";
 
-import type { Arrow, HeadStyleAlias } from "react-arrow-master";
+import type { Arrow } from "react-arrow-master";
 
 type Props = {
   route: Route[];
-  ids: any;
+  ids: string[];
   convertedCount: any;
   setIsShowResultModal: Dispatch<SetStateAction<boolean>>;
 };
@@ -14,42 +13,29 @@ type Props = {
 const ResultModal = ({ setIsShowResultModal, ...props }: Props) => {
   const { datasetConfig } = useConfig();
 
-  const getResultPathStyle = (
-    from: string,
-    to: string,
-    head: HeadStyleAlias,
-  ): Arrow => {
-    return {
-      from: {
-        id: from,
-        posX: "right",
-        posY: "middle",
-      },
-      to: {
-        id: to,
-        posX: "left",
-        posY: "middle",
-      },
-      style: {
-        color: "#1A8091",
-        head: head,
-        arrow: "smooth",
-        width: 1.5,
-      },
-    };
-  };
-
   const routePath = useMemo<Arrow[]>(
     () =>
       props.route.flatMap((_, i) => {
         if (i === 0) {
-          return getResultPathStyle(`label-${i}`, `link-${i + 1}`, "none");
+          return getPathStyle(`label-${i}`, `link-${i + 1}`, {
+            head: "none",
+            isResult: true,
+          });
         } else if (i === props.route.length - 1) {
-          return getResultPathStyle(`link-${i}`, `label-${i}`, "default");
+          return getPathStyle(`link-${i}`, `label-${i}`, {
+            head: "default",
+            isResult: true,
+          });
         } else {
           return [
-            getResultPathStyle(`link-${i}`, `label-${i}`, "default"),
-            getResultPathStyle(`label-${i}`, `link-${i + 1}`, "none"),
+            getPathStyle(`link-${i}`, `label-${i}`, {
+              head: "default",
+              isResult: true,
+            }),
+            getPathStyle(`label-${i}`, `link-${i + 1}`, {
+              head: "none",
+              isResult: true,
+            }),
           ];
         }
       }),
@@ -123,13 +109,23 @@ const ResultModal = ({ setIsShowResultModal, ...props }: Props) => {
             </div>
           </div>
 
-          <ResultModalAction
-            route={props.route}
-            ids={props.ids}
-            lastTargetCount={
-              props.convertedCount[props.convertedCount.length - 1].target
-            }
-          />
+          {props.route.length > 1 ? (
+            <ResultModalAction
+              route={props.route}
+              ids={props.ids}
+              lastTargetCount={
+                props.convertedCount[props.convertedCount.length - 1].target
+              }
+            />
+          ) : (
+            <ResultModalSingleAction
+              route={props.route}
+              ids={props.ids}
+              lastTargetCount={
+                props.convertedCount[props.convertedCount.length - 1].target
+              }
+            />
+          )}
         </div>
       </div>
     </div>

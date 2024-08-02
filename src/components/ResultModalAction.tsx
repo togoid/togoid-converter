@@ -1,17 +1,18 @@
 import copy from "copy-to-clipboard";
-import { printf } from "fast-printf";
 
 // 定数
-const previewModeList = new Map([
-  ["all", "All converted IDs"],
-  ["pair", "Source and target IDs"],
-  ["target", "Target IDs"],
-  ["full", "All including unconverted IDs"],
-]);
+const previewModeList = [
+  new Map([
+    ["all", "All converted IDs"],
+    ["pair", "Source and target IDs"],
+    ["target", "Target IDs"],
+  ]),
+  new Map([["full", "All including unconverted IDs"]]),
+];
 
 type Props = {
   route: Route[];
-  ids: any;
+  ids: string[];
   lastTargetCount: any;
 };
 
@@ -22,6 +23,9 @@ const ResultModalAction = (props: Props) => {
   const [isCompact, setIsCompact] = useState(false);
   const [lineMode, setLineMode] = useState<string[]>(
     Array(props.route.length).fill("id"),
+  );
+  const [isShowLabelList, setIsShowLabelList] = useState<boolean[]>(
+    Array(props.route.length).fill(false),
   );
 
   const tableHead = useMemo(
@@ -34,11 +38,13 @@ const ResultModalAction = (props: Props) => {
     [],
   );
 
-  const createExportTable = (tableRows: any[][]) => {
+  const createExportTable = (tableRows: string[][]) => {
     if (previewMode === "all") {
       // all
       const rows = tableRows.map((v) =>
-        v.map((w, i) => [joinPrefix(w, lineMode[i], tableHead[i].prefix)]),
+        v.map((w, i) => [
+          joinPrefix(w, lineMode[i], tableHead[i].prefix, isCompact),
+        ]),
       );
 
       return { heading: tableHead, rows };
@@ -47,12 +53,13 @@ const ResultModalAction = (props: Props) => {
       return {
         heading: [tableHead[0], tableHead[tableHead.length - 1]],
         rows: tableRows.map((v) => [
-          [joinPrefix(v[0], lineMode[0], tableHead[0].prefix)],
+          [joinPrefix(v[0], lineMode[0], tableHead[0].prefix, isCompact)],
           [
             joinPrefix(
               v[v.length - 1],
               lineMode[lineMode.length - 1],
               tableHead[tableHead.length - 1].prefix,
+              isCompact,
             ),
           ],
         ]),
@@ -65,17 +72,21 @@ const ResultModalAction = (props: Props) => {
           ? [
               [
                 joinPrefix(
+                  // @ts-expect-error
                   tableRows,
                   lineMode[lineMode.length - 1],
                   tableHead[tableHead.length - 1].prefix,
+                  isCompact,
                 ),
               ],
             ]
           : tableRows.map((v) => [
               joinPrefix(
+                // @ts-expect-error
                 v,
                 lineMode[lineMode.length - 1],
                 tableHead[tableHead.length - 1].prefix,
+                isCompact,
               ),
             ]),
       };
@@ -83,29 +94,11 @@ const ResultModalAction = (props: Props) => {
       // full
       const rows = tableRows.map((v) =>
         v.map((w, i) => [
-          w ? joinPrefix(w, lineMode[i], tableHead[i].prefix) : null,
+          w ? joinPrefix(w, lineMode[i], tableHead[i].prefix, isCompact) : null,
         ]),
       );
 
       return { heading: tableHead, rows };
-    }
-  };
-
-  const joinPrefix = (id, mode, prefix) => {
-    // nullチェックが必要な場合は関数に渡す前にチェックすること
-    // compactの際の処理を共通化させるためにsplitする
-    if (mode === "id") {
-      return id;
-    } else if (mode === "url") {
-      return id
-        .split(" ")
-        .map((v) => prefix + v)
-        .join(" ");
-    } else {
-      return id
-        .split(" ")
-        .map((v) => printf(mode, v))
-        .join(" ");
     }
   };
 
@@ -117,7 +110,7 @@ const ResultModalAction = (props: Props) => {
       compact: isCompact,
     });
 
-    const { rows } = createExportTable(d.results);
+    const { rows } = createExportTable(d.results)!;
     const text = invokeUnparse(rows, "tsv");
 
     copy(text, {
@@ -125,7 +118,7 @@ const ResultModalAction = (props: Props) => {
     });
   };
 
-  const handleExportCsvTsv = async (extension) => {
+  const handleExportCsvTsv = async (extension: "csv" | "tsv") => {
     const d = await executeQuery({
       route: props.route,
       ids: props.ids,
@@ -133,7 +126,7 @@ const ResultModalAction = (props: Props) => {
       compact: isCompact,
     });
 
-    const { heading, rows } = createExportTable(d.results);
+    const { heading, rows } = createExportTable(d.results)!;
     const h = heading.map((v) => v.label);
     exportCsvTsv([h, ...rows], extension, `result.${extension}`);
   };
@@ -162,12 +155,21 @@ const ResultModalAction = (props: Props) => {
     }).toString();
 
     copy(
-      `curl -X POST "${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert?${text}"`,
+      `curl -X POST -d "${text}" "${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert"`,
       {
         format: "text/plain",
       },
     );
   };
+
+  const { filterTable, labelList } = useResultModalPreview(
+    previewMode,
+    isCompact,
+    props.route,
+    props.ids,
+    tableHead,
+    isShowLabelList,
+  );
 
   return (
     <>
@@ -175,14 +177,12 @@ const ResultModalAction = (props: Props) => {
         <div className="item_wrapper">
           <div className="report">
             <p className="modal__heading">Report</p>
-            <div className="report__inner">
-              {[...previewModeList]
-                .filter(([key]) => key !== "full")
-                .map(([key, value], i) => (
-                  <div className="radio" key={i}>
+            {previewModeList.map((modeRowMap, i) => (
+              <div className="report__inner" key={i}>
+                {Array.from(modeRowMap, ([key, value], j) => (
+                  <div className="radio" key={j}>
                     <input
-                      id={i}
-                      key={i}
+                      id={`${i}-${j}`}
                       value={key}
                       name="report"
                       type="radio"
@@ -190,32 +190,13 @@ const ResultModalAction = (props: Props) => {
                       checked={previewMode === key}
                       onChange={() => setPreviewMode(key)}
                     />
-                    <label htmlFor={i} className="radio__label">
+                    <label htmlFor={`${i}-${j}`} className="radio__label">
                       {value}
                     </label>
                   </div>
                 ))}
-            </div>
-            <div className="report__inner">
-              <div className="radio" key={previewModeList.size - 1}>
-                <input
-                  id={previewModeList.size - 1}
-                  key={previewModeList.size - 1}
-                  value="full"
-                  name="report"
-                  type="radio"
-                  className="radio__input"
-                  checked={previewMode === "full"}
-                  onChange={() => setPreviewMode("full")}
-                />
-                <label
-                  htmlFor={previewModeList.size - 1}
-                  className="radio__label"
-                >
-                  {previewModeList.get("full")}
-                </label>
               </div>
-            </div>
+            ))}
           </div>
 
           <div className="report">
@@ -321,13 +302,13 @@ const ResultModalAction = (props: Props) => {
       </div>
 
       <ResultModalActionTable
-        route={props.route}
-        ids={props.ids}
-        previewMode={previewMode}
         isCompact={isCompact}
-        tableHead={tableHead}
         lineMode={lineMode}
         setLineMode={setLineMode}
+        isShowLabelList={isShowLabelList}
+        setIsShowLabelList={setIsShowLabelList}
+        filterTable={filterTable}
+        labelList={labelList}
       />
     </>
   );

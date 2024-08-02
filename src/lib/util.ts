@@ -1,6 +1,7 @@
 import PaPa from "papaparse";
 import { saveAs } from "file-saver";
 import axios from "axios";
+import { printf } from "fast-printf";
 
 import type { Arrow, HeadStyleAlias } from "react-arrow-master";
 
@@ -57,7 +58,11 @@ export const executeQuery = async (baseParams: {
   compact?: boolean;
 }) => {
   return await axios
-    .post(
+    .post<{
+      ids: string[];
+      results: string[][];
+      route: string[];
+    }>(
       `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert`,
       getConvertUrlSearchParams({ ...baseParams, format: "json" }),
     )
@@ -80,22 +85,56 @@ export const executeCountQuery = async (option: {
     .then((d) => d.data);
 };
 
+export const executeAnnotateQuery = async (option: {
+  name: string;
+  ids: string[];
+}) => {
+  return await axios<{
+    data: {
+      id: string;
+      iri: string;
+      label: string;
+    }[][];
+  }>({
+    url: "https://rdfportal.org/grasp-togoid",
+    method: "POST",
+    data: {
+      query: `query {
+      ${option.name}(id: ${JSON.stringify([...new Set(option.ids)])}) {
+        iri
+        id
+        label
+      }
+    }`,
+    },
+  }).then((d) => d.data);
+};
+
 export const mergePathStyle = (
   fromId: string,
   toId: string,
   isRoute: boolean,
 ) => {
   const toLabelId = toId.replace(/^to/, "label");
-  const toLabelPath = getPathStyle(fromId, toLabelId, isRoute, "none");
-  const fromLabelPath = getPathStyle(toLabelId, toId, isRoute, "default");
+  const toLabelPath = getPathStyle(fromId, toLabelId, {
+    head: "none",
+    isRoute,
+  });
+  const fromLabelPath = getPathStyle(toLabelId, toId, {
+    head: "default",
+    isRoute,
+  });
   return [toLabelPath, fromLabelPath];
 };
 
 export const getPathStyle = (
   fromId: string,
   toId: string,
-  isRoute: boolean,
-  head: HeadStyleAlias,
+  options: {
+    head: HeadStyleAlias;
+    isResult?: boolean;
+    isRoute?: boolean;
+  },
 ): Arrow => {
   return {
     from: {
@@ -108,18 +147,50 @@ export const getPathStyle = (
       posX: "left",
       posY: "middle",
     },
-    style: isRoute
+    style: options.isResult
       ? ({
           color: "#1A8091",
-          head: head,
-          arrow: "smooth",
-          width: 2,
-        } as const)
-      : ({
-          color: "#dddddd",
-          head: head,
+          head: options.head,
           arrow: "smooth",
           width: 1.5,
-        } as const),
+        } as const)
+      : options.isRoute
+        ? ({
+            color: "#1A8091",
+            head: options.head,
+            arrow: "smooth",
+            width: 2,
+          } as const)
+        : ({
+            color: "#dddddd",
+            head: options.head,
+            arrow: "smooth",
+            width: 1.5,
+          } as const),
   };
+};
+
+export const joinPrefix = (
+  id: string,
+  mode: string,
+  prefix: string,
+  isCompact?: boolean,
+) => {
+  if (mode === "id") {
+    return id;
+  } else if (mode === "url") {
+    return isCompact
+      ? id
+          .split(" ")
+          .map((v) => prefix + v)
+          .join(" ")
+      : prefix + id;
+  } else {
+    return isCompact
+      ? id
+          .split(" ")
+          .map((v) => printf(mode, v))
+          .join(" ")
+      : printf(mode, id);
+  }
 };

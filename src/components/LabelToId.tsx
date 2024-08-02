@@ -1,6 +1,6 @@
 import Select from "react-select";
 
-const dataset = signal<Datasetconfig>();
+const dataset = signal<DatasetConfig[number]>();
 const species = signal<string>();
 const threshold = signal(0.5);
 const selectDictionaryList = signal<{ [key: string]: boolean }>({});

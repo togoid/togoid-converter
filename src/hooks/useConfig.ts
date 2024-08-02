@@ -3,7 +3,7 @@ import useSWR from "swr";
 
 const configFetcher = async () => {
   const res = await Promise.all([
-    axios.get<Datasetconfig>(
+    axios.get<DatasetConfig>(
       `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/dataset`,
     ),
     axios.get<RelationConfig>(
@@ -43,7 +43,7 @@ const configFetcher = async () => {
         [key]: { ...value, linkTo },
       };
     },
-    {} as Datasetconfig,
+    {} as DatasetConfig,
   );
 
   return {

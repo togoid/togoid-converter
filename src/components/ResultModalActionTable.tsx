@@ -1,30 +1,22 @@
 type Props = {
-  route: Route[];
-  ids: string[];
-  previewMode: string;
   isCompact: boolean;
-  tableHead: any[];
   lineMode: string[];
   setLineMode: Dispatch<SetStateAction<string[]>>;
+  isShowLabelList: boolean[];
+  setIsShowLabelList: Dispatch<SetStateAction<boolean[]>>;
+  filterTable: ReturnType<typeof useResultModalPreview>["filterTable"];
+  labelList: ReturnType<typeof useResultModalPreview>["labelList"];
 };
 
 const ResultModalActionTable = ({
-  route,
-  ids,
-  previewMode,
   isCompact,
-  tableHead,
   lineMode,
   setLineMode,
+  isShowLabelList,
+  setIsShowLabelList,
+  filterTable,
+  labelList,
 }: Props) => {
-  const filterTable = useResultModalPreview(
-    previewMode,
-    isCompact,
-    route,
-    ids,
-    tableHead,
-  );
-
   const { annotateConfig } = useAnnotateConfig();
 
   return (
@@ -32,15 +24,15 @@ const ResultModalActionTable = ({
       <thead>
         <tr>
           {filterTable?.rows?.length &&
-            filterTable.heading!.map((v, i) => {
+            filterTable.heading.map((v, i) => {
               return (
                 <th key={i}>
                   <fieldset>
-                    <label htmlFor={i} className="select__label">
+                    <label htmlFor={String(i)} className="select__label">
                       {v.label}
                     </label>
                     <select
-                      id={v.index}
+                      id={String(v.index)}
                       className="select white"
                       value={lineMode[v.index]}
                       onChange={(e) =>
@@ -64,6 +56,16 @@ const ResultModalActionTable = ({
                           id={"showLabels" + i}
                           type="checkbox"
                           className="c-switch"
+                          checked={isShowLabelList[v.index]}
+                          onChange={(e) =>
+                            setIsShowLabelList(
+                              isShowLabelList.toSpliced(
+                                v.index,
+                                1,
+                                e.target.checked,
+                              ),
+                            )
+                          }
                         />
                         <label htmlFor={"showLabels" + i}>Show Labels</label>
                       </>
@@ -75,34 +77,83 @@ const ResultModalActionTable = ({
         </tr>
       </thead>
       <tbody>
-        {filterTable?.rows?.length
+        {filterTable?.heading?.length && filterTable?.rows?.length
           ? filterTable.rows.map((data, i) => (
               <tr key={i}>
                 {data.map((d, j) => (
                   <td key={j}>
                     {isCompact ? (
-                      d.url &&
-                      Array.isArray(d.url) &&
-                      d.url.map((f, k) => (
+                      d?.split(" ")?.map((f, k) => (
                         <Fragment key={k}>
-                          <a href={f} target="_blank" rel="noreferrer">
-                            {d[lineMode[filterTable.heading![j].index]][k]}
+                          <a
+                            href={joinPrefix(
+                              f,
+                              "url",
+                              filterTable.heading![j].prefix,
+                            )}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {joinPrefix(
+                              f,
+                              lineMode[filterTable.heading![j].index],
+                              filterTable.heading![j].prefix,
+                            )}
                           </a>
+                          {isShowLabelList[filterTable.heading![j].index] &&
+                            labelList?.[filterTable.heading![j].index]?.find(
+                              (v) => v.id === f,
+                            ) && (
+                              <span>
+                                {" " +
+                                  labelList?.[
+                                    filterTable.heading![j].index
+                                  ]?.find((v) => v.id === f)?.label}
+                              </span>
+                            )}
                           <br />
                         </Fragment>
                       ))
                     ) : (
-                      <a href={d.url} target="_blank" rel="noreferrer">
-                        {d[lineMode[filterTable.heading![j].index]]}
-                      </a>
+                      <>
+                        <a
+                          href={joinPrefix(
+                            d,
+                            "url",
+                            filterTable.heading![j].prefix,
+                          )}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {joinPrefix(
+                            d,
+                            lineMode[filterTable.heading![j].index],
+                            filterTable.heading![j].prefix,
+                          )}
+                        </a>
+                        {isShowLabelList[filterTable.heading![j].index] &&
+                          labelList?.[filterTable.heading![j].index]?.find(
+                            (v) => v.id === d,
+                          ) && (
+                            <span>
+                              {" " +
+                                labelList?.[
+                                  filterTable.heading![j].index
+                                ]?.find((v) => v.id === d)?.label}
+                            </span>
+                          )}
+                      </>
                     )}
                   </td>
                 ))}
               </tr>
             ))
-          : filterTable.heading && (
+          : filterTable?.heading && (
               <tr>
-                <td colSpan={tableHead.length} className="no_results">
+                <td
+                  colSpan={filterTable?.heading.length}
+                  className="no_results"
+                >
                   No Results
                 </td>
               </tr>
