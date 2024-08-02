@@ -1,6 +1,4 @@
 import copy from "copy-to-clipboard";
-import { printf } from "fast-printf";
-import axios from "axios";
 
 type Props = {
   route: Route[];

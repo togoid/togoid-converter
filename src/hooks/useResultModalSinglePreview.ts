@@ -20,7 +20,18 @@ const useResultModalSinglePreview = (
   isShowLabelList: boolean[],
   lineMode: string[],
 ) => {
-  const baseTable = useMemo(() => route.map((v) => v.results), []);
+  const baseTable = useMemo(() => {
+    return tableHead[0].format?.length
+      ? route.map((v) =>
+          v.results.map((w) =>
+            tableHead[0].format!.reduce((prev, curr) => {
+              return prev.replace(curr.replace("%s", ""), "");
+            }, w),
+          ),
+        )
+      : route.map((v) => v.results);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const { data: labelList } = useSWRImmutable(
     {
