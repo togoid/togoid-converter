@@ -32,24 +32,15 @@ const ResultModalSingleAction = (props: Props) => {
     if (isShowLabelList[0]) {
       const head = tableHead.flatMap((v) => [v.label, ""]);
 
-      const response = await axios({
-        url: "https://rdfportal.org/grasp-togoid",
-        method: "POST",
-        data: {
-          query: `query {
-            ${tableHead[0].name}(id: ${JSON.stringify(idList)}) {
-              iri
-              id
-              label
-            }
-          }`,
-        },
+      const data = await executeAnnotateQuery({
+        name: tableHead[0].name,
+        ids: idList,
       });
 
       const row = idList.map((v, i) => {
         return [
           joinPrefix(v, lineMode[0], tableHead[0].prefix),
-          (Object.values(response.data.data)[0] as any)[i].label,
+          (Object.values(data.data)[0] as any)[i].label,
         ];
       });
 
@@ -61,24 +52,6 @@ const ResultModalSingleAction = (props: Props) => {
       });
 
       return { head: head, row: row };
-    }
-  };
-
-  const joinPrefix = (id: string, mode: string, prefix: string) => {
-    // nullチェックが必要な場合は関数に渡す前にチェックすること
-    // compactの際の処理を共通化させるためにsplitする
-    if (mode === "id") {
-      return id;
-    } else if (mode === "url") {
-      return id
-        .split(" ")
-        .map((v) => prefix + v)
-        .join(" ");
-    } else {
-      return id
-        .split(" ")
-        .map((v) => printf(mode, v))
-        .join(" ");
     }
   };
 

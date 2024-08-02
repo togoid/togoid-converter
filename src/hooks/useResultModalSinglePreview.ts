@@ -1,21 +1,26 @@
 import useSWRImmutable from "swr/immutable";
 // import useSWR from "swr";
-import axios from "axios";
 
 const useResultModalSinglePreview = (
   route: Route[],
-  tableHead: any[],
+  tableHead: {
+    index: number;
+    name: string;
+    catalog: string;
+    category: string;
+    description?: string;
+    examples: string[];
+    format?: string[];
+    label: string;
+    label_resolver?: any;
+    linkTo: any;
+    prefix: string;
+    regex: string;
+  }[],
   isShowLabelList: boolean[],
   lineMode: string[],
 ) => {
-  const { data: baseTable } = useSWRImmutable(
-    {
-      route: route,
-    },
-    () => {
-      return route.map((v) => v.results);
-    },
-  );
+  const baseTable = useMemo(() => route.map((v) => v.results), []);
 
   const { data: labelList } = useSWRImmutable(
     {
@@ -24,7 +29,7 @@ const useResultModalSinglePreview = (
     },
     async () => {
       if (!(baseTable && isShowLabelList.some((v) => v))) {
-        return;
+        return null;
       }
 
       return await Promise.all(
@@ -32,58 +37,29 @@ const useResultModalSinglePreview = (
           if (!isShowLabelList[i]) {
             return null;
           }
-          const response = await axios({
-            url: "https://rdfportal.org/grasp-togoid",
-            method: "POST",
-            data: {
-              query: `query {
-              ${tableHead[i].name}(id: ${JSON.stringify(v)}) {
-                iri
-                id
-                label
-              }
-            }`,
-            },
+          const data = await executeAnnotateQuery({
+            name: tableHead[i].name,
+            ids: v,
           });
-
-          return Object.values(response.data.data)[0];
+          return Object.values(data.data)[0];
         }),
       );
     },
   );
 
-  const [filterTable, setFilterTable] =
-    useState<ReturnType<typeof editTable>>();
+  const [filterTable, setFilterTable] = useState<{
+    head: typeof tableHead;
+    row: string[][];
+  }>();
 
   useEffect(() => {
     if (baseTable) {
-      setFilterTable(editTable(baseTable));
+      setFilterTable({ head: tableHead, row: baseTable });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [baseTable, labelList, isShowLabelList, lineMode]);
 
-  const editTable = (table: NonNullable<typeof baseTable>) => {
-    if (isShowLabelList[0]) {
-      const head = tableHead.map((v) => [v, null]);
-      const row = table.map((v, i) =>
-        v.map((w, j) => {
-          // @ts-expect-error
-          return [w, labelList?.[i]?.[j]?.label];
-        }),
-      );
-      return { head: head, row: row };
-    } else {
-      const head = tableHead.map((v) => [v]);
-      const row = table.map((v) =>
-        v.map((w) => {
-          return [w];
-        }),
-      );
-      return { head: head, row: row };
-    }
-  };
-
-  return { filterTable };
+  return { filterTable, labelList };
 };
 
 export default useResultModalSinglePreview;

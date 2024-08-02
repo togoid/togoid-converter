@@ -19,30 +19,12 @@ const ResultModalSingleActionTable = ({
 }: Props) => {
   const { annotateConfig } = useAnnotateConfig();
 
-  const { filterTable } = useResultModalSinglePreview(
+  const { filterTable, labelList } = useResultModalSinglePreview(
     route,
     tableHead,
     isShowLabelList,
     lineMode,
   );
-
-  const joinPrefix = (id: string, mode: string, prefix: string) => {
-    // nullチェックが必要な場合は関数に渡す前にチェックすること
-    // compactの際の処理を共通化させるためにsplitする
-    if (mode === "id") {
-      return id;
-    } else if (mode === "url") {
-      return id
-        .split(" ")
-        .map((v) => prefix + v)
-        .join(" ");
-    } else {
-      return id
-        .split(" ")
-        .map((v) => printf(mode, v))
-        .join(" ");
-    }
-  };
 
   return (
     <table className="table">
@@ -53,7 +35,7 @@ const ResultModalSingleActionTable = ({
               <th>
                 <fieldset>
                   <label htmlFor="0" className="select__label">
-                    {filterTable.head[0][0].label}
+                    {filterTable.head[0].label}
                   </label>
                   <select
                     id="0"
@@ -64,7 +46,7 @@ const ResultModalSingleActionTable = ({
                     }
                   >
                     <option value="id">ID</option>
-                    {filterTable.head[0][0].format?.map((w: string) => (
+                    {filterTable.head[0].format?.map((w: string) => (
                       <option key={w} value={w}>
                         ID ({w.replace("%s", "")})
                       </option>
@@ -72,7 +54,7 @@ const ResultModalSingleActionTable = ({
                     <option value="url">URL</option>
                   </select>
 
-                  {annotateConfig?.includes(filterTable.head[0][0].name) && (
+                  {annotateConfig?.includes(filterTable.head[0].name) && (
                     <>
                       <input
                         id={"showLabels" + 0}
@@ -97,17 +79,23 @@ const ResultModalSingleActionTable = ({
               <tr key={i}>
                 <td>
                   <a
-                    href={filterTable.head[0][0].prefix + v[0]}
+                    href={joinPrefix(v, "url", filterTable.head[0].prefix)}
                     target="_blank"
                     rel="noreferrer"
                   >
-                    {joinPrefix(
-                      v[0],
-                      lineMode[0],
-                      filterTable.head[0][0].prefix,
-                    )}
+                    {joinPrefix(v, lineMode[0], filterTable.head[0].prefix)}
                   </a>
-                  {v[1] && <span> {v[1]}</span>}
+                  {isShowLabelList[0] &&
+                    labelList?.[filterTable.head![0].index]?.find(
+                      (w) => w.id === v,
+                    ) && (
+                      <span>
+                        {" " +
+                          labelList?.[filterTable.head![0].index]?.find(
+                            (w) => w.id === v,
+                          )?.label}
+                      </span>
+                    )}
                 </td>
               </tr>
             ))}
