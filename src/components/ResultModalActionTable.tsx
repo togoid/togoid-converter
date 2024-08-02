@@ -81,9 +81,9 @@ const ResultModalActionTable = ({
                 {data.map((d, j) => (
                   <td key={j}>
                     {isCompact ? (
-                      d.id &&
-                      Array.isArray(d.id) &&
-                      d.id.map((f, k) => (
+                      d &&
+                      Array.isArray(d) &&
+                      d.map((f, k) => (
                         <Fragment key={k}>
                           <a
                             href={joinPrefix(
