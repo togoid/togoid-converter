@@ -10,7 +10,7 @@ const previewModeList = new Map([
 
 type Props = {
   route: Route[];
-  ids: any;
+  ids: string[];
   lastTargetCount: any;
 };
 
@@ -322,7 +322,6 @@ const ResultModalAction = (props: Props) => {
 
       <ResultModalActionTable
         isCompact={isCompact}
-        tableHead={tableHead}
         lineMode={lineMode}
         setLineMode={setLineMode}
         isShowLabelList={isShowLabelList}

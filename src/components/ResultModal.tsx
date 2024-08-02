@@ -5,7 +5,7 @@ import type { Arrow } from "react-arrow-master";
 
 type Props = {
   route: Route[];
-  ids: any;
+  ids: string[];
   convertedCount: any;
   setIsShowResultModal: Dispatch<SetStateAction<boolean>>;
 };

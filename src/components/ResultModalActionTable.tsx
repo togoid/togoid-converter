@@ -1,19 +1,5 @@
 type Props = {
   isCompact: boolean;
-  tableHead: {
-    index: number;
-    name: string;
-    catalog: string;
-    category: string;
-    description?: string;
-    examples: string[];
-    format?: string[];
-    label: string;
-    label_resolver?: any;
-    linkTo: any;
-    prefix: string;
-    regex: string;
-  }[];
   lineMode: string[];
   setLineMode: Dispatch<SetStateAction<string[]>>;
   isShowLabelList: boolean[];
@@ -24,7 +10,6 @@ type Props = {
 
 const ResultModalActionTable = ({
   isCompact,
-  tableHead,
   lineMode,
   setLineMode,
   isShowLabelList,
@@ -165,7 +150,10 @@ const ResultModalActionTable = ({
             ))
           : filterTable?.heading && (
               <tr>
-                <td colSpan={tableHead.length} className="no_results">
+                <td
+                  colSpan={filterTable?.heading.length}
+                  className="no_results"
+                >
                   No Results
                 </td>
               </tr>

@@ -2,7 +2,7 @@ import copy from "copy-to-clipboard";
 
 type Props = {
   route: Route[];
-  ids: any;
+  ids: string[];
   lastTargetCount: any;
 };
 
@@ -145,7 +145,6 @@ const ResultModalSingleAction = (props: Props) => {
 
       <ResultModalActionTable
         isCompact={false}
-        tableHead={tableHead}
         lineMode={lineMode}
         setLineMode={setLineMode}
         isShowLabelList={isShowLabelList}
