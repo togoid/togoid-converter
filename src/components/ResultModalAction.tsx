@@ -1,12 +1,14 @@
 import copy from "copy-to-clipboard";
 
 // 定数
-const previewModeList = new Map([
-  ["all", "All converted IDs"],
-  ["pair", "Source and target IDs"],
-  ["target", "Target IDs"],
-  ["full", "All including unconverted IDs"],
-]);
+const previewModeList = [
+  new Map([
+    ["all", "All converted IDs"],
+    ["pair", "Source and target IDs"],
+    ["target", "Target IDs"],
+  ]),
+  new Map([["full", "All including unconverted IDs"]]),
+];
 
 type Props = {
   route: Route[];
@@ -175,14 +177,12 @@ const ResultModalAction = (props: Props) => {
         <div className="item_wrapper">
           <div className="report">
             <p className="modal__heading">Report</p>
-            <div className="report__inner">
-              {[...previewModeList]
-                .filter(([key]) => key !== "full")
-                .map(([key, value], i) => (
-                  <div className="radio" key={i}>
+            {previewModeList.map((modeRowMap, i) => (
+              <div className="report__inner" key={i}>
+                {Array.from(modeRowMap, ([key, value], j) => (
+                  <div className="radio" key={j}>
                     <input
-                      id={String(i)}
-                      key={i}
+                      id={`${i}-${j}`}
                       value={key}
                       name="report"
                       type="radio"
@@ -190,32 +190,13 @@ const ResultModalAction = (props: Props) => {
                       checked={previewMode === key}
                       onChange={() => setPreviewMode(key)}
                     />
-                    <label htmlFor={String(i)} className="radio__label">
+                    <label htmlFor={`${i}-${j}`} className="radio__label">
                       {value}
                     </label>
                   </div>
                 ))}
-            </div>
-            <div className="report__inner">
-              <div className="radio" key={previewModeList.size - 1}>
-                <input
-                  id={String(previewModeList.size - 1)}
-                  key={previewModeList.size - 1}
-                  value="full"
-                  name="report"
-                  type="radio"
-                  className="radio__input"
-                  checked={previewMode === "full"}
-                  onChange={() => setPreviewMode("full")}
-                />
-                <label
-                  htmlFor={String(previewModeList.size - 1)}
-                  className="radio__label"
-                >
-                  {previewModeList.get("full")}
-                </label>
               </div>
-            </div>
+            ))}
           </div>
 
           <div className="report">
