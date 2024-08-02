@@ -19,6 +19,8 @@ type Props = {
   }[];
   lineMode: string[];
   setLineMode: Dispatch<SetStateAction<string[]>>;
+  isShowLabelList: boolean[];
+  setIsShowLabelList: Dispatch<SetStateAction<boolean[]>>;
 };
 
 const ResultModalActionTable = ({
@@ -29,13 +31,16 @@ const ResultModalActionTable = ({
   tableHead,
   lineMode,
   setLineMode,
+  isShowLabelList,
+  setIsShowLabelList,
 }: Props) => {
-  const filterTable = useResultModalPreview(
+  const { filterTable, labelList } = useResultModalPreview(
     previewMode,
     isCompact,
     route,
     ids,
     tableHead,
+    isShowLabelList,
   );
 
   const { annotateConfig } = useAnnotateConfig();
@@ -77,6 +82,16 @@ const ResultModalActionTable = ({
                           id={"showLabels" + i}
                           type="checkbox"
                           className="c-switch"
+                          checked={isShowLabelList[v.index]}
+                          onChange={(e) =>
+                            setIsShowLabelList(
+                              isShowLabelList.toSpliced(
+                                v.index,
+                                1,
+                                e.target.checked,
+                              ),
+                            )
+                          }
                         />
                         <label htmlFor={"showLabels" + i}>Show Labels</label>
                       </>
@@ -111,25 +126,49 @@ const ResultModalActionTable = ({
                               filterTable.heading![j].prefix,
                             )}
                           </a>
+                          {isShowLabelList[filterTable.heading![j].index] &&
+                            labelList?.[filterTable.heading![j].index]?.find(
+                              (v) => v.id === f,
+                            ) && (
+                              <span>
+                                {" " +
+                                  labelList?.[
+                                    filterTable.heading![j].index
+                                  ]?.find((v) => v.id === f)?.label}
+                              </span>
+                            )}
                           <br />
                         </Fragment>
                       ))
                     ) : (
-                      <a
-                        href={joinPrefix(
-                          d,
-                          "url",
-                          filterTable.heading![j].prefix,
-                        )}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        {joinPrefix(
-                          d,
-                          lineMode[filterTable.heading![j].index],
-                          filterTable.heading![j].prefix,
-                        )}
-                      </a>
+                      <>
+                        <a
+                          href={joinPrefix(
+                            d,
+                            "url",
+                            filterTable.heading![j].prefix,
+                          )}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {joinPrefix(
+                            d,
+                            lineMode[filterTable.heading![j].index],
+                            filterTable.heading![j].prefix,
+                          )}
+                        </a>
+                        {isShowLabelList[filterTable.heading![j].index] &&
+                          labelList?.[filterTable.heading![j].index]?.find(
+                            (v) => v.id === d,
+                          ) && (
+                            <span>
+                              {" " +
+                                labelList?.[
+                                  filterTable.heading![j].index
+                                ]?.find((v) => v.id === d)?.label}
+                            </span>
+                          )}
+                      </>
                     )}
                   </td>
                 ))}

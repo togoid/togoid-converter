@@ -2,7 +2,7 @@ import axios from "axios";
 import useSWRImmutable from "swr/immutable";
 
 const useAnnotateConfig = () => {
-  const { data: annotateConfig } = useSWRImmutable(
+  const { data: annotateConfig } = useSWRImmutable<string[]>(
     "annotateConfig",
     async () => {
       const response = await axios({

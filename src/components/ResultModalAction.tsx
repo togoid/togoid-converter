@@ -22,6 +22,9 @@ const ResultModalAction = (props: Props) => {
   const [lineMode, setLineMode] = useState<string[]>(
     Array(props.route.length).fill("id"),
   );
+  const [isShowLabelList, setIsShowLabelList] = useState<boolean[]>(
+    Array(props.route.length).fill(false),
+  );
 
   const tableHead = useMemo(
     () =>
@@ -316,6 +319,8 @@ const ResultModalAction = (props: Props) => {
         tableHead={tableHead}
         lineMode={lineMode}
         setLineMode={setLineMode}
+        isShowLabelList={isShowLabelList}
+        setIsShowLabelList={setIsShowLabelList}
       />
     </>
   );

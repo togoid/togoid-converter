@@ -85,6 +85,31 @@ export const executeCountQuery = async (option: {
     .then((d) => d.data);
 };
 
+export const executeAnnotateQuery = async (option: {
+  name: string;
+  ids: string[];
+}) => {
+  return await axios<{
+    data: {
+      id: string;
+      iri: string;
+      label: string;
+    }[][];
+  }>({
+    url: "https://rdfportal.org/grasp-togoid",
+    method: "POST",
+    data: {
+      query: `query {
+      ${option.name}(id: ${JSON.stringify([...new Set(option.ids)])}) {
+        iri
+        id
+        label
+      }
+    }`,
+    },
+  }).then((d) => d.data);
+};
+
 export const mergePathStyle = (
   fromId: string,
   toId: string,

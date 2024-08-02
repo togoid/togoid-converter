@@ -1,4 +1,5 @@
 import useSWRImmutable from "swr/immutable";
+// import useSWR from "swr";
 
 const useResultModalPreview = (
   previewMode: string,
@@ -19,6 +20,7 @@ const useResultModalPreview = (
     prefix: string;
     regex: string;
   }[],
+  isShowLabelList: boolean[],
 ) => {
   const [filterTable, setFilterTable] =
     useState<ReturnType<typeof editTable>>();
@@ -35,6 +37,47 @@ const useResultModalPreview = (
       const data = await executeQuery(key);
 
       return data.results;
+    },
+  );
+
+  const { data: expandedFullTable } = useSWRImmutable<typeof baseTable>(
+    {
+      route: route,
+      ids: ids,
+      report: "full",
+      limit: 100,
+      compact: false,
+    },
+    null,
+  );
+
+  const { annotateConfig } = useAnnotateConfig();
+
+  const { data: labelList } = useSWRImmutable(
+    {
+      expandedFullTable: expandedFullTable,
+      isShowLabelSome: isShowLabelList.some((v) => v),
+    },
+    async () => {
+      if (!(expandedFullTable && isShowLabelList.some((v) => v))) {
+        return null;
+      }
+      const array = expandedFullTable[0].map((_, i) =>
+        expandedFullTable.map((row) => row[i]).filter((v) => v),
+      );
+
+      return await Promise.all(
+        array.map(async (v, i) => {
+          if (!annotateConfig?.includes(tableHead[i].name)) {
+            return null;
+          }
+          const data = await executeAnnotateQuery({
+            name: tableHead[i].name,
+            ids: v,
+          });
+          return Object.values(data.data)[0];
+        }),
+      );
     },
   );
 
@@ -132,7 +175,7 @@ const useResultModalPreview = (
     return { heading: [], rows: [[]] };
   };
 
-  return filterTable;
+  return { filterTable, labelList };
 };
 
 export default useResultModalPreview;

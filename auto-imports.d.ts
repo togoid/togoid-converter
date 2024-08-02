@@ -46,6 +46,7 @@ declare global {
   const colorLegendList: typeof import('./src/lib/setting')['colorLegendList']
   const createJSONStorage: typeof import('jotai/utils')['createJSONStorage']
   const createRef: typeof import('react')['createRef']
+  const executeAnnotateQuery: typeof import('./src/lib/util')['executeAnnotateQuery']
   const executeCountQuery: typeof import('./src/lib/util')['executeCountQuery']
   const executeQuery: typeof import('./src/lib/util')['executeQuery']
   const exportCsvTsv: typeof import('./src/lib/util')['exportCsvTsv']
