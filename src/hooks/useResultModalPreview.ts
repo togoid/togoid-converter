@@ -5,11 +5,23 @@ const useResultModalPreview = (
   isCompact: boolean,
   route: any[],
   ids: any[],
-  tableHead: any[],
+  tableHead: {
+    index: number;
+    name: string;
+    catalog: string;
+    category: string;
+    description?: string;
+    examples: string[];
+    format?: string[];
+    label: string;
+    label_resolver?: any;
+    linkTo: any;
+    prefix: string;
+    regex: string;
+  }[],
 ) => {
-  const [filterTable, setFilterTable] = useState<
-    Partial<ReturnType<typeof editTable>>
-  >({});
+  const [filterTable, setFilterTable] =
+    useState<ReturnType<typeof editTable>>();
 
   const { data: baseTable } = useSWRImmutable(
     {
@@ -35,9 +47,7 @@ const useResultModalPreview = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [baseTable, previewMode]);
 
-  const editTable = (
-    table: NonNullable<typeof baseTable>,
-  ): { heading: any[]; rows: any[][] } => {
+  const editTable = (table: NonNullable<typeof baseTable>) => {
     if (previewMode === "all") {
       // all
       const rows = table.filter((v) => v[v.length - 1]);
@@ -53,7 +63,7 @@ const useResultModalPreview = (
               .filter((v) => v[v.length - 1])
               .map((v) => JSON.stringify([v[0], v[v.length - 1]])),
           ),
-          (v) => JSON.parse(v),
+          (v) => JSON.parse(v) as string[],
         ),
       };
     } else if (previewMode === "target") {
@@ -74,12 +84,10 @@ const useResultModalPreview = (
     }
 
     // ここには来ない
-    return { heading: [], rows: [] };
+    return { heading: [], rows: [[]] };
   };
 
-  const editCompactTable = (
-    table: NonNullable<typeof baseTable>,
-  ): { heading: any[]; rows: any[][] } => {
+  const editCompactTable = (table: NonNullable<typeof baseTable>) => {
     if (previewMode === "all") {
       // all
       return {
@@ -121,7 +129,7 @@ const useResultModalPreview = (
     }
 
     // ここには来ない
-    return { heading: [], rows: [] };
+    return { heading: [], rows: [[]] };
   };
 
   return filterTable;

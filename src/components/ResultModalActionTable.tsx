@@ -3,7 +3,20 @@ type Props = {
   ids: string[];
   previewMode: string;
   isCompact: boolean;
-  tableHead: any[];
+  tableHead: {
+    index: number;
+    name: string;
+    catalog: string;
+    category: string;
+    description?: string;
+    examples: string[];
+    format?: string[];
+    label: string;
+    label_resolver?: any;
+    linkTo: any;
+    prefix: string;
+    regex: string;
+  }[];
   lineMode: string[];
   setLineMode: Dispatch<SetStateAction<string[]>>;
 };
@@ -32,15 +45,15 @@ const ResultModalActionTable = ({
       <thead>
         <tr>
           {filterTable?.rows?.length &&
-            filterTable.heading!.map((v, i) => {
+            filterTable.heading.map((v, i) => {
               return (
                 <th key={i}>
                   <fieldset>
-                    <label htmlFor={i} className="select__label">
+                    <label htmlFor={String(i)} className="select__label">
                       {v.label}
                     </label>
                     <select
-                      id={v.index}
+                      id={String(v.index)}
                       className="select white"
                       value={lineMode[v.index]}
                       onChange={(e) =>
@@ -122,7 +135,7 @@ const ResultModalActionTable = ({
                 ))}
               </tr>
             ))
-          : filterTable.heading && (
+          : filterTable?.heading && (
               <tr>
                 <td colSpan={tableHead.length} className="no_results">
                   No Results
