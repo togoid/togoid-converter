@@ -1,12 +1,11 @@
 const ResultModalClipboardButton = (props: {
   children: string;
   copyFunction: Function;
-  isReduced?: boolean;
 }) => {
   const [isShowCopied, setIsShowCopied] = useState(false);
 
   const handleClipboardButton = async () => {
-    await props.copyFunction(props.isReduced);
+    await props.copyFunction();
 
     setIsShowCopied(true);
     setTimeout(() => {

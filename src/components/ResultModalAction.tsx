@@ -18,6 +18,7 @@ type Props = {
 
 const ResultModalAction = (props: Props) => {
   const { datasetConfig } = useConfig();
+  const { annotateConfig } = useAnnotateConfig();
 
   const [previewMode, setPreviewMode] = useState("all");
   const [isCompact, setIsCompact] = useState(false);
@@ -38,68 +39,173 @@ const ResultModalAction = (props: Props) => {
     [],
   );
 
-  const createExportTable = (tableRows: string[][]) => {
-    if (previewMode === "all") {
-      // all
-      const rows = tableRows.map((v) =>
-        v.map((w, i) => [
-          joinPrefix(w, lineMode[i], tableHead[i].prefix, isCompact),
-        ]),
+  const createExportTable = async (tableRows: string[][]) => {
+    if (isShowLabelList.some((v) => v)) {
+      const labelList = await Promise.all(
+        tableRows[0]
+          .map((_, i) => tableRows.map((row) => row[i]).filter((v) => v))
+          .map(async (v, i) => {
+            if (
+              !annotateConfig?.includes(tableHead[i].name) ||
+              !isShowLabelList[i]
+            ) {
+              return null;
+            }
+            const data = await executeAnnotateQuery({
+              name: tableHead[i].name,
+              ids: isCompact ? v.flatMap((w) => w.split(" ")) : v,
+            });
+            return Object.values(data.data)[0];
+          }),
       );
 
-      return { heading: tableHead, rows };
-    } else if (previewMode === "pair") {
-      // origin and targets
-      return {
-        heading: [tableHead[0], tableHead[tableHead.length - 1]],
-        rows: tableRows.map((v) => [
-          [joinPrefix(v[0], lineMode[0], tableHead[0].prefix, isCompact)],
-          [
-            joinPrefix(
-              v[v.length - 1],
-              lineMode[lineMode.length - 1],
-              tableHead[tableHead.length - 1].prefix,
-              isCompact,
-            ),
-          ],
-        ]),
-      };
-    } else if (previewMode === "target") {
-      // target
-      return {
-        heading: [tableHead[tableHead.length - 1]],
-        rows: isCompact
-          ? [
-              [
-                joinPrefix(
-                  // @ts-expect-error
-                  tableRows,
-                  lineMode[lineMode.length - 1],
-                  tableHead[tableHead.length - 1].prefix,
-                  isCompact,
-                ),
-              ],
-            ]
-          : tableRows.map((v) => [
+      if (previewMode === "all") {
+        // all
+        const head = tableHead.flatMap((v, i) =>
+          isShowLabelList[i] ? [v.label, ""] : [v.label],
+        );
+
+        const rows = tableRows.map((v) =>
+          v.flatMap((w, j) =>
+            isShowLabelList[j]
+              ? [
+                  joinPrefix(w, lineMode[j], tableHead[j].prefix, isCompact),
+                  isCompact
+                    ? w
+                        .split(" ")
+                        .map(
+                          (x) => labelList[j]?.find((y) => y.id === x)?.label,
+                        )
+                        .join(" ")
+                    : labelList[j]?.find((y) => y.id === w)?.label,
+                ]
+              : [joinPrefix(w, lineMode[j], tableHead[j].prefix, isCompact)],
+          ),
+        );
+
+        return { heading: head, rows };
+      } else if (previewMode === "pair") {
+        // origin and targets
+        return {
+          heading: [tableHead[0], tableHead[tableHead.length - 1]],
+          rows: tableRows.map((v) => [
+            [joinPrefix(v[0], lineMode[0], tableHead[0].prefix, isCompact)],
+            [
               joinPrefix(
-                // @ts-expect-error
-                v,
+                v[v.length - 1],
                 lineMode[lineMode.length - 1],
                 tableHead[tableHead.length - 1].prefix,
                 isCompact,
               ),
-            ]),
-      };
-    } else if (previewMode === "full") {
-      // full
-      const rows = tableRows.map((v) =>
-        v.map((w, i) => [
-          w ? joinPrefix(w, lineMode[i], tableHead[i].prefix, isCompact) : null,
-        ]),
-      );
+            ],
+          ]),
+        };
+      } else if (previewMode === "target") {
+        // target
+        return {
+          heading: [tableHead[tableHead.length - 1]],
+          rows: isCompact
+            ? [
+                [
+                  joinPrefix(
+                    // @ts-expect-error
+                    tableRows,
+                    lineMode[lineMode.length - 1],
+                    tableHead[tableHead.length - 1].prefix,
+                    isCompact,
+                  ),
+                ],
+              ]
+            : tableRows.map((v) => [
+                joinPrefix(
+                  // @ts-expect-error
+                  v,
+                  lineMode[lineMode.length - 1],
+                  tableHead[tableHead.length - 1].prefix,
+                  isCompact,
+                ),
+              ]),
+        };
+      } else if (previewMode === "full") {
+        // full
+        const rows = tableRows.map((v) =>
+          v.map((w, i) => [
+            w
+              ? joinPrefix(w, lineMode[i], tableHead[i].prefix, isCompact)
+              : null,
+          ]),
+        );
 
-      return { heading: tableHead, rows };
+        return { heading: tableHead, rows };
+      }
+    } else {
+      if (previewMode === "all") {
+        // all
+        const rows = tableRows.map((v) =>
+          v.map((w, i) => [
+            joinPrefix(w, lineMode[i], tableHead[i].prefix, isCompact),
+          ]),
+        );
+
+        return { heading: tableHead, rows };
+      } else if (previewMode === "pair") {
+        // origin and targets
+        return {
+          heading: [tableHead[0], tableHead[tableHead.length - 1]],
+          rows: tableRows.map((v) => [
+            [joinPrefix(v[0], lineMode[0], tableHead[0].prefix, isCompact)],
+            [
+              joinPrefix(
+                v[v.length - 1],
+                lineMode[lineMode.length - 1],
+                tableHead[tableHead.length - 1].prefix,
+                isCompact,
+              ),
+            ],
+          ]),
+        };
+      } else if (previewMode === "target") {
+        // target
+        return {
+          heading: [tableHead[tableHead.length - 1]],
+          rows: isCompact
+            ? [
+                [
+                  joinPrefix(
+                    // @ts-expect-error
+                    tableRows,
+                    lineMode[lineMode.length - 1],
+                    tableHead[tableHead.length - 1].prefix,
+                    isCompact,
+                  ),
+                ],
+              ]
+            : tableRows.map((v) => [
+                joinPrefix(
+                  // @ts-expect-error
+                  v,
+                  lineMode[lineMode.length - 1],
+                  tableHead[tableHead.length - 1].prefix,
+                  isCompact,
+                ),
+              ]),
+        };
+      } else if (previewMode === "full") {
+        // full
+        const rows = tableRows.map((v) =>
+          v.map((w, i) => [
+            w
+              ? joinPrefix(w, lineMode[i], tableHead[i].prefix, isCompact)
+              : null,
+          ]),
+        );
+
+        return { heading: tableHead, rows };
+      }
     }
+
+    // この部分を通過することはないが型のため
+    return { heading: [], rows: [] };
   };
 
   const copyClipboard = async () => {
@@ -110,7 +216,7 @@ const ResultModalAction = (props: Props) => {
       compact: isCompact,
     });
 
-    const { rows } = createExportTable(d.results)!;
+    const { rows } = await createExportTable(d.results)!;
     const text = invokeUnparse(rows, "tsv");
 
     copy(text, {
@@ -126,8 +232,9 @@ const ResultModalAction = (props: Props) => {
       compact: isCompact,
     });
 
-    const { heading, rows } = createExportTable(d.results)!;
-    const h = heading.map((v) => v.label);
+    const { heading, rows } = await createExportTable(d.results)!;
+    // @ts-expect-error
+    const h = heading.map((v) => v?.label ?? v);
     exportCsvTsv([h, ...rows], extension, `result.${extension}`);
   };
 
