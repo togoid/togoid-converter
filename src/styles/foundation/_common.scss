@@ -109,9 +109,11 @@
 
   & + label {
     position: relative;
-    display: flex;
+    display: grid;
     gap: 5px;
+    grid-template-columns: 56px 1fr;
     align-items: center;
+    height: 27px;
     font: {
       family: g.$ff-oswald;
       size: 1.2rem;
@@ -126,6 +128,7 @@
     }
 
     &::before {
+      align-self: flex-start;
       width: 56px;
       height: 27px;
       border-radius: 14px;
