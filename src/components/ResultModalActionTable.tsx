@@ -41,16 +41,19 @@ const ResultModalActionTable = ({
                         )
                       }
                     >
-                      <option value="id">ID</option>
-                      {v.format?.map((w) => (
-                        <option key={w} value={w}>
-                          ID ({w.replace("%s", "")})
-                        </option>
-                      ))}
+                      {v.format ? (
+                        v.format.map((w: string) => (
+                          <option key={w} value={w}>
+                            {w === "%s" ? "ID" : `ID (${w.replace("%s", "")})`}
+                          </option>
+                        ))
+                      ) : (
+                        <option value="id">ID</option>
+                      )}
                       <option value="url">URL</option>
                     </select>
 
-                    {annotateConfig?.includes(v.name) && (
+                    {!isCompact && annotateConfig?.includes(v.name) && (
                       <>
                         <input
                           id={"showLabels" + i}
@@ -100,17 +103,6 @@ const ResultModalActionTable = ({
                               filterTable.heading![j].prefix,
                             )}
                           </a>
-                          {isShowLabelList[filterTable.heading![j].index] &&
-                            labelList?.[filterTable.heading![j].index]?.find(
-                              (v) => v.id === f,
-                            ) && (
-                              <span>
-                                {" " +
-                                  labelList?.[
-                                    filterTable.heading![j].index
-                                  ]?.find((v) => v.id === f)?.label}
-                              </span>
-                            )}
                           <br />
                         </Fragment>
                       ))

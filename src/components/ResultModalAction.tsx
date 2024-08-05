@@ -40,7 +40,7 @@ const ResultModalAction = (props: Props) => {
   );
 
   const createExportTable = async (tableRows: string[][]) => {
-    if (isShowLabelList.some((v) => v)) {
+    if (!isCompact && isShowLabelList.some((v) => v)) {
       const labelList = await Promise.all(
         tableRows[0]
           .map((_, i) => tableRows.map((row) => row[i]).filter((v) => v))
@@ -70,14 +70,7 @@ const ResultModalAction = (props: Props) => {
             isShowLabelList[j]
               ? [
                   joinPrefix(w, lineMode[j], tableHead[j].prefix, isCompact),
-                  isCompact
-                    ? w
-                        .split(" ")
-                        .map(
-                          (x) => labelList[j]?.find((y) => y.id === x)?.label,
-                        )
-                        .join(" ")
-                    : labelList[j]?.find((y) => y.id === w)?.label,
+                  labelList[j]?.find((y) => y.id === w)?.label,
                 ]
               : [joinPrefix(w, lineMode[j], tableHead[j].prefix, isCompact)],
           ),
