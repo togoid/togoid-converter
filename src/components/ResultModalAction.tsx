@@ -233,6 +233,7 @@ const ResultModalAction = (props: Props) => {
     });
 
     const { heading, rows } = await createExportTable(d.results)!;
+    // @ts-expect-error
     const h = heading.map((v) => v?.label ?? v);
     exportCsvTsv([h, ...rows], extension, `result.${extension}`);
   };
