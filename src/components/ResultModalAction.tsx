@@ -41,10 +41,13 @@ const ResultModalAction = (props: Props) => {
 
   const createExportTable = async (tableRows: string[][]) => {
     if (!isCompact && isShowLabelList.some((v) => v)) {
-      const labelList = await Promise.all(
-        tableRows[0]
-          .map((_, i) => tableRows.map((row) => row[i]).filter((v) => v))
-          .map(async (v, i) => {
+      if (previewMode === "all") {
+        // all
+        const array = tableRows[0].map((_, i) =>
+          tableRows.map((row) => row[i]).filter((v) => v),
+        );
+        const labelList = await Promise.all(
+          array.map(async (v, i) => {
             if (
               !annotateConfig?.includes(tableHead[i].name) ||
               !isShowLabelList[i]
@@ -53,83 +56,198 @@ const ResultModalAction = (props: Props) => {
             }
             const data = await executeAnnotateQuery({
               name: tableHead[i].name,
-              ids: isCompact ? v.flatMap((w) => w.split(" ")) : v,
+              ids: v,
             });
             return Object.values(data.data)[0];
           }),
-      );
-
-      if (previewMode === "all") {
-        // all
-        const head = tableHead.flatMap((v, i) =>
-          isShowLabelList[i] ? [v.label, ""] : [v.label],
         );
 
-        const rows = tableRows.map((v) =>
-          v.flatMap((w, j) =>
-            isShowLabelList[j]
-              ? [
-                  joinPrefix(w, lineMode[j], tableHead[j].prefix, isCompact),
-                  labelList[j]?.find((y) => y.id === w)?.label,
-                ]
-              : [joinPrefix(w, lineMode[j], tableHead[j].prefix, isCompact)],
+        return {
+          heading: tableHead.reduce<string[]>((prev, curr, i) => {
+            isShowLabelList[i]
+              ? prev.push(curr.label, "")
+              : prev.push(curr.label);
+
+            return prev;
+          }, []),
+          rows: tableRows.map((v) =>
+            v.reduce<(string | undefined)[]>((prev, curr, j) => {
+              isShowLabelList[j]
+                ? prev.push(
+                    joinPrefix(curr, lineMode[j], tableHead[j].prefix),
+                    labelList[j]?.find((y) => y.id === curr)?.label,
+                  )
+                : prev.push(joinPrefix(curr, lineMode[j], tableHead[j].prefix));
+
+              return prev;
+            }, []),
           ),
-        );
-
-        return { heading: head, rows };
+        };
       } else if (previewMode === "pair") {
         // origin and targets
+        const array = tableRows[0].map((_, i) =>
+          tableRows.map((row) => row[i]).filter((v) => v),
+        );
+        const fn0 = async () => {
+          if (
+            !annotateConfig?.includes(tableHead[0].name) ||
+            !isShowLabelList[0]
+          ) {
+            return null;
+          }
+          const data = await executeAnnotateQuery({
+            name: tableHead[0].name,
+            ids: array[0],
+          });
+          return Object.values(data.data)[0];
+        };
+
+        const fn1 = async () => {
+          if (
+            !annotateConfig?.includes(tableHead[tableHead.length - 1].name) ||
+            !isShowLabelList[tableHead.length - 1]
+          ) {
+            return null;
+          }
+          const data = await executeAnnotateQuery({
+            name: tableHead[tableHead.length - 1].name,
+            ids: array[1],
+          });
+          return Object.values(data.data)[0];
+        };
+
+        const labelList = await Promise.all([fn0(), fn1()]);
+
+        const head: string[] = [];
+        isShowLabelList[0]
+          ? head.push(tableHead[0].label, "")
+          : head.push(tableHead[0].label);
+
+        isShowLabelList[1]
+          ? head.push(tableHead[tableHead.length - 1].label, "")
+          : head.push(tableHead[tableHead.length - 1].label);
+
         return {
-          heading: [tableHead[0], tableHead[tableHead.length - 1]],
-          rows: tableRows.map((v) => [
-            [joinPrefix(v[0], lineMode[0], tableHead[0].prefix, isCompact)],
-            [
-              joinPrefix(
-                v[v.length - 1],
-                lineMode[lineMode.length - 1],
-                tableHead[tableHead.length - 1].prefix,
-                isCompact,
-              ),
-            ],
-          ]),
+          heading: head,
+          rows: tableRows.map((v) => {
+            const row: (string | undefined)[] = [];
+            isShowLabelList[0]
+              ? row.push(
+                  joinPrefix(v[0], lineMode[0], tableHead[0].prefix),
+                  labelList[0]?.find((y) => y.id === v[0])?.label,
+                )
+              : row.push(joinPrefix(v[0], lineMode[0], tableHead[0].prefix));
+            isShowLabelList[tableHead.length - 1]
+              ? row.push(
+                  joinPrefix(
+                    v[v.length - 1],
+                    lineMode[lineMode.length - 1],
+                    tableHead[tableHead.length - 1].prefix,
+                  ),
+                  labelList[1]?.find((y) => y.id === v[v.length - 1])?.label,
+                )
+              : row.push(
+                  joinPrefix(
+                    v[v.length - 1],
+                    lineMode[lineMode.length - 1],
+                    tableHead[tableHead.length - 1].prefix,
+                  ),
+                );
+
+            return row;
+          }),
         };
       } else if (previewMode === "target") {
         // target
+        const fn0 = async () => {
+          if (
+            !annotateConfig?.includes(tableHead[tableHead.length - 1].name) ||
+            !isShowLabelList[tableHead.length - 1]
+          ) {
+            return null;
+          }
+          const data = await executeAnnotateQuery({
+            name: tableHead[tableHead.length - 1].name,
+            // @ts-expect-error
+            ids: tableRows,
+          });
+          return Object.values(data.data)[0];
+        };
+
+        const labelList = [await fn0()];
+
         return {
-          heading: [tableHead[tableHead.length - 1]],
-          rows: isCompact
-            ? [
-                [
+          heading: isShowLabelList[tableHead.length - 1]
+            ? [tableHead[tableHead.length - 1], ""]
+            : [tableHead[tableHead.length - 1]],
+          rows: tableRows.map((v) =>
+            isShowLabelList[tableHead.length - 1]
+              ? [
                   joinPrefix(
                     // @ts-expect-error
-                    tableRows,
+                    v,
+                    lineMode[lineMode.length - 1],
+                    tableHead[tableHead.length - 1].prefix,
+                    isCompact,
+                  ),
+                  // @ts-expect-error
+                  labelList[0]?.find((y) => y.id === v)?.label,
+                ]
+              : [
+                  joinPrefix(
+                    // @ts-expect-error
+                    v,
                     lineMode[lineMode.length - 1],
                     tableHead[tableHead.length - 1].prefix,
                     isCompact,
                   ),
                 ],
-              ]
-            : tableRows.map((v) => [
-                joinPrefix(
-                  // @ts-expect-error
-                  v,
-                  lineMode[lineMode.length - 1],
-                  tableHead[tableHead.length - 1].prefix,
-                  isCompact,
-                ),
-              ]),
+          ),
         };
       } else if (previewMode === "full") {
         // full
-        const rows = tableRows.map((v) =>
-          v.map((w, i) => [
-            w
-              ? joinPrefix(w, lineMode[i], tableHead[i].prefix, isCompact)
-              : null,
-          ]),
+        const array = tableRows[0].map((_, i) =>
+          tableRows.map((row) => row[i]).filter((v) => v),
+        );
+        const labelList = await Promise.all(
+          array.map(async (v, i) => {
+            if (
+              !annotateConfig?.includes(tableHead[i].name) ||
+              !isShowLabelList[i]
+            ) {
+              return null;
+            }
+            const data = await executeAnnotateQuery({
+              name: tableHead[i].name,
+              ids: v,
+            });
+            return Object.values(data.data)[0];
+          }),
         );
 
-        return { heading: tableHead, rows };
+        const rows = tableRows.map((v) =>
+          v.reduce<(string | undefined)[]>((prev, curr, j) => {
+            isShowLabelList[j]
+              ? prev.push(
+                  joinPrefix(curr, lineMode[j], tableHead[j].prefix),
+                  labelList[j]?.find((y) => y.id === curr)?.label,
+                )
+              : prev.push(joinPrefix(curr, lineMode[j], tableHead[j].prefix));
+
+            return prev;
+          }, []),
+        );
+
+        return {
+          heading: tableHead.reduce<string[]>((prev, curr, i) => {
+            isShowLabelList[i]
+              ? prev.push(curr.label, "")
+              : prev.push(curr.label);
+
+            return prev;
+          }, []),
+          rows,
+        };
       }
     } else {
       if (previewMode === "all") {
