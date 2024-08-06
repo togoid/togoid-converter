@@ -50,46 +50,14 @@ const ResultModalAction = (props: Props) => {
               tableRows.map((row) => row[i]).filter((v) => v),
             );
 
-      if (previewMode === "all" || previewMode === "full") {
+      if (
+        previewMode === "all" ||
+        previewMode === "pair" ||
+        previewMode === "full"
+      ) {
         // All converted IDs
-        // All including unconverted IDs
-        const labelList = await Promise.all(
-          transposeList.map(async (v, i) => {
-            if (
-              annotateConfig?.includes(tableHead[i].name) &&
-              isShowLabelList[i]
-            ) {
-              return await executeAnnotateQuery({
-                name: tableHead[i].name,
-                ids: v,
-              });
-            }
-          }),
-        );
-
-        return {
-          heading: tableHead.reduce<string[]>((prev, curr, i) => {
-            isShowLabelList[i]
-              ? prev.push(curr.label, "")
-              : prev.push(curr.label);
-
-            return prev;
-          }, []),
-          rows: tableRows.map((v) =>
-            v.reduce<(string | undefined)[]>((prev, curr, j) => {
-              isShowLabelList[j]
-                ? prev.push(
-                    joinPrefix(curr, lineMode[j], tableHead[j].prefix),
-                    labelList[j]?.[curr],
-                  )
-                : prev.push(joinPrefix(curr, lineMode[j], tableHead[j].prefix));
-
-              return prev;
-            }, []),
-          ),
-        };
-      } else if (previewMode === "pair") {
         // origin and targets
+        // All including unconverted IDs
         const labelList = await Promise.all(
           headList.map(async (head, i) => {
             if (
@@ -176,31 +144,26 @@ const ResultModalAction = (props: Props) => {
         };
       }
     } else {
-      if (previewMode === "all" || previewMode === "full") {
+      if (
+        previewMode === "all" ||
+        previewMode === "pair" ||
+        previewMode === "full"
+      ) {
         // All converted IDs
+        // origin and targets
         // All including unconverted IDs
         return {
           heading: headList.map((v) => v.label),
           rows: tableRows.map((v) =>
-            v.map((w, i) => [
-              joinPrefix(w, lineMode[i], tableHead[i].prefix, isCompact),
-            ]),
-          ),
-        };
-      } else if (previewMode === "pair") {
-        // origin and targets
-        return {
-          heading: headList.map((v) => v.label),
-          rows: tableRows.map((v) => [
-            headList.map((head, i) => [
+            headList.map((head, i) =>
               joinPrefix(
                 v[i],
                 lineMode[head.index],
                 tableHead[head.index].prefix,
                 isCompact,
               ),
-            ]),
-          ]),
+            ),
+          ),
         };
       } else if (previewMode === "target") {
         // target
