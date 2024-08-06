@@ -43,13 +43,6 @@ const ResultModalAction = (props: Props) => {
     const headList = getHeadList();
 
     if (!isCompact && isShowLabelList.some((v) => v)) {
-      const transposeList =
-        previewMode === "target"
-          ? tableRows
-          : tableRows[0].map((_, i) =>
-              tableRows.map((row) => row[i]).filter((v) => v),
-            );
-
       if (
         previewMode === "all" ||
         previewMode === "pair" ||
@@ -58,6 +51,10 @@ const ResultModalAction = (props: Props) => {
         // All converted IDs
         // origin and targets
         // All including unconverted IDs
+        const transposeList = tableRows[0].map((_, i) =>
+          tableRows.map((row) => row[i]).filter((v) => v),
+        );
+
         const labelList = await Promise.all(
           headList.map(async (head, i) => {
             if (
@@ -82,29 +79,22 @@ const ResultModalAction = (props: Props) => {
           }, []),
           rows: tableRows.map((v) =>
             headList.reduce<(string | undefined)[]>((prev, curr, j) => {
+              const idWithPrefix = joinPrefix(
+                v[j],
+                lineMode[curr.index],
+                tableHead[curr.index].prefix,
+              );
+
               isShowLabelList[curr.index]
-                ? prev.push(
-                    joinPrefix(
-                      v[j],
-                      lineMode[curr.index],
-                      tableHead[curr.index].prefix,
-                    ),
-                    labelList[j]?.[v[j]],
-                  )
-                : prev.push(
-                    joinPrefix(
-                      v[j],
-                      lineMode[curr.index],
-                      tableHead[curr.index].prefix,
-                    ),
-                  );
+                ? prev.push(idWithPrefix, labelList[j]?.[v[j]])
+                : prev.push(idWithPrefix);
 
               return prev;
             }, []),
           ),
         };
       } else if (previewMode === "target") {
-        // target
+        // Target IDs
         const labelList = [
           await (async () => {
             if (
@@ -120,27 +110,23 @@ const ResultModalAction = (props: Props) => {
         ];
 
         return {
-          heading: isShowLabelList[tableHead.length - 1]
-            ? [tableHead[tableHead.length - 1], ""]
-            : [tableHead[tableHead.length - 1]],
-          rows: (tableRows as unknown as string[]).map((v) =>
-            isShowLabelList[tableHead.length - 1]
-              ? [
-                  joinPrefix(
-                    v,
-                    lineMode[lineMode.length - 1],
-                    tableHead[tableHead.length - 1].prefix,
-                  ),
-                  labelList[0]?.[v],
-                ]
-              : [
-                  joinPrefix(
-                    v,
-                    lineMode[lineMode.length - 1],
-                    tableHead[tableHead.length - 1].prefix,
-                  ),
-                ],
-          ),
+          heading: headList.reduce<string[]>((prev, curr) => {
+            isShowLabelList[curr.index]
+              ? prev.push(curr.label, "")
+              : prev.push(curr.label);
+
+            return prev;
+          }, []),
+          rows: (tableRows as unknown as string[]).map((v) => {
+            const idWithPrefix = joinPrefix(
+              v,
+              lineMode[lineMode.length - 1],
+              tableHead[tableHead.length - 1].prefix,
+            );
+            return isShowLabelList[tableHead.length - 1]
+              ? [idWithPrefix, labelList[0]?.[v]]
+              : [idWithPrefix];
+          }),
         };
       }
     } else {
@@ -166,7 +152,7 @@ const ResultModalAction = (props: Props) => {
           ),
         };
       } else if (previewMode === "target") {
-        // target
+        // Target IDs
         return {
           heading: headList.map((v) => v.label),
           rows: isCompact
