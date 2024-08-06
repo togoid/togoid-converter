@@ -9,13 +9,6 @@ type Props = {
 const ResultModalSingleAction = (props: Props) => {
   const { datasetConfig } = useConfig();
 
-  const [lineMode, setLineMode] = useState<string[]>(
-    Array(props.route.length).fill("id"),
-  );
-  const [isShowLabelList, setIsShowLabelList] = useState<boolean[]>(
-    Array(props.route.length).fill(false),
-  );
-
   const tableHead = useMemo<any[]>(
     () =>
       props.route.map((v, i) => ({
@@ -24,6 +17,13 @@ const ResultModalSingleAction = (props: Props) => {
         name: v.name,
       })),
     [],
+  );
+
+  const [lineMode, setLineMode] = useState<string[]>(
+    tableHead.map((v) => (v.format ? v.format[0] : "id")),
+  );
+  const [isShowLabelList, setIsShowLabelList] = useState<boolean[]>(
+    Array(props.route.length).fill(false),
   );
 
   const createExportTable = async (idList: string[]) => {

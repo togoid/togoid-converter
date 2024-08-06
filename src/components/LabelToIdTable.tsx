@@ -20,7 +20,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
   useSignals();
 
   const lineMode = useSignal(
-    dataset.value.format ? dataset.value.format[0] : "ID",
+    dataset.value.format ? dataset.value.format[0] : "id",
   );
 
   const setText = useSetAtom(textAtom);
