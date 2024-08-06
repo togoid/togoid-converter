@@ -85,14 +85,40 @@ export const executeCountQuery = async (option: {
     .then((d) => d.data);
 };
 
+// export const executeAnnotateQuery = async (option: {
+//   name: string;
+//   ids: string[];
+// }) => {
+//   const res = await axios<{
+//     data: {
+//       id: string;
+//       iri: string;
+//       label: string;
+//     }[][];
+//   }>({
+//     url: "https://rdfportal.org/grasp-togoid",
+//     method: "POST",
+//     data: {
+//       query: `query {
+//       ${option.name}(id: ${JSON.stringify([...new Set(option.ids)])}) {
+//         iri
+//         id
+//         label
+//       }
+//     }`,
+//     },
+//   });
+
+//   return Object.values(res.data.data)[0];
+// };
+
 export const executeAnnotateQuery = async (option: {
   name: string;
   ids: string[];
 }) => {
-  return await axios<{
+  const res = await axios<{
     data: {
       id: string;
-      iri: string;
       label: string;
     }[][];
   }>({
@@ -101,13 +127,16 @@ export const executeAnnotateQuery = async (option: {
     data: {
       query: `query {
       ${option.name}(id: ${JSON.stringify([...new Set(option.ids)])}) {
-        iri
         id
         label
       }
     }`,
     },
-  }).then((d) => d.data);
+  });
+
+  return Object.fromEntries(
+    Object.values(res.data.data)[0].map((v) => [v.id, v.label]),
+  );
 };
 
 export const mergePathStyle = (
@@ -171,11 +200,15 @@ export const getPathStyle = (
 };
 
 export const joinPrefix = (
-  id: string,
+  id: string | undefined,
   mode: string,
   prefix: string,
   isCompact?: boolean,
 ) => {
+  if (!id) {
+    return "";
+  }
+
   if (mode === "id") {
     return id;
   } else if (mode === "url") {

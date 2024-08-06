@@ -40,134 +40,121 @@ const ResultModalAction = (props: Props) => {
   );
 
   const createExportTable = async (tableRows: string[][]) => {
-    if (isShowLabelList.some((v) => v)) {
-      const labelList = await Promise.all(
-        tableRows[0]
-          .map((_, i) => tableRows.map((row) => row[i]).filter((v) => v))
-          .map(async (v, i) => {
-            if (
-              !annotateConfig?.includes(tableHead[i].name) ||
-              !isShowLabelList[i]
-            ) {
-              return null;
-            }
-            const data = await executeAnnotateQuery({
-              name: tableHead[i].name,
-              ids: isCompact ? v.flatMap((w) => w.split(" ")) : v,
-            });
-            return Object.values(data.data)[0];
-          }),
-      );
+    const headList = getHeadList(tableHead, previewMode);
 
-      if (previewMode === "all") {
-        // all
-        const head = tableHead.flatMap((v, i) =>
-          isShowLabelList[i] ? [v.label, ""] : [v.label],
-        );
-
-        const rows = tableRows.map((v) =>
-          v.flatMap((w, j) =>
-            isShowLabelList[j]
-              ? [
-                  joinPrefix(w, lineMode[j], tableHead[j].prefix, isCompact),
-                  isCompact
-                    ? w
-                        .split(" ")
-                        .map(
-                          (x) => labelList[j]?.find((y) => y.id === x)?.label,
-                        )
-                        .join(" ")
-                    : labelList[j]?.find((y) => y.id === w)?.label,
-                ]
-              : [joinPrefix(w, lineMode[j], tableHead[j].prefix, isCompact)],
-          ),
-        );
-
-        return { heading: head, rows };
-      } else if (previewMode === "pair") {
+    if (!isCompact && isShowLabelList.some((v) => v)) {
+      if (
+        previewMode === "all" ||
+        previewMode === "pair" ||
+        previewMode === "full"
+      ) {
+        // All converted IDs
         // origin and targets
+        // All including unconverted IDs
+        const transposeList = tableRows[0].map((_, i) =>
+          tableRows.map((row) => row[i]).filter((v) => v),
+        );
+
+        const labelList = await Promise.all(
+          headList.map(async (head, i) => {
+            if (
+              annotateConfig?.includes(head.name) &&
+              isShowLabelList[head.index]
+            ) {
+              return await executeAnnotateQuery({
+                name: head.name,
+                ids: transposeList[i],
+              });
+            }
+          }),
+        );
+
         return {
-          heading: [tableHead[0], tableHead[tableHead.length - 1]],
-          rows: tableRows.map((v) => [
-            [joinPrefix(v[0], lineMode[0], tableHead[0].prefix, isCompact)],
-            [
-              joinPrefix(
-                v[v.length - 1],
-                lineMode[lineMode.length - 1],
-                tableHead[tableHead.length - 1].prefix,
-                isCompact,
-              ),
-            ],
-          ]),
+          heading: headList.reduce<string[]>((prev, curr) => {
+            isShowLabelList[curr.index]
+              ? prev.push(curr.label, "")
+              : prev.push(curr.label);
+
+            return prev;
+          }, []),
+          rows: tableRows.map((v) =>
+            headList.reduce<(string | undefined)[]>((prev, curr, j) => {
+              const idWithPrefix = joinPrefix(
+                v[j],
+                lineMode[curr.index],
+                tableHead[curr.index].prefix,
+              );
+
+              isShowLabelList[curr.index]
+                ? prev.push(idWithPrefix, labelList[j]?.[v[j]])
+                : prev.push(idWithPrefix);
+
+              return prev;
+            }, []),
+          ),
         };
       } else if (previewMode === "target") {
-        // target
-        return {
-          heading: [tableHead[tableHead.length - 1]],
-          rows: isCompact
-            ? [
-                [
-                  joinPrefix(
-                    // @ts-expect-error
-                    tableRows,
-                    lineMode[lineMode.length - 1],
-                    tableHead[tableHead.length - 1].prefix,
-                    isCompact,
-                  ),
-                ],
-              ]
-            : tableRows.map((v) => [
-                joinPrefix(
-                  // @ts-expect-error
-                  v,
-                  lineMode[lineMode.length - 1],
-                  tableHead[tableHead.length - 1].prefix,
-                  isCompact,
-                ),
-              ]),
-        };
-      } else if (previewMode === "full") {
-        // full
-        const rows = tableRows.map((v) =>
-          v.map((w, i) => [
-            w
-              ? joinPrefix(w, lineMode[i], tableHead[i].prefix, isCompact)
-              : null,
-          ]),
-        );
+        // Target IDs
+        const labelList = [
+          await (async () => {
+            if (
+              annotateConfig?.includes(tableHead[tableHead.length - 1].name) &&
+              isShowLabelList[tableHead.length - 1]
+            ) {
+              return await executeAnnotateQuery({
+                name: tableHead[tableHead.length - 1].name,
+                ids: tableRows as unknown as string[],
+              });
+            }
+          })(),
+        ];
 
-        return { heading: tableHead, rows };
+        return {
+          heading: headList.reduce<string[]>((prev, curr) => {
+            isShowLabelList[curr.index]
+              ? prev.push(curr.label, "")
+              : prev.push(curr.label);
+
+            return prev;
+          }, []),
+          rows: (tableRows as unknown as string[]).map((v) => {
+            const idWithPrefix = joinPrefix(
+              v,
+              lineMode[lineMode.length - 1],
+              tableHead[tableHead.length - 1].prefix,
+            );
+            return isShowLabelList[tableHead.length - 1]
+              ? [idWithPrefix, labelList[0]?.[v]]
+              : [idWithPrefix];
+          }),
+        };
       }
     } else {
-      if (previewMode === "all") {
-        // all
-        const rows = tableRows.map((v) =>
-          v.map((w, i) => [
-            joinPrefix(w, lineMode[i], tableHead[i].prefix, isCompact),
-          ]),
-        );
-
-        return { heading: tableHead, rows };
-      } else if (previewMode === "pair") {
+      if (
+        previewMode === "all" ||
+        previewMode === "pair" ||
+        previewMode === "full"
+      ) {
+        // All converted IDs
         // origin and targets
+        // All including unconverted IDs
         return {
-          heading: [tableHead[0], tableHead[tableHead.length - 1]],
-          rows: tableRows.map((v) => [
-            [joinPrefix(v[0], lineMode[0], tableHead[0].prefix, isCompact)],
-            [
+          heading: headList.map((v) => v.label),
+          rows: tableRows.map((v) =>
+            headList.map((head, i) =>
               joinPrefix(
-                v[v.length - 1],
-                lineMode[lineMode.length - 1],
-                tableHead[tableHead.length - 1].prefix,
+                v[i],
+                lineMode[head.index],
+                tableHead[head.index].prefix,
                 isCompact,
               ),
-            ],
-          ]),
+            ),
+          ),
         };
       } else if (previewMode === "target") {
-        // target
+        // Target IDs
         return {
-          heading: [tableHead[tableHead.length - 1]],
+          heading: headList.map((v) => v.label),
           rows: isCompact
             ? [
                 [
@@ -190,17 +177,6 @@ const ResultModalAction = (props: Props) => {
                 ),
               ]),
         };
-      } else if (previewMode === "full") {
-        // full
-        const rows = tableRows.map((v) =>
-          v.map((w, i) => [
-            w
-              ? joinPrefix(w, lineMode[i], tableHead[i].prefix, isCompact)
-              : null,
-          ]),
-        );
-
-        return { heading: tableHead, rows };
       }
     }
 
@@ -233,9 +209,7 @@ const ResultModalAction = (props: Props) => {
     });
 
     const { heading, rows } = await createExportTable(d.results)!;
-    // @ts-expect-error
-    const h = heading.map((v) => v?.label ?? v);
-    exportCsvTsv([h, ...rows], extension, `result.${extension}`);
+    exportCsvTsv([heading, ...rows], extension, `result.${extension}`);
   };
 
   const copyClipboardURL = () => {
@@ -269,7 +243,7 @@ const ResultModalAction = (props: Props) => {
     );
   };
 
-  const { filterTable, labelList } = useResultModalPreview(
+  const { filterTable, labelList, getHeadList } = useResultModalPreview(
     previewMode,
     isCompact,
     props.route,

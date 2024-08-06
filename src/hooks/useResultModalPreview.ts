@@ -62,21 +62,20 @@ const useResultModalPreview = (
       if (!(expandedFullTable && isShowLabelList.some((v) => v))) {
         return null;
       }
-      const array = expandedFullTable[0].map((_, i) =>
-        expandedFullTable.map((row) => row[i]).filter((v) => v),
-      );
 
       return await Promise.all(
-        array.map(async (v, i) => {
-          if (!annotateConfig?.includes(tableHead[i].name)) {
-            return null;
-          }
-          const data = await executeAnnotateQuery({
-            name: tableHead[i].name,
-            ids: v,
-          });
-          return Object.values(data.data)[0];
-        }),
+        expandedFullTable[0]
+          .map((_, i) =>
+            expandedFullTable.map((row) => row[i]).filter((v) => v),
+          )
+          .map(async (v, i) => {
+            if (annotateConfig?.includes(tableHead[i].name)) {
+              return await executeAnnotateQuery({
+                name: tableHead[i].name,
+                ids: v,
+              });
+            }
+          }),
       );
     },
   );
@@ -91,15 +90,17 @@ const useResultModalPreview = (
   }, [baseTable, previewMode]);
 
   const editTable = (table: NonNullable<typeof baseTable>) => {
+    const headList = getHeadList(tableHead, previewMode);
+
     if (previewMode === "all") {
       // all
       const rows = table.filter((v) => v[v.length - 1]);
-      return { heading: tableHead, rows };
+      return { heading: headList, rows };
     } else if (previewMode === "pair") {
       // origin and targets
       // 重複は消す
       return {
-        heading: [tableHead[0], tableHead[tableHead.length - 1]],
+        heading: headList,
         rows: Array.from(
           new Set(
             table
@@ -113,7 +114,7 @@ const useResultModalPreview = (
       // target
       // 重複は消す
       return {
-        heading: [tableHead[tableHead.length - 1]],
+        heading: headList,
         rows: Array.from(
           new Set(
             table.filter((v) => v[v.length - 1]).map((v) => v[v.length - 1]),
@@ -123,7 +124,7 @@ const useResultModalPreview = (
       };
     } else if (previewMode === "full") {
       // full
-      return { heading: tableHead, rows: table };
+      return { heading: headList, rows: table };
     }
 
     // ここには来ない
@@ -131,16 +132,18 @@ const useResultModalPreview = (
   };
 
   const editCompactTable = (table: NonNullable<typeof baseTable>) => {
+    const headList = getHeadList(tableHead, previewMode);
+
     if (previewMode === "all") {
       // all
       return {
-        heading: tableHead,
+        heading: headList,
         rows: table.filter((v) => v[tableHead.length - 1]),
       };
     } else if (previewMode === "pair") {
       // origin and targets
       return {
-        heading: [tableHead[0], tableHead[tableHead.length - 1]],
+        heading: headList,
         rows: table
           .filter((v) => v[tableHead.length - 1])
           .map((v) => [v[0], v[tableHead.length - 1]]),
@@ -149,7 +152,7 @@ const useResultModalPreview = (
       // target
       // 重複は消す
       return {
-        heading: [tableHead[tableHead.length - 1]],
+        heading: headList,
         rows: [
           [
             [
@@ -166,7 +169,7 @@ const useResultModalPreview = (
     } else if (previewMode === "full") {
       // full
       return {
-        heading: tableHead,
+        heading: headList,
         rows: table,
       };
     }
@@ -175,7 +178,19 @@ const useResultModalPreview = (
     return { heading: [], rows: [[]] };
   };
 
-  return { filterTable, labelList };
+  const getHeadList = (head: typeof tableHead, mode: typeof previewMode) => {
+    if (mode === "all" || mode === "full") {
+      return head;
+    } else if (mode === "pair") {
+      return [head[0], head[head.length - 1]];
+    } else if (mode === "target") {
+      return [head[head.length - 1]];
+    }
+
+    return head;
+  };
+
+  return { filterTable, labelList, getHeadList };
 };
 
 export default useResultModalPreview;
