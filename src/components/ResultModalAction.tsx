@@ -20,15 +20,6 @@ const ResultModalAction = (props: Props) => {
   const { datasetConfig } = useConfig();
   const { annotateConfig } = useAnnotateConfig();
 
-  const [previewMode, setPreviewMode] = useState("all");
-  const [isCompact, setIsCompact] = useState(false);
-  const [lineMode, setLineMode] = useState<string[]>(
-    Array(props.route.length).fill("id"),
-  );
-  const [isShowLabelList, setIsShowLabelList] = useState<boolean[]>(
-    Array(props.route.length).fill(false),
-  );
-
   const tableHead = useMemo(
     () =>
       props.route.map((v, i) => ({
@@ -37,6 +28,15 @@ const ResultModalAction = (props: Props) => {
         name: v.name,
       })),
     [],
+  );
+
+  const [previewMode, setPreviewMode] = useState("all");
+  const [isCompact, setIsCompact] = useState(false);
+  const [lineMode, setLineMode] = useState<string[]>(
+    tableHead.map((v) => (v.format ? v.format[0] : "id")),
+  );
+  const [isShowLabelList, setIsShowLabelList] = useState<boolean[]>(
+    Array(props.route.length).fill(false),
   );
 
   const createExportTable = async (tableRows: string[][]) => {
