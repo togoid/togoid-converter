@@ -48,8 +48,9 @@ const ResultModalAction = (props: Props) => {
               tableRows.map((row) => row[i]).filter((v) => v),
             );
 
-      if (previewMode === "all") {
-        // all
+      if (previewMode === "all" || previewMode === "full") {
+        // All converted IDs
+        // All including unconverted IDs
         const labelList = await Promise.all(
           transposeList.map(async (v, i) => {
             if (
@@ -117,7 +118,7 @@ const ResultModalAction = (props: Props) => {
           ? head.push(tableHead[0].label, "")
           : head.push(tableHead[0].label);
 
-        isShowLabelList[1]
+        isShowLabelList[tableHead.length - 1]
           ? head.push(tableHead[tableHead.length - 1].label, "")
           : head.push(tableHead[tableHead.length - 1].label);
 
@@ -190,49 +191,11 @@ const ResultModalAction = (props: Props) => {
                 ],
           ),
         };
-      } else if (previewMode === "full") {
-        // full
-        const labelList = await Promise.all(
-          transposeList.map(async (v, i) => {
-            if (
-              annotateConfig?.includes(tableHead[i].name) &&
-              isShowLabelList[i]
-            ) {
-              return await executeAnnotateQuery({
-                name: tableHead[i].name,
-                ids: v,
-              });
-            }
-          }),
-        );
-
-        const rows = tableRows.map((v) =>
-          v.reduce<(string | undefined)[]>((prev, curr, j) => {
-            isShowLabelList[j]
-              ? prev.push(
-                  joinPrefix(curr, lineMode[j], tableHead[j].prefix),
-                  labelList[j]?.[curr],
-                )
-              : prev.push(joinPrefix(curr, lineMode[j], tableHead[j].prefix));
-
-            return prev;
-          }, []),
-        );
-
-        return {
-          heading: tableHead.reduce<string[]>((prev, curr, i) => {
-            isShowLabelList[i]
-              ? prev.push(curr.label, "")
-              : prev.push(curr.label);
-
-            return prev;
-          }, []),
-          rows,
-        };
       }
     } else {
-      if (previewMode === "all") {
-        // all
+      if (previewMode === "all" || previewMode === "full") {
+        // All converted IDs
+        // All including unconverted IDs
         const rows = tableRows.map((v) =>
           v.map((w, i) => [
             joinPrefix(w, lineMode[i], tableHead[i].prefix, isCompact),
@@ -282,17 +245,6 @@ const ResultModalAction = (props: Props) => {
                 ),
               ]),
         };
-      } else if (previewMode === "full") {
-        // full
-        const rows = tableRows.map((v) =>
-          v.map((w, i) => [
-            w
-              ? joinPrefix(w, lineMode[i], tableHead[i].prefix, isCompact)
-              : null,
-          ]),
-        );
-
-        return { heading: tableHead, rows };
       }
     }
 

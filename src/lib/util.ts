@@ -200,11 +200,15 @@ export const getPathStyle = (
 };
 
 export const joinPrefix = (
-  id: string,
+  id: string | undefined,
   mode: string,
   prefix: string,
   isCompact?: boolean,
 ) => {
+  if (!id) {
+    return "";
+  }
+
   if (mode === "id") {
     return id;
   } else if (mode === "url") {
