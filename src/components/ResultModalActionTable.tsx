@@ -18,7 +18,6 @@ const ResultModalActionTable = ({
   labelList,
 }: Props) => {
   const { annotateConfig } = useAnnotateConfig();
-  console.log(labelList);
 
   return (
     <table className="table">

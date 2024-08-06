@@ -87,31 +87,30 @@ const ResultModalAction = (props: Props) => {
         };
       } else if (previewMode === "pair") {
         // origin and targets
-        const fn0 = async () => {
-          if (
-            annotateConfig?.includes(tableHead[0].name) &&
-            isShowLabelList[0]
-          ) {
-            return await executeAnnotateQuery({
-              name: tableHead[0].name,
-              ids: transposeList[0],
-            });
-          }
-        };
-
-        const fn1 = async () => {
-          if (
-            annotateConfig?.includes(tableHead[tableHead.length - 1].name) &&
-            isShowLabelList[tableHead.length - 1]
-          ) {
-            return await executeAnnotateQuery({
-              name: tableHead[tableHead.length - 1].name,
-              ids: transposeList[1],
-            });
-          }
-        };
-
-        const labelList = await Promise.all([fn0(), fn1()]);
+        const labelList = await Promise.all([
+          (async () => {
+            if (
+              annotateConfig?.includes(tableHead[0].name) &&
+              isShowLabelList[0]
+            ) {
+              return await executeAnnotateQuery({
+                name: tableHead[0].name,
+                ids: transposeList[0],
+              });
+            }
+          })(),
+          (async () => {
+            if (
+              annotateConfig?.includes(tableHead[tableHead.length - 1].name) &&
+              isShowLabelList[tableHead.length - 1]
+            ) {
+              return await executeAnnotateQuery({
+                name: tableHead[tableHead.length - 1].name,
+                ids: transposeList[1],
+              });
+            }
+          })(),
+        ]);
 
         const head: string[] = [];
         isShowLabelList[0]
@@ -154,19 +153,19 @@ const ResultModalAction = (props: Props) => {
         };
       } else if (previewMode === "target") {
         // target
-        const fn0 = async () => {
-          if (
-            annotateConfig?.includes(tableHead[tableHead.length - 1].name) &&
-            isShowLabelList[tableHead.length - 1]
-          ) {
-            return await executeAnnotateQuery({
-              name: tableHead[tableHead.length - 1].name,
-              ids: tableRows as unknown as string[],
-            });
-          }
-        };
-
-        const labelList = [await fn0()];
+        const labelList = [
+          await (async () => {
+            if (
+              annotateConfig?.includes(tableHead[tableHead.length - 1].name) &&
+              isShowLabelList[tableHead.length - 1]
+            ) {
+              return await executeAnnotateQuery({
+                name: tableHead[tableHead.length - 1].name,
+                ids: tableRows as unknown as string[],
+              });
+            }
+          })(),
+        ];
 
         return {
           heading: isShowLabelList[tableHead.length - 1]
