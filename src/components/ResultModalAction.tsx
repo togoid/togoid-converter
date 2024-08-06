@@ -40,6 +40,8 @@ const ResultModalAction = (props: Props) => {
   );
 
   const createExportTable = async (tableRows: string[][]) => {
+    const headList = getHeadList();
+
     if (!isCompact && isShowLabelList.some((v) => v)) {
       const transposeList =
         previewMode === "target"
@@ -88,69 +90,50 @@ const ResultModalAction = (props: Props) => {
         };
       } else if (previewMode === "pair") {
         // origin and targets
-        const labelList = await Promise.all([
-          (async () => {
+        const labelList = await Promise.all(
+          headList.map(async (head, i) => {
             if (
-              annotateConfig?.includes(tableHead[0].name) &&
-              isShowLabelList[0]
+              annotateConfig?.includes(head.name) &&
+              isShowLabelList[head.index]
             ) {
               return await executeAnnotateQuery({
-                name: tableHead[0].name,
-                ids: transposeList[0],
+                name: head.name,
+                ids: transposeList[i],
               });
             }
-          })(),
-          (async () => {
-            if (
-              annotateConfig?.includes(tableHead[tableHead.length - 1].name) &&
-              isShowLabelList[tableHead.length - 1]
-            ) {
-              return await executeAnnotateQuery({
-                name: tableHead[tableHead.length - 1].name,
-                ids: transposeList[1],
-              });
-            }
-          })(),
-        ]);
-
-        const head: string[] = [];
-        isShowLabelList[0]
-          ? head.push(tableHead[0].label, "")
-          : head.push(tableHead[0].label);
-
-        isShowLabelList[tableHead.length - 1]
-          ? head.push(tableHead[tableHead.length - 1].label, "")
-          : head.push(tableHead[tableHead.length - 1].label);
+          }),
+        );
 
         return {
-          heading: head,
-          rows: tableRows.map((v) => {
-            const row: (string | undefined)[] = [];
-            isShowLabelList[0]
-              ? row.push(
-                  joinPrefix(v[0], lineMode[0], tableHead[0].prefix),
-                  labelList[0]?.[v[0]],
-                )
-              : row.push(joinPrefix(v[0], lineMode[0], tableHead[0].prefix));
-            isShowLabelList[tableHead.length - 1]
-              ? row.push(
-                  joinPrefix(
-                    v[v.length - 1],
-                    lineMode[lineMode.length - 1],
-                    tableHead[tableHead.length - 1].prefix,
-                  ),
-                  labelList[1]?.[v[v.length - 1]],
-                )
-              : row.push(
-                  joinPrefix(
-                    v[v.length - 1],
-                    lineMode[lineMode.length - 1],
-                    tableHead[tableHead.length - 1].prefix,
-                  ),
-                );
+          heading: headList.reduce<string[]>((prev, curr) => {
+            isShowLabelList[curr.index]
+              ? prev.push(curr.label, "")
+              : prev.push(curr.label);
 
-            return row;
-          }),
+            return prev;
+          }, []),
+          rows: tableRows.map((v) =>
+            headList.reduce<(string | undefined)[]>((prev, curr, j) => {
+              isShowLabelList[curr.index]
+                ? prev.push(
+                    joinPrefix(
+                      v[j],
+                      lineMode[curr.index],
+                      tableHead[curr.index].prefix,
+                    ),
+                    labelList[j]?.[v[j]],
+                  )
+                : prev.push(
+                    joinPrefix(
+                      v[j],
+                      lineMode[curr.index],
+                      tableHead[curr.index].prefix,
+                    ),
+                  );
+
+              return prev;
+            }, []),
+          ),
         };
       } else if (previewMode === "target") {
         // target
@@ -196,33 +179,33 @@ const ResultModalAction = (props: Props) => {
       if (previewMode === "all" || previewMode === "full") {
         // All converted IDs
         // All including unconverted IDs
-        const rows = tableRows.map((v) =>
-          v.map((w, i) => [
-            joinPrefix(w, lineMode[i], tableHead[i].prefix, isCompact),
-          ]),
-        );
-
-        return { heading: tableHead, rows };
+        return {
+          heading: headList.map((v) => v.label),
+          rows: tableRows.map((v) =>
+            v.map((w, i) => [
+              joinPrefix(w, lineMode[i], tableHead[i].prefix, isCompact),
+            ]),
+          ),
+        };
       } else if (previewMode === "pair") {
         // origin and targets
         return {
-          heading: [tableHead[0], tableHead[tableHead.length - 1]],
+          heading: headList.map((v) => v.label),
           rows: tableRows.map((v) => [
-            [joinPrefix(v[0], lineMode[0], tableHead[0].prefix, isCompact)],
-            [
+            headList.map((head, i) => [
               joinPrefix(
-                v[v.length - 1],
-                lineMode[lineMode.length - 1],
-                tableHead[tableHead.length - 1].prefix,
+                v[i],
+                lineMode[head.index],
+                tableHead[head.index].prefix,
                 isCompact,
               ),
-            ],
+            ]),
           ]),
         };
       } else if (previewMode === "target") {
         // target
         return {
-          heading: [tableHead[tableHead.length - 1]],
+          heading: headList.map((v) => v.label),
           rows: isCompact
             ? [
                 [
@@ -252,6 +235,18 @@ const ResultModalAction = (props: Props) => {
     return { heading: [], rows: [] };
   };
 
+  const getHeadList = () => {
+    if (previewMode === "all" || previewMode === "full") {
+      return tableHead;
+    } else if (previewMode === "pair") {
+      return [tableHead[0], tableHead[tableHead.length - 1]];
+    } else if (previewMode === "target") {
+      return [tableHead[tableHead.length - 1]];
+    }
+
+    return tableHead;
+  };
+
   const copyClipboard = async () => {
     const d = await executeQuery({
       route: props.route,
@@ -277,9 +272,7 @@ const ResultModalAction = (props: Props) => {
     });
 
     const { heading, rows } = await createExportTable(d.results)!;
-    // @ts-expect-error
-    const h = heading.map((v) => v?.label ?? v);
-    exportCsvTsv([h, ...rows], extension, `result.${extension}`);
+    exportCsvTsv([heading, ...rows], extension, `result.${extension}`);
   };
 
   const copyClipboardURL = () => {
