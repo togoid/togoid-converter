@@ -18,6 +18,7 @@ const ResultModalActionTable = ({
   labelList,
 }: Props) => {
   const { annotateConfig } = useAnnotateConfig();
+  console.log(labelList);
 
   return (
     <table className="table">
@@ -135,15 +136,13 @@ const ResultModalActionTable = ({
                           </a>
                         </td>
                         {isShowLabelList[filterTable.heading![j].index] &&
-                          labelList?.[filterTable.heading![j].index]?.find(
-                            (v) => v.id === d,
-                          ) && (
+                          labelList?.[filterTable.heading![j].index]?.[d] && (
                             <td>
                               <span>
                                 {
-                                  labelList?.[
-                                    filterTable.heading![j].index
-                                  ]?.find((v) => v.id === d)?.label
+                                  labelList?.[filterTable.heading![j].index]?.[
+                                    d
+                                  ]
                                 }
                               </span>
                             </td>

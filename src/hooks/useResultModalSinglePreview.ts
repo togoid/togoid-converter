@@ -45,13 +45,12 @@ const useResultModalSinglePreview = (
 
       return await Promise.all(
         baseTable.map(async (v, i) => {
-          if (!isShowLabelList[i]) {
-            return null;
+          if (isShowLabelList[i]) {
+            return await executeAnnotateQuery({
+              name: tableHead[i].name,
+              ids: v,
+            });
           }
-          return await executeAnnotateQuery({
-            name: tableHead[i].name,
-            ids: v,
-          });
         }),
       );
     },

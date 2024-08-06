@@ -62,20 +62,20 @@ const useResultModalPreview = (
       if (!(expandedFullTable && isShowLabelList.some((v) => v))) {
         return null;
       }
-      const array = expandedFullTable[0].map((_, i) =>
-        expandedFullTable.map((row) => row[i]).filter((v) => v),
-      );
 
       return await Promise.all(
-        array.map(async (v, i) => {
-          if (!annotateConfig?.includes(tableHead[i].name)) {
-            return null;
-          }
-          return await executeAnnotateQuery({
-            name: tableHead[i].name,
-            ids: v,
-          });
-        }),
+        expandedFullTable[0]
+          .map((_, i) =>
+            expandedFullTable.map((row) => row[i]).filter((v) => v),
+          )
+          .map(async (v, i) => {
+            if (annotateConfig?.includes(tableHead[i].name)) {
+              return await executeAnnotateQuery({
+                name: tableHead[i].name,
+                ids: v,
+              });
+            }
+          }),
       );
     },
   );

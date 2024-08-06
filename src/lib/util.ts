@@ -85,6 +85,33 @@ export const executeCountQuery = async (option: {
     .then((d) => d.data);
 };
 
+// export const executeAnnotateQuery = async (option: {
+//   name: string;
+//   ids: string[];
+// }) => {
+//   const res = await axios<{
+//     data: {
+//       id: string;
+//       iri: string;
+//       label: string;
+//     }[][];
+//   }>({
+//     url: "https://rdfportal.org/grasp-togoid",
+//     method: "POST",
+//     data: {
+//       query: `query {
+//       ${option.name}(id: ${JSON.stringify([...new Set(option.ids)])}) {
+//         iri
+//         id
+//         label
+//       }
+//     }`,
+//     },
+//   });
+
+//   return Object.values(res.data.data)[0];
+// };
+
 export const executeAnnotateQuery = async (option: {
   name: string;
   ids: string[];
@@ -92,7 +119,6 @@ export const executeAnnotateQuery = async (option: {
   const res = await axios<{
     data: {
       id: string;
-      iri: string;
       label: string;
     }[][];
   }>({
@@ -101,7 +127,6 @@ export const executeAnnotateQuery = async (option: {
     data: {
       query: `query {
       ${option.name}(id: ${JSON.stringify([...new Set(option.ids)])}) {
-        iri
         id
         label
       }
@@ -109,7 +134,9 @@ export const executeAnnotateQuery = async (option: {
     },
   });
 
-  return Object.values(res.data.data)[0];
+  return Object.fromEntries(
+    Object.values(res.data.data)[0].map((v) => [v.id, v.label]),
+  );
 };
 
 export const mergePathStyle = (

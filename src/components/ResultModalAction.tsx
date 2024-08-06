@@ -49,15 +49,14 @@ const ResultModalAction = (props: Props) => {
         const labelList = await Promise.all(
           array.map(async (v, i) => {
             if (
-              !annotateConfig?.includes(tableHead[i].name) ||
-              !isShowLabelList[i]
+              annotateConfig?.includes(tableHead[i].name) &&
+              isShowLabelList[i]
             ) {
-              return null;
+              return await executeAnnotateQuery({
+                name: tableHead[i].name,
+                ids: v,
+              });
             }
-            return await executeAnnotateQuery({
-              name: tableHead[i].name,
-              ids: v,
-            });
           }),
         );
 
@@ -74,7 +73,7 @@ const ResultModalAction = (props: Props) => {
               isShowLabelList[j]
                 ? prev.push(
                     joinPrefix(curr, lineMode[j], tableHead[j].prefix),
-                    labelList[j]?.find((y) => y.id === curr)?.label,
+                    labelList[j]?.[curr],
                   )
                 : prev.push(joinPrefix(curr, lineMode[j], tableHead[j].prefix));
 
@@ -89,28 +88,26 @@ const ResultModalAction = (props: Props) => {
         );
         const fn0 = async () => {
           if (
-            !annotateConfig?.includes(tableHead[0].name) ||
-            !isShowLabelList[0]
+            annotateConfig?.includes(tableHead[0].name) &&
+            isShowLabelList[0]
           ) {
-            return null;
+            return await executeAnnotateQuery({
+              name: tableHead[0].name,
+              ids: array[0],
+            });
           }
-          return await executeAnnotateQuery({
-            name: tableHead[0].name,
-            ids: array[0],
-          });
         };
 
         const fn1 = async () => {
           if (
-            !annotateConfig?.includes(tableHead[tableHead.length - 1].name) ||
-            !isShowLabelList[tableHead.length - 1]
+            annotateConfig?.includes(tableHead[tableHead.length - 1].name) &&
+            isShowLabelList[tableHead.length - 1]
           ) {
-            return null;
+            return await executeAnnotateQuery({
+              name: tableHead[tableHead.length - 1].name,
+              ids: array[1],
+            });
           }
-          return await executeAnnotateQuery({
-            name: tableHead[tableHead.length - 1].name,
-            ids: array[1],
-          });
         };
 
         const labelList = await Promise.all([fn0(), fn1()]);
@@ -131,7 +128,7 @@ const ResultModalAction = (props: Props) => {
             isShowLabelList[0]
               ? row.push(
                   joinPrefix(v[0], lineMode[0], tableHead[0].prefix),
-                  labelList[0]?.find((y) => y.id === v[0])?.label,
+                  labelList[0]?.[v[0]],
                 )
               : row.push(joinPrefix(v[0], lineMode[0], tableHead[0].prefix));
             isShowLabelList[tableHead.length - 1]
@@ -141,7 +138,7 @@ const ResultModalAction = (props: Props) => {
                     lineMode[lineMode.length - 1],
                     tableHead[tableHead.length - 1].prefix,
                   ),
-                  labelList[1]?.find((y) => y.id === v[v.length - 1])?.label,
+                  labelList[1]?.[v[v.length - 1]],
                 )
               : row.push(
                   joinPrefix(
@@ -158,16 +155,14 @@ const ResultModalAction = (props: Props) => {
         // target
         const fn0 = async () => {
           if (
-            !annotateConfig?.includes(tableHead[tableHead.length - 1].name) ||
-            !isShowLabelList[tableHead.length - 1]
+            annotateConfig?.includes(tableHead[tableHead.length - 1].name) &&
+            isShowLabelList[tableHead.length - 1]
           ) {
-            return null;
+            return await executeAnnotateQuery({
+              name: tableHead[tableHead.length - 1].name,
+              ids: tableRows as unknown as string[],
+            });
           }
-          return await executeAnnotateQuery({
-            name: tableHead[tableHead.length - 1].name,
-            // @ts-expect-error
-            ids: tableRows,
-          });
         };
 
         const labelList = [await fn0()];
@@ -176,26 +171,21 @@ const ResultModalAction = (props: Props) => {
           heading: isShowLabelList[tableHead.length - 1]
             ? [tableHead[tableHead.length - 1], ""]
             : [tableHead[tableHead.length - 1]],
-          rows: tableRows.map((v) =>
+          rows: (tableRows as unknown as string[]).map((v) =>
             isShowLabelList[tableHead.length - 1]
               ? [
                   joinPrefix(
-                    // @ts-expect-error
                     v,
                     lineMode[lineMode.length - 1],
                     tableHead[tableHead.length - 1].prefix,
-                    isCompact,
                   ),
-                  // @ts-expect-error
-                  labelList[0]?.find((y) => y.id === v)?.label,
+                  labelList[0]?.[v],
                 ]
               : [
                   joinPrefix(
-                    // @ts-expect-error
                     v,
                     lineMode[lineMode.length - 1],
                     tableHead[tableHead.length - 1].prefix,
-                    isCompact,
                   ),
                 ],
           ),
@@ -208,15 +198,14 @@ const ResultModalAction = (props: Props) => {
         const labelList = await Promise.all(
           array.map(async (v, i) => {
             if (
-              !annotateConfig?.includes(tableHead[i].name) ||
-              !isShowLabelList[i]
+              annotateConfig?.includes(tableHead[i].name) &&
+              isShowLabelList[i]
             ) {
-              return null;
+              return await executeAnnotateQuery({
+                name: tableHead[i].name,
+                ids: v,
+              });
             }
-            return await executeAnnotateQuery({
-              name: tableHead[i].name,
-              ids: v,
-            });
           }),
         );
 
@@ -225,7 +214,7 @@ const ResultModalAction = (props: Props) => {
             isShowLabelList[j]
               ? prev.push(
                   joinPrefix(curr, lineMode[j], tableHead[j].prefix),
-                  labelList[j]?.find((y) => y.id === curr)?.label,
+                  labelList[j]?.[curr],
                 )
               : prev.push(joinPrefix(curr, lineMode[j], tableHead[j].prefix));
 
