@@ -40,7 +40,7 @@ const ResultModalAction = (props: Props) => {
   );
 
   const createExportTable = async (tableRows: string[][]) => {
-    const headList = getHeadList();
+    const headList = getHeadList(tableHead, previewMode);
 
     if (!isCompact && isShowLabelList.some((v) => v)) {
       if (
@@ -184,18 +184,6 @@ const ResultModalAction = (props: Props) => {
     return { heading: [], rows: [] };
   };
 
-  const getHeadList = () => {
-    if (previewMode === "all" || previewMode === "full") {
-      return tableHead;
-    } else if (previewMode === "pair") {
-      return [tableHead[0], tableHead[tableHead.length - 1]];
-    } else if (previewMode === "target") {
-      return [tableHead[tableHead.length - 1]];
-    }
-
-    return tableHead;
-  };
-
   const copyClipboard = async () => {
     const d = await executeQuery({
       route: props.route,
@@ -255,7 +243,7 @@ const ResultModalAction = (props: Props) => {
     );
   };
 
-  const { filterTable, labelList } = useResultModalPreview(
+  const { filterTable, labelList, getHeadList } = useResultModalPreview(
     previewMode,
     isCompact,
     props.route,
