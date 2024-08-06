@@ -41,13 +41,17 @@ const ResultModalAction = (props: Props) => {
 
   const createExportTable = async (tableRows: string[][]) => {
     if (!isCompact && isShowLabelList.some((v) => v)) {
+      const transposeList =
+        previewMode === "target"
+          ? tableRows
+          : tableRows[0].map((_, i) =>
+              tableRows.map((row) => row[i]).filter((v) => v),
+            );
+
       if (previewMode === "all") {
         // all
-        const array = tableRows[0].map((_, i) =>
-          tableRows.map((row) => row[i]).filter((v) => v),
-        );
         const labelList = await Promise.all(
-          array.map(async (v, i) => {
+          transposeList.map(async (v, i) => {
             if (
               annotateConfig?.includes(tableHead[i].name) &&
               isShowLabelList[i]
@@ -83,9 +87,6 @@ const ResultModalAction = (props: Props) => {
         };
       } else if (previewMode === "pair") {
         // origin and targets
-        const array = tableRows[0].map((_, i) =>
-          tableRows.map((row) => row[i]).filter((v) => v),
-        );
         const fn0 = async () => {
           if (
             annotateConfig?.includes(tableHead[0].name) &&
@@ -93,7 +94,7 @@ const ResultModalAction = (props: Props) => {
           ) {
             return await executeAnnotateQuery({
               name: tableHead[0].name,
-              ids: array[0],
+              ids: transposeList[0],
             });
           }
         };
@@ -105,7 +106,7 @@ const ResultModalAction = (props: Props) => {
           ) {
             return await executeAnnotateQuery({
               name: tableHead[tableHead.length - 1].name,
-              ids: array[1],
+              ids: transposeList[1],
             });
           }
         };
@@ -192,11 +193,8 @@ const ResultModalAction = (props: Props) => {
         };
       } else if (previewMode === "full") {
         // full
-        const array = tableRows[0].map((_, i) =>
-          tableRows.map((row) => row[i]).filter((v) => v),
-        );
         const labelList = await Promise.all(
-          array.map(async (v, i) => {
+          transposeList.map(async (v, i) => {
             if (
               annotateConfig?.includes(tableHead[i].name) &&
               isShowLabelList[i]
