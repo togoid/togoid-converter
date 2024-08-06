@@ -54,11 +54,10 @@ const ResultModalAction = (props: Props) => {
             ) {
               return null;
             }
-            const data = await executeAnnotateQuery({
+            return await executeAnnotateQuery({
               name: tableHead[i].name,
               ids: v,
             });
-            return Object.values(data.data)[0];
           }),
         );
 
@@ -95,11 +94,10 @@ const ResultModalAction = (props: Props) => {
           ) {
             return null;
           }
-          const data = await executeAnnotateQuery({
+          return await executeAnnotateQuery({
             name: tableHead[0].name,
             ids: array[0],
           });
-          return Object.values(data.data)[0];
         };
 
         const fn1 = async () => {
@@ -109,11 +107,10 @@ const ResultModalAction = (props: Props) => {
           ) {
             return null;
           }
-          const data = await executeAnnotateQuery({
+          return await executeAnnotateQuery({
             name: tableHead[tableHead.length - 1].name,
             ids: array[1],
           });
-          return Object.values(data.data)[0];
         };
 
         const labelList = await Promise.all([fn0(), fn1()]);
@@ -166,12 +163,11 @@ const ResultModalAction = (props: Props) => {
           ) {
             return null;
           }
-          const data = await executeAnnotateQuery({
+          return await executeAnnotateQuery({
             name: tableHead[tableHead.length - 1].name,
             // @ts-expect-error
             ids: tableRows,
           });
-          return Object.values(data.data)[0];
         };
 
         const labelList = [await fn0()];
@@ -217,11 +213,10 @@ const ResultModalAction = (props: Props) => {
             ) {
               return null;
             }
-            const data = await executeAnnotateQuery({
+            return await executeAnnotateQuery({
               name: tableHead[i].name,
               ids: v,
             });
-            return Object.values(data.data)[0];
           }),
         );
 

@@ -89,7 +89,7 @@ export const executeAnnotateQuery = async (option: {
   name: string;
   ids: string[];
 }) => {
-  return await axios<{
+  const res = await axios<{
     data: {
       id: string;
       iri: string;
@@ -107,7 +107,9 @@ export const executeAnnotateQuery = async (option: {
       }
     }`,
     },
-  }).then((d) => d.data);
+  });
+
+  return Object.values(res.data.data)[0];
 };
 
 export const mergePathStyle = (

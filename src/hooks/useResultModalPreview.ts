@@ -71,11 +71,10 @@ const useResultModalPreview = (
           if (!annotateConfig?.includes(tableHead[i].name)) {
             return null;
           }
-          const data = await executeAnnotateQuery({
+          return await executeAnnotateQuery({
             name: tableHead[i].name,
             ids: v,
           });
-          return Object.values(data.data)[0];
         }),
       );
     },

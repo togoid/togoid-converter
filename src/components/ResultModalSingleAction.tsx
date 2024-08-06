@@ -30,7 +30,7 @@ const ResultModalSingleAction = (props: Props) => {
     if (isShowLabelList[0]) {
       const head = tableHead.flatMap((v) => [v.label, ""]);
 
-      const data = await executeAnnotateQuery({
+      const result = await executeAnnotateQuery({
         name: tableHead[0].name,
         ids: idList,
       });
@@ -38,7 +38,7 @@ const ResultModalSingleAction = (props: Props) => {
       const row = idList.map((v, i) => {
         return [
           joinPrefix(v, lineMode[0], tableHead[0].prefix),
-          (Object.values(data.data)[0] as any)[i].label,
+          result[i].label,
         ];
       });
 
