@@ -35,11 +35,8 @@ const ResultModalSingleAction = (props: Props) => {
         ids: idList,
       });
 
-      const row = idList.map((v, i) => {
-        return [
-          joinPrefix(v, lineMode[0], tableHead[0].prefix),
-          result[i].label,
-        ];
+      const row = idList.map((v) => {
+        return [joinPrefix(v, lineMode[0], tableHead[0].prefix), result[v]];
       });
 
       return { head: head, row: row };
