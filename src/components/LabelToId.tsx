@@ -1,6 +1,10 @@
 import Select from "react-select";
 
-const dataset = signal<DatasetConfig[number]>();
+type Props = {
+  executeExamples: (idList: string[], exampleTarget: string) => void;
+};
+
+const dataset = signal<DatasetConfig[number] & { key: string }>();
 const species = signal<string>();
 const threshold = signal(0.5);
 const selectDictionaryList = signal<{ [key: string]: boolean }>({});
@@ -13,14 +17,16 @@ const pubdictionariesParam = signal({
   verbose: true,
 });
 
-const LabelToId = () => {
+const LabelToId = ({ executeExamples }: Props) => {
   useSignals();
 
   const { datasetConfig } = useConfig();
 
   const text = useAtomValue(textAtom);
 
-  const handleSelectDropDown = (value: any) => {
+  const handleSelectDropDown = (
+    value: DatasetConfig[number] & { key: string },
+  ) => {
     isShowTable.value = false;
     species.value = undefined;
     threshold.value = 0.5;
@@ -81,15 +87,17 @@ const LabelToId = () => {
               }),
               option: (css) => ({ ...css, width: "300px" }),
             }}
-            options={Object.values(datasetConfig)
-              .filter((value) => "label_resolver" in value)
-              .map((value) => ({
-                value: value,
-                label: value.label,
-              }))}
+            options={
+              Object.entries(datasetConfig)
+                .filter(([_, value]) => "label_resolver" in value)
+                .map(([key, value]) => ({
+                  value: { ...value, key: key },
+                  label: value.label,
+                })) as any
+            }
             value={dataset.value}
             placeholder="Select a dataset"
-            onChange={(e) => handleSelectDropDown(e!.value)}
+            onChange={(e) => handleSelectDropDown((e as any).value)}
           />
         </div>
 
@@ -137,6 +145,7 @@ const LabelToId = () => {
         <LabelToIdTable
           pubdictionariesParam={pubdictionariesParam}
           dataset={dataset as Signal<NonNullable<typeof dataset.value>>}
+          executeExamples={executeExamples}
         />
       )}
     </div>

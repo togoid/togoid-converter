@@ -13,17 +13,20 @@ type Props = {
     threshold?: number;
     verbose: boolean;
   }>;
-  dataset: Signal<DatasetConfig[number]>;
+  dataset: Signal<DatasetConfig[number] & { key: string }>;
+  executeExamples: (idList: string[], exampleTarget: string) => void;
 };
 
-const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
+const LabelToIdTable = ({
+  pubdictionariesParam,
+  dataset,
+  executeExamples,
+}: Props) => {
   useSignals();
 
   const lineMode = useSignal(
     dataset.value.format ? dataset.value.format[0] : "id",
   );
-
-  const setText = useSetAtom(textAtom);
 
   const { data: tableData, isLoading } = useSWRImmutable(
     pubdictionariesParam.value,
@@ -115,14 +118,13 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
   }, [report.value, tableData]);
 
   const inputResultId = () => {
-    setText(
-      tableDataMod.value
-        .filter((v) => v.identifier)
-        .map((v) =>
-          joinPrefix(v.identifier, lineMode.value, dataset.value.prefix),
-        )
-        .join("\n"),
-    );
+    const idList = tableDataMod.value
+      .filter((v) => v.identifier)
+      .map((v) =>
+        joinPrefix(v.identifier, lineMode.value, dataset.value.prefix),
+      );
+
+    executeExamples(idList, dataset.value.key);
   };
 
   const copyClipboard = async () => {
@@ -206,7 +208,7 @@ const LabelToIdTable = ({ pubdictionariesParam, dataset }: Props) => {
                   onClick={() => inputResultId()}
                   className="button search"
                 >
-                  Copy to Search
+                  Convert IDs
                 </button>
                 <button
                   onClick={() => copyClipboard()}
