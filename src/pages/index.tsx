@@ -487,7 +487,9 @@ const Home = () => {
               setRoute={setRoute}
             />
           )}
-          {activeTab === "LABEL2LD" && <LabelToId />}
+          {activeTab === "LABEL2LD" && (
+            <LabelToId executeExamples={executeExamples} />
+          )}
           {activeTab === "DATASETS" && (
             <Datasets executeExamples={executeExamples} />
           )}
