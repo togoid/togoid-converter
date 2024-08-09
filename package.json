@@ -9,12 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@preact/signals-react": "2.1.0",
+    "@preact/signals-react": "2.2.0",
     "axios": "1.7.3",
     "copy-to-clipboard": "3.3.3",
     "fast-printf": "1.6.9",
     "file-saver": "2.0.5",
-    "jotai": "2.9.1",
+    "jotai": "2.9.2",
     "next": "14.2.5",
     "nprogress": "0.2.0",
     "papaparse": "5.4.1",
