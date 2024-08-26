@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@preact/signals-react": "2.2.0",
-    "axios": "1.7.4",
+    "axios": "1.7.5",
     "copy-to-clipboard": "3.3.3",
     "fast-printf": "1.6.9",
     "file-saver": "2.0.5",
@@ -44,5 +44,5 @@
     "typescript": "5.5.4",
     "unplugin-auto-import": "0.18.2"
   },
-  "packageManager": "yarn@4.4.0"
+  "packageManager": "yarn@4.4.1"
 }
