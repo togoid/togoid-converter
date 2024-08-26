@@ -1,3 +1,4 @@
+// @ts-expect-error
 const TabWrapper = (props) => (
   <div className="tab_wrapper">
     <button

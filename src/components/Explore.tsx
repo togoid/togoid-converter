@@ -31,6 +31,7 @@ const Explore = (props: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.databaseNodesList]);
 
+  // @ts-expect-error
   const selectDatabase = (database, i) => {
     const r = props.route.slice(0, i);
     r[i] = database;

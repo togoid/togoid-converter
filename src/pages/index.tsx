@@ -185,6 +185,7 @@ const Home = () => {
           _v.target = 0;
         }
 
+        // @ts-expect-error
         _v.results = convert.results;
         return _v;
       }),
