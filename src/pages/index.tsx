@@ -480,13 +480,6 @@ const Home = () => {
               lookupRoute={lookupRoute}
             />
           )}
-          {activeTab === "ANNOTATE" && (
-            <Annotate
-              databaseNodesList={databaseNodesList}
-              route={route}
-              setRoute={setRoute}
-            />
-          )}
           {activeTab === "LABEL2LD" && (
             <LabelToId executeExamples={executeExamples} />
           )}
