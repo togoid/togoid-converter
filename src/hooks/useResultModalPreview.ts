@@ -29,7 +29,7 @@ const useResultModalPreview = (
     {
       route: route,
       ids: ids,
-      report: "full",
+      report: previewMode,
       limit: 100,
       compact: isCompact,
     },
@@ -40,43 +40,42 @@ const useResultModalPreview = (
     },
   );
 
-  const { data: expandedFullTable } = useSWRImmutable<typeof baseTable>(
-    {
-      route: route,
-      ids: ids,
-      report: "full",
-      limit: 100,
-      compact: false,
-    },
-    null,
-  );
-
   const { annotateConfig } = useAnnotateConfig();
 
   const { data: labelList } = useSWRImmutable(
     {
-      expandedFullTable: expandedFullTable,
+      baseTable: baseTable,
       isShowLabelSome: isShowLabelList.some((v) => v),
+      isCompact: isCompact,
     },
     async () => {
-      if (!(expandedFullTable && isShowLabelList.some((v) => v))) {
+      if (!(baseTable && isShowLabelList.some((v) => v)) || isCompact) {
         return null;
       }
 
-      return await Promise.all(
-        expandedFullTable[0]
-          .map((_, i) =>
-            expandedFullTable.map((row) => row[i]).filter((v) => v),
-          )
-          .map(async (v, i) => {
-            if (annotateConfig?.includes(tableHead[i].name)) {
-              return await executeAnnotateQuery({
-                name: tableHead[i].name,
-                ids: v,
-              });
-            }
+      const headList = getHeadList(tableHead, previewMode);
+
+      if (previewMode === "target") {
+        return [
+          await executeAnnotateQuery({
+            name: headList[0].name,
+            ids: baseTable as unknown as string[],
           }),
-      );
+        ];
+      } else {
+        return await Promise.all(
+          baseTable[0]
+            .map((_, i) => baseTable.map((row) => row[i]).filter((v) => v))
+            .map(async (v, i) => {
+              if (annotateConfig?.includes(headList[i].name)) {
+                return await executeAnnotateQuery({
+                  name: headList[i].name,
+                  ids: v,
+                });
+              }
+            }),
+        );
+      }
     },
   );
 
@@ -94,33 +93,17 @@ const useResultModalPreview = (
 
     if (previewMode === "all") {
       // all
-      const rows = table.filter((v) => v[v.length - 1]);
-      return { heading: headList, rows };
+      return { heading: headList, rows: table };
     } else if (previewMode === "pair") {
       // origin and targets
       // 重複は消す
-      return {
-        heading: headList,
-        rows: Array.from(
-          new Set(
-            table
-              .filter((v) => v[v.length - 1])
-              .map((v) => JSON.stringify([v[0], v[v.length - 1]])),
-          ),
-          (v) => JSON.parse(v) as string[],
-        ),
-      };
+      return { heading: headList, rows: table };
     } else if (previewMode === "target") {
       // target
       // 重複は消す
       return {
         heading: headList,
-        rows: Array.from(
-          new Set(
-            table.filter((v) => v[v.length - 1]).map((v) => v[v.length - 1]),
-          ),
-          (v) => [v],
-        ),
+        rows: table.map((v) => [v]) as unknown as string[][],
       };
     } else if (previewMode === "full") {
       // full
@@ -138,33 +121,20 @@ const useResultModalPreview = (
       // all
       return {
         heading: headList,
-        rows: table.filter((v) => v[tableHead.length - 1]),
+        rows: table,
       };
     } else if (previewMode === "pair") {
       // origin and targets
       return {
         heading: headList,
-        rows: table
-          .filter((v) => v[tableHead.length - 1])
-          .map((v) => [v[0], v[tableHead.length - 1]]),
+        rows: table,
       };
     } else if (previewMode === "target") {
       // target
       // 重複は消す
       return {
         heading: headList,
-        rows: [
-          [
-            [
-              ...new Set(
-                table
-                  .filter((v) => v[tableHead.length - 1])
-                  .map((v) => v[tableHead.length - 1].split(" "))
-                  .flat(),
-              ),
-            ].join(" "),
-          ],
-        ],
+        rows: table,
       };
     } else if (previewMode === "full") {
       // full

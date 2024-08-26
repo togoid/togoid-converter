@@ -136,9 +136,7 @@ const ResultModalActionTable = ({
                         </td>
                         {isShowLabelList[filterTable.heading![j].index] && (
                           <td>
-                            <span>
-                              {labelList?.[filterTable.heading![j].index]?.[d]}
-                            </span>
+                            <span>{labelList?.[j]?.[d]}</span>
                           </td>
                         )}
                       </>
