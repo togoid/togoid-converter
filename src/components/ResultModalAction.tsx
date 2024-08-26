@@ -155,27 +155,15 @@ const ResultModalAction = (props: Props) => {
         // Target IDs
         return {
           heading: headList.map((v) => v.label),
-          rows: isCompact
-            ? [
-                [
-                  joinPrefix(
-                    // @ts-expect-error
-                    tableRows,
-                    lineMode[lineMode.length - 1],
-                    tableHead[tableHead.length - 1].prefix,
-                    isCompact,
-                  ),
-                ],
-              ]
-            : tableRows.map((v) => [
-                joinPrefix(
-                  // @ts-expect-error
-                  v,
-                  lineMode[lineMode.length - 1],
-                  tableHead[tableHead.length - 1].prefix,
-                  isCompact,
-                ),
-              ]),
+          rows: tableRows.map((v) => [
+            joinPrefix(
+              // @ts-expect-error
+              v,
+              lineMode[lineMode.length - 1],
+              tableHead[tableHead.length - 1].prefix,
+              isCompact,
+            ),
+          ]),
         };
       }
     }

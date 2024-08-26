@@ -185,6 +185,7 @@ const Home = () => {
           _v.target = 0;
         }
 
+        // @ts-expect-error
         _v.results = convert.results;
         return _v;
       }),
@@ -478,13 +479,6 @@ const Home = () => {
               setRoute={setRoute}
               ids={ids}
               lookupRoute={lookupRoute}
-            />
-          )}
-          {activeTab === "ANNOTATE" && (
-            <Annotate
-              databaseNodesList={databaseNodesList}
-              route={route}
-              setRoute={setRoute}
             />
           )}
           {activeTab === "LABEL2LD" && (
