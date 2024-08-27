@@ -68,7 +68,7 @@ const LabelToIdTable = ({
 
           return tableBaseData.map((v) => {
             return {
-              label: v.label,
+              label: label,
               type: dataset.value.label_resolver.dictionaries.find(
                 (w: any) => w.dictionary === v.dictionary,
               )?.label,
