@@ -49,7 +49,7 @@ const LabelToId = ({ executeExamples }: Props) => {
       )
       .split(/[\n,、,,]+/)
       .filter((v) => v)
-      .map((v) => v.trim().replace(/\s+/g, "+"))
+      .map((v) => v.trim())
       .join("|");
 
     // exanple: ovarian cancer
