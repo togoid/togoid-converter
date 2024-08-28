@@ -14,7 +14,11 @@ type DatasetConfig = {
 };
 
 type RelationConfig = {
-  [key: string]: { forward: any; reverse?: any; description?: string }[];
+  [key: string]: {
+    forward: { id: string; display_label: string };
+    reverse?: { id: string; display_label: string };
+    description?: string;
+  }[];
 };
 
 type DescriptionConfig = {

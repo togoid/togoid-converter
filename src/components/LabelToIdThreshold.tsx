@@ -25,7 +25,7 @@ const LabelToIdThreshold = ({ threshold }: Props) => {
       </label>
       <input
         type="number"
-        min="0"
+        min="0.5"
         max="1"
         step="0.1"
         className="threshold"
