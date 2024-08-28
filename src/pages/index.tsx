@@ -71,7 +71,7 @@ const Home = () => {
           setRoute(r);
           setRouterRoute(
             r.flatMap((v, i) =>
-              i === 0 ? [v.name] : [v.relation?.link.label, v.name],
+              i === 0 ? [v.name] : [v.relation!.link.id, v.name],
             ),
           );
           setIsUseKeepRoute(false);
@@ -113,7 +113,10 @@ const Home = () => {
             target: 0,
             results: [],
             relation: {
-              link: value.forward,
+              link: {
+                display_label: value.forward.display_label,
+                label: value.forward.id,
+              },
               description: value.description,
             },
           });
@@ -133,7 +136,7 @@ const Home = () => {
               relation: {
                 link: {
                   display_label: value.reverse.display_label,
-                  label: value.forward.label, // 必ずforward側を使う
+                  label: value.forward.id, // 必ずforward側を使う
                 },
                 description: value.description,
               },
@@ -167,7 +170,7 @@ const Home = () => {
             const count = await executeCountQuery({
               relation: `${beforeRoute.name}-${v.name}`,
               ids: beforeRoute.results,
-              link: v.relation?.link.label,
+              link: v.relation!.link.label,
             }).catch(() => null);
             if (count === null) {
               _v.message = "ERROR";
@@ -429,7 +432,7 @@ const Home = () => {
         relation: {
           link: {
             display_label: value[direction].display_label,
-            label: value.forward.label, // labelは必ずforward側を使う
+            label: value.forward.id, // labelは必ずforward側を使う
           },
           description: value.description,
         },
