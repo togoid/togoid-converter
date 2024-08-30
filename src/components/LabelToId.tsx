@@ -1,67 +1,70 @@
-import useSWRImmutable from "swr/immutable";
-import axios from "axios";
 import Select from "react-select";
 
-const LabelToId = () => {
+type Props = {
+  executeExamples: (idList: string[], exampleTarget: string) => void;
+};
+
+const dataset = signal<DatasetConfig[number] & { key: string }>();
+const species = signal<string>();
+const threshold = signal(0.5);
+const selectDictionaryList = signal<{ [key: string]: boolean }>({});
+const isShowTable = signal(false);
+const pubdictionariesParam = signal({
+  labels: "",
+  dictionaries: "",
+  tags: undefined as string | undefined,
+  threshold: undefined as number | undefined,
+  verbose: true,
+});
+
+const LabelToId = ({ executeExamples }: Props) => {
+  useSignals();
+
   const { datasetConfig } = useConfig();
 
-  const [dataset, setDataset] = useState();
-  const [species, setSpecies] = useState();
-  const [selectDictionaryList, setSelectDictionaryList] = useState<
-    (string | false)[]
-  >([]);
-  const [threshold, setThreshold] = useState(0.5);
-  const [isShowTable, setIsShowTable] = useState(false);
-  const [pubdictionariesParam, setPubdictionariesParam] = useState({
-    labels: "",
-    dictionaries: "",
-    tag: undefined as string | undefined,
-    threshold: undefined as number | undefined,
-    verbose: true,
-  });
   const text = useAtomValue(textAtom);
 
-  const { data: taxonomyList } = useSWRImmutable("taxonomy", async () => {
-    const res = await axios.get<string[][]>(
-      `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/taxonomy`,
+  const handleSelectDropDown = (
+    value: DatasetConfig[number] & { key: string },
+  ) => {
+    isShowTable.value = false;
+    species.value = undefined;
+    threshold.value = 0.5;
+    dataset.value = value;
+
+    selectDictionaryList.value = value.label_resolver.dictionaries.reduce(
+      (prev: any, curr: any) => {
+        return { ...prev, [curr.dictionary]: true };
+      },
+      {},
     );
-
-    return res.data;
-  });
-
-  const handleSelectDropDown = (value: any) => {
-    setIsShowTable(false);
-    setSpecies(undefined);
-    setDataset(value);
-    setSelectDictionaryList(
-      value.label_resolver.dictionaries.map((v) => v.dictionary),
-    );
-  };
-
-  const handleSelectSpecies = (value: any) => {
-    setSpecies(value);
   };
 
   const handleExecute = () => {
+    isShowTable.value = false;
+
     const labels = text
       .replace(/[Ａ-Ｚａ-ｚ０-９]/g, (s) =>
         String.fromCharCode(s.charCodeAt(0) - 0xfee0),
       )
       .split(/[\n,、,,]+/)
       .filter((v) => v)
-      .map((v) => v.trim().replace(/\s+/g, "+"))
+      .map((v) => v.trim())
       .join("|");
 
-    // exanple: ovarian+cancer
-    setPubdictionariesParam({
+    // exanple: ovarian cancer
+    pubdictionariesParam.value = {
       labels: labels,
-      dictionaries: selectDictionaryList.filter((v) => v).join(","),
-      tag: dataset?.label_resolver?.taxonomy ? species : undefined,
-      threshold: dataset?.label_resolver?.threshold ? threshold : undefined,
+      dictionaries: Object.entries(selectDictionaryList.value)
+        .filter(([_, value]) => value)
+        .map(([key, _]) => key)
+        .join(","),
+      tags: dataset.value?.label_resolver?.taxonomy ? species.value : undefined,
+      threshold: dataset.value?.label_resolver?.threshold ? threshold.value : 1,
       verbose: true,
-    });
+    };
 
-    setIsShowTable(true);
+    isShowTable.value = true;
   };
 
   return (
@@ -84,85 +87,45 @@ const LabelToId = () => {
               }),
               option: (css) => ({ ...css, width: "300px" }),
             }}
-            options={Object.values(datasetConfig)
-              .filter((value) => "label_resolver" in value)
-              .map((value) => ({
-                value: value,
-                label: value.label,
-              }))}
+            options={
+              Object.entries(datasetConfig)
+                .filter(([_, value]) => "label_resolver" in value)
+                .map(([key, value]) => ({
+                  value: { ...value, key: key },
+                  label: value.label,
+                })) as any
+            }
+            value={dataset.value}
             placeholder="Select a dataset"
-            onChange={(e) => handleSelectDropDown(e!.value)}
+            onChange={(e) => handleSelectDropDown((e as any).value)}
           />
         </div>
 
-        {taxonomyList?.length && dataset && (
+        {dataset.value && (
           <>
-            {dataset?.label_resolver?.taxonomy && (
-              <>
-                <div className="">
-                  <label htmlFor="selectSpecies" className="label">
-                    Species
-                  </label>
-                  <Select
-                    id="selectSpecies"
-                    styles={{
-                      control: (css) => ({
-                        ...css,
-                        width: "300px",
-                      }),
-                      menu: ({ width, ...css }) => ({
-                        ...css,
-                        width: "300px",
-                      }),
-                      option: (css) => ({ ...css, width: "300px" }),
-                    }}
-                    options={taxonomyList.map((v) => ({
-                      value: v[0],
-                      label: `${v[1]} (ID: ${v[0]}, ${v[2]}, ${v[3]})`,
-                    }))}
-                    placeholder="Select a species"
-                    onChange={(e) => handleSelectSpecies(e!.value)}
-                  />
-                </div>
-
-                <span className="between-text">OR</span>
-                <input type="text" className="keyword" />
-              </>
+            {dataset.value?.label_resolver?.taxonomy && (
+              <LabelToIdSpecies species={species} />
             )}
-            {dataset?.label_resolver?.threshold && (
-              <div>
-                <label className="label">Threshold</label>
-                <input
-                  type="number"
-                  min="0"
-                  max="1"
-                  step="0.1"
-                  className="threshold"
-                  value={threshold}
-                  onChange={(e) => setThreshold(e.target.value)}
-                />
-              </div>
+            {dataset.value?.label_resolver?.threshold && (
+              <LabelToIdThreshold threshold={threshold} />
             )}
             <fieldset className="labels">
               <legend className="label">Select label types</legend>
               <div className="labels__wrapper">
-                {dataset.label_resolver.dictionaries?.map((v, i) => (
+                {dataset.value.label_resolver.dictionaries?.map((v: any) => (
                   <Fragment key={v.label}>
                     <input
                       type="checkbox"
                       id={v.label}
                       value={v.dictionary}
                       className="checkbox"
-                      checked={Boolean(selectDictionaryList[i])}
-                      onChange={(e) =>
-                        setSelectDictionaryList(
-                          selectDictionaryList.toSpliced(
-                            i,
-                            1,
-                            e.target.checked ? e.target.value : false,
-                          ),
-                        )
-                      }
+                      checked={selectDictionaryList.value[v.dictionary]}
+                      onChange={(e) => {
+                        selectDictionaryList.value = {
+                          ...selectDictionaryList.value,
+                          [v.dictionary]: e.target.checked,
+                        };
+                      }}
                     />
                     <label htmlFor={v.label} className="checkbox-label">
                       {v.label}
@@ -178,10 +141,11 @@ const LabelToId = () => {
           </>
         )}
       </div>
-      {isShowTable && (
+      {isShowTable.value && (
         <LabelToIdTable
           pubdictionariesParam={pubdictionariesParam}
-          dataset={dataset}
+          dataset={dataset as Signal<NonNullable<typeof dataset.value>>}
+          executeExamples={executeExamples}
         />
       )}
     </div>

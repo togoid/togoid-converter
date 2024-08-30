@@ -19,7 +19,14 @@ const nextConfig = {
           "jotai",
           "jotai/utils",
           { react: ["Fragment"] },
-          { "@preact/signals-react": ["useSignal"] },
+          {
+            "@preact/signals-react": [
+              "signal",
+              "useSignal",
+              "useComputed",
+              "useSignalEffect",
+            ],
+          },
           { "@preact/signals-react/runtime": ["useSignals"] },
         ],
         defaultExportByFilename: true,

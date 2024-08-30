@@ -1,7 +1,7 @@
 import { createPortal } from "react-dom";
 import { useHoverDirty } from "react-use";
 
-const NavigateResultItem = (props) => {
+const NavigateResultItem = (props: any) => {
   const { datasetConfig } = useConfig();
 
   const [isShowResultModal, setIsShowResultModal] = useState(false);
@@ -62,9 +62,7 @@ const NavigateResultItem = (props) => {
               opacity: isActionButtonVisible ? 0.7 : 1,
               backgroundColor: isActionButtonVisible
                 ? "#000000"
-                : categories[props.v.category]
-                  ? categories[props.v.category].color
-                  : null,
+                : categoryColor[datasetConfig[props.v.name].category],
             }}
           >
             <div id={`from${props.i}-${props.v.name}`} className="dummy" />
@@ -90,9 +88,7 @@ const NavigateResultItem = (props) => {
             opacity: isActionButtonVisible ? 0.7 : 1,
             backgroundColor: isActionButtonVisible
               ? "#000000"
-              : categories[props.v.category]
-                ? categories[props.v.category].color
-                : null,
+              : categoryColor[datasetConfig[props.v.name].category],
           }}
         >
           <div id={`from${props.i}-${props.j}`} className="dummy" />

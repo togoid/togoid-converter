@@ -274,10 +274,6 @@
         height: auto;
         padding: 8px 26px;
 
-        &:first-child {
-          width: calc(100% / 3);
-        }
-
         .select {
           width: 90px;
           height: 22px;
@@ -290,6 +286,12 @@
             display: block;
             font-size: 1rem;
             margin: 0 0 5px;
+          }
+        }
+
+        .c-switch {
+          & + label {
+            margin: 8px 0 0;
           }
         }
       }

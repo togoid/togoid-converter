@@ -3,7 +3,15 @@ import Select from "react-select";
 
 import type { Arrow } from "react-arrow-master";
 
-const Navigate = (props) => {
+type Props = {
+  databaseNodesList: any[][];
+  route: Route[];
+  ids: string[];
+  setRoute: Function;
+  lookupRoute: Function;
+};
+
+const Navigate = (props: Props) => {
   const [offsetRoute, setOffsetRoute] = useState<number | null>(null);
 
   const { datasetConfig } = useConfig();
@@ -20,97 +28,33 @@ const Navigate = (props) => {
 
     if (isShowDropdown) {
       candidatePaths.push(
-        getPathStyle(
-          `from${0}-${props.route[0].name}`,
-          `nodeOther`,
-          false,
-          "default",
-        ),
+        getPathStyle(`from${0}-${props.route[0].name}`, `nodeOther`, {
+          head: "default",
+          isRoute: false,
+        }),
       );
     } else if (props.route.length) {
       props.databaseNodesList.forEach((nodes, i) => {
         if (i === 0) {
-          if (props.databaseNodesList.length === 1) {
-            candidatePaths.push(
-              getPathStyle(
-                `from${0}-${props.route[0].name}`,
-                `nodeOther`,
-                false,
-                "default",
-              ),
-            );
-          }
+          return;
         } else if (i === 1) {
           nodes.forEach((v, j) => {
             if (v === null) {
               candidatePaths.push(
-                getPathStyle(
-                  `from${0}-${props.route[0].name}`,
-                  `label${i}-${j}`,
-                  j === offsetRoute,
-                  "none",
-                ),
+                getPathStyle(`from0-${props.route[0].name}`, `label1-${j}`, {
+                  head: "none",
+                  isRoute: j === offsetRoute,
+                }),
+                getPathStyle(`label1-${j}`, `label1-${j}`, {
+                  head: "none",
+                  isRoute: j === offsetRoute,
+                }),
               );
             } else {
               candidatePaths.push(
                 ...mergePathStyle(
-                  `from${0}-${props.route[0].name}`,
-                  `to${i}-${j}`,
-                  j === offsetRoute,
-                ),
-              );
-            }
-          });
-        } else if (i === props.databaseNodesList.length - 1) {
-          nodes.forEach((v, j) => {
-            if (props.databaseNodesList[i - 2][j] === null) {
-              candidatePaths.push(
-                {
-                  from: {
-                    id: `label${i - 2}-${j}`,
-                    posX: "left",
-                    posY: "middle",
-                  },
-                  to: {
-                    id: `label${i}-${j}`,
-                    posX: "left",
-                    posY: "middle",
-                  },
-                  style:
-                    j === offsetRoute
-                      ? {
-                          color: "#1A8091",
-                          head: "none",
-                          arrow: "smooth",
-                          width: 2,
-                        }
-                      : {
-                          color: "#dddddd",
-                          head: "none",
-                          arrow: "smooth",
-                          width: 1.5,
-                        },
-                },
-                getPathStyle(
-                  `label${i}-${j}`,
-                  `to${i}-${j}`,
-                  j === offsetRoute,
-                  "default",
-                ),
-              );
-            } else if (props.databaseNodesList[i - 1][j] === null) {
-              candidatePaths.push(
-                ...mergePathStyle(
-                  `to${i - 2}-${j}`,
-                  `to${i}-${j}`,
-                  j === offsetRoute,
-                ),
-              );
-            } else {
-              candidatePaths.push(
-                ...mergePathStyle(
-                  `to${i - 1}-${j}`,
-                  `to${i}-${j}`,
+                  `from0-${props.route[0].name}`,
+                  `to1-${j}`,
                   j === offsetRoute,
                 ),
               );
@@ -118,16 +62,39 @@ const Navigate = (props) => {
           });
         } else {
           nodes.forEach((v, j) => {
-            if (v === null) return;
-            else {
+            if (v === null) {
+              return;
+            }
+
+            if (props.databaseNodesList[1][j] === null) {
               candidatePaths.push(
                 ...mergePathStyle(
-                  `to${i - 1}-${j}`,
+                  `label${1}-${j}`,
                   `to${i}-${j}`,
                   j === offsetRoute,
                 ),
               );
+              return;
             }
+
+            if (props.databaseNodesList[i - 1][j] === null) {
+              candidatePaths.push(
+                ...mergePathStyle(
+                  `to${i - 2}-${j}`,
+                  `to${i}-${j}`,
+                  j === offsetRoute,
+                ),
+              );
+              return;
+            }
+
+            candidatePaths.push(
+              ...mergePathStyle(
+                `to${i - 1}-${j}`,
+                `to${i}-${j}`,
+                j === offsetRoute,
+              ),
+            );
           });
         }
       });
@@ -137,7 +104,7 @@ const Navigate = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.databaseNodesList, props.route]);
 
-  const selectDatabase = (database) => {
+  const selectDatabase = (database: any) => {
     props.setRoute([database]);
     setOffsetRoute(null);
   };
