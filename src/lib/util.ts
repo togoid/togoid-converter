@@ -1,6 +1,7 @@
 import PaPa from "papaparse";
 import { saveAs } from "file-saver";
 import axios from "axios";
+import { printf } from "fast-printf";
 
 import type { Arrow, HeadStyleAlias } from "react-arrow-master";
 
@@ -23,15 +24,21 @@ export const invokeUnparse = (rows: unknown[], extension: "csv" | "tsv") => {
   return PaPa.unparse(rows, { delimiter: delimiterList[extension] });
 };
 
-/**
- * @param {{ route: object[]; ids: string[]; report: string; limit?: number; compact?: boolean }} baseParams
- */
-export const executeQuery = async (baseParams) => {
+export const getConvertUrlSearchParams = (baseParams: {
+  route: Route[];
+  ids: string[];
+  report: string;
+  format: "csv" | "json";
+  limit?: number;
+  compact?: boolean;
+}) => {
   const params = new URLSearchParams({
-    route: baseParams.route.map((v) => v.name).join(","),
+    route: baseParams.route
+      .map((v, i) => (i === 0 ? v.name : `${v.relation?.link.label},${v.name}`))
+      .join(","),
     ids: baseParams.ids.join(","),
     report: baseParams.report,
-    format: "json",
+    format: baseParams.format,
   });
   if (baseParams.limit) {
     params.set("limit", String(baseParams.limit));
@@ -40,20 +47,96 @@ export const executeQuery = async (baseParams) => {
     params.set("compact", "1");
   }
 
+  return params;
+};
+
+export const executeQuery = async (baseParams: {
+  route: Route[];
+  ids: string[];
+  report: string;
+  limit?: number;
+  compact?: boolean;
+}) => {
   return await axios
-    .post(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert`, params)
+    .post<{
+      ids: string[];
+      results: string[][];
+      route: string[];
+    }>(
+      `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert`,
+      getConvertUrlSearchParams({ ...baseParams, format: "json" }),
+    )
     .then((d) => d.data);
 };
 
-export const executeCountQuery = async (path, ids) => {
+export const executeCountQuery = async (option: {
+  relation: string;
+  ids: string[];
+  link: string;
+}) => {
   return await axios
     .post(
-      `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/count/${path}`,
+      `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/count/${option.relation}`,
       new URLSearchParams({
-        ids: ids,
+        ids: option.ids.join(","),
+        link: option.link,
       }),
     )
     .then((d) => d.data);
+};
+
+// export const executeAnnotateQuery = async (option: {
+//   name: string;
+//   ids: string[];
+// }) => {
+//   const res = await axios<{
+//     data: {
+//       id: string;
+//       iri: string;
+//       label: string;
+//     }[][];
+//   }>({
+//     url: "https://rdfportal.org/grasp-togoid",
+//     method: "POST",
+//     data: {
+//       query: `query {
+//       ${option.name}(id: ${JSON.stringify([...new Set(option.ids)])}) {
+//         iri
+//         id
+//         label
+//       }
+//     }`,
+//     },
+//   });
+
+//   return Object.values(res.data.data)[0];
+// };
+
+export const executeAnnotateQuery = async (option: {
+  name: string;
+  ids: string[];
+}) => {
+  const res = await axios<{
+    data: {
+      id: string;
+      label: string;
+    }[][];
+  }>({
+    url: "https://rdfportal.org/grasp-togoid",
+    method: "POST",
+    data: {
+      query: `query {
+      ${option.name}(id: ${JSON.stringify([...new Set(option.ids)])}) {
+        id
+        label
+      }
+    }`,
+    },
+  });
+
+  return Object.fromEntries(
+    Object.values(res.data.data)[0].map((v) => [v.id, v.label]),
+  );
 };
 
 export const mergePathStyle = (
@@ -62,30 +145,26 @@ export const mergePathStyle = (
   isRoute: boolean,
 ) => {
   const toLabelId = toId.replace(/^to/, "label");
-  const toLabelPath = getPathStyle(fromId, toLabelId, isRoute, "none");
-  const fromLabelPath = getPathStyle(toLabelId, toId, isRoute, "default");
+  const toLabelPath = getPathStyle(fromId, toLabelId, {
+    head: "none",
+    isRoute,
+  });
+  const fromLabelPath = getPathStyle(toLabelId, toId, {
+    head: "default",
+    isRoute,
+  });
   return [toLabelPath, fromLabelPath];
 };
 
 export const getPathStyle = (
   fromId: string,
   toId: string,
-  isRoute: boolean,
-  head: HeadStyleAlias,
+  options: {
+    head: HeadStyleAlias;
+    isResult?: boolean;
+    isRoute?: boolean;
+  },
 ): Arrow => {
-  const style = isRoute
-    ? ({
-        color: "#1A8091",
-        head: head,
-        arrow: "smooth",
-        width: 2,
-      } as const)
-    : ({
-        color: "#dddddd",
-        head: head,
-        arrow: "smooth",
-        width: 1.5,
-      } as const);
   return {
     from: {
       id: fromId,
@@ -97,6 +176,54 @@ export const getPathStyle = (
       posX: "left",
       posY: "middle",
     },
-    style: style,
+    style: options.isResult
+      ? ({
+          color: "#1A8091",
+          head: options.head,
+          arrow: "smooth",
+          width: 1.5,
+        } as const)
+      : options.isRoute
+        ? ({
+            color: "#1A8091",
+            head: options.head,
+            arrow: "smooth",
+            width: 2,
+          } as const)
+        : ({
+            color: "#dddddd",
+            head: options.head,
+            arrow: "smooth",
+            width: 1.5,
+          } as const),
   };
+};
+
+export const joinPrefix = (
+  id: string | undefined,
+  mode: string,
+  prefix: string,
+  isCompact?: boolean,
+) => {
+  if (!id) {
+    return "";
+  }
+
+  if (mode === "id") {
+    return id;
+  } else if (mode === "url") {
+    return isCompact
+      ? id
+          .split(" ")
+          .map((v) => prefix + v)
+          .join(" ")
+      : prefix + id;
+  } else {
+    return isCompact
+      ? id
+          .split(" ")
+          .map((v) => printf(mode, v))
+          .join(" ")
+      : printf(mode, id);
+  }
 };

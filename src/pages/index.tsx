@@ -1,16 +1,22 @@
 import { useRouter } from "next/router";
 import NProgress from "nprogress";
+import { useUpdateEffect } from "react-use";
 
 const Home = () => {
   const router = useRouter();
 
-  const [ids, setIds] = useState<string[]>(
-    router.asPath.match(new RegExp(`[&?]ids=(.*?)(&|$)`))?.[1].split("%2C") ??
-      [],
+  const [ids, setIds] = useState(
+    decodeURIComponent(router.asPath)
+      .match(new RegExp(`[&?]ids=(.*?)(&|$|#)`))?.[1]
+      .split(",")
+      .filter((v) => v) ?? [],
   );
+
   const [routerRoute, setRouterRoute] = useState(
-    router.asPath.match(new RegExp(`[&?]route=(.*?)(&|$)`))?.[1].split("%2C") ??
-      [],
+    decodeURIComponent(router.asPath)
+      .match(new RegExp(`[&?]route=(.*?)(&|$|#)`))?.[1]
+      .split(",")
+      .filter((v) => v) ?? [],
   );
   const [activeTab, setActiveTab] = useState("EXPLORE");
   const [databaseNodesList, setDatabaseNodesList] = useState<any[][]>([]);
@@ -20,7 +26,7 @@ const Home = () => {
 
   const { datasetConfig, relationConfig } = useConfig(true);
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     router.replace({
       query: {
         route: routerRoute.length ? routerRoute.join(",") : undefined,
@@ -41,12 +47,18 @@ const Home = () => {
         } else if (activeTab === "ANNOTATE") {
         } else if (isUseKeepRoute) {
           const r = route;
-          let nodesList: any[][] = [];
+          const nodesList = databaseNodesList.slice();
           for (let i = 0; i < routerRoute.length; i++) {
-            nodesList = await createNodesList(r, databaseNodesList);
-            if (i < routerRoute.length - 1) {
-              const v = databaseNodesList[i + 1].find(
-                (element) => element.name === routerRoute[i + 1],
+            if (i % 2 === 1) {
+              continue;
+            }
+            const result = await createNodesList(r[r.length - 1]);
+            nodesList.push(result);
+            if (i < routerRoute.length) {
+              const v = nodesList[i / 2 + 1].find(
+                (element) =>
+                  element.name === routerRoute[i + 2] &&
+                  element.relation.link.label === routerRoute[i + 1],
               );
               if (v === undefined || v.target === 0) {
                 break;
@@ -57,13 +69,16 @@ const Home = () => {
 
           setDatabaseNodesList(nodesList);
           setRoute(r);
-          setRouterRoute(r.map((v) => v.name));
+          setRouterRoute(
+            r.flatMap((v, i) =>
+              i === 0 ? [v.name] : [v.relation!.link.id, v.name],
+            ),
+          );
           setIsUseKeepRoute(false);
         } else {
-          const nodesList = await createNodesList(
-            route,
-            databaseNodesList.slice(0, route.length),
-          );
+          const nodesList = databaseNodesList.slice(0, route.length);
+          const result = await createNodesList(route[route.length - 1]);
+          nodesList.push(result);
 
           setDatabaseNodesList(nodesList);
         }
@@ -85,71 +100,78 @@ const Home = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [datasetConfig]);
 
-  const createNodesList = async (routeTemp: Route[], nodesList: any[][]) => {
-    const r = routeTemp[routeTemp.length - 1];
-    const candidateMap = new Map();
-    Object.entries(relationConfig).forEach(([key, value]) => {
+  const createNodesList = async (beforeRoute: Route) => {
+    const candidateList: Route[] = [];
+    Object.entries(relationConfig).forEach(([key, valueList]) => {
       const keySplit = key.split("-");
-      if (keySplit[0] === r.name) {
-        const name = keySplit[1];
-        if (!routeTemp.find((w) => w.name === name)) {
-          // 順方向の変換
-          candidateMap.set(name, {
-            name,
-            category: datasetConfig[name].category,
+      if (keySplit[0] === beforeRoute.name) {
+        // 順方向の変換
+        valueList.forEach((value) => {
+          candidateList.push({
+            name: keySplit[1],
             source: 0,
             target: 0,
-            link: value.link.forward.label,
             results: [],
+            relation: {
+              link: {
+                display_label: value.forward.display_label,
+                label: value.forward.id,
+              },
+              description: value.description,
+            },
           });
-        }
-      } else if (value.link.reverse && keySplit[1] === r.name) {
-        // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
-        const name = keySplit[0];
-        if (
-          !candidateMap.has(name) &&
-          !routeTemp.find((w) => w.name === name)
-        ) {
-          // 逆方向の変換
-          candidateMap.set(name, {
-            name,
-            category: datasetConfig[name].category,
-            source: 0,
-            target: 0,
-            link: value.link.reverse.label,
-            results: [],
-          });
-        }
+        });
+      } else if (
+        keySplit[1] === beforeRoute.name &&
+        !relationConfig[`${keySplit[1]}-${keySplit[0]}`]
+      ) {
+        // configに逆変換が許可されていて順方向の定義が無ければ、逆方向の変換を候補に含める
+        valueList.forEach((value) => {
+          if (value.reverse) {
+            candidateList.push({
+              name: keySplit[0],
+              source: 0,
+              target: 0,
+              results: [],
+              relation: {
+                link: {
+                  display_label: value.reverse.display_label,
+                  label: value.forward.id, // 必ずforward側を使う
+                },
+                description: value.description,
+              },
+            });
+          }
+        });
       }
     });
 
     NProgress.start();
-    nodesList[routeTemp.length] = await Promise.all(
-      Array.from(candidateMap.values(), async (v) => {
-        const r = [routeTemp[routeTemp.length - 1], v];
-        const ids = routeTemp[routeTemp.length - 1].results;
-        const _v = Object.assign({}, v);
-
+    const result = await Promise.all(
+      candidateList.map(async (v) => {
         // 変換結果を取得
         const convert = await executeQuery({
-          route: r,
-          ids: ids,
+          route: [beforeRoute, v],
+          ids: beforeRoute.results,
           report: "target",
           limit: 10000,
         }).catch(() => null);
-        NProgress.inc(1 / candidateMap.size);
+        NProgress.inc(1 / candidateList.length);
 
+        const _v = structuredClone(v);
         if (convert === null) {
           _v.message = "ERROR";
           return _v;
         }
 
-        _v.results = convert.results;
-        if (_v.results.length) {
-          if (_v.results.length < 10000) {
-            const path = `${r[0].name}-${r[1].name}`;
+        if (convert.results.length) {
+          if (convert.results.length < 10000) {
             // 変換結果が0より多く10000未満の時は個数を取得する
-            const count = await executeCountQuery(path, ids).catch(() => null);
+            const count = await executeCountQuery({
+              relation: `${beforeRoute.name}-${v.name}`,
+              ids: beforeRoute.results,
+              link: v.relation!.link.label,
+            }).catch(() => null);
             if (count === null) {
               _v.message = "ERROR";
             } else {
@@ -159,18 +181,21 @@ const Home = () => {
           } else {
             // targetが0のままでは変換が0個と同じ扱いになってしまうため1以上にしておく
             _v.target = 1;
-            _v.message = `${_v.results.length}+`;
+            _v.message = `${convert.results.length}+`;
           }
         } else {
           _v.source = 0;
           _v.target = 0;
         }
+
+        // @ts-expect-error
+        _v.results = convert.results;
         return _v;
       }),
     );
     NProgress.done();
 
-    return nodesList.slice();
+    return result;
   };
 
   /**
@@ -178,9 +203,8 @@ const Home = () => {
    */
   const searchDatabase = (ids: string[], exampleTarget?: string) => {
     setIds(ids);
-    router.replace({ query: ids.length ? { ids: ids.join(",") } : undefined });
 
-    const candidates: any[] = [];
+    const candidateList: Route[] = [];
     ids.forEach((id) => {
       Object.entries(datasetConfig).forEach(([key, value]) => {
         if (
@@ -188,45 +212,46 @@ const Home = () => {
           id.match(value.regex) &&
           Object.keys(relationConfig).some((d) => d.split("-").includes(key))
         ) {
-          const index = candidates.findIndex(
+          const candidate = candidateList.find(
             (databases) => databases.name === key,
           );
-          if (index === -1) {
-            candidates.push({
+          if (candidate) {
+            candidate.target += 1;
+            candidate.results.push(id);
+          } else {
+            candidateList.push({
               name: key,
-              category: value.category,
               target: 1,
               results: [id],
             });
-          } else {
-            candidates[index].target += 1;
-            candidates[index].results.push(id);
           }
         }
       });
     });
 
-    if (candidates.length > 0) {
-      setDatabaseNodesList([candidates]);
+    if (candidateList.length) {
+      setDatabaseNodesList([candidateList]);
     } else {
       setDatabaseNodesList([]);
     }
 
     if (exampleTarget) {
       // Examplesで選択したものは必ず見つかる前提
-      setRoute([candidates.find((v) => v.name === exampleTarget)]);
-      setRouterRoute([candidates.find((v) => v.name === exampleTarget).name]);
+      setRoute([candidateList.find((v) => v.name === exampleTarget)!]);
+      setRouterRoute([
+        candidateList.find((v) => v.name === exampleTarget)!.name,
+      ]);
     } else if (
       routerRoute.length &&
-      candidates.some((v) => v.name === routerRoute[0])
+      candidateList.some((v) => v.name === routerRoute[0])
     ) {
       // keepRouteを使用する
-      setRoute([candidates.find((v) => v.name === routerRoute[0])]);
+      setRoute([candidateList.find((v) => v.name === routerRoute[0])!]);
       setIsUseKeepRoute(true);
-    } else if (candidates.length === 1) {
+    } else if (candidateList.length === 1) {
       // listが1件の時は自動で選択する
-      setRoute(candidates);
-      setRouterRoute([candidates[0].name]);
+      setRoute(candidateList);
+      setRouterRoute([candidateList[0].name]);
     } else {
       setRoute([]);
       setRouterRoute([]);
@@ -253,158 +278,88 @@ const Home = () => {
   };
 
   const lookupRoute = async (target: string) => {
-    const r = route[route.length - 1];
-    const candidateMap = new Map<string, any[]>();
-    const candidateTempMapList = [
-      new Map<string, any[]>(),
-      new Map<string, any[]>(),
-    ];
+    const candidateList: NavigateRoute[][] = [];
+    const candidateTempList: NavigateRoute[][][] = [[], []];
 
-    Object.entries(relationConfig).forEach(([key, value]) => {
+    Object.entries(relationConfig).forEach(([key, valueList]) => {
       const keySplit = key.split("-");
-      if (keySplit[0] === r.name) {
-        const name = keySplit[1];
-        if (!route.some((w) => w.name === name)) {
-          if (name === target) {
-            candidateMap.set(name, [
-              {
-                name,
-                category: datasetConfig[name].category,
-                link: value.link.forward.label,
-              },
-            ]);
-          } else {
-            candidateTempMapList[0].set(name, [
-              {
-                name,
-                category: datasetConfig[name].category,
-                link: value.link.forward.label,
-              },
-            ]);
-          }
+      if (keySplit[0] === route[0].name) {
+        (keySplit[1] === target ? candidateList : candidateTempList[0]).push(
+          ...createCandidateList(keySplit[1], valueList, "forward"),
+        );
+      } else if (
+        keySplit[1] === route[0].name &&
+        !relationConfig[`${keySplit[1]}-${keySplit[0]}`]
+      ) {
+        // configに逆変換が許可されていて順方向の定義が無ければ、逆方向の変換を候補に含める
+        const valueReverseList = valueList.filter((v) => v.reverse);
+        if (!valueReverseList.length) {
+          return;
         }
-      } else if (value.link.reverse && keySplit[1] === r.name) {
-        // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
-        const name = keySplit[0];
-        if (!candidateMap.has(name) && !route.some((w) => w.name === name)) {
-          if (name === target) {
-            candidateMap.set(name, [
-              {
-                name,
-                category: datasetConfig[name].category,
-                link: value.link.reverse.label,
-              },
-            ]);
-          } else if (!candidateTempMapList[0].has(name)) {
-            candidateTempMapList[0].set(name, [
-              {
-                name,
-                category: datasetConfig[name].category,
-                link: value.link.reverse.label,
-              },
-            ]);
-          }
-        }
+        (keySplit[0] === target ? candidateList : candidateTempList[0]).push(
+          ...createCandidateList(keySplit[0], valueReverseList, "reverse"),
+        );
       }
     });
 
-    candidateTempMapList[0].forEach((r) => {
-      Object.entries(relationConfig).forEach(([key, value]) => {
+    candidateTempList[0].forEach((r) => {
+      Object.entries(relationConfig).forEach(([key, valueList]) => {
         const keySplit = key.split("-");
         if (keySplit[0] === r[0].name) {
-          const name = keySplit[1];
-          if (!route.some((w) => w.name === name)) {
-            if (name === target) {
-              candidateMap.set(`${r[0].name}-${name}`, [
-                r[0],
-                {
-                  name,
-                  category: datasetConfig[name].category,
-                  link: value.link.forward.label,
-                },
-              ]);
-            } else {
-              candidateTempMapList[1].set(`${r[0].name}-${name}`, [
-                r[0],
-                {
-                  name,
-                  category: datasetConfig[name].category,
-                  link: value.link.forward.label,
-                },
-              ]);
-            }
+          if (keySplit[1] === route[0].name) {
+            return;
           }
-        } else if (value.link.reverse && keySplit[1] === r[0].name) {
-          // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
-          const name = keySplit[0];
-          if (
-            !candidateMap.has(`${r[0].name}-${name}`) &&
-            !route.some((w) => w.name === name)
-          ) {
-            if (name === target) {
-              candidateMap.set(`${r[0].name}-${name}`, [
-                r[0],
-                {
-                  name,
-                  category: datasetConfig[name].category,
-                  link: value.link.reverse.label,
-                },
-              ]);
-            } else if (!candidateTempMapList[1].has(`${r[0].name}-${name}`)) {
-              candidateTempMapList[1].set(`${r[0].name}-${name}`, [
-                r[0],
-                {
-                  name,
-                  category: datasetConfig[name].category,
-                  link: value.link.reverse.label,
-                },
-              ]);
-            }
+          (keySplit[1] === target ? candidateList : candidateTempList[1]).push(
+            ...createCandidateList(keySplit[1], valueList, "forward", r),
+          );
+        } else if (
+          keySplit[1] === r[0].name &&
+          !relationConfig[`${keySplit[1]}-${keySplit[0]}`]
+        ) {
+          if (keySplit[0] === route[0].name) {
+            return;
           }
+          const valueReverseList = valueList.filter((v) => v.reverse);
+          if (!valueReverseList.length) {
+            return;
+          }
+          (keySplit[0] === target ? candidateList : candidateTempList[1]).push(
+            ...createCandidateList(keySplit[0], valueReverseList, "reverse", r),
+          );
         }
       });
     });
 
-    if (!candidateMap.size && !candidateTempMapList[1].size) {
+    if (!candidateList.length && !candidateTempList[1].length) {
       return;
     }
 
-    candidateTempMapList[1].forEach((r) => {
-      Object.entries(relationConfig).forEach(([key, value]) => {
+    candidateTempList[1].forEach((r) => {
+      Object.entries(relationConfig).forEach(([key, valueList]) => {
         const keySplit = key.split("-");
         if (keySplit[0] === r[1].name) {
-          const name = keySplit[1];
-          if (!route.some((w) => w.name === name)) {
-            if (name === target) {
-              candidateMap.set(`${r[0].name}-${r[1].name}-${name}`, [
-                r[0],
-                r[1],
-                {
-                  name,
-                  category: datasetConfig[name].category,
-                  link: value.link.forward.label,
-                },
-              ]);
-            }
+          if (keySplit[1] === target) {
+            candidateList.push(
+              ...createCandidateList(keySplit[1], valueList, "forward", r),
+            );
           }
-        } else if (value.link.reverse && keySplit[1] === r[1].name) {
-          // ↑configに逆変換が許可されていれば、逆方向の変換を候補に含める
-          const name = keySplit[0];
-          if (
-            !candidateMap.has(`${r[0].name}-${r[1].name}-${name}`) &&
-            !route.some((w) => w.name === name)
-          ) {
-            if (name === target) {
-              candidateMap.set(`${r[0].name}-${r[1].name}-${name}`, [
-                r[0],
-                r[1],
-                {
-                  name,
-                  category: datasetConfig[name].category,
-                  link: value.link.reverse.label,
-                },
-              ]);
+        } else if (
+          keySplit[1] === r[1].name &&
+          !relationConfig[`${keySplit[1]}-${keySplit[0]}`]
+        ) {
+          if (keySplit[0] === target) {
+            const valueReverseList = valueList.filter((v) => v.reverse);
+            if (!valueReverseList.length) {
+              return;
             }
+            candidateList.push(
+              ...createCandidateList(
+                keySplit[0],
+                valueReverseList,
+                "reverse",
+                r,
+              ),
+            );
           }
         }
       });
@@ -413,15 +368,16 @@ const Home = () => {
     NProgress.start();
     const result = (
       await Promise.all(
-        Array.from(candidateMap.values(), async (v) => {
+        candidateList.map(async (v) => {
           // 変換結果を取得
           const convert = await executeQuery({
+            // @ts-expect-error
             route: route.concat(v),
             ids: ids,
             report: "target",
             limit: 10000,
           }).catch(() => null);
-          NProgress.inc(1 / candidateMap.size);
+          NProgress.inc(1 / candidateList.length);
 
           if (convert === null) {
             // 変換に失敗したとき
@@ -441,7 +397,7 @@ const Home = () => {
           }
         }),
       )
-    ).filter((v): v is NonNullable<typeof v> => v !== null);
+    ).filter((v) => v !== null);
     NProgress.done();
 
     const nodesList: any[][] = [databaseNodesList[0], [], [], []];
@@ -464,7 +420,28 @@ const Home = () => {
     setDatabaseNodesList(nodesList);
   };
 
-  const changeIndexTab = (name) => {
+  const createCandidateList = (
+    name: string,
+    valueList: (typeof relationConfig)[number],
+    direction: "forward" | "reverse",
+    beforeRoute?: NavigateRoute[],
+  ) => {
+    return valueList.map((value) => {
+      const obj = {
+        name,
+        relation: {
+          link: {
+            display_label: value[direction].display_label,
+            label: value.forward.id, // labelは必ずforward側を使う
+          },
+          description: value.description,
+        },
+      };
+      return beforeRoute ? [...beforeRoute, obj] : [obj];
+    });
+  };
+
+  const changeIndexTab = (name: string) => {
     if (
       (previousSearchTab === "NAVIGATE" && name === "EXPLORE") ||
       (previousSearchTab === "EXPLORE" && name === "NAVIGATE")
@@ -507,14 +484,9 @@ const Home = () => {
               lookupRoute={lookupRoute}
             />
           )}
-          {/* {activeTab === "ANNOTATE" && (
-            <Annotate
-              databaseNodesList={databaseNodesList}
-              route={route}
-              setRoute={setRoute}
-            />
+          {activeTab === "LABEL2LD" && (
+            <LabelToId executeExamples={executeExamples} />
           )}
-          {activeTab === "LABEL2LD" && <LabelToId />} */}
           {activeTab === "DATASETS" && (
             <Datasets executeExamples={executeExamples} />
           )}

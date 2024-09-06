@@ -73,6 +73,13 @@ const Datasets = ({ executeExamples }: Props) => {
     searchDataset();
   };
 
+  const handleAllClear = () => {
+    searchNameIndexSetList.value.clear();
+    searchCategorySetList.value.clear();
+    searchText.value = "";
+    searchDataset();
+  };
+
   return (
     <div className="home">
       <main className="main">
@@ -190,9 +197,8 @@ const Datasets = ({ executeExamples }: Props) => {
                     <span
                       className="title__square"
                       style={{
-                        backgroundColor: categories[datasetConfig[key].category]
-                          ? categories[datasetConfig[key].category].color
-                          : null,
+                        backgroundColor:
+                          categoryColor[datasetConfig[key].category],
                       }}
                     />
                     <span className="title__text">
@@ -240,15 +246,13 @@ const Datasets = ({ executeExamples }: Props) => {
                               "#" + datasetConfig[l].label.replace(/\s/g, "")
                             }
                             key={i}
+                            onClick={handleAllClear}
                           >
                             <div
                               className="path_label small green"
                               style={{
-                                backgroundColor: categories[
-                                  datasetConfig[l].category
-                                ]
-                                  ? categories[datasetConfig[l].category].color
-                                  : null,
+                                backgroundColor:
+                                  categoryColor[datasetConfig[l].category],
                               }}
                               key={i}
                             >

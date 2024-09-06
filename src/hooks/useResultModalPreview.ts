@@ -1,187 +1,166 @@
-import { printf } from "fast-printf";
 import useSWRImmutable from "swr/immutable";
-
-const createBaseTable = (tableRows, tableHeading, prefixList) => {
-  const baseTable = tableRows.map((v) => {
-    return v.map((w, i) => {
-      const formatIdObj = {};
-
-      // prefixがある場合
-      prefixList[i].forEach((x) => {
-        formatIdObj[x.value] = w ? printf(x.value, w) : null;
-      });
-
-      // idとurlは必ず作成する
-      formatIdObj["id"] = w ?? null;
-      formatIdObj["url"] = w ? tableHeading[i].prefix + w : null;
-
-      return formatIdObj;
-    });
-  });
-
-  return baseTable;
-};
-
-const createCompactBaseTable = (tableRows, tableHeading, prefixList) => {
-  const baseTable = tableRows.map((v) => {
-    return v.map((w, i) => {
-      const formatIdObj = {};
-
-      const idSplitList = w ? w.split(" ") : [];
-      // prefixがある場合
-      prefixList[i].forEach((x) => {
-        formatIdObj[x.value] = w
-          ? idSplitList.map((y) => printf(x.value, y))
-          : [];
-      });
-
-      // idとurlは必ず作成する
-      formatIdObj["id"] = idSplitList;
-      formatIdObj["url"] = w
-        ? idSplitList.map((x) => tableHeading[i].prefix + x)
-        : [];
-
-      return formatIdObj;
-    });
-  });
-
-  return baseTable;
-};
-
-const fetcher = async (
-  key: {
-    route: object[];
-    ids: string[];
-    report: string;
-    limit: number;
-    compact: boolean;
-  },
-  tableHeading: any[],
-  prefixList: any[],
-) => {
-  const data = await executeQuery(key);
-
-  return key.compact
-    ? createCompactBaseTable(data.results, tableHeading, prefixList)
-    : createBaseTable(data.results, tableHeading, prefixList);
-};
+// import useSWR from "swr";
 
 const useResultModalPreview = (
   previewMode: string,
   isCompact: boolean,
   route: any[],
   ids: any[],
-  tableHeading: any[],
-  prefixList: any[],
+  tableHead: {
+    index: number;
+    name: string;
+    catalog: string;
+    category: string;
+    description?: string;
+    examples: string[];
+    format?: string[];
+    label: string;
+    label_resolver?: any;
+    linkTo: any;
+    prefix: string;
+    regex: string;
+  }[],
+  isShowLabelList: boolean[],
 ) => {
-  const [filterTable, setFilterTable] = useState({});
+  const [filterTable, setFilterTable] =
+    useState<ReturnType<typeof editTable>>();
 
   const { data: baseTable } = useSWRImmutable(
     {
       route: route,
       ids: ids,
-      report: "full",
+      report: previewMode,
       limit: 100,
       compact: isCompact,
     },
-    (key) => fetcher(key, tableHeading, prefixList),
+    async (key) => {
+      const data = await executeQuery(key);
+
+      return data.results;
+    },
+  );
+
+  const { annotateConfig } = useAnnotateConfig();
+
+  const { data: labelList } = useSWRImmutable(
+    {
+      baseTable: baseTable,
+      isShowLabelSome: isShowLabelList.some((v) => v),
+      isCompact: isCompact,
+    },
+    async () => {
+      if (!(baseTable && isShowLabelList.some((v) => v)) || isCompact) {
+        return null;
+      }
+
+      const headList = getHeadList(tableHead, previewMode);
+
+      if (previewMode === "target") {
+        return [
+          await executeAnnotateQuery({
+            name: headList[0].name,
+            ids: baseTable as unknown as string[],
+          }),
+        ];
+      } else {
+        return await Promise.all(
+          baseTable[0]
+            .map((_, i) => baseTable.map((row) => row[i]).filter((v) => v))
+            .map(async (v, i) => {
+              if (annotateConfig?.includes(headList[i].name)) {
+                return await executeAnnotateQuery({
+                  name: headList[i].name,
+                  ids: v,
+                });
+              }
+            }),
+        );
+      }
+    },
   );
 
   useEffect(() => {
     if (baseTable) {
-      setFilterTable(isCompact ? editCompactTable() : editTable());
+      setFilterTable(
+        isCompact ? editCompactTable(baseTable) : editTable(baseTable),
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [baseTable, previewMode]);
 
-  const editTable = (): { heading: any[]; rows: any[] } => {
+  const editTable = (table: NonNullable<typeof baseTable>) => {
+    const headList = getHeadList(tableHead, previewMode);
+
     if (previewMode === "all") {
       // all
-      const rows = baseTable.filter((v) => v[v.length - 1].url);
-      return { heading: tableHeading, rows };
+      return { heading: headList, rows: table };
     } else if (previewMode === "pair") {
       // origin and targets
       // 重複は消す
+      return { heading: headList, rows: table };
+    } else if (previewMode === "target") {
+      // target
+      // 重複は消す
       return {
-        heading: [tableHeading[0], tableHeading[tableHeading.length - 1]],
-        rows: baseTable
-          .filter((v) => v[v.length - 1].url)
-          .map((v) => [v[0], v[v.length - 1]])
-          .filter(
-            (v, i, self) =>
-              self.findIndex(
-                (w) =>
-                  w[0].url === v[0].url &&
-                  w[w.length - 1].url === v[v.length - 1].url,
-              ) === i,
-          ),
+        heading: headList,
+        rows: table.map((v) => [v]) as unknown as string[][],
+      };
+    } else if (previewMode === "full") {
+      // full
+      return { heading: headList, rows: table };
+    }
+
+    // ここには来ない
+    return { heading: [], rows: [[]] };
+  };
+
+  const editCompactTable = (table: NonNullable<typeof baseTable>) => {
+    const headList = getHeadList(tableHead, previewMode);
+
+    if (previewMode === "all") {
+      // all
+      return {
+        heading: headList,
+        rows: table,
+      };
+    } else if (previewMode === "pair") {
+      // origin and targets
+      return {
+        heading: headList,
+        rows: table,
       };
     } else if (previewMode === "target") {
       // target
       // 重複は消す
       return {
-        heading: [tableHeading[tableHeading.length - 1]],
-        rows: baseTable
-          .filter((v) => v[v.length - 1].url)
-          .map((v) => [v[v.length - 1]])
-          .filter(
-            (v, i, self) => self.findIndex((w) => w[0].url === v[0].url) === i,
-          ),
+        heading: headList,
+        rows: table,
       };
     } else if (previewMode === "full") {
       // full
-      return { heading: tableHeading, rows: baseTable };
+      return {
+        heading: headList,
+        rows: table,
+      };
     }
 
     // ここには来ない
-    return { heading: [], rows: [] };
+    return { heading: [], rows: [[]] };
   };
 
-  const editCompactTable = (): { heading: any[]; rows: any[] } => {
-    if (previewMode === "all") {
-      // all
-      return {
-        heading: tableHeading,
-        rows: baseTable.filter((v) => v[v.length - 1].url.length),
-      };
-    } else if (previewMode === "pair") {
-      // origin and targets
-      // 重複は消す
-      return {
-        heading: [tableHeading[0], tableHeading[tableHeading.length - 1]],
-        rows: baseTable
-          .filter((v) => v[v.length - 1].url.length)
-          .map((v) => [v[0], v[v.length - 1]]),
-      };
-    } else if (previewMode === "target") {
-      // target
-      // 重複は消す
-      return {
-        heading: [tableHeading[tableHeading.length - 1]],
-        rows: [
-          [
-            structuredClone(baseTable)
-              .filter((v) => v[v.length - 1].url.length)
-              .map((v) => v[v.length - 1])
-              .reduce((prev, curr) => {
-                Object.entries(curr).forEach(([key, value]) => {
-                  prev[key] = [...new Set(prev[key].concat(value))];
-                });
-                return prev;
-              }),
-          ],
-        ],
-      };
-    } else if (previewMode === "full") {
-      // full
-      return { heading: tableHeading, rows: baseTable };
+  const getHeadList = (head: typeof tableHead, mode: typeof previewMode) => {
+    if (mode === "all" || mode === "full") {
+      return head;
+    } else if (mode === "pair") {
+      return [head[0], head[head.length - 1]];
+    } else if (mode === "target") {
+      return [head[head.length - 1]];
     }
 
-    // ここには来ない
-    return { heading: [], rows: [] };
+    return head;
   };
 
-  return filterTable;
+  return { filterTable, labelList, getHeadList };
 };
 
 export default useResultModalPreview;

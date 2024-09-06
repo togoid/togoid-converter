@@ -3,20 +3,22 @@ import useSWR from "swr";
 
 const configFetcher = async () => {
   const res = await Promise.all([
-    axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/dataset`),
-    axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/relation`),
-    axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/descriptions`),
+    axios.get<DatasetConfig>(
+      `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/dataset`,
+    ),
+    axios.get<RelationConfig>(
+      `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/relation`,
+    ),
+    axios.get<DescriptionConfig>(
+      `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/descriptions`,
+    ),
     axios.get(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/statistics`),
   ]);
 
-  const relationConfig = res[1].data as {
-    [key: string]: { [key: string]: any };
-  };
-  const descriptionConfig = res[2].data as {
-    [key: string]: { [key: string]: any };
-  };
+  const relationConfig = res[1].data;
+  const descriptionConfig = res[2].data;
   const statisticConfig = res[3].data as {
-    [key: string]: { [key: string]: any };
+    [key: string]: { count: number; last_updated_at: string };
   };
 
   const datasetConfig = Object.entries(res[0].data).reduce(
@@ -36,21 +38,18 @@ const configFetcher = async () => {
         }
       });
 
-      return linkTo.size
-        ? {
-            ...prev,
-            [key]: { ...value, linkTo },
-          }
-        : prev;
+      return {
+        ...prev,
+        [key]: { ...value, linkTo },
+      };
     },
-    {} as { [key: string]: { [key: string]: any } },
+    {} as DatasetConfig,
   );
 
   return {
     datasetConfig,
     relationConfig,
     descriptionConfig,
-    statisticConfig,
   };
 };
 
@@ -59,7 +58,7 @@ const configFetcher = async () => {
  */
 const useConfig = (isFetch?: boolean) => {
   const {
-    data: { datasetConfig, relationConfig, descriptionConfig, statisticConfig },
+    data: { datasetConfig, relationConfig, descriptionConfig },
   } = useSWR("config", isFetch ? configFetcher : null, {
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
@@ -67,7 +66,6 @@ const useConfig = (isFetch?: boolean) => {
       datasetConfig: {},
       relationConfig: {},
       descriptionConfig: {},
-      statisticConfig: {},
     },
   });
 
@@ -75,7 +73,6 @@ const useConfig = (isFetch?: boolean) => {
     datasetConfig,
     relationConfig,
     descriptionConfig,
-    statisticConfig,
   };
 };
 

@@ -5,7 +5,7 @@ const ExploreResultRelation = (props: any) => {
 
   return (
     <div
-      id={`label${props.i}-${props.v.relation.link.label}-${props.v.name}`}
+      id={`label${props.i}-${props.j}`}
       className="label_list label_list__item label_list__item__inner"
     >
       <p className="text">{props.v.relation.link.display_label}</p>

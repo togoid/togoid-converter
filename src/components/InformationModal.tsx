@@ -70,11 +70,7 @@ const InformationModal = ({ setIsShowInfomationModal, ...props }: Props) => {
               <div
                 className="path_label small green"
                 style={{
-                  // @ts-expect-error
-                  backgroundColor: categories[datasetConfig[v].category]
-                    ? // @ts-expect-error
-                      categories[datasetConfig[v].category].color
-                    : null,
+                  backgroundColor: categoryColor[datasetConfig[v].category],
                 }}
                 key={i}
               >
