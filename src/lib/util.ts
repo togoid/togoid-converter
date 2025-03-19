@@ -2,8 +2,8 @@ import PaPa from "papaparse";
 import { saveAs } from "file-saver";
 import axios from "axios";
 import { printf } from "fast-printf";
-
 import type { Arrow, HeadStyleAlias } from "react-arrow-master";
+import * as gql from "gql-query-builder";
 
 export const exportCsvTsv = (
   rows: unknown[],
@@ -111,11 +111,26 @@ export const executeCountQuery = async (option: {
 
 //   return Object.values(res.data.data)[0];
 // };
-
+// {
+//   refseq_rna(id: ["NM_001354870","NM_002467","NM_001173531","NM_001285986","NM_002701","NM_203289","NM_003106","NM_001314052","NM_004235"]) {
+//   id
+//   label
+// }
 export const executeAnnotateQuery = async (option: {
   name: string;
   ids: string[];
 }) => {
+  const query = gql.query({
+    operation: option.name,
+    variables: {
+      id: {
+        value: [...new Set(option.ids)],
+        type: "[String!]",
+      },
+    },
+    fields: ["id", "label"],
+  });
+
   const res = await axios<{
     data: {
       id: string;
@@ -124,16 +139,8 @@ export const executeAnnotateQuery = async (option: {
   }>({
     url: "https://rdfportal.org/grasp-togoid",
     method: "POST",
-    data: {
-      query: `query {
-      ${option.name}(id: ${JSON.stringify([...new Set(option.ids)])}) {
-        id
-        label
-      }
-    }`,
-    },
+    data: query,
   });
-
   return Object.fromEntries(
     Object.values(res.data.data)[0].map((v) => [v.id, v.label]),
   );

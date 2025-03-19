@@ -3380,6 +3380,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"gql-query-builder@npm:3.8.0":
+  version: 3.8.0
+  resolution: "gql-query-builder@npm:3.8.0"
+  checksum: 10c0/52138c04be359361586c3960f48439665f7990c8536b7ef2d03c5f74faa65f429cbea114effd41b1c02ed908cef9dedfe9e42672bb4825b6cd7775016653f6c5
+  languageName: node
+  linkType: hard
+
 "graceful-fs@npm:^4.2.11, graceful-fs@npm:^4.2.4, graceful-fs@npm:^4.2.6":
   version: 4.2.11
   resolution: "graceful-fs@npm:4.2.11"
@@ -6927,6 +6934,7 @@ __metadata:
     eslint-plugin-prettier: "npm:5.2.1"
     fast-printf: "npm:1.6.9"
     file-saver: "npm:2.0.5"
+    gql-query-builder: "npm:3.8.0"
     jotai: "npm:2.9.3"
     next: "npm:14.2.7"
     nprogress: "npm:0.2.0"
