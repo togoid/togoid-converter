@@ -23,17 +23,14 @@ const ResultModalActionTable = ({
   const resultList = isShowLabelList.map((_, i) =>
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useSWR(
-      isShowLabelList[i]
+      isShowLabelList[i] && filterTable
         ? {
-            baseTable: filterTable?.heading![i].name,
-            ids: filterTable?.rows.map((v) => v[i]),
+            name: filterTable.heading![i].name,
+            ids: filterTable.rows.map((v) => v[i]),
           }
         : null,
-      async () => {
-        return await executeAnnotateQuery({
-          name: filterTable!.heading![i].name,
-          ids: filterTable!.rows.map((v) => v[i]),
-        });
+      async (key) => {
+        return await executeAnnotateQuery(key);
       },
     ),
   );

@@ -15,39 +15,19 @@ const useResultModalSinglePreview = (
     regex: string;
   }[],
 ) => {
-  const baseTable = useMemo(() => {
-    return tableHead[0].format?.length
-      ? route.map((v) =>
-          v.results.map((w) =>
+  const filterTable = useMemo(() => {
+    return {
+      heading: tableHead,
+      rows: tableHead[0].format?.length
+        ? route[0].results.map((v) => [
             tableHead[0].format!.reduce((prev, curr) => {
               return prev.replace(curr.replace("%s", ""), "");
-            }, w),
-          ),
-        )
-      : route.map((v) => v.results);
+            }, v),
+          ])
+        : route[0].results.map((v) => [v]),
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const [filterTable, setFilterTable] = useState<{
-    heading: typeof tableHead;
-    rows: string[][];
-  }>();
-
-  useEffect(() => {
-    if (baseTable) {
-      const arr: string[][] = [];
-      baseTable.forEach((v) => {
-        v.forEach((w) => {
-          arr.push([w]);
-        });
-      });
-      setFilterTable({
-        heading: tableHead,
-        rows: arr,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [baseTable]);
 
   return { filterTable };
 };

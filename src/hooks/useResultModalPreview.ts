@@ -21,10 +21,7 @@ const useResultModalPreview = (
     regex: string;
   }[],
 ) => {
-  const [filterTable, setFilterTable] =
-    useState<ReturnType<typeof editTable>>();
-
-  const { data: baseTable } = useSWRImmutable(
+  const { data: filterTable } = useSWRImmutable(
     {
       route: route,
       ids: ids,
@@ -34,79 +31,18 @@ const useResultModalPreview = (
     },
     async (key) => {
       const data = await executeQuery(key);
+      const headList = getHeadList(tableHead, previewMode);
 
-      return data.results;
+      if (!isCompact && previewMode === "target") {
+        return {
+          heading: headList,
+          rows: data.results.map((v) => [v]) as unknown as string[][],
+        };
+      }
+
+      return { heading: headList, rows: data.results };
     },
   );
-
-  useEffect(() => {
-    if (baseTable) {
-      setFilterTable(
-        isCompact ? editCompactTable(baseTable) : editTable(baseTable),
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [baseTable, previewMode]);
-
-  const editTable = (table: NonNullable<typeof baseTable>) => {
-    const headList = getHeadList(tableHead, previewMode);
-
-    if (previewMode === "all") {
-      // all
-      return { heading: headList, rows: table };
-    } else if (previewMode === "pair") {
-      // origin and targets
-      // 重複は消す
-      return { heading: headList, rows: table };
-    } else if (previewMode === "target") {
-      // target
-      // 重複は消す
-      return {
-        heading: headList,
-        rows: table.map((v) => [v]) as unknown as string[][],
-      };
-    } else if (previewMode === "full") {
-      // full
-      return { heading: headList, rows: table };
-    }
-
-    // ここには来ない
-    return { heading: [], rows: [[]] };
-  };
-
-  const editCompactTable = (table: NonNullable<typeof baseTable>) => {
-    const headList = getHeadList(tableHead, previewMode);
-
-    if (previewMode === "all") {
-      // all
-      return {
-        heading: headList,
-        rows: table,
-      };
-    } else if (previewMode === "pair") {
-      // origin and targets
-      return {
-        heading: headList,
-        rows: table,
-      };
-    } else if (previewMode === "target") {
-      // target
-      // 重複は消す
-      return {
-        heading: headList,
-        rows: table,
-      };
-    } else if (previewMode === "full") {
-      // full
-      return {
-        heading: headList,
-        rows: table,
-      };
-    }
-
-    // ここには来ない
-    return { heading: [], rows: [[]] };
-  };
 
   const getHeadList = (head: typeof tableHead, mode: typeof previewMode) => {
     if (mode === "all" || mode === "full") {
