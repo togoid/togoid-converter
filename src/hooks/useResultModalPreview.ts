@@ -6,20 +6,10 @@ const useResultModalPreview = (
   isCompact: boolean,
   route: any[],
   ids: any[],
-  tableHead: {
+  tableHead: (DatasetConfig[number] & {
     index: number;
     name: string;
-    catalog: string;
-    category: string;
-    description?: string;
-    examples: string[];
-    format?: string[];
-    label: string;
-    label_resolver?: any;
-    linkTo: any;
-    prefix: string;
-    regex: string;
-  }[],
+  })[],
 ) => {
   const { data: filterTable } = useSWRImmutable(
     {

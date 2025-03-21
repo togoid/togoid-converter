@@ -22,12 +22,14 @@ const ResultModalActionTable = ({
 
   const resultList = isShowLabelList.map((_, i) => {
     const index = filterTable?.heading.findIndex((v) => v.index === i)!;
+    const head = filterTable?.heading![index];
     // eslint-disable-next-line react-hooks/rules-of-hooks
     return useSWR(
       isShowLabelList[i] && filterTable
         ? {
             name: filterTable.heading![index].name,
             ids: filterTable.rows.map((v) => v[index]),
+            annotations: head?.annotations,
           }
         : null,
       async (key) => {
@@ -101,6 +103,12 @@ const ResultModalActionTable = ({
                   {!isCompact &&
                     annotateConfig.includes(v.name) &&
                     isShowLabelList[v.index] && <th></th>}
+                  {!isCompact &&
+                    annotateConfig.includes(v.name) &&
+                    isShowLabelList[v.index] &&
+                    v.annotations?.map((v) => (
+                      <th key={v.variable}>{v.label}</th>
+                    ))}
                 </Fragment>
               );
             })}
@@ -159,11 +167,27 @@ const ResultModalActionTable = ({
                             <span>
                               {
                                 resultList[filterTable.heading![j].index]
-                                  .data?.[d]
+                                  .data?.[d].label
                               }
                             </span>
                           </td>
                         )}
+                        {isShowLabelList[filterTable.heading![j].index] &&
+                          filterTable.heading![j].annotations?.map((v) => (
+                            <td key={v.variable}>
+                              <span>
+                                {Array.isArray(
+                                  resultList[filterTable.heading![j].index]
+                                    .data?.[d][v.variable],
+                                )
+                                  ? resultList[
+                                      filterTable.heading![j].index
+                                    ].data?.[d][v.variable].join(" ")
+                                  : resultList[filterTable.heading![j].index]
+                                      .data?.[d][v.variable]}
+                              </span>
+                            </td>
+                          ))}
                       </>
                     )}
                   </Fragment>
