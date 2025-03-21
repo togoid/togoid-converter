@@ -60,6 +60,7 @@ const ResultModalAction = (props: Props) => {
             return await executeAnnotateQuery({
               name: head.name,
               ids: transposeList[i],
+              annotations: head?.annotations,
             });
           }
         }),
@@ -67,9 +68,14 @@ const ResultModalAction = (props: Props) => {
 
       return {
         heading: headList.reduce<string[]>((prev, curr) => {
-          isShowLabelList[curr.index]
-            ? prev.push(curr.label, "")
-            : prev.push(curr.label);
+          if (isShowLabelList[curr.index]) {
+            prev.push(curr.label, "");
+            curr.annotations?.forEach((v) => {
+              prev.push(v.label);
+            });
+          } else {
+            prev.push(curr.label);
+          }
 
           return prev;
         }, []),
@@ -81,9 +87,18 @@ const ResultModalAction = (props: Props) => {
               tableHead[curr.index].prefix,
             );
 
-            isShowLabelList[curr.index]
-              ? prev.push(idWithPrefix, labelList[j]?.[v[j]])
-              : prev.push(idWithPrefix);
+            if (isShowLabelList[curr.index]) {
+              prev.push(idWithPrefix, labelList[j]?.[v[j]].label);
+              curr.annotations?.forEach((w) => {
+                prev.push(
+                  Array.isArray(labelList[j]?.[v[j]][w.variable])
+                    ? labelList[j]?.[v[j]][w.variable].join(" ")
+                    : labelList[j]?.[v[j]][w.variable],
+                );
+              });
+            } else {
+              prev.push(idWithPrefix);
+            }
 
             return prev;
           }, []),
