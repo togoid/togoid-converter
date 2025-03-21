@@ -119,7 +119,12 @@ export const executeCountQuery = async (option: {
 export const executeAnnotateQuery = async (option: {
   name: string;
   ids: string[];
+  annotations?: DatasetConfig[number]["annotations"];
 }) => {
+  const fields = ["id", "label"];
+  option.annotations?.forEach((v) => {
+    fields.push(v.variable);
+  });
   const query = gql.query({
     operation: option.name,
     variables: {
@@ -128,22 +133,24 @@ export const executeAnnotateQuery = async (option: {
         type: "[String!]",
       },
     },
-    fields: ["id", "label"],
+    fields: fields,
   });
 
   const res = await axios<{
-    data: {
-      id: string;
-      label: string;
-    }[][];
+    data: any[][];
   }>({
-    url: "https://rdfportal.org/grasp-togoid",
+    url: "http://ep.dbcls.jp/grasp-dev-togoid",
     method: "POST",
     data: query,
   });
-  return Object.fromEntries(
-    Object.values(res.data.data)[0].map((v) => [v.id, v.label]),
-  );
+
+  return Object.values(res.data.data)[0].reduce(
+    (prev, curr) => {
+      const { id, ...other } = curr;
+      return { ...prev, [id]: other };
+    },
+    {} as { [key: string]: any },
+  ) as { [key: string]: any };
 };
 
 export const mergePathStyle = (
