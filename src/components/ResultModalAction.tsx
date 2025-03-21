@@ -231,13 +231,12 @@ const ResultModalAction = (props: Props) => {
     );
   };
 
-  const { filterTable, labelList, getHeadList } = useResultModalPreview(
+  const { filterTable, getHeadList } = useResultModalPreview(
     previewMode,
     isCompact,
     props.route,
     props.ids,
     tableHead,
-    isShowLabelList,
   );
 
   return (
@@ -377,7 +376,6 @@ const ResultModalAction = (props: Props) => {
         isShowLabelList={isShowLabelList}
         setIsShowLabelList={setIsShowLabelList}
         filterTable={filterTable}
-        labelList={labelList}
       />
     </>
   );

@@ -1,6 +1,3 @@
-import useSWRImmutable from "swr/immutable";
-// import useSWR from "swr";
-
 const useResultModalSinglePreview = (
   route: Route[],
   tableHead: {
@@ -17,8 +14,6 @@ const useResultModalSinglePreview = (
     prefix: string;
     regex: string;
   }[],
-  isShowLabelList: boolean[],
-  lineMode: string[],
 ) => {
   const baseTable = useMemo(() => {
     return tableHead[0].format?.length
@@ -32,29 +27,6 @@ const useResultModalSinglePreview = (
       : route.map((v) => v.results);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const { data: labelList } = useSWRImmutable(
-    {
-      baseTable: baseTable,
-      isShowLabelSome: isShowLabelList.some((v) => v),
-    },
-    async () => {
-      if (!(baseTable && isShowLabelList.some((v) => v))) {
-        return null;
-      }
-
-      return await Promise.all(
-        baseTable.map(async (v, i) => {
-          if (isShowLabelList[i]) {
-            return await executeAnnotateQuery({
-              name: tableHead[i].name,
-              ids: v,
-            });
-          }
-        }),
-      );
-    },
-  );
 
   const [filterTable, setFilterTable] = useState<{
     heading: typeof tableHead;
@@ -75,9 +47,9 @@ const useResultModalSinglePreview = (
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [baseTable, labelList, isShowLabelList, lineMode]);
+  }, [baseTable]);
 
-  return { filterTable, labelList };
+  return { filterTable };
 };
 
 export default useResultModalSinglePreview;

@@ -21,7 +21,7 @@ const useAnnotateConfig = () => {
   );
 
   return {
-    annotateConfig,
+    annotateConfig: annotateConfig ?? [],
   };
 };
 

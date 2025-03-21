@@ -20,7 +20,6 @@ const useResultModalPreview = (
     prefix: string;
     regex: string;
   }[],
-  isShowLabelList: boolean[],
 ) => {
   const [filterTable, setFilterTable] =
     useState<ReturnType<typeof editTable>>();
@@ -37,45 +36,6 @@ const useResultModalPreview = (
       const data = await executeQuery(key);
 
       return data.results;
-    },
-  );
-
-  const { annotateConfig } = useAnnotateConfig();
-
-  const { data: labelList } = useSWRImmutable(
-    {
-      baseTable: baseTable,
-      isShowLabelSome: isShowLabelList.some((v) => v),
-      isCompact: isCompact,
-    },
-    async () => {
-      if (!(baseTable && isShowLabelList.some((v) => v)) || isCompact) {
-        return null;
-      }
-
-      const headList = getHeadList(tableHead, previewMode);
-
-      if (previewMode === "target") {
-        return [
-          await executeAnnotateQuery({
-            name: headList[0].name,
-            ids: baseTable as unknown as string[],
-          }),
-        ];
-      } else {
-        return await Promise.all(
-          baseTable[0]
-            .map((_, i) => baseTable.map((row) => row[i]).filter((v) => v))
-            .map(async (v, i) => {
-              if (annotateConfig?.includes(headList[i].name)) {
-                return await executeAnnotateQuery({
-                  name: headList[i].name,
-                  ids: v,
-                });
-              }
-            }),
-        );
-      }
     },
   );
 
@@ -160,7 +120,7 @@ const useResultModalPreview = (
     return head;
   };
 
-  return { filterTable, labelList, getHeadList };
+  return { filterTable, getHeadList };
 };
 
 export default useResultModalPreview;

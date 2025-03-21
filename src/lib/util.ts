@@ -137,7 +137,7 @@ export const executeAnnotateQuery = async (option: {
       label: string;
     }[][];
   }>({
-    url: "https://rdfportal.org/grasp-togoid",
+    url: "http://ep.dbcls.jp/grasp-dev-togoid",
     method: "POST",
     data: query,
   });

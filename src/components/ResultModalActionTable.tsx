@@ -1,3 +1,6 @@
+// import useSWRImmutable from "swr/immutable";
+import useSWR from "swr";
+
 type Props = {
   isCompact: boolean;
   lineMode: string[];
@@ -5,7 +8,6 @@ type Props = {
   isShowLabelList: boolean[];
   setIsShowLabelList: Dispatch<SetStateAction<boolean[]>>;
   filterTable: ReturnType<typeof useResultModalPreview>["filterTable"];
-  labelList: ReturnType<typeof useResultModalPreview>["labelList"];
 };
 
 const ResultModalActionTable = ({
@@ -15,9 +17,26 @@ const ResultModalActionTable = ({
   isShowLabelList,
   setIsShowLabelList,
   filterTable,
-  labelList,
 }: Props) => {
   const { annotateConfig } = useAnnotateConfig();
+
+  const resultList = isShowLabelList.map((_, i) =>
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useSWR(
+      isShowLabelList[i]
+        ? {
+            baseTable: filterTable?.heading![i].name,
+            ids: filterTable?.rows.map((v) => v[i]),
+          }
+        : null,
+      async () => {
+        return await executeAnnotateQuery({
+          name: filterTable!.heading![i].name,
+          ids: filterTable!.rows.map((v) => v[i]),
+        });
+      },
+    ),
+  );
 
   return (
     <table className="table">
@@ -56,7 +75,7 @@ const ResultModalActionTable = ({
                         <option value="url">URL</option>
                       </select>
 
-                      {!isCompact && annotateConfig?.includes(v.name) && (
+                      {!isCompact && annotateConfig.includes(v.name) && (
                         <>
                           <input
                             id={"showLabels" + i}
@@ -79,7 +98,7 @@ const ResultModalActionTable = ({
                     </fieldset>
                   </th>
                   {!isCompact &&
-                    annotateConfig?.includes(v.name) &&
+                    annotateConfig.includes(v.name) &&
                     isShowLabelList[v.index] && <th></th>}
                 </Fragment>
               );
@@ -136,7 +155,7 @@ const ResultModalActionTable = ({
                         </td>
                         {isShowLabelList[filterTable.heading![j].index] && (
                           <td>
-                            <span>{labelList?.[j]?.[d]}</span>
+                            <span>{resultList[j].data?.[d]}</span>
                           </td>
                         )}
                       </>
