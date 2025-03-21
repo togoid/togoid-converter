@@ -2,8 +2,8 @@ import PaPa from "papaparse";
 import { saveAs } from "file-saver";
 import axios from "axios";
 import { printf } from "fast-printf";
-
 import type { Arrow, HeadStyleAlias } from "react-arrow-master";
+import * as gql from "gql-query-builder";
 
 export const exportCsvTsv = (
   rows: unknown[],
@@ -111,32 +111,46 @@ export const executeCountQuery = async (option: {
 
 //   return Object.values(res.data.data)[0];
 // };
-
+// {
+//   refseq_rna(id: ["NM_001354870","NM_002467","NM_001173531","NM_001285986","NM_002701","NM_203289","NM_003106","NM_001314052","NM_004235"]) {
+//   id
+//   label
+// }
 export const executeAnnotateQuery = async (option: {
   name: string;
   ids: string[];
+  annotations?: DatasetConfig[number]["annotations"];
 }) => {
-  const res = await axios<{
-    data: {
-      id: string;
-      label: string;
-    }[][];
-  }>({
-    url: "https://rdfportal.org/grasp-togoid",
-    method: "POST",
-    data: {
-      query: `query {
-      ${option.name}(id: ${JSON.stringify([...new Set(option.ids)])}) {
-        id
-        label
-      }
-    }`,
+  const fields = ["id", "label"];
+  option.annotations?.forEach((v) => {
+    fields.push(v.variable);
+  });
+  const query = gql.query({
+    operation: option.name,
+    variables: {
+      id: {
+        value: [...new Set(option.ids)],
+        type: "[String!]",
+      },
     },
+    fields: fields,
   });
 
-  return Object.fromEntries(
-    Object.values(res.data.data)[0].map((v) => [v.id, v.label]),
-  );
+  const res = await axios<{
+    data: any[][];
+  }>({
+    url: "http://ep.dbcls.jp/grasp-dev-togoid",
+    method: "POST",
+    data: query,
+  });
+
+  return Object.values(res.data.data)[0].reduce(
+    (prev, curr) => {
+      const { id, ...other } = curr;
+      return { ...prev, [id]: other };
+    },
+    {} as { [key: string]: any },
+  ) as { [key: string]: any };
 };
 
 export const mergePathStyle = (

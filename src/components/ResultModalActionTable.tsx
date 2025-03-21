@@ -1,3 +1,6 @@
+// import useSWRImmutable from "swr/immutable";
+import useSWR from "swr";
+
 type Props = {
   isCompact: boolean;
   lineMode: string[];
@@ -5,7 +8,6 @@ type Props = {
   isShowLabelList: boolean[];
   setIsShowLabelList: Dispatch<SetStateAction<boolean[]>>;
   filterTable: ReturnType<typeof useResultModalPreview>["filterTable"];
-  labelList: ReturnType<typeof useResultModalPreview>["labelList"];
 };
 
 const ResultModalActionTable = ({
@@ -15,9 +17,26 @@ const ResultModalActionTable = ({
   isShowLabelList,
   setIsShowLabelList,
   filterTable,
-  labelList,
 }: Props) => {
   const { annotateConfig } = useAnnotateConfig();
+
+  const resultList = isShowLabelList.map((_, i) => {
+    const index = filterTable?.heading.findIndex((v) => v.index === i)!;
+    const head = filterTable?.heading![index];
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    return useSWR(
+      isShowLabelList[i] && filterTable
+        ? {
+            name: filterTable.heading![index].name,
+            ids: filterTable.rows.map((v) => v[index]),
+            annotations: head?.annotations,
+          }
+        : null,
+      async (key) => {
+        return await executeAnnotateQuery(key);
+      },
+    );
+  });
 
   return (
     <table className="table">
@@ -26,10 +45,13 @@ const ResultModalActionTable = ({
           {filterTable?.rows?.length &&
             filterTable.heading.map((v, i) => {
               return (
-                <Fragment key={i}>
+                <Fragment key={v.index}>
                   <th>
                     <fieldset>
-                      <label htmlFor={String(i)} className="select__label">
+                      <label
+                        htmlFor={String(v.index)}
+                        className="select__label"
+                      >
                         {v.label}
                       </label>
                       <select
@@ -56,7 +78,7 @@ const ResultModalActionTable = ({
                         <option value="url">URL</option>
                       </select>
 
-                      {!isCompact && annotateConfig?.includes(v.name) && (
+                      {!isCompact && annotateConfig.includes(v.name) && (
                         <>
                           <input
                             id={"showLabels" + i}
@@ -79,8 +101,14 @@ const ResultModalActionTable = ({
                     </fieldset>
                   </th>
                   {!isCompact &&
-                    annotateConfig?.includes(v.name) &&
+                    annotateConfig.includes(v.name) &&
                     isShowLabelList[v.index] && <th></th>}
+                  {!isCompact &&
+                    annotateConfig.includes(v.name) &&
+                    isShowLabelList[v.index] &&
+                    v.annotations?.map((v) => (
+                      <th key={v.variable}>{v.label}</th>
+                    ))}
                 </Fragment>
               );
             })}
@@ -136,9 +164,30 @@ const ResultModalActionTable = ({
                         </td>
                         {isShowLabelList[filterTable.heading![j].index] && (
                           <td>
-                            <span>{labelList?.[j]?.[d]}</span>
+                            <span>
+                              {
+                                resultList[filterTable.heading![j].index]
+                                  .data?.[d].label
+                              }
+                            </span>
                           </td>
                         )}
+                        {isShowLabelList[filterTable.heading![j].index] &&
+                          filterTable.heading![j].annotations?.map((v) => (
+                            <td key={v.variable}>
+                              <span>
+                                {Array.isArray(
+                                  resultList[filterTable.heading![j].index]
+                                    .data?.[d][v.variable],
+                                )
+                                  ? resultList[
+                                      filterTable.heading![j].index
+                                    ].data?.[d][v.variable].join(" ")
+                                  : resultList[filterTable.heading![j].index]
+                                      .data?.[d][v.variable]}
+                              </span>
+                            </td>
+                          ))}
                       </>
                     )}
                   </Fragment>

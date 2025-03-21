@@ -1,5 +1,10 @@
 type DatasetConfig = {
   [key: string]: {
+    annotations?: {
+      items?: string[];
+      label: string;
+      variable: string;
+    }[];
     catalog: string;
     category: string;
     description?: string;
