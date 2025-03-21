@@ -20,20 +20,21 @@ const ResultModalActionTable = ({
 }: Props) => {
   const { annotateConfig } = useAnnotateConfig();
 
-  const resultList = isShowLabelList.map((_, i) =>
+  const resultList = isShowLabelList.map((_, i) => {
+    const index = filterTable?.heading.findIndex((v) => v.index === i)!;
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    useSWR(
+    return useSWR(
       isShowLabelList[i] && filterTable
         ? {
-            name: filterTable.heading![i].name,
-            ids: filterTable.rows.map((v) => v[i]),
+            name: filterTable.heading![index].name,
+            ids: filterTable.rows.map((v) => v[index]),
           }
         : null,
       async (key) => {
         return await executeAnnotateQuery(key);
       },
-    ),
-  );
+    );
+  });
 
   return (
     <table className="table">
@@ -42,10 +43,13 @@ const ResultModalActionTable = ({
           {filterTable?.rows?.length &&
             filterTable.heading.map((v, i) => {
               return (
-                <Fragment key={i}>
+                <Fragment key={v.index}>
                   <th>
                     <fieldset>
-                      <label htmlFor={String(i)} className="select__label">
+                      <label
+                        htmlFor={String(v.index)}
+                        className="select__label"
+                      >
                         {v.label}
                       </label>
                       <select
@@ -152,7 +156,12 @@ const ResultModalActionTable = ({
                         </td>
                         {isShowLabelList[filterTable.heading![j].index] && (
                           <td>
-                            <span>{resultList[j].data?.[d]}</span>
+                            <span>
+                              {
+                                resultList[filterTable.heading![j].index]
+                                  .data?.[d]
+                              }
+                            </span>
                           </td>
                         )}
                       </>
