@@ -19,6 +19,7 @@ const eslintConfig = [
     rules: {
       "prettier/prettier": "error",
       "react/jsx-no-undef": "off",
+      "@typescript-eslint/no-explicit-any": "off",
     },
   },
 ];
