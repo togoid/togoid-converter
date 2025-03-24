@@ -20,6 +20,7 @@ const eslintConfig = [
       "prettier/prettier": "error",
       "react/jsx-no-undef": "off",
       "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/ban-ts-comment": "off",
     },
   },
 ];
