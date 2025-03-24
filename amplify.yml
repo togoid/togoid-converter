@@ -3,7 +3,7 @@ frontend:
   phases:
     preBuild:
       commands:
-        - nvm use 22
+        - nvm install 22
         - node -v
         - yarn
     build:
