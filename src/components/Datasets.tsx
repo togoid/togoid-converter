@@ -267,7 +267,11 @@ const Datasets = ({ executeExamples }: Props) => {
                   <dl className="data">
                     <div className="data__wrapper">
                       <dt>PREFIX</dt>
-                      <dd>{datasetConfig[key].prefix}</dd>
+                      <dd>
+                        {datasetConfig[key].prefix.map((p, i) => (
+                          <li key={i}>{p.uri}</li>
+                        ))}
+                      </dd>
                     </div>
                     <div className="data__wrapper">
                       <dt>CATEGORY</dt>
