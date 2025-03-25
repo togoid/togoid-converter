@@ -3,83 +3,101 @@ import useSWR from "swr";
 
 type Props = {
   isCompact: boolean;
-  lineModeList: {
-    key: "id" | "url";
-    value: string;
-  }[];
-  setLineModeList: Dispatch<
+  tableHeadBaseList: ({
+    index: number;
+    name: string;
+    lineMode: {
+      key: "id" | "url";
+      value: string;
+    };
+  } & DatasetConfig[number])[];
+  setTableHeadBaseList: Dispatch<
     SetStateAction<
-      {
-        key: "id" | "url";
-        value: string;
-      }[]
+      ({
+        index: number;
+        name: string;
+        lineMode: {
+          key: "id" | "url";
+          value: string;
+        };
+      } & DatasetConfig[number])[]
     >
   >;
+  tableHeadList: ({
+    index: number;
+    name: string;
+    lineMode: {
+      key: "id" | "url";
+      value: string;
+    };
+  } & DatasetConfig[number])[];
   isShowLabelList: boolean[];
   setIsShowLabelList: Dispatch<SetStateAction<boolean[]>>;
   filterTable: ReturnType<typeof useResultModalPreview>["filterTable"];
+  isLoading: boolean;
 };
 
 const ResultModalActionTable = ({
   isCompact,
-  lineModeList,
-  setLineModeList,
+  tableHeadBaseList,
+  setTableHeadBaseList,
+  tableHeadList,
   isShowLabelList,
   setIsShowLabelList,
   filterTable,
+  isLoading,
 }: Props) => {
   const { annotateConfig } = useAnnotateConfig();
 
-  const resultList = isShowLabelList.map((_, i) => {
-    const index = filterTable?.heading.findIndex((v) => v.index === i)!;
-    const head = filterTable?.heading![index];
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    return useSWR(
-      isShowLabelList[i] && filterTable
-        ? {
-            name: filterTable.heading![index].name,
-            ids: filterTable.rows.map((v) => v[index]),
-            annotations: head?.annotations,
-          }
-        : null,
-      async (key) => {
-        return await executeAnnotateQuery(key);
-      },
-    );
-  });
+  // const resultList = isShowLabelList.map((_, i) => {
+  //   const index = filterTable?.heading.findIndex((v) => v.index === i)!;
+  //   const head = filterTable?.heading![index];
+  //   // eslint-disable-next-line react-hooks/rules-of-hooks
+  //   return useSWR(
+  //     isShowLabelList[i] && filterTable
+  //       ? {
+  //           name: filterTable.heading![index].name,
+  //           ids: filterTable.rows.map((v) => v[index]),
+  //           annotations: head?.annotations,
+  //         }
+  //       : null,
+  //     async (key) => {
+  //       return await executeAnnotateQuery(key);
+  //     },
+  //   );
+  // });
 
   return (
     <table className="table">
       <thead>
         <tr>
           {filterTable?.rows?.length &&
-            filterTable.heading.map((v, i) => {
+            tableHeadList.map((tableHead, i) => {
               return (
-                <Fragment key={v.index}>
+                <Fragment key={tableHead.index}>
                   <th>
                     <fieldset>
                       <label
-                        htmlFor={String(v.index)}
+                        htmlFor={String(tableHead.index)}
                         className="select__label"
                       >
-                        {v.label}
+                        {tableHead.label}
                       </label>
                       <select
-                        id={String(v.index)}
+                        id={String(tableHead.index)}
                         className="select white"
-                        value={JSON.stringify(lineModeList[v.index])}
+                        value={JSON.stringify(tableHead.lineMode)}
                         onChange={(e) =>
-                          setLineModeList(
-                            lineModeList.toSpliced(
-                              v.index,
-                              1,
-                              JSON.parse(e.target.value),
-                            ),
+                          setTableHeadBaseList(
+                            tableHeadBaseList.toSpliced(tableHead.index, 1, {
+                              ...tableHeadBaseList[tableHead.index],
+                              lineMode: JSON.parse(e.target.value),
+                            }),
                           )
                         }
                       >
-                        {v.format ? (
-                          v.format.map((w: string) => (
+                        {tableHead.format ? (
+                          tableHead.format.map((w: string) => (
                             <option
                               key={w}
                               value={JSON.stringify({ key: "id", value: w })}
@@ -96,8 +114,8 @@ const ResultModalActionTable = ({
                             ID
                           </option>
                         )}
-                        {v.prefix.length > 1 ? (
-                          v.prefix.map((w) => (
+                        {tableHead.prefix?.length > 1 ? (
+                          tableHead.prefix.map((w) => (
                             <option
                               key={w.uri}
                               value={JSON.stringify({
@@ -112,7 +130,7 @@ const ResultModalActionTable = ({
                           <option
                             value={JSON.stringify({
                               key: "url",
-                              value: v.prefix[0].uri,
+                              value: tableHead.prefix?.[0].uri,
                             })}
                           >
                             URL
@@ -120,35 +138,38 @@ const ResultModalActionTable = ({
                         )}
                       </select>
 
-                      {!isCompact && annotateConfig.includes(v.name) && (
-                        <>
-                          <input
-                            id={"showLabels" + i}
-                            type="checkbox"
-                            className="c-switch"
-                            checked={isShowLabelList[v.index]}
-                            onChange={(e) =>
-                              setIsShowLabelList(
-                                isShowLabelList.toSpliced(
-                                  v.index,
-                                  1,
-                                  e.target.checked,
-                                ),
-                              )
-                            }
-                          />
-                          <label htmlFor={"showLabels" + i}>Show Labels</label>
-                        </>
-                      )}
+                      {!isCompact &&
+                        annotateConfig.includes(tableHead.name) && (
+                          <>
+                            <input
+                              id={"showLabels" + i}
+                              type="checkbox"
+                              className="c-switch"
+                              checked={isShowLabelList[tableHead.index]}
+                              onChange={(e) =>
+                                setIsShowLabelList(
+                                  isShowLabelList.toSpliced(
+                                    tableHead.index,
+                                    1,
+                                    e.target.checked,
+                                  ),
+                                )
+                              }
+                            />
+                            <label htmlFor={"showLabels" + i}>
+                              Show Labels
+                            </label>
+                          </>
+                        )}
                     </fieldset>
                   </th>
                   {!isCompact &&
-                    annotateConfig.includes(v.name) &&
-                    isShowLabelList[v.index] && <th></th>}
+                    annotateConfig.includes(tableHead.name) &&
+                    isShowLabelList[tableHead.index] && <th></th>}
                   {!isCompact &&
-                    annotateConfig.includes(v.name) &&
-                    isShowLabelList[v.index] &&
-                    v.annotations?.map((v) => (
+                    annotateConfig.includes(tableHead.name) &&
+                    isShowLabelList[tableHead.index] &&
+                    tableHead.annotations?.map((v) => (
                       <th key={v.variable}>{v.label}</th>
                     ))}
                 </Fragment>
@@ -157,7 +178,7 @@ const ResultModalActionTable = ({
         </tr>
       </thead>
       <tbody>
-        {filterTable?.heading?.length && filterTable?.rows?.length
+        {!isLoading && filterTable?.rows?.length
           ? filterTable.rows.map((data, i) => (
               <tr key={i}>
                 {data.map((d, j) => (
@@ -169,22 +190,17 @@ const ResultModalActionTable = ({
                             <a
                               href={joinPrefix(
                                 f,
-                                lineModeList[filterTable.heading![j].index]
-                                  .key === "url"
-                                  ? lineModeList[filterTable.heading![j].index]
+                                tableHeadList[j].lineMode.key === "url"
+                                  ? tableHeadList[j].lineMode
                                   : {
                                       key: "url",
-                                      value:
-                                        filterTable.heading![j].prefix[0].uri,
+                                      value: tableHeadList[j].prefix[0].uri,
                                     },
                               )}
                               target="_blank"
                               rel="noreferrer"
                             >
-                              {joinPrefix(
-                                f,
-                                lineModeList[filterTable.heading![j].index],
-                              )}
+                              {joinPrefix(f, tableHeadList[j].lineMode)}
                             </a>
                             <br />
                           </Fragment>
@@ -196,25 +212,20 @@ const ResultModalActionTable = ({
                           <a
                             href={joinPrefix(
                               d,
-                              lineModeList[filterTable.heading![j].index]
-                                .key === "url"
-                                ? lineModeList[filterTable.heading![j].index]
+                              tableHeadList[j].lineMode.key === "url"
+                                ? tableHeadList[j].lineMode
                                 : {
                                     key: "url",
-                                    value:
-                                      filterTable.heading![j].prefix[0].uri,
+                                    value: tableHeadList[j].prefix[0].uri,
                                   },
                             )}
                             target="_blank"
                             rel="noreferrer"
                           >
-                            {joinPrefix(
-                              d,
-                              lineModeList[filterTable.heading![j].index],
-                            )}
+                            {joinPrefix(d, tableHeadList[j].lineMode)}
                           </a>
                         </td>
-                        {isShowLabelList[filterTable.heading![j].index] && (
+                        {/* {isShowLabelList[filterTable.heading![j].index] && (
                           <td>
                             <span>
                               {
@@ -239,19 +250,16 @@ const ResultModalActionTable = ({
                                       .data?.[d][v.variable]}
                               </span>
                             </td>
-                          ))}
+                          ))} */}
                       </>
                     )}
                   </Fragment>
                 ))}
               </tr>
             ))
-          : filterTable?.heading && (
+          : !isLoading && (
               <tr>
-                <td
-                  colSpan={filterTable?.heading.length}
-                  className="no_results"
-                >
+                <td colSpan={tableHeadList.length} className="no_results">
                   No Results
                 </td>
               </tr>

@@ -20,36 +20,48 @@ const ResultModalAction = (props: Props) => {
   const { datasetConfig } = useConfig();
   const { annotateConfig } = useAnnotateConfig();
 
-  const tableHead = useMemo(
-    () =>
-      props.route.map((v, i) => ({
-        ...datasetConfig[v.name],
-        index: i,
-        name: v.name,
-      })),
-    [],
-  );
-
   const [previewMode, setPreviewMode] = useState("all");
   const [isCompact, setIsCompact] = useState(false);
-  const [lineModeList, setLineModeList] = useState<
-    {
-      key: "id" | "url";
-      value: string;
-    }[]
+
+  const [tableHeadBaseList, setTableHeadBaseList] = useState<
+    ({
+      index: number;
+      name: string;
+      lineMode: {
+        key: "id" | "url";
+        value: string;
+      };
+    } & DatasetConfig[number])[]
   >(
-    tableHead.map((v) => ({
-      key: "id",
-      value: v.format?.[0] ?? "",
+    props.route.map((v, i) => ({
+      ...datasetConfig[v.name],
+      index: i,
+      name: v.name,
+      lineMode: {
+        key: "id",
+        value: datasetConfig[v.name].format?.[0] ?? "",
+      },
     })),
   );
+
+  const tableHeadList = useMemo(() => {
+    if (previewMode === "pair") {
+      return [
+        tableHeadBaseList[0],
+        tableHeadBaseList[tableHeadBaseList.length - 1],
+      ];
+    } else if (previewMode === "target") {
+      return [tableHeadBaseList[tableHeadBaseList.length - 1]];
+    }
+
+    return tableHeadBaseList;
+  }, [previewMode, tableHeadBaseList]);
+
   const [isShowLabelList, setIsShowLabelList] = useState<boolean[]>(
     Array(props.route.length).fill(false),
   );
 
   const createExportTable = async (tableRows: string[][]) => {
-    const headList = getHeadList(tableHead, previewMode);
-
     if (!isCompact && isShowLabelList.some((v) => v)) {
       // All converted IDs
       // origin and targets
@@ -60,7 +72,7 @@ const ResultModalAction = (props: Props) => {
       );
 
       const labelList = await Promise.all(
-        headList.map(async (head, i) => {
+        tableHeadList.map(async (head, i) => {
           if (
             annotateConfig?.includes(head.name) &&
             isShowLabelList[head.index]
@@ -75,7 +87,7 @@ const ResultModalAction = (props: Props) => {
       );
 
       return {
-        heading: headList.reduce<string[]>((prev, curr) => {
+        heading: tableHeadList.reduce<string[]>((prev, curr) => {
           if (isShowLabelList[curr.index]) {
             prev.push(curr.label, "");
             curr.annotations?.forEach((v) => {
@@ -88,8 +100,8 @@ const ResultModalAction = (props: Props) => {
           return prev;
         }, []),
         rows: tableRows.map((v) =>
-          headList.reduce<(string | undefined)[]>((prev, curr, j) => {
-            const idWithPrefix = joinPrefix(v[j], lineModeList[curr.index]);
+          tableHeadList.reduce<(string | undefined)[]>((prev, curr, j) => {
+            const idWithPrefix = joinPrefix(v[j], curr.lineMode);
 
             if (isShowLabelList[curr.index]) {
               prev.push(idWithPrefix, labelList[j]?.[v[j]].label);
@@ -114,10 +126,10 @@ const ResultModalAction = (props: Props) => {
       // Target IDs
       // All including unconverted IDs
       return {
-        heading: headList.map((v) => v.label),
+        heading: tableHeadList.map((v) => v.label),
         rows: tableRows.map((v) =>
-          headList.map((head, i) =>
-            joinPrefix(v[i], lineModeList[head.index], isCompact),
+          tableHeadList.map((tableHead, i) =>
+            joinPrefix(v[i], tableHead.lineMode, isCompact),
           ),
         ),
       };
@@ -191,12 +203,11 @@ const ResultModalAction = (props: Props) => {
     );
   };
 
-  const { filterTable, getHeadList } = useResultModalPreview(
+  const { filterTable, isLoading } = useResultModalPreview(
     previewMode,
     isCompact,
     props.route,
     props.ids,
-    tableHead,
   );
 
   return (
@@ -331,11 +342,13 @@ const ResultModalAction = (props: Props) => {
 
       <ResultModalActionTable
         isCompact={isCompact}
-        lineModeList={lineModeList}
-        setLineModeList={setLineModeList}
+        tableHeadBaseList={tableHeadBaseList}
+        setTableHeadBaseList={setTableHeadBaseList}
+        tableHeadList={tableHeadList}
         isShowLabelList={isShowLabelList}
         setIsShowLabelList={setIsShowLabelList}
         filterTable={filterTable}
+        isLoading={isLoading}
       />
     </>
   );
