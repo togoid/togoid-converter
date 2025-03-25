@@ -25,7 +25,9 @@ const Documents = () => {
       <main className="main">
         <div className="documents">
           <LanguageButton language={language} setLanguage={setLanguage} />
-          <ReactMarkdown className="markdown-body">{docs}</ReactMarkdown>
+          <div className="markdown-body">
+            <ReactMarkdown>{docs}</ReactMarkdown>
+          </div>
         </div>
       </main>
     </div>

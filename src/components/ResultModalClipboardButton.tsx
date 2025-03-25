@@ -1,6 +1,6 @@
 const ResultModalClipboardButton = (props: {
   children: string;
-  copyFunction: Function;
+  copyFunction: () => void;
 }) => {
   const [isShowCopied, setIsShowCopied] = useState(false);
 
