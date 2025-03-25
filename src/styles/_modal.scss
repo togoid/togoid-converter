@@ -169,30 +169,58 @@
 
     &__frame {
       width: 100%;
-      padding: 18px 0 19px 19px;
+      padding: 20px 20px 20px 40px;
       overflow: auto;
       background: g.$col-FAFAFA;
 
       &__inner {
         display: flex;
-        flex-wrap: nowrap;
+        gap: 10px 40px;
+        flex-wrap: wrap;
         align-items: center;
 
         .path_label {
-          & + .path_label {
-            position: relative;
-            margin: 0 0 0 40px;
+          position: relative;
 
+          &::before,
+          &::after {
+            position: absolute;
+            top: 50%;
+            content: none;
+            display: inline-block;
+            width: 40px;
+            height: 1px;
+            background-color: g.$col-249EB3;;
+          }
+
+          &:first-of-type {
+            margin: 0 0 0 -20px;
+          }
+
+          &:last-of-type {
+            .path_label__arrow {
+              display: none;
+            }
+          }
+
+          &:not(:first-of-type) {
             &::before {
-              position: absolute;
-              top: 50%;
               left: -40px;
               content: '';
-              display: inline-block;
-              width: 40px;
-              height: 1px;
-              background: g.$col-249EB3;
             }
+          }
+
+          &:not(:last-of-type) {
+            &::after {
+              right: -40px;
+              content: '';
+            }
+          }
+
+          &__arrow {
+            position: absolute;
+            right: -40px;
+            width: 14px;
           }
         }
       }
@@ -202,20 +230,47 @@
         flex-wrap: nowrap;
         align-items: center;
 
-        & + .modal__path__frame__item {
+        &:has( + .modal__path__frame__item) {
           position: relative;
-          margin: 0 0 0 40px;
+          background: {
+            image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 40 20"><path fill="%23249eb3" d="d="M10,0,20,40H0Z" transform="translate(40) rotate(90)" /></svg>');
+            repeat: no-repeat;
+            position: right center;
+            size: 20px;
+          }
 
-          &::before {
+          &::after {
             position: absolute;
             top: 50%;
-            left: -40px;
+            right: 0;
             content: '';
             display: inline-block;
             width: 40px;
             height: 1px;
             background: g.$col-249EB3;
           }
+        }
+
+        &:first-of-type {
+          &::after {
+            right: -40px;
+          }
+        }
+
+        & + .modal__path__frame__item {
+          position: relative;
+          margin: 0 40px;
+
+          //&::before {
+          //  position: absolute;
+          //  top: 50%;
+          //  left: -40px;
+          //  content: '';
+          //  display: inline-block;
+          //  width: 40px;
+          //  height: 1px;
+          //  background: g.$col-249EB3;
+          //}
         }
       }
     }
