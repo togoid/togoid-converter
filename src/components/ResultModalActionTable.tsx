@@ -3,8 +3,18 @@ import useSWR from "swr";
 
 type Props = {
   isCompact: boolean;
-  lineMode: string[];
-  setLineMode: Dispatch<SetStateAction<string[]>>;
+  lineModeList: {
+    key: "id" | "url";
+    value: string;
+  }[];
+  setLineModeList: Dispatch<
+    SetStateAction<
+      {
+        key: "id" | "url";
+        value: string;
+      }[]
+    >
+  >;
   isShowLabelList: boolean[];
   setIsShowLabelList: Dispatch<SetStateAction<boolean[]>>;
   filterTable: ReturnType<typeof useResultModalPreview>["filterTable"];
@@ -12,8 +22,8 @@ type Props = {
 
 const ResultModalActionTable = ({
   isCompact,
-  lineMode,
-  setLineMode,
+  lineModeList,
+  setLineModeList,
   isShowLabelList,
   setIsShowLabelList,
   filterTable,
@@ -57,25 +67,57 @@ const ResultModalActionTable = ({
                       <select
                         id={String(v.index)}
                         className="select white"
-                        value={lineMode[v.index]}
+                        value={JSON.stringify(lineModeList[v.index])}
                         onChange={(e) =>
-                          setLineMode(
-                            lineMode.toSpliced(v.index, 1, e.target.value),
+                          setLineModeList(
+                            lineModeList.toSpliced(
+                              v.index,
+                              1,
+                              JSON.parse(e.target.value),
+                            ),
                           )
                         }
                       >
                         {v.format ? (
                           v.format.map((w: string) => (
-                            <option key={w} value={w}>
+                            <option
+                              key={w}
+                              value={JSON.stringify({ key: "id", value: w })}
+                            >
                               {w === "%s"
                                 ? "ID"
                                 : `ID (${w.replace("%s", "")})`}
                             </option>
                           ))
                         ) : (
-                          <option value="id">ID</option>
+                          <option
+                            value={JSON.stringify({ key: "id", value: "" })}
+                          >
+                            ID
+                          </option>
                         )}
-                        <option value="url">URL</option>
+                        {v.prefix.length > 1 ? (
+                          v.prefix.map((w) => (
+                            <option
+                              key={w.uri}
+                              value={JSON.stringify({
+                                key: "url",
+                                value: w.uri,
+                              })}
+                            >
+                              {`URL (${w.uri})`}
+                            </option>
+                          ))
+                        ) : (
+                          <option
+                            value={JSON.stringify({
+                              key: "url",
+                              value: v.prefix[0].uri,
+                            })}
+                          >
+                            URL
+                          </option>
+                        )}
                       </select>
 
                       {!isCompact && annotateConfig.includes(v.name) && (
@@ -127,16 +169,21 @@ const ResultModalActionTable = ({
                             <a
                               href={joinPrefix(
                                 f,
-                                "url",
-                                filterTable.heading![j].prefix,
+                                lineModeList[filterTable.heading![j].index]
+                                  .key === "url"
+                                  ? lineModeList[filterTable.heading![j].index]
+                                  : {
+                                      key: "url",
+                                      value:
+                                        filterTable.heading![j].prefix[0].uri,
+                                    },
                               )}
                               target="_blank"
                               rel="noreferrer"
                             >
                               {joinPrefix(
                                 f,
-                                lineMode[filterTable.heading![j].index],
-                                filterTable.heading![j].prefix,
+                                lineModeList[filterTable.heading![j].index],
                               )}
                             </a>
                             <br />
@@ -149,16 +196,21 @@ const ResultModalActionTable = ({
                           <a
                             href={joinPrefix(
                               d,
-                              "url",
-                              filterTable.heading![j].prefix,
+                              lineModeList[filterTable.heading![j].index]
+                                .key === "url"
+                                ? lineModeList[filterTable.heading![j].index]
+                                : {
+                                    key: "url",
+                                    value:
+                                      filterTable.heading![j].prefix[0].uri,
+                                  },
                             )}
                             target="_blank"
                             rel="noreferrer"
                           >
                             {joinPrefix(
                               d,
-                              lineMode[filterTable.heading![j].index],
-                              filterTable.heading![j].prefix,
+                              lineModeList[filterTable.heading![j].index],
                             )}
                           </a>
                         </td>

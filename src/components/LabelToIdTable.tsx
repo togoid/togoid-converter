@@ -327,10 +327,15 @@ const LabelToIdTable = ({
                       <td>
                         {v.identifier && (
                           <a
-                            href={joinPrefix(v.identifier, {
-                              key: "url",
-                              value: dataset.value.prefix[0].uri,
-                            })}
+                            href={joinPrefix(
+                              v.identifier,
+                              lineMode.value.key === "url"
+                                ? lineMode.value
+                                : {
+                                    key: "url",
+                                    value: dataset.value.prefix[0].uri,
+                                  },
+                            )}
                             target="_blank"
                             rel="noreferrer"
                           >

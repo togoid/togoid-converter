@@ -32,8 +32,16 @@ const ResultModalAction = (props: Props) => {
 
   const [previewMode, setPreviewMode] = useState("all");
   const [isCompact, setIsCompact] = useState(false);
-  const [lineMode, setLineMode] = useState<string[]>(
-    tableHead.map((v) => (v.format ? v.format[0] : "id")),
+  const [lineModeList, setLineModeList] = useState<
+    {
+      key: "id" | "url";
+      value: string;
+    }[]
+  >(
+    tableHead.map((v) => ({
+      key: "id",
+      value: v.format?.[0] ?? "",
+    })),
   );
   const [isShowLabelList, setIsShowLabelList] = useState<boolean[]>(
     Array(props.route.length).fill(false),
@@ -81,11 +89,7 @@ const ResultModalAction = (props: Props) => {
         }, []),
         rows: tableRows.map((v) =>
           headList.reduce<(string | undefined)[]>((prev, curr, j) => {
-            const idWithPrefix = joinPrefix(
-              v[j],
-              lineMode[curr.index],
-              tableHead[curr.index].prefix,
-            );
+            const idWithPrefix = joinPrefix(v[j], lineModeList[curr.index]);
 
             if (isShowLabelList[curr.index]) {
               prev.push(idWithPrefix, labelList[j]?.[v[j]].label);
@@ -113,12 +117,7 @@ const ResultModalAction = (props: Props) => {
         heading: headList.map((v) => v.label),
         rows: tableRows.map((v) =>
           headList.map((head, i) =>
-            joinPrefix(
-              v[i],
-              lineMode[head.index],
-              tableHead[head.index].prefix,
-              isCompact,
-            ),
+            joinPrefix(v[i], lineModeList[head.index], isCompact),
           ),
         ),
       };
@@ -332,8 +331,8 @@ const ResultModalAction = (props: Props) => {
 
       <ResultModalActionTable
         isCompact={isCompact}
-        lineMode={lineMode}
-        setLineMode={setLineMode}
+        lineModeList={lineModeList}
+        setLineModeList={setLineModeList}
         isShowLabelList={isShowLabelList}
         setIsShowLabelList={setIsShowLabelList}
         filterTable={filterTable}
