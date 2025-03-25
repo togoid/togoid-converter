@@ -51,17 +51,17 @@ export const getConvertUrlSearchParams = (baseParams: {
   return params;
 };
 
-export const executeQuery = async (baseParams: {
+export const executeQuery = async <T extends string>(baseParams: {
   route: Route[];
   ids: string[];
-  report: string;
+  report: T;
   limit?: number;
   compact?: boolean;
 }) => {
   return await axios
     .post<{
       ids: string[];
-      results: string[][];
+      results: T extends "target" ? string[] : string[][];
       route: string[];
     }>(
       `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert`,
