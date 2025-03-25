@@ -24,9 +24,13 @@ const LabelToIdTable = ({
 }: Props) => {
   useSignals();
 
-  const lineMode = useSignal(
-    dataset.value.format ? dataset.value.format[0] : "id",
-  );
+  const lineMode = useSignal<{
+    key: "id" | "url";
+    value: string;
+  }>({
+    key: "id",
+    value: dataset.value.format?.[0] ?? "",
+  });
 
   const { data: tableData, isLoading } = useSWRImmutable(
     pubdictionariesParam.value,
@@ -121,7 +125,15 @@ const LabelToIdTable = ({
     const idList = tableDataMod.value
       .filter((v) => v.identifier)
       .map((v) =>
-        joinPrefix(v.identifier, lineMode.value, dataset.value.prefix),
+        joinPrefix(
+          v.identifier,
+          lineMode.value.key === "id"
+            ? lineMode.value
+            : {
+                key: "id",
+                value: dataset.value.format?.[0] ?? "",
+              },
+        ),
       );
 
     executeExamples(idList, dataset.value.key);
@@ -142,9 +154,7 @@ const LabelToIdTable = ({
 
   const createExportTable = () => {
     return tableDataMod.value.map((v) => {
-      const id = v.identifier
-        ? joinPrefix(v.identifier, lineMode.value, dataset.value.prefix)
-        : "";
+      const id = v.identifier ? joinPrefix(v.identifier, lineMode.value) : "";
 
       if (dataset.value?.label_resolver?.taxonomy) {
         return {
@@ -250,21 +260,51 @@ const LabelToIdTable = ({
                         <select
                           id="idSelect"
                           className="select white"
-                          value={lineMode.value}
-                          onChange={(e) => (lineMode.value = e.target.value)}
+                          value={JSON.stringify(lineMode.value)}
+                          onChange={(e) =>
+                            (lineMode.value = JSON.parse(e.target.value))
+                          }
                         >
                           {dataset.value.format ? (
                             dataset.value.format.map((w: string) => (
-                              <option key={w} value={w}>
+                              <option
+                                key={w}
+                                value={JSON.stringify({ key: "id", value: w })}
+                              >
                                 {w === "%s"
                                   ? "ID"
                                   : `ID (${w.replace("%s", "")})`}
                               </option>
                             ))
                           ) : (
-                            <option value="id">ID</option>
+                            <option
+                              value={JSON.stringify({ key: "id", value: "" })}
+                            >
+                              ID
+                            </option>
                           )}
-                          <option value="url">URL</option>
+                          {dataset.value.prefix.length > 1 ? (
+                            dataset.value.prefix.map((w) => (
+                              <option
+                                key={w.uri}
+                                value={JSON.stringify({
+                                  key: "url",
+                                  value: w.uri,
+                                })}
+                              >
+                                {`URL (${w.uri})`}
+                              </option>
+                            ))
+                          ) : (
+                            <option
+                              value={JSON.stringify({
+                                key: "url",
+                                value: dataset.value.prefix[0].uri,
+                              })}
+                            >
+                              URL
+                            </option>
+                          )}
                         </select>
                       </div>
                     </th>
@@ -289,17 +329,17 @@ const LabelToIdTable = ({
                           <a
                             href={joinPrefix(
                               v.identifier,
-                              "url",
-                              dataset.value.prefix,
+                              lineMode.value.key === "url"
+                                ? lineMode.value
+                                : {
+                                    key: "url",
+                                    value: dataset.value.prefix[0].uri,
+                                  },
                             )}
                             target="_blank"
                             rel="noreferrer"
                           >
-                            {joinPrefix(
-                              v.identifier,
-                              lineMode.value,
-                              dataset.value.prefix,
-                            )}
+                            {joinPrefix(v.identifier, lineMode.value)}
                           </a>
                         )}
                       </td>

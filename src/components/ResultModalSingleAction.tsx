@@ -19,8 +19,16 @@ const ResultModalSingleAction = (props: Props) => {
     [],
   );
 
-  const [lineMode, setLineMode] = useState<string[]>(
-    tableHead.map((v) => (v.format ? v.format[0] : "id")),
+  const [lineModeList, setLineModeList] = useState<
+    {
+      key: "id" | "url";
+      value: string;
+    }[]
+  >(
+    tableHead.map((v) => ({
+      key: "id",
+      value: v.format?.[0] ?? "",
+    })),
   );
   const [isShowLabelList, setIsShowLabelList] = useState<boolean[]>(
     Array(props.route.length).fill(false),
@@ -36,14 +44,14 @@ const ResultModalSingleAction = (props: Props) => {
       });
 
       const row = idList.map((v) => {
-        return [joinPrefix(v, lineMode[0], tableHead[0].prefix), result[v]];
+        return [joinPrefix(v, lineModeList[0]), result[v]];
       });
 
       return { head: head, row: row };
     } else {
       const head = tableHead.map((v) => v.label);
       const row = idList.map((v) => {
-        return [joinPrefix(v, lineMode[0], tableHead[0].prefix)];
+        return [joinPrefix(v, lineModeList[0])];
       });
 
       return { head: head, row: row };
@@ -137,8 +145,8 @@ const ResultModalSingleAction = (props: Props) => {
 
       <ResultModalActionTable
         isCompact={false}
-        lineMode={lineMode}
-        setLineMode={setLineMode}
+        lineModeList={lineModeList}
+        setLineModeList={setLineModeList}
         isShowLabelList={isShowLabelList}
         setIsShowLabelList={setIsShowLabelList}
         filterTable={filterTable}
