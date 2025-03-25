@@ -10,6 +10,11 @@ type Props = {
       key: "id" | "url";
       value: string;
     };
+    annotateList: {
+      checked: boolean;
+      label: string;
+      variable: string;
+    }[];
   } & DatasetConfig[number])[];
   setTableHeadBaseList: Dispatch<
     SetStateAction<
@@ -20,6 +25,11 @@ type Props = {
           key: "id" | "url";
           value: string;
         };
+        annotateList: {
+          checked: boolean;
+          label: string;
+          variable: string;
+        }[];
       } & DatasetConfig[number])[]
     >
   >;
@@ -30,9 +40,12 @@ type Props = {
       key: "id" | "url";
       value: string;
     };
+    annotateList: {
+      checked: boolean;
+      label: string;
+      variable: string;
+    }[];
   } & DatasetConfig[number])[];
-  isShowLabelList: boolean[];
-  setIsShowLabelList: Dispatch<SetStateAction<boolean[]>>;
   filterTable: ReturnType<typeof useResultModalPreview>["filterTable"];
   isLoading: boolean;
 };
@@ -42,30 +55,28 @@ const ResultModalActionTable = ({
   tableHeadBaseList,
   setTableHeadBaseList,
   tableHeadList,
-  isShowLabelList,
-  setIsShowLabelList,
   filterTable,
   isLoading,
 }: Props) => {
-  const { annotateConfig } = useAnnotateConfig();
-
-  // const resultList = isShowLabelList.map((_, i) => {
-  //   const index = filterTable?.heading.findIndex((v) => v.index === i)!;
-  //   const head = filterTable?.heading![index];
-  //   // eslint-disable-next-line react-hooks/rules-of-hooks
-  //   return useSWR(
-  //     isShowLabelList[i] && filterTable
-  //       ? {
-  //           name: filterTable.heading![index].name,
-  //           ids: filterTable.rows.map((v) => v[index]),
-  //           annotations: head?.annotations,
-  //         }
-  //       : null,
-  //     async (key) => {
-  //       return await executeAnnotateQuery(key);
-  //     },
-  //   );
-  // });
+  const resultList = tableHeadBaseList.map((tableHeadBase, i) => {
+    const index = tableHeadList.findIndex((v) => v.index === i)!;
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    return useSWR(
+      index !== -1 &&
+        tableHeadBase.annotateList.some((annotate) => annotate.checked)
+        ? {
+            name: tableHeadBase.name,
+            ids: filterTable!.rows.map((v) => v[index]),
+            annotations: tableHeadBase.annotateList.map(
+              (annotate) => annotate.variable,
+            ),
+          }
+        : null,
+      async (key) => {
+        return await executeAnnotateQuery(key);
+      },
+    );
+  });
 
   return (
     <table className="table">
@@ -139,39 +150,44 @@ const ResultModalActionTable = ({
                       </select>
 
                       {!isCompact &&
-                        annotateConfig.includes(tableHead.name) && (
-                          <>
+                        tableHead.annotateList.map((annotate, j) => (
+                          <Fragment key={j}>
                             <input
-                              id={"showLabels" + i}
+                              id={annotate.label + "-" + i}
                               type="checkbox"
-                              className="c-switch"
-                              checked={isShowLabelList[tableHead.index]}
+                              checked={annotate.checked}
                               onChange={(e) =>
-                                setIsShowLabelList(
-                                  isShowLabelList.toSpliced(
+                                setTableHeadBaseList(
+                                  tableHeadBaseList.toSpliced(
                                     tableHead.index,
                                     1,
-                                    e.target.checked,
+                                    {
+                                      ...tableHeadBaseList[tableHead.index],
+                                      annotateList: tableHeadBaseList[
+                                        tableHead.index
+                                      ].annotateList.toSpliced(j, 1, {
+                                        ...tableHeadBaseList[tableHead.index]
+                                          .annotateList[j],
+                                        checked: e.target.checked,
+                                      }),
+                                    },
                                   ),
                                 )
                               }
                             />
-                            <label htmlFor={"showLabels" + i}>
-                              Show Labels
+                            <label htmlFor={annotate.label + "-" + i}>
+                              {annotate.label}
                             </label>
-                          </>
-                        )}
+                          </Fragment>
+                        ))}
                     </fieldset>
                   </th>
                   {!isCompact &&
-                    annotateConfig.includes(tableHead.name) &&
-                    isShowLabelList[tableHead.index] && <th></th>}
-                  {!isCompact &&
-                    annotateConfig.includes(tableHead.name) &&
-                    isShowLabelList[tableHead.index] &&
-                    tableHead.annotations?.map((v) => (
-                      <th key={v.variable}>{v.label}</th>
-                    ))}
+                    tableHead.annotateList
+                      .filter((annotate) => annotate.checked)
+                      .map((annotate) => (
+                        <th key={annotate.variable}>{annotate.label}</th>
+                      ))}
                 </Fragment>
               );
             })}
@@ -225,32 +241,19 @@ const ResultModalActionTable = ({
                             {joinPrefix(d, tableHeadList[j].lineMode)}
                           </a>
                         </td>
-                        {/* {isShowLabelList[filterTable.heading![j].index] && (
-                          <td>
-                            <span>
-                              {
-                                resultList[filterTable.heading![j].index]
-                                  .data?.[d].label
-                              }
-                            </span>
-                          </td>
-                        )}
-                        {isShowLabelList[filterTable.heading![j].index] &&
-                          filterTable.heading![j].annotations?.map((v) => (
-                            <td key={v.variable}>
+                        {tableHeadList[j].annotateList
+                          .filter((annotate) => annotate.checked)
+                          .map((annotate) => (
+                            <td key={`${i}-${j}-${annotate.variable}`}>
                               <span>
-                                {Array.isArray(
-                                  resultList[filterTable.heading![j].index]
-                                    .data?.[d][v.variable],
-                                )
-                                  ? resultList[
-                                      filterTable.heading![j].index
-                                    ].data?.[d][v.variable].join(" ")
-                                  : resultList[filterTable.heading![j].index]
-                                      .data?.[d][v.variable]}
+                                {
+                                  resultList[tableHeadList[j].index].data?.[d][
+                                    annotate.variable
+                                  ]
+                                }
                               </span>
                             </td>
-                          ))} */}
+                          ))}
                       </>
                     )}
                   </Fragment>

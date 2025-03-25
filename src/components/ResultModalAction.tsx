@@ -31,17 +31,49 @@ const ResultModalAction = (props: Props) => {
         key: "id" | "url";
         value: string;
       };
+      annotateList: {
+        checked: boolean;
+        label: string;
+        variable: string;
+      }[];
     } & DatasetConfig[number])[]
   >(
-    props.route.map((v, i) => ({
-      ...datasetConfig[v.name],
-      index: i,
-      name: v.name,
-      lineMode: {
-        key: "id",
-        value: datasetConfig[v.name].format?.[0] ?? "",
-      },
-    })),
+    props.route.map((v, i) => {
+      const dataset = datasetConfig[v.name];
+
+      const annotateList: {
+        checked: boolean;
+        label: string;
+        variable: string;
+      }[] = [];
+      if (annotateConfig.includes(v.name)) {
+        annotateList.push({
+          checked: false,
+          label: "Label",
+          variable: "label",
+        });
+      }
+      if (dataset.annotations?.length) {
+        dataset.annotations.forEach((annotation) => {
+          annotateList.push({
+            checked: false,
+            label: annotation.label,
+            variable: annotation.variable,
+          });
+        });
+      }
+
+      return {
+        ...dataset,
+        index: i,
+        name: v.name,
+        lineMode: {
+          key: "id",
+          value: dataset.format?.[0] ?? "",
+        },
+        annotateList: annotateList,
+      };
+    }),
   );
 
   const tableHeadList = useMemo(() => {
@@ -57,12 +89,13 @@ const ResultModalAction = (props: Props) => {
     return tableHeadBaseList;
   }, [previewMode, tableHeadBaseList]);
 
-  const [isShowLabelList, setIsShowLabelList] = useState<boolean[]>(
-    Array(props.route.length).fill(false),
-  );
-
   const createExportTable = async (tableRows: string[][]) => {
-    if (!isCompact && isShowLabelList.some((v) => v)) {
+    if (
+      !isCompact &&
+      tableHeadList.some((tablehead) =>
+        tablehead.annotateList.some((annotate) => annotate.checked),
+      )
+    ) {
       // All converted IDs
       // origin and targets
       // Target IDs
@@ -72,15 +105,14 @@ const ResultModalAction = (props: Props) => {
       );
 
       const labelList = await Promise.all(
-        tableHeadList.map(async (head, i) => {
-          if (
-            annotateConfig?.includes(head.name) &&
-            isShowLabelList[head.index]
-          ) {
+        tableHeadList.map(async (tablehead, i) => {
+          if (tablehead.annotateList.some((annotate) => annotate.checked)) {
             return await executeAnnotateQuery({
-              name: head.name,
+              name: tablehead.name,
               ids: transposeList[i],
-              annotations: head?.annotations,
+              annotations: tablehead.annotateList
+                .filter((annotate) => annotate.checked)
+                .map((annotate) => annotate.variable),
             });
           }
         }),
@@ -88,33 +120,25 @@ const ResultModalAction = (props: Props) => {
 
       return {
         heading: tableHeadList.reduce<string[]>((prev, curr) => {
-          if (isShowLabelList[curr.index]) {
-            prev.push(curr.label, "");
-            curr.annotations?.forEach((v) => {
-              prev.push(v.label);
-            });
-          } else {
-            prev.push(curr.label);
-          }
+          prev.push(curr.label);
+          curr.annotateList.forEach((annotate) => {
+            if (annotate.checked) {
+              prev.push(annotate.label);
+            }
+          });
 
           return prev;
         }, []),
         rows: tableRows.map((v) =>
           tableHeadList.reduce<(string | undefined)[]>((prev, curr, j) => {
             const idWithPrefix = joinPrefix(v[j], curr.lineMode);
-
-            if (isShowLabelList[curr.index]) {
-              prev.push(idWithPrefix, labelList[j]?.[v[j]].label);
-              curr.annotations?.forEach((w) => {
-                prev.push(
-                  Array.isArray(labelList[j]?.[v[j]][w.variable])
-                    ? labelList[j]?.[v[j]][w.variable].join(" ")
-                    : labelList[j]?.[v[j]][w.variable],
-                );
-              });
-            } else {
-              prev.push(idWithPrefix);
-            }
+            prev.push(idWithPrefix);
+            curr.annotateList.forEach((annotate) => {
+              if (annotate.checked) {
+                const label = labelList[j]?.[v[j]][annotate.variable];
+                prev.push(Array.isArray(label) ? label.join(" ") : label);
+              }
+            });
 
             return prev;
           }, []),
@@ -345,8 +369,6 @@ const ResultModalAction = (props: Props) => {
         tableHeadBaseList={tableHeadBaseList}
         setTableHeadBaseList={setTableHeadBaseList}
         tableHeadList={tableHeadList}
-        isShowLabelList={isShowLabelList}
-        setIsShowLabelList={setIsShowLabelList}
         filterTable={filterTable}
         isLoading={isLoading}
       />
