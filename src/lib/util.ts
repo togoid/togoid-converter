@@ -39,6 +39,7 @@ export const getConvertUrlSearchParams = (baseParams: {
     ids: baseParams.ids.join(","),
     report: baseParams.report,
     format: baseParams.format,
+    output: "id",
   });
   if (baseParams.limit) {
     params.set("limit", String(baseParams.limit));
@@ -50,17 +51,17 @@ export const getConvertUrlSearchParams = (baseParams: {
   return params;
 };
 
-export const executeQuery = async (baseParams: {
+export const executeQuery = async <T extends string>(baseParams: {
   route: Route[];
   ids: string[];
-  report: string;
+  report: T;
   limit?: number;
   compact?: boolean;
 }) => {
   return await axios
     .post<{
       ids: string[];
-      results: string[][];
+      results: T extends "target" ? string[] : string[][];
       route: string[];
     }>(
       `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert`,
@@ -215,29 +216,34 @@ export const getPathStyle = (
 
 export const joinPrefix = (
   id: string | undefined,
-  mode: string,
-  prefix: string,
+  mode: {
+    key: "id" | "url";
+    value: string;
+  },
   isCompact?: boolean,
 ) => {
   if (!id) {
     return "";
   }
 
-  if (mode === "id") {
-    return id;
-  } else if (mode === "url") {
+  if (mode.key === "id") {
+    if (!mode.value) {
+      return id;
+    }
     return isCompact
       ? id
           .split(" ")
-          .map((v) => prefix + v)
+          .map((v) => printf(mode.value, v))
           .join(" ")
-      : prefix + id;
-  } else {
+      : printf(mode.value, id);
+  } else if (mode.key === "url") {
     return isCompact
       ? id
           .split(" ")
-          .map((v) => printf(mode, v))
+          .map((v) => mode.value + v)
           .join(" ")
-      : printf(mode, id);
+      : mode.value + id;
   }
+
+  return "";
 };

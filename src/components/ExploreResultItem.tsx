@@ -7,7 +7,7 @@ const ExploreResultItem = (props: any) => {
   const [isShowResultModal, setIsShowResultModal] = useState(false);
   const [isShowInfomationModal, setIsShowInfomationModal] = useState(false);
 
-  const ref = useRef(null);
+  const ref = useRef(null!);
   const isActionButtonVisible = useHoverDirty(ref);
 
   const convertedCount = useRef<any[]>([]);
@@ -20,10 +20,17 @@ const ExploreResultItem = (props: any) => {
       report: "target",
     });
 
-    const prefix = datasetConfig[props.v.name].prefix.split("/").slice(-1);
+    const format = datasetConfig[props.v.name].format?.[0];
 
     exportCsvTsv(
-      d.results.map((result: any) => [prefix + result]),
+      d.results.map((result) => [
+        format
+          ? joinPrefix(result, {
+              key: "id",
+              value: format,
+            })
+          : result,
+      ]),
       "tsv",
       "ids.tsv",
     );

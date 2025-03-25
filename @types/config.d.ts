@@ -13,7 +13,10 @@ type DatasetConfig = {
     label: string;
     label_resolver?: any;
     linkTo: any;
-    prefix: string;
+    prefix: {
+      label: string;
+      uri: string;
+    }[];
     regex: string;
   };
 };
