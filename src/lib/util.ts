@@ -247,3 +247,38 @@ export const joinPrefix = (
 
   return "";
 };
+
+export const sscanf = (str: string, format: string) => {
+  const formatPatterns = {
+    "%s": "(.*?)",
+    "%d": "(\\d+)",
+    "%f": "([+-]?\\d+(?:\\.\\d+)?)",
+    "%u": "(\\d+)",
+    "%x": "([0-9a-f]+)",
+    "%X": "([0-9A-F]+)",
+    "%o": "([0-7]+)",
+    "%c": "(.)",
+    "%w": "(\\w+)",
+    "%a": "([a-zA-Z]+)",
+    "%e": "([+-]?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?)",
+  };
+
+  // 特殊文字をエスケープ
+  let regexStr = format.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
+
+  // 一致するフォーマットを1つだけ見つけて置換
+  let foundKey = null;
+  for (const [key, pattern] of Object.entries(formatPatterns)) {
+    if (regexStr.includes(key)) {
+      regexStr = regexStr.replace(key, pattern);
+      foundKey = key;
+      break; // 1つだけの前提なのでbreak
+    }
+  }
+
+  if (!foundKey) return null;
+
+  const regex = new RegExp("^" + regexStr + "$");
+  const match = str.match(regex);
+  return match ? match[1] : null;
+};
