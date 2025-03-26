@@ -37,7 +37,7 @@ const ResultModal = ({ setIsShowResultModal, ...props }: Props) => {
             <div className="modal__path__frame">
               <div className="modal__path__frame__inner">
                 {props.route.map((v, i) => (
-                  <>
+                  <Fragment key={i}>
                     {i !== 0 && (
                       <div className="path_label white" id={`link-${i}`}>
                         <span>{v.relation?.link.display_label}</span>
@@ -55,7 +55,6 @@ const ResultModal = ({ setIsShowResultModal, ...props }: Props) => {
                       </div>
                     )}
                     <div
-                      key={i}
                       className="path_label green"
                       id={`label-${i}`}
                       style={{
@@ -91,7 +90,7 @@ const ResultModal = ({ setIsShowResultModal, ...props }: Props) => {
                         </svg>
                       )}
                     </div>
-                  </>
+                  </Fragment>
                 ))}
               </div>
             </div>
