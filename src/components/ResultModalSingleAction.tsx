@@ -147,10 +147,18 @@ const ResultModalSingleAction = (props: Props) => {
     }
   };
 
+  const createTableRows = () => {
+    return tableHeadList[0].format?.length
+      ? props.route[0].results.map((v) => [
+          tableHeadList[0].format!.reduce((prev, curr) => {
+            return prev.replace(curr.replace("%s", ""), "");
+          }, v),
+        ])
+      : props.route[0].results.map((v) => [v]);
+  };
+
   const copyClipboard = async () => {
-    const { rows } = await createExportTable(
-      props.route[0].results.map((v) => [v]),
-    );
+    const { rows } = await createExportTable(createTableRows());
     const text = invokeUnparse(rows, "tsv");
 
     copy(text, {
@@ -159,14 +167,16 @@ const ResultModalSingleAction = (props: Props) => {
   };
 
   const handleExportCsvTsv = async (extension: "csv" | "tsv") => {
-    const { heading, rows } = await createExportTable(
-      props.route[0].results.map((v) => [v]),
-    );
+    const { heading, rows } = await createExportTable(createTableRows());
 
     exportCsvTsv([heading, ...rows], extension, `result.${extension}`);
   };
 
-  const { filterTable } = useResultModalSinglePreview(props.route);
+  const filterTable = useMemo(() => {
+    return {
+      rows: createTableRows(),
+    };
+  }, []);
 
   return (
     <>

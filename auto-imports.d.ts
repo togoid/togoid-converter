@@ -62,6 +62,7 @@ declare global {
   const selectAtom: typeof import('jotai/utils')['selectAtom']
   const signal: typeof import('@preact/signals-react')['signal']
   const splitAtom: typeof import('jotai/utils')['splitAtom']
+  const sscanf: typeof import('./src/lib/util')['sscanf']
   const startTransition: typeof import('react')['startTransition']
   const textAtom: typeof import('./src/atoms/text')['textAtom']
   const topExamples: typeof import('./src/lib/examples')['topExamples']
