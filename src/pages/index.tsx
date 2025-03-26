@@ -211,7 +211,7 @@ const Home = () => {
         if (
           value.regex &&
           id.match(value.regex) &&
-          (activeTab === "EXPLORE" ||
+          (activeTab !== "NAVIGATE" ||
             Object.keys(relationConfig).some((d) => d.split("-").includes(key)))
         ) {
           const candidate = candidateList.find(
