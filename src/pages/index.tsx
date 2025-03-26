@@ -26,6 +26,9 @@ const Home = () => {
 
   const { datasetConfig, relationConfig } = useConfig(true);
 
+  // 実行だけは先に行う必要がある
+  useAnnotateConfig();
+
   useUpdateEffect(() => {
     router.replace({
       query: {
@@ -43,7 +46,6 @@ const Home = () => {
           if (route.length === 1) {
             setDatabaseNodesList([databaseNodesList[0]]);
           }
-          // eslint-disable-next-line no-empty
         } else if (activeTab === "ANNOTATE") {
         } else if (isUseKeepRoute) {
           const r = route;
