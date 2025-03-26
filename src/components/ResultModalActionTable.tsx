@@ -3,50 +3,10 @@ import useSWR from "swr";
 
 type Props = {
   isCompact: boolean;
-  tableHeadBaseList: ({
-    index: number;
-    name: string;
-    lineMode: {
-      key: "id" | "url";
-      value: string;
-    };
-    annotateList: {
-      checked: boolean;
-      label: string;
-      variable: string;
-    }[];
-  } & DatasetConfig[number])[];
-  setTableHeadBaseList: Dispatch<
-    SetStateAction<
-      ({
-        index: number;
-        name: string;
-        lineMode: {
-          key: "id" | "url";
-          value: string;
-        };
-        annotateList: {
-          checked: boolean;
-          label: string;
-          variable: string;
-        }[];
-      } & DatasetConfig[number])[]
-    >
-  >;
-  tableHeadList: ({
-    index: number;
-    name: string;
-    lineMode: {
-      key: "id" | "url";
-      value: string;
-    };
-    annotateList: {
-      checked: boolean;
-      label: string;
-      variable: string;
-    }[];
-  } & DatasetConfig[number])[];
-  filterTable: ReturnType<typeof useResultModalPreview>["filterTable"];
+  tableHeadBaseList: TableHead[];
+  setTableHeadBaseList: Dispatch<SetStateAction<TableHead[]>>;
+  tableHeadList: TableHead[];
+  filterTable?: string[][];
   isLoading: boolean;
 };
 
@@ -66,7 +26,7 @@ const ResultModalActionTable = ({
         tableHeadBase.annotateList.some((annotate) => annotate.checked)
         ? {
             name: tableHeadBase.name,
-            ids: filterTable!.rows.map((v) => v[index]),
+            ids: filterTable!.map((v) => v[index]),
             annotations: tableHeadBase.annotateList.map(
               (annotate) => annotate.variable,
             ),
@@ -82,7 +42,7 @@ const ResultModalActionTable = ({
     <table className="table">
       <thead>
         <tr>
-          {filterTable?.rows?.length &&
+          {filterTable?.length &&
             tableHeadList.map((tableHead, i) => {
               return (
                 <Fragment key={tableHead.index}>
@@ -194,8 +154,8 @@ const ResultModalActionTable = ({
         </tr>
       </thead>
       <tbody>
-        {!isLoading && filterTable?.rows?.length
-          ? filterTable.rows.map((data, i) => (
+        {!isLoading && filterTable?.length
+          ? filterTable.map((data, i) => (
               <tr key={i}>
                 {data.map((d, j) => (
                   <Fragment key={j}>
