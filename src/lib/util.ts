@@ -140,7 +140,7 @@ export const executeAnnotateQuery = async (option: {
   const res = await axios<{
     data: any[][];
   }>({
-    url: "http://ep.dbcls.jp/grasp-dev-togoid",
+    url: "https://dx.dbcls.jp/grasp-dev-togoid",
     method: "POST",
     data: query,
   });
