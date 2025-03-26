@@ -15,6 +15,7 @@ const ResultModalSingleAction = (props: Props) => {
     setTableHeadBaseList,
     tableHeadList,
     createExportTable,
+    createExportTableHead,
   } = useResultModalAction(props.route, previewMode, isCompact);
 
   const filterTable = useMemo(() => {
@@ -30,7 +31,7 @@ const ResultModalSingleAction = (props: Props) => {
   }, []);
 
   const copyClipboard = async () => {
-    const { rows } = await createExportTable(filterTable.rows);
+    const rows = await createExportTable(filterTable.rows);
     const text = invokeUnparse(rows, "tsv");
 
     copy(text, {
@@ -39,9 +40,10 @@ const ResultModalSingleAction = (props: Props) => {
   };
 
   const handleExportCsvTsv = async (extension: "csv" | "tsv") => {
-    const { heading, rows } = await createExportTable(filterTable.rows);
+    const head = createExportTableHead();
+    const rows = await createExportTable(filterTable.rows);
 
-    exportCsvTsv([heading, ...rows], extension, `result.${extension}`);
+    exportCsvTsv([head, ...rows], extension, `result.${extension}`);
   };
 
   return (

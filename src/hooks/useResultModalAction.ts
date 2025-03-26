@@ -87,45 +87,47 @@ const useResultModalAction = (
         }),
       );
 
-      return {
-        heading: tableHeadList.reduce<string[]>((prev, curr) => {
-          prev.push(curr.label);
+      return tableRows.map((v) =>
+        tableHeadList.reduce<(string | undefined)[]>((prev, curr, j) => {
+          const idWithPrefix = joinPrefix(v[j], curr.lineMode);
+          prev.push(idWithPrefix);
           curr.annotateList.forEach((annotate) => {
             if (annotate.checked) {
-              prev.push(annotate.label);
+              const label = labelList[j]?.[v[j]][annotate.variable];
+              prev.push(Array.isArray(label) ? label.join(" ") : label);
             }
           });
 
           return prev;
         }, []),
-        rows: tableRows.map((v) =>
-          tableHeadList.reduce<(string | undefined)[]>((prev, curr, j) => {
-            const idWithPrefix = joinPrefix(v[j], curr.lineMode);
-            prev.push(idWithPrefix);
-            curr.annotateList.forEach((annotate) => {
-              if (annotate.checked) {
-                const label = labelList[j]?.[v[j]][annotate.variable];
-                prev.push(Array.isArray(label) ? label.join(" ") : label);
-              }
-            });
-
-            return prev;
-          }, []),
-        ),
-      };
+      );
     } else {
       // All converted IDs
       // origin and targets
       // Target IDs
       // All including unconverted IDs
-      return {
-        heading: tableHeadList.map((v) => v.label),
-        rows: tableRows.map((v) =>
-          tableHeadList.map((tableHead, i) =>
-            joinPrefix(v[i], tableHead.lineMode, isCompact),
-          ),
+      return tableRows.map((v) =>
+        tableHeadList.map((tableHead, i) =>
+          joinPrefix(v[i], tableHead.lineMode, isCompact),
         ),
-      };
+      );
+    }
+  };
+
+  const createExportTableHead = () => {
+    if (!isCompact) {
+      return tableHeadList.reduce<string[]>((prev, curr) => {
+        prev.push(curr.label);
+        curr.annotateList.forEach((annotate) => {
+          if (annotate.checked) {
+            prev.push(annotate.label);
+          }
+        });
+
+        return prev;
+      }, []);
+    } else {
+      return tableHeadList.map((v) => v.label);
     }
   };
 
@@ -134,6 +136,7 @@ const useResultModalAction = (
     setTableHeadBaseList,
     tableHeadList,
     createExportTable,
+    createExportTableHead,
   };
 };
 

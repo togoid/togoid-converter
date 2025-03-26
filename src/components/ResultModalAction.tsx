@@ -25,6 +25,7 @@ const ResultModalAction = (props: Props) => {
     setTableHeadBaseList,
     tableHeadList,
     createExportTable,
+    createExportTableHead,
   } = useResultModalAction(props.route, previewMode, isCompact);
 
   const copyClipboard = async () => {
@@ -39,7 +40,7 @@ const ResultModalAction = (props: Props) => {
       d.results = d.results.map((v) => [v]) as unknown as string[][];
     }
 
-    const { rows } = await createExportTable(d.results)!;
+    const rows = await createExportTable(d.results)!;
     const text = invokeUnparse(rows, "tsv");
 
     copy(text, {
@@ -59,8 +60,9 @@ const ResultModalAction = (props: Props) => {
       d.results = d.results.map((v) => [v]) as unknown as string[][];
     }
 
-    const { heading, rows } = await createExportTable(d.results)!;
-    exportCsvTsv([heading, ...rows], extension, `result.${extension}`);
+    const head = createExportTableHead();
+    const rows = await createExportTable(d.results)!;
+    exportCsvTsv([head, ...rows], extension, `result.${extension}`);
   };
 
   const copyClipboardURL = () => {
