@@ -120,11 +120,11 @@ export const executeCountQuery = async (option: {
 export const executeAnnotateQuery = async (option: {
   name: string;
   ids: string[];
-  annotations?: DatasetConfig[number]["annotations"];
+  annotations?: string[];
 }) => {
-  const fields = ["id", "label"];
+  const fields = ["id"];
   option.annotations?.forEach((v) => {
-    fields.push(v.variable);
+    fields.push(v);
   });
   const query = gql.query({
     operation: option.name,
