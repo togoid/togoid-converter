@@ -1,3 +1,5 @@
+import useSWRImmutable from "swr/immutable";
+// import useSWR from "swr";
 import copy from "copy-to-clipboard";
 
 // 定数
@@ -27,6 +29,25 @@ const ResultModalAction = (props: Props) => {
     createExportTable,
     createExportTableHead,
   } = useResultModalAction(props.route, previewMode, isCompact);
+
+  const { data: filterTable, isLoading } = useSWRImmutable(
+    {
+      route: props.route,
+      ids: props.ids,
+      report: previewMode,
+      limit: 100,
+      compact: isCompact,
+    },
+    async (key) => {
+      const data = await executeQuery(key);
+
+      if (!isCompact && previewMode === "target") {
+        return data.results.map((v) => [v]) as unknown as string[][];
+      }
+
+      return data.results;
+    },
+  );
 
   const copyClipboard = async () => {
     const d = await executeQuery({
@@ -95,13 +116,6 @@ const ResultModalAction = (props: Props) => {
       },
     );
   };
-
-  const { filterTable, isLoading } = useResultModalPreview(
-    previewMode,
-    isCompact,
-    props.route,
-    props.ids,
-  );
 
   return (
     <>
