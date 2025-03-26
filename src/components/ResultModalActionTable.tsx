@@ -3,49 +3,9 @@ import useSWR from "swr";
 
 type Props = {
   isCompact: boolean;
-  tableHeadBaseList: ({
-    index: number;
-    name: string;
-    lineMode: {
-      key: "id" | "url";
-      value: string;
-    };
-    annotateList: {
-      checked: boolean;
-      label: string;
-      variable: string;
-    }[];
-  } & DatasetConfig[number])[];
-  setTableHeadBaseList: Dispatch<
-    SetStateAction<
-      ({
-        index: number;
-        name: string;
-        lineMode: {
-          key: "id" | "url";
-          value: string;
-        };
-        annotateList: {
-          checked: boolean;
-          label: string;
-          variable: string;
-        }[];
-      } & DatasetConfig[number])[]
-    >
-  >;
-  tableHeadList: ({
-    index: number;
-    name: string;
-    lineMode: {
-      key: "id" | "url";
-      value: string;
-    };
-    annotateList: {
-      checked: boolean;
-      label: string;
-      variable: string;
-    }[];
-  } & DatasetConfig[number])[];
+  tableHeadBaseList: TableHead[];
+  setTableHeadBaseList: Dispatch<SetStateAction<TableHead[]>>;
+  tableHeadList: TableHead[];
   filterTable: ReturnType<typeof useResultModalPreview>["filterTable"];
   isLoading: boolean;
 };
