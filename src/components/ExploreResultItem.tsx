@@ -6,6 +6,7 @@ const ExploreResultItem = (props: any) => {
 
   const [isShowResultModal, setIsShowResultModal] = useState(false);
   const [isShowInfomationModal, setIsShowInfomationModal] = useState(false);
+  const [resultRoute, setResultRoute] = useState(props.route);
 
   const ref = useRef(null!);
   const isActionButtonVisible = useHoverDirty(ref);
@@ -13,7 +14,10 @@ const ExploreResultItem = (props: any) => {
   const convertedCount = useRef<any[]>([]);
 
   const handleIdDownload = async () => {
-    const r = props.route;
+    const r: any[] = props.route.slice(0, props.i);
+    r[props.i] = props.v;
+    setResultRoute(r);
+
     const d = await executeQuery({
       route: r,
       ids: props.ids,
@@ -37,7 +41,9 @@ const ExploreResultItem = (props: any) => {
   };
 
   const openResultModal = async () => {
-    const r: any[] = props.route;
+    const r: any[] = props.route.slice(0, props.i);
+    r[props.i] = props.v;
+    setResultRoute(r);
 
     convertedCount.current = r.map((v) => {
       const source = v.message
@@ -168,7 +174,7 @@ const ExploreResultItem = (props: any) => {
       {isShowResultModal &&
         createPortal(
           <ResultModal
-            route={props.route}
+            route={resultRoute}
             ids={props.ids}
             convertedCount={convertedCount.current}
             setIsShowResultModal={setIsShowResultModal}
