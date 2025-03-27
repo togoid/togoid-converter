@@ -343,6 +343,83 @@
           }
         }
 
+        .detail {
+          position: relative;
+
+          &__summary {
+            font: {
+              family: g.$ff-oswald;
+              weight: 700;
+            }
+            cursor: pointer;
+          }
+
+          &__contents {
+            position: absolute;
+            top: 100%;
+            display: flex;
+            gap: 8px;
+            flex-direction: column;
+            padding: 16px;
+            border-radius: 5px;
+            border: 1px solid g.$col-D5D5D5;
+            background-color: g.$col-FFF;
+
+            .checkbox {
+              @include g.visuallyHidden;
+
+              + .checkbox-label {
+                position: relative;
+                font: {
+                  family: g.$ff-oswald;
+                  size: 1.4rem;
+                }
+
+                white-space: nowrap;
+                cursor: pointer;
+                color: g.$col-5A5A5A;
+                padding: 0 0 0 33px;
+                line-height: 24px;
+
+                &::before,
+                &::after {
+                  position: absolute;
+                  display: block;
+                  content: "";
+                }
+
+                &::before {
+                  top: 0;
+                  left: 0;
+                  width: 22px;
+                  height: 22px;
+                  border-radius: 5px;
+                  border: 1px solid g.$col-C4C4C4;
+                  background-color: g.$col-FFF;
+                }
+
+                &::after {
+                  top: 4px;
+                  left: 4px;
+                  width: 16px;
+                  height: 16px;
+                  opacity: 0;
+                  border-radius: 2px;
+                  background-color: g.$col-249EB3;
+                }
+              }
+
+              &:checked {
+                + .checkbox-label {
+                  &::after {
+                    opacity: 1;
+                  }
+                }
+              }
+            }
+          }
+        }
+
         .c-switch {
           & + label {
             margin: 8px 0 0;

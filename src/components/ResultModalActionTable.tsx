@@ -108,38 +108,51 @@ const ResultModalActionTable = ({
                           </option>
                         )}
                       </select>
-
-                      {!isCompact &&
-                        tableHead.annotateList.map((annotate, j) => (
-                          <Fragment key={j}>
-                            <input
-                              id={annotate.label + "-" + i}
-                              type="checkbox"
-                              checked={annotate.checked}
-                              onChange={(e) =>
-                                setTableHeadBaseList(
-                                  tableHeadBaseList.toSpliced(
-                                    tableHead.index,
-                                    1,
-                                    {
-                                      ...tableHeadBaseList[tableHead.index],
-                                      annotateList: tableHeadBaseList[
-                                        tableHead.index
-                                      ].annotateList.toSpliced(j, 1, {
-                                        ...tableHeadBaseList[tableHead.index]
-                                          .annotateList[j],
-                                        checked: e.target.checked,
-                                      }),
-                                    },
-                                  ),
-                                )
-                              }
-                            />
-                            <label htmlFor={annotate.label + "-" + i}>
-                              {annotate.label}
-                            </label>
-                          </Fragment>
-                        ))}
+                      {!isCompact && tableHead.annotateList.length ? (
+                        <details className="detail">
+                          <summary className="detail__summary">SELECT</summary>
+                          <div className="detail__contents">
+                            {!isCompact &&
+                              tableHead.annotateList.map((annotate, j) => (
+                                <Fragment key={j}>
+                                  <input
+                                    id={annotate.label + "-" + i}
+                                    type="checkbox"
+                                    checked={annotate.checked}
+                                    onChange={(e) =>
+                                      setTableHeadBaseList(
+                                        tableHeadBaseList.toSpliced(
+                                          tableHead.index,
+                                          1,
+                                          {
+                                            ...tableHeadBaseList[
+                                              tableHead.index
+                                            ],
+                                            annotateList: tableHeadBaseList[
+                                              tableHead.index
+                                            ].annotateList.toSpliced(j, 1, {
+                                              ...tableHeadBaseList[
+                                                tableHead.index
+                                              ].annotateList[j],
+                                              checked: e.target.checked,
+                                            }),
+                                          },
+                                        ),
+                                      )
+                                    }
+                                    className="checkbox"
+                                  />
+                                  <label
+                                    htmlFor={annotate.label + "-" + i}
+                                    className="checkbox-label"
+                                  >
+                                    {annotate.label}
+                                  </label>
+                                </Fragment>
+                              ))}
+                          </div>
+                        </details>
+                      ) : null}
                     </fieldset>
                   </th>
                   {!isCompact &&
