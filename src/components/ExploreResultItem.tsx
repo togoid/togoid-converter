@@ -13,7 +13,7 @@ const ExploreResultItem = (props: any) => {
   const convertedCount = useRef<any[]>([]);
 
   const handleIdDownload = async () => {
-    const r = props.selectDatabase(props.v, props.i);
+    const r = props.route;
     const d = await executeQuery({
       route: r,
       ids: props.ids,
@@ -37,7 +37,7 @@ const ExploreResultItem = (props: any) => {
   };
 
   const openResultModal = async () => {
-    const r: any[] = props.selectDatabase(props.v, props.i);
+    const r: any[] = props.route;
 
     convertedCount.current = r.map((v) => {
       const source = v.message
