@@ -94,7 +94,7 @@ const ResultModalActionTable = ({
                                 value: w.uri,
                               })}
                             >
-                              {`URL (${w.uri})`}
+                              {`URL (${w.label})`}
                             </option>
                           ))
                         ) : (
