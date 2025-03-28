@@ -110,7 +110,9 @@ const ResultModalActionTable = ({
                       </select>
                       {!isCompact && tableHead.annotateList.length ? (
                         <details className="detail">
-                          <summary className="detail__summary">SELECT</summary>
+                          <summary className="detail__summary">
+                            ANNOTATION
+                          </summary>
                           <div className="detail__contents">
                             {!isCompact &&
                               tableHead.annotateList.map((annotate, j) => (
