@@ -13,11 +13,20 @@ const ExploreResultItem = (props: any) => {
 
   const convertedCount = useRef<any[]>([]);
 
-  const handleIdDownload = async () => {
-    const r: any[] = props.route.slice(0, props.i);
-    r[props.i] = props.v;
-    setResultRoute(r);
+  const getRoutes = (name: string) => {
+    let r: Route[];
+    if (props.route.length === props.i || props.route[props.i].name !== name) {
+      r = props.selectDatabase(props.v, props.i);
+    } else {
+      r = props.route.slice(0, props.i);
+      r[props.i] = props.v;
+    }
+    return r;
+  };
 
+  const handleIdDownload = async (name: string) => {
+    const r = getRoutes(name);
+    setResultRoute(r);
     const d = await executeQuery({
       route: r,
       ids: props.ids,
@@ -40,11 +49,9 @@ const ExploreResultItem = (props: any) => {
     );
   };
 
-  const openResultModal = async () => {
-    const r: any[] = props.route.slice(0, props.i);
-    r[props.i] = props.v;
+  const openResultModal = async (name: string) => {
+    const r = getRoutes(name);
     setResultRoute(r);
-
     convertedCount.current = r.map((v) => {
       const source = v.message
         ? v.message === "ERROR"
@@ -120,7 +127,7 @@ const ExploreResultItem = (props: any) => {
         <div className="action_icons">
           {props.v.target > 0 && (
             <button
-              onClick={() => openResultModal()}
+              onClick={() => openResultModal(props.v.name)}
               className="action_icons__item"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 16">
@@ -135,7 +142,7 @@ const ExploreResultItem = (props: any) => {
 
           {props.i > 0 && props.v.target > 0 && (
             <button
-              onClick={() => handleIdDownload()}
+              onClick={() => handleIdDownload(props.v.name)}
               className="action_icons__item"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 17">
