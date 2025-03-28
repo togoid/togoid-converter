@@ -60,7 +60,7 @@ const ResultModalActionTable = ({
                         value={JSON.stringify(tableHead.lineMode)}
                         onChange={(e) =>
                           setTableHeadBaseList(
-                            tableHeadBaseList.toSpliced(tableHead.index, 1, {
+                            tableHeadBaseList.with(tableHead.index, {
                               ...tableHeadBaseList[tableHead.index],
                               lineMode: JSON.parse(e.target.value),
                             }),
@@ -121,16 +121,15 @@ const ResultModalActionTable = ({
                                     checked={annotate.checked}
                                     onChange={(e) =>
                                       setTableHeadBaseList(
-                                        tableHeadBaseList.toSpliced(
+                                        tableHeadBaseList.with(
                                           tableHead.index,
-                                          1,
                                           {
                                             ...tableHeadBaseList[
                                               tableHead.index
                                             ],
                                             annotateList: tableHeadBaseList[
                                               tableHead.index
-                                            ].annotateList.toSpliced(j, 1, {
+                                            ].annotateList.with(j, {
                                               ...tableHeadBaseList[
                                                 tableHead.index
                                               ].annotateList[j],
