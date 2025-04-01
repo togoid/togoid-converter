@@ -19,13 +19,13 @@
     "next": "15.2.4",
     "nprogress": "0.2.0",
     "papaparse": "5.5.2",
-    "react": "19.0.0",
+    "react": "19.1.0",
     "react-arrow-master": "https://github.com/InfoLoungeLLC/react-arrow-master",
-    "react-dom": "19.0.0",
+    "react-dom": "19.1.0",
     "react-markdown": "10.1.0",
     "react-select": "5.10.1",
     "react-use": "17.6.0",
-    "swagger-ui-react": "5.20.1",
+    "swagger-ui-react": "5.20.2",
     "swr": "2.3.3"
   },
   "devDependencies": {
@@ -43,7 +43,7 @@
     "eslint-plugin-prettier": "5.2.5",
     "gql-query-builder": "3.8.0",
     "prettier": "3.5.3",
-    "sass": "1.86.0",
+    "sass": "1.86.1",
     "typescript": "5.8.2",
     "unplugin-auto-import": "19.1.2"
   },
