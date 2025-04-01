@@ -1,5 +1,5 @@
-// import useSWRImmutable from "swr/immutable";
-import useSWR from "swr";
+import useSWRImmutable from "swr/immutable";
+// import useSWR from "swr";
 
 type Props = {
   isCompact: boolean;
@@ -21,7 +21,7 @@ const ResultModalActionTable = ({
   const resultList = tableHeadBaseList.map((tableHeadBase, i) => {
     const index = tableHeadList.findIndex((v) => v.index === i)!;
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    return useSWR(
+    return useSWRImmutable(
       index !== -1 &&
         tableHeadBase.annotateList.some((annotate) => annotate.checked)
         ? {
