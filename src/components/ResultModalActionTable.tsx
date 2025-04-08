@@ -38,6 +38,52 @@ const ResultModalActionTable = ({
     );
   });
 
+  const updateAnnotate = (
+    tableIndex: number,
+    annotateIndex: number,
+    updater: (
+      annotate: TableHead["annotateList"][number],
+    ) => TableHead["annotateList"][number],
+  ) => {
+    setTableHeadBaseList((prev) => {
+      const table = prev[tableIndex];
+      const oldAnnotate = table.annotateList[annotateIndex];
+      const updatedAnnotate = updater(oldAnnotate);
+      const updatedAnnotateList = table.annotateList.with(
+        annotateIndex,
+        updatedAnnotate,
+      );
+      const updatedTable = { ...table, annotateList: updatedAnnotateList };
+      return prev.with(tableIndex, updatedTable);
+    });
+  };
+
+  const updateAnnotateChecked = (
+    tableIndex: number,
+    annotateIndex: number,
+    checked: boolean,
+  ) => {
+    updateAnnotate(tableIndex, annotateIndex, (annotate) => ({
+      ...annotate,
+      checked,
+    }));
+  };
+
+  const updateAnnotateItemChecked = (
+    tableIndex: number,
+    annotateIndex: number,
+    itemIndex: number,
+    checked: boolean,
+  ) => {
+    updateAnnotate(tableIndex, annotateIndex, (annotate) => {
+      const updatedItems = annotate.items!.with(itemIndex, {
+        ...annotate.items![itemIndex],
+        checked,
+      });
+      return { ...annotate, items: updatedItems };
+    });
+  };
+
   return (
     <table className="table">
       <thead>
@@ -77,23 +123,10 @@ const ResultModalActionTable = ({
                                     type="checkbox"
                                     checked={annotate.checked}
                                     onChange={(e) =>
-                                      setTableHeadBaseList(
-                                        tableHeadBaseList.with(
-                                          tableHead.index,
-                                          {
-                                            ...tableHeadBaseList[
-                                              tableHead.index
-                                            ],
-                                            annotateList: tableHeadBaseList[
-                                              tableHead.index
-                                            ].annotateList.with(j, {
-                                              ...tableHeadBaseList[
-                                                tableHead.index
-                                              ].annotateList[j],
-                                              checked: e.target.checked,
-                                            }),
-                                          },
-                                        ),
+                                      updateAnnotateChecked(
+                                        tableHead.index,
+                                        annotate.index,
+                                        e.target.checked,
                                       )
                                     }
                                     className="checkbox"
@@ -137,39 +170,11 @@ const ResultModalActionTable = ({
                                         type="checkbox"
                                         checked={item.checked}
                                         onChange={(e) =>
-                                          setTableHeadBaseList(
-                                            tableHeadBaseList.with(
-                                              tableHead.index,
-                                              {
-                                                ...tableHeadBaseList[
-                                                  tableHead.index
-                                                ],
-                                                annotateList: tableHeadBaseList[
-                                                  tableHead.index
-                                                ].annotateList.with(
-                                                  annotate.index,
-                                                  {
-                                                    ...tableHeadBaseList[
-                                                      tableHead.index
-                                                    ].annotateList[
-                                                      annotate.index
-                                                    ],
-                                                    items: tableHeadBaseList[
-                                                      tableHead.index
-                                                    ].annotateList[
-                                                      annotate.index
-                                                    ].items!.with(j, {
-                                                      ...tableHeadBaseList[
-                                                        tableHead.index
-                                                      ].annotateList[
-                                                        annotate.index
-                                                      ].items![j],
-                                                      checked: e.target.checked,
-                                                    }),
-                                                  },
-                                                ),
-                                              },
-                                            ),
+                                          updateAnnotateItemChecked(
+                                            tableHead.index,
+                                            annotate.index,
+                                            j,
+                                            e.target.checked,
                                           )
                                         }
                                         className="checkbox"
