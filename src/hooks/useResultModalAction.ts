@@ -10,24 +10,26 @@ const useResultModalAction = (
     route.map((v, i) => {
       const dataset = datasetConfig[v.name];
 
-      const annotateList: {
-        checked: boolean;
-        label: string;
-        variable: string;
-      }[] = [];
+      const annotateList: TableHead["annotateList"] = [];
       if (annotateConfig.includes(v.name)) {
         annotateList.push({
+          index: 0,
           checked: false,
           label: "Label",
           variable: "label",
         });
       }
       if (dataset.annotations?.length) {
-        dataset.annotations.forEach((annotation) => {
+        dataset.annotations.forEach((annotation, j) => {
           annotateList.push({
+            index: j + 1,
             checked: false,
             label: annotation.label,
             variable: annotation.variable,
+            items: annotation.items?.map((v) => ({
+              checked: false,
+              label: v,
+            })),
           });
         });
       }

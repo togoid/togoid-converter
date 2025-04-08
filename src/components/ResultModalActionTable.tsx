@@ -160,7 +160,84 @@ const ResultModalActionTable = ({
                     tableHead.annotateList
                       .filter((annotate) => annotate.checked)
                       .map((annotate) => (
-                        <th key={annotate.variable}>{annotate.label}</th>
+                        <Fragment key={annotate.variable}>
+                          <th>
+                            {annotate.label}
+                            {annotate.items?.length ? (
+                              <details className="detail">
+                                <summary className="detail__summary">
+                                  FILTER
+                                </summary>
+                                <div className="detail__contents">
+                                  {annotate.items.map((item, j) => (
+                                    <Fragment key={j}>
+                                      <input
+                                        id={
+                                          annotate.label +
+                                          "-" +
+                                          i +
+                                          "-" +
+                                          item.label
+                                        }
+                                        type="checkbox"
+                                        checked={item.checked}
+                                        onChange={(e) =>
+                                          setTableHeadBaseList(
+                                            tableHeadBaseList.with(
+                                              tableHead.index,
+                                              {
+                                                ...tableHeadBaseList[
+                                                  tableHead.index
+                                                ],
+                                                annotateList: tableHeadBaseList[
+                                                  tableHead.index
+                                                ].annotateList.with(
+                                                  annotate.index,
+                                                  {
+                                                    ...tableHeadBaseList[
+                                                      tableHead.index
+                                                    ].annotateList[
+                                                      annotate.index
+                                                    ],
+                                                    items: tableHeadBaseList[
+                                                      tableHead.index
+                                                    ].annotateList[
+                                                      annotate.index
+                                                    ].items!.with(j, {
+                                                      ...tableHeadBaseList[
+                                                        tableHead.index
+                                                      ].annotateList[
+                                                        annotate.index
+                                                      ].items![j],
+                                                      checked: e.target.checked,
+                                                    }),
+                                                  },
+                                                ),
+                                              },
+                                            ),
+                                          )
+                                        }
+                                        className="checkbox"
+                                      />
+                                      <label
+                                        htmlFor={
+                                          annotate.label +
+                                          "-" +
+                                          i +
+                                          "-" +
+                                          item.label
+                                        }
+                                        className="checkbox-label"
+                                      >
+                                        {item.label}
+                                      </label>
+                                    </Fragment>
+                                  ))}
+                                </div>
+                              </details>
+                            ) : null}
+                          </th>
+                        </Fragment>
                       ))}
                 </Fragment>
               );
