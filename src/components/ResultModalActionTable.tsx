@@ -63,10 +63,23 @@ const ResultModalActionTable = ({
     annotateIndex: number,
     checked: boolean,
   ) => {
-    updateAnnotate(tableIndex, annotateIndex, (annotate) => ({
-      ...annotate,
-      checked,
-    }));
+    updateAnnotate(tableIndex, annotateIndex, (annotate) => {
+      let updatedItems = annotate.items;
+
+      if (!checked && annotate.items) {
+        // チェック解除時は items もすべて false に
+        updatedItems = annotate.items.map((item) => ({
+          ...item,
+          checked: false,
+        }));
+      }
+
+      return {
+        ...annotate,
+        checked,
+        items: updatedItems,
+      };
+    });
   };
 
   const updateAnnotateItemChecked = (
