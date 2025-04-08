@@ -48,66 +48,21 @@ const ResultModalActionTable = ({
                 <Fragment key={tableHead.index}>
                   <th>
                     <fieldset>
-                      <label
-                        htmlFor={String(tableHead.index)}
-                        className="select__label"
-                      >
-                        {tableHead.label}
-                      </label>
-                      <select
+                      <ResultModalActionTableSelect
                         id={String(tableHead.index)}
-                        className="select white"
-                        value={JSON.stringify(tableHead.lineMode)}
-                        onChange={(e) =>
+                        value={tableHead.lineMode}
+                        tableHead={tableHead}
+                        onChange={(value: TableHead["lineMode"]) =>
                           setTableHeadBaseList(
                             tableHeadBaseList.with(tableHead.index, {
                               ...tableHeadBaseList[tableHead.index],
-                              lineMode: JSON.parse(e.target.value),
+                              lineMode: value,
                             }),
                           )
                         }
                       >
-                        {tableHead.format ? (
-                          tableHead.format.map((w: string) => (
-                            <option
-                              key={w}
-                              value={JSON.stringify({ key: "id", value: w })}
-                            >
-                              {w === "%s"
-                                ? "ID"
-                                : `ID (${w.replace("%s", "")})`}
-                            </option>
-                          ))
-                        ) : (
-                          <option
-                            value={JSON.stringify({ key: "id", value: "" })}
-                          >
-                            ID
-                          </option>
-                        )}
-                        {tableHead.prefix?.length > 1 ? (
-                          tableHead.prefix.map((w) => (
-                            <option
-                              key={w.uri}
-                              value={JSON.stringify({
-                                key: "url",
-                                value: w.uri,
-                              })}
-                            >
-                              {`URL (${w.label})`}
-                            </option>
-                          ))
-                        ) : (
-                          <option
-                            value={JSON.stringify({
-                              key: "url",
-                              value: tableHead.prefix?.[0].uri,
-                            })}
-                          >
-                            URL
-                          </option>
-                        )}
-                      </select>
+                        {tableHead.label}
+                      </ResultModalActionTableSelect>
                       {!isCompact && tableHead.annotateList.length ? (
                         <details className="detail">
                           <summary className="detail__summary">
