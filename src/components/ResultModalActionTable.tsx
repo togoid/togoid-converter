@@ -115,30 +115,29 @@ const ResultModalActionTable = ({
                             ANNOTATION
                           </summary>
                           <div className="detail__contents">
-                            {!isCompact &&
-                              tableHead.annotateList.map((annotate, j) => (
-                                <Fragment key={j}>
-                                  <input
-                                    id={annotate.label + "-" + i}
-                                    type="checkbox"
-                                    checked={annotate.checked}
-                                    onChange={(e) =>
-                                      updateAnnotateChecked(
-                                        tableHead.index,
-                                        annotate.index,
-                                        e.target.checked,
-                                      )
-                                    }
-                                    className="checkbox"
-                                  />
-                                  <label
-                                    htmlFor={annotate.label + "-" + i}
-                                    className="checkbox-label"
-                                  >
-                                    {annotate.label}
-                                  </label>
-                                </Fragment>
-                              ))}
+                            {tableHead.annotateList.map((annotate, j) => (
+                              <Fragment key={j}>
+                                <input
+                                  id={annotate.label + "-" + i}
+                                  className="checkbox"
+                                  type="checkbox"
+                                  checked={annotate.checked}
+                                  onChange={(e) =>
+                                    updateAnnotateChecked(
+                                      tableHead.index,
+                                      annotate.index,
+                                      e.target.checked,
+                                    )
+                                  }
+                                />
+                                <label
+                                  htmlFor={annotate.label + "-" + i}
+                                  className="checkbox-label"
+                                >
+                                  {annotate.label}
+                                </label>
+                              </Fragment>
+                            ))}
                           </div>
                         </details>
                       ) : null}
@@ -167,6 +166,7 @@ const ResultModalActionTable = ({
                                           "-" +
                                           item.label
                                         }
+                                        className="checkbox"
                                         type="checkbox"
                                         checked={item.checked}
                                         onChange={(e) =>
@@ -177,7 +177,6 @@ const ResultModalActionTable = ({
                                             e.target.checked,
                                           )
                                         }
-                                        className="checkbox"
                                       />
                                       <label
                                         htmlFor={
