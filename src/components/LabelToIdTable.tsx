@@ -254,58 +254,16 @@ const LabelToIdTable = ({
                     )}
                     <th>
                       <div className="id-select">
-                        <label htmlFor="idSelect" className="select__label">
-                          ID
-                        </label>
-                        <select
+                        <ResultModalActionTableSelect
                           id="idSelect"
-                          className="select white"
-                          value={JSON.stringify(lineMode.value)}
-                          onChange={(e) =>
-                            (lineMode.value = JSON.parse(e.target.value))
+                          value={lineMode.value}
+                          tableHead={dataset.value}
+                          onChange={(value: TableHead["lineMode"]) =>
+                            (lineMode.value = value)
                           }
                         >
-                          {dataset.value.format ? (
-                            dataset.value.format.map((w: string) => (
-                              <option
-                                key={w}
-                                value={JSON.stringify({ key: "id", value: w })}
-                              >
-                                {w === "%s"
-                                  ? "ID"
-                                  : `ID (${w.replace("%s", "")})`}
-                              </option>
-                            ))
-                          ) : (
-                            <option
-                              value={JSON.stringify({ key: "id", value: "" })}
-                            >
-                              ID
-                            </option>
-                          )}
-                          {dataset.value.prefix.length > 1 ? (
-                            dataset.value.prefix.map((w) => (
-                              <option
-                                key={w.uri}
-                                value={JSON.stringify({
-                                  key: "url",
-                                  value: w.uri,
-                                })}
-                              >
-                                {`URL (${w.uri})`}
-                              </option>
-                            ))
-                          ) : (
-                            <option
-                              value={JSON.stringify({
-                                key: "url",
-                                value: dataset.value.prefix[0].uri,
-                              })}
-                            >
-                              URL
-                            </option>
-                          )}
-                        </select>
+                          ID
+                        </ResultModalActionTableSelect>
                       </div>
                     </th>
                   </tr>

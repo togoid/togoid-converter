@@ -30,11 +30,15 @@ const Home = () => {
   useAnnotateConfig();
 
   useUpdateEffect(() => {
+    const query = {};
+    if (routerRoute.length) {
+      query["route"] = routerRoute.join(",");
+    }
+    if (ids.length) {
+      query["ids"] = ids.join(",");
+    }
     router.replace({
-      query: {
-        route: routerRoute.length ? routerRoute.join(",") : undefined,
-        ids: ids.length ? ids.join(",") : undefined,
-      },
+      query: query,
     });
   }, [routerRoute, ids]);
 

@@ -989,3 +989,11 @@
   margin: 0 .2em .25em -1.6em;
   vertical-align: middle;
 }
+
+// アンカーリンク遷移時にheaderに隠れないようにする
+.markdown-body [id]::before {
+  content: '';
+  display: block;
+  height: 30px;
+  margin-top: -30px;
+}
