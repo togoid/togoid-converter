@@ -1,6 +1,7 @@
 import useSWRImmutable from "swr/immutable";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
+import rehypeSlug from "rehype-slug";
 
 const Documents = () => {
   const [language, setLanguage] = useState<"en" | "ja">("en");
@@ -26,7 +27,7 @@ const Documents = () => {
         <div className="documents">
           <LanguageButton language={language} setLanguage={setLanguage} />
           <div className="markdown-body">
-            <ReactMarkdown>{docs}</ReactMarkdown>
+            <ReactMarkdown rehypePlugins={[rehypeSlug]}>{docs}</ReactMarkdown>
           </div>
         </div>
       </main>

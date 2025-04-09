@@ -38,138 +38,184 @@ const ResultModalActionTable = ({
     );
   });
 
+  const updateAnnotate = (
+    tableIndex: number,
+    annotateIndex: number,
+    updater: (
+      annotate: TableHead["annotateList"][number],
+    ) => TableHead["annotateList"][number],
+  ) => {
+    setTableHeadBaseList((prev) => {
+      const table = prev[tableIndex];
+      const oldAnnotate = table.annotateList[annotateIndex];
+      const updatedAnnotate = updater(oldAnnotate);
+      const updatedAnnotateList = table.annotateList.with(
+        annotateIndex,
+        updatedAnnotate,
+      );
+      const updatedTable = { ...table, annotateList: updatedAnnotateList };
+      return prev.with(tableIndex, updatedTable);
+    });
+  };
+
+  const updateAnnotateChecked = (
+    tableIndex: number,
+    annotateIndex: number,
+    checked: boolean,
+  ) => {
+    updateAnnotate(tableIndex, annotateIndex, (annotate) => {
+      const updatedItems =
+        !checked && annotate.items
+          ? annotate.items.map((item) => ({
+              ...item,
+              checked: false,
+            }))
+          : annotate.items;
+
+      return {
+        ...annotate,
+        checked,
+        items: updatedItems,
+      };
+    });
+  };
+
+  const updateAnnotateItemChecked = (
+    tableIndex: number,
+    annotateIndex: number,
+    itemIndex: number,
+    checked: boolean,
+  ) => {
+    updateAnnotate(tableIndex, annotateIndex, (annotate) => {
+      const updatedItems = annotate.items!.with(itemIndex, {
+        ...annotate.items![itemIndex],
+        checked,
+      });
+      return { ...annotate, items: updatedItems };
+    });
+  };
+
   return (
     <table className="table">
       <thead>
         <tr>
           {filterTable?.length &&
-            tableHeadList.map((tableHead, i) => {
-              return (
-                <Fragment key={tableHead.index}>
-                  <th>
-                    <fieldset>
-                      <label
-                        htmlFor={String(tableHead.index)}
-                        className="select__label"
-                      >
-                        {tableHead.label}
-                      </label>
-                      <select
-                        id={String(tableHead.index)}
-                        className="select white"
-                        value={JSON.stringify(tableHead.lineMode)}
-                        onChange={(e) =>
-                          setTableHeadBaseList(
-                            tableHeadBaseList.with(tableHead.index, {
-                              ...tableHeadBaseList[tableHead.index],
-                              lineMode: JSON.parse(e.target.value),
-                            }),
-                          )
-                        }
-                      >
-                        {tableHead.format ? (
-                          tableHead.format.map((w: string) => (
-                            <option
-                              key={w}
-                              value={JSON.stringify({ key: "id", value: w })}
-                            >
-                              {w === "%s"
-                                ? "ID"
-                                : `ID (${w.replace("%s", "")})`}
-                            </option>
-                          ))
-                        ) : (
-                          <option
-                            value={JSON.stringify({ key: "id", value: "" })}
-                          >
-                            ID
-                          </option>
-                        )}
-                        {tableHead.prefix?.length > 1 ? (
-                          tableHead.prefix.map((w) => (
-                            <option
-                              key={w.uri}
-                              value={JSON.stringify({
-                                key: "url",
-                                value: w.uri,
-                              })}
-                            >
-                              {`URL (${w.label})`}
-                            </option>
-                          ))
-                        ) : (
-                          <option
-                            value={JSON.stringify({
-                              key: "url",
-                              value: tableHead.prefix?.[0].uri,
-                            })}
-                          >
-                            URL
-                          </option>
-                        )}
-                      </select>
-                      {!isCompact && tableHead.annotateList.length ? (
-                        <details className="detail">
-                          <summary className="detail__summary">
-                            ANNOTATION
-                          </summary>
-                          <div className="detail__contents">
-                            {!isCompact &&
-                              tableHead.annotateList.map((annotate, j) => (
-                                <Fragment key={j}>
-                                  <input
-                                    id={annotate.label + "-" + i}
-                                    type="checkbox"
-                                    checked={annotate.checked}
-                                    onChange={(e) =>
-                                      setTableHeadBaseList(
-                                        tableHeadBaseList.with(
+            tableHeadList.map((tableHead, i) => (
+              <Fragment key={tableHead.index}>
+                <th>
+                  <fieldset>
+                    <ResultModalActionTableSelect
+                      id={String(tableHead.index)}
+                      value={tableHead.lineMode}
+                      tableHead={tableHead}
+                      onChange={(value: TableHead["lineMode"]) =>
+                        setTableHeadBaseList(
+                          tableHeadBaseList.with(tableHead.index, {
+                            ...tableHeadBaseList[tableHead.index],
+                            lineMode: value,
+                          }),
+                        )
+                      }
+                    >
+                      {tableHead.label}
+                    </ResultModalActionTableSelect>
+                    {!isCompact && tableHead.annotateList.length && (
+                      <details className="detail">
+                        <summary className="detail__summary">
+                          ANNOTATION
+                        </summary>
+                        <div className="detail__contents">
+                          {tableHead.annotateList.map((annotate, j) => (
+                            <Fragment key={j}>
+                              <input
+                                id={annotate.label + "-" + i}
+                                className="checkbox"
+                                type="checkbox"
+                                checked={annotate.checked}
+                                onChange={(e) =>
+                                  updateAnnotateChecked(
+                                    tableHead.index,
+                                    annotate.index,
+                                    e.target.checked,
+                                  )
+                                }
+                              />
+                              <label
+                                htmlFor={annotate.label + "-" + i}
+                                className="checkbox-label"
+                              >
+                                {annotate.label}
+                              </label>
+                            </Fragment>
+                          ))}
+                        </div>
+                      </details>
+                    )}
+                  </fieldset>
+                </th>
+                {!isCompact &&
+                  tableHead.annotateList
+                    .filter((annotate) => annotate.checked)
+                    .map((annotate) => (
+                      <Fragment key={annotate.variable}>
+                        <th>
+                          {annotate.label}
+                          {annotate.items?.length && (
+                            <details className="detail">
+                              <summary className="detail__summary">
+                                FILTER
+                              </summary>
+                              <div className="detail__contents">
+                                {annotate.items.map((item, j) => (
+                                  <Fragment key={j}>
+                                    <input
+                                      id={
+                                        annotate.label +
+                                        "-" +
+                                        i +
+                                        "-" +
+                                        item.label
+                                      }
+                                      className="checkbox"
+                                      type="checkbox"
+                                      checked={item.checked}
+                                      onChange={(e) =>
+                                        updateAnnotateItemChecked(
                                           tableHead.index,
-                                          {
-                                            ...tableHeadBaseList[
-                                              tableHead.index
-                                            ],
-                                            annotateList: tableHeadBaseList[
-                                              tableHead.index
-                                            ].annotateList.with(j, {
-                                              ...tableHeadBaseList[
-                                                tableHead.index
-                                              ].annotateList[j],
-                                              checked: e.target.checked,
-                                            }),
-                                          },
-                                        ),
-                                      )
-                                    }
-                                    className="checkbox"
-                                  />
-                                  <label
-                                    htmlFor={annotate.label + "-" + i}
-                                    className="checkbox-label"
-                                  >
-                                    {annotate.label}
-                                  </label>
-                                </Fragment>
-                              ))}
-                          </div>
-                        </details>
-                      ) : null}
-                    </fieldset>
-                  </th>
-                  {!isCompact &&
-                    tableHead.annotateList
-                      .filter((annotate) => annotate.checked)
-                      .map((annotate) => (
-                        <th key={annotate.variable}>{annotate.label}</th>
-                      ))}
-                </Fragment>
-              );
-            })}
+                                          annotate.index,
+                                          j,
+                                          e.target.checked,
+                                        )
+                                      }
+                                    />
+                                    <label
+                                      htmlFor={
+                                        annotate.label +
+                                        "-" +
+                                        i +
+                                        "-" +
+                                        item.label
+                                      }
+                                      className="checkbox-label"
+                                    >
+                                      {item.label}
+                                    </label>
+                                  </Fragment>
+                                ))}
+                              </div>
+                            </details>
+                          )}
+                        </th>
+                      </Fragment>
+                    ))}
+              </Fragment>
+            ))}
         </tr>
       </thead>
       <tbody>
-        {!isLoading && filterTable?.length
-          ? filterTable.map((data, i) => (
+        {!isLoading &&
+          (filterTable?.length ? (
+            filterTable.map((data, i) => (
               <tr key={i}>
                 {data.map((d, j) => (
                   <Fragment key={j}>
@@ -234,13 +280,13 @@ const ResultModalActionTable = ({
                 ))}
               </tr>
             ))
-          : !isLoading && (
-              <tr>
-                <td colSpan={tableHeadList.length} className="no_results">
-                  No Results
-                </td>
-              </tr>
-            )}
+          ) : (
+            <tr>
+              <td colSpan={tableHeadList.length} className="no_results">
+                No Results
+              </td>
+            </tr>
+          ))}
       </tbody>
     </table>
   );

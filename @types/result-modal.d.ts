@@ -6,8 +6,13 @@ type TableHead = {
     value: string;
   };
   annotateList: {
+    index: number;
     checked: boolean;
     label: string;
     variable: string;
+    items?: {
+      checked: boolean;
+      label: string;
+    }[];
   }[];
 } & DatasetConfig[number];
