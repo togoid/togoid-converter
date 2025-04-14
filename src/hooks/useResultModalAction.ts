@@ -81,28 +81,52 @@ const useResultModalAction = (
             return await executeAnnotateQuery({
               name: tablehead.name,
               ids: transposeList[i],
-              annotations: tablehead.annotateList
+              fields: tablehead.annotateList
                 .filter((annotate) => annotate.checked)
                 .map((annotate) => annotate.variable),
+              variables: tablehead.annotateList
+                .filter((annotate) => annotate.checked)
+                .reduce((prev, curr) => {
+                  const tmp = curr.items
+                    ?.filter((v) => v.checked)
+                    .map((v) => v.label);
+                  return tmp?.length
+                    ? {
+                        ...prev,
+                        [curr.variable]: { value: tmp, type: "[String!]" },
+                      }
+                    : prev;
+                }, {}),
             });
           }
         }),
       );
 
-      return tableRows.map((v) =>
-        tableHeadList.reduce<(string | undefined)[]>((prev, curr, j) => {
-          const idWithPrefix = joinPrefix(v[j], curr.lineMode);
-          prev.push(idWithPrefix);
-          curr.annotateList.forEach((annotate) => {
-            if (annotate.checked) {
-              const label = labelList[j]?.[v[j]][annotate.variable];
-              prev.push(Array.isArray(label) ? label.join(" ") : label);
-            }
-          });
+      const idsList = labelList.map((v) => (v ? Object.keys(v) : v));
 
-          return prev;
-        }, []),
-      );
+      return tableRows
+        .filter((v) =>
+          tableHeadList.every((tableHead, i) => {
+            return (
+              !tableHead.annotateList.some((v) => v.checked) ||
+              idsList[tableHead.index]?.includes(v[i])
+            );
+          }),
+        )
+        .map((v) =>
+          tableHeadList.reduce<(string | undefined)[]>((prev, curr, j) => {
+            const idWithPrefix = joinPrefix(v[j], curr.lineMode);
+            prev.push(idWithPrefix);
+            curr.annotateList.forEach((annotate) => {
+              if (annotate.checked) {
+                const label = labelList?.[j]?.[v[j]]?.[annotate.variable];
+                prev.push(Array.isArray(label) ? label.join(" ") : label);
+              }
+            });
+
+            return prev;
+          }, []),
+        );
     } else {
       // All converted IDs
       // origin and targets
