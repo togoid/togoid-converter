@@ -66,20 +66,37 @@ export const executeCountQuery = async (option: {
 export const executeAnnotateQuery = async (option: {
   name: string;
   ids: string[];
-  annotations?: string[];
+  fields?: string[];
+  variables?: {
+    [key: string]: {
+      value: string[];
+      type: string;
+    };
+  };
 }) => {
   const fields = ["id"];
-  option.annotations?.forEach((v) => {
+  option.fields?.forEach((v) => {
     fields.push(v);
   });
+
+  const variables: {
+    [key: string]: {
+      value: string[];
+      type: string;
+    };
+  } = {
+    id: {
+      value: [...new Set(option.ids)],
+      type: "[String!]",
+    },
+  };
+  if (option.variables) {
+    Object.assign(variables, option.variables);
+  }
+
   const data = query({
     operation: option.name,
-    variables: {
-      id: {
-        value: [...new Set(option.ids)],
-        type: "[String!]",
-      },
-    },
+    variables: variables,
     fields: fields,
   });
 

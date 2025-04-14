@@ -81,7 +81,7 @@ const useResultModalAction = (
             return await executeAnnotateQuery({
               name: tablehead.name,
               ids: transposeList[i],
-              annotations: tablehead.annotateList
+              fields: tablehead.annotateList
                 .filter((annotate) => annotate.checked)
                 .map((annotate) => annotate.variable),
             });

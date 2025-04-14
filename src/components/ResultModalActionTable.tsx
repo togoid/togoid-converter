@@ -20,16 +20,30 @@ const ResultModalActionTable = ({
 }: Props) => {
   const resultList = tableHeadBaseList.map((tableHeadBase, i) => {
     const index = tableHeadList.findIndex((v) => v.index === i)!;
+
     // eslint-disable-next-line react-hooks/rules-of-hooks
     return useSWRImmutable(
       index !== -1 &&
+        filterTable &&
+        !isCompact &&
         tableHeadBase.annotateList.some((annotate) => annotate.checked)
         ? {
             name: tableHeadBase.name,
-            ids: filterTable!.map((v) => v[index]),
-            annotations: tableHeadBase.annotateList.map(
+            ids: filterTable.map((v) => v[index]),
+            fields: tableHeadBase.annotateList.map(
               (annotate) => annotate.variable,
             ),
+            variables: tableHeadBase.annotateList.reduce((prev, curr) => {
+              const tmp = curr.items
+                ?.filter((v) => v.checked)
+                .map((v) => v.label);
+              return tmp?.length
+                ? {
+                    ...prev,
+                    [curr.variable]: { value: tmp, type: "[String!]" },
+                  }
+                : prev;
+            }, {}),
           }
         : null,
       async (key) => {
@@ -267,9 +281,9 @@ const ResultModalActionTable = ({
                             <td key={`${i}-${j}-${annotate.variable}`}>
                               <span>
                                 {
-                                  resultList[tableHeadList[j].index].data?.[d][
-                                    annotate.variable
-                                  ]
+                                  resultList?.[tableHeadList[j].index]?.data?.[
+                                    d
+                                  ]?.[annotate.variable]
                                 }
                               </span>
                             </td>
