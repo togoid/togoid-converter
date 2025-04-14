@@ -30,7 +30,7 @@ const Home = () => {
   useAnnotateConfig();
 
   useUpdateEffect(() => {
-    const query = {};
+    const query: { [key: string]: string } = {};
     if (routerRoute.length) {
       query["route"] = routerRoute.join(",");
     }

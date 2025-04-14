@@ -20,16 +20,30 @@ const ResultModalActionTable = ({
 }: Props) => {
   const resultList = tableHeadBaseList.map((tableHeadBase, i) => {
     const index = tableHeadList.findIndex((v) => v.index === i)!;
+
     // eslint-disable-next-line react-hooks/rules-of-hooks
     return useSWRImmutable(
       index !== -1 &&
+        filterTable &&
+        !isCompact &&
         tableHeadBase.annotateList.some((annotate) => annotate.checked)
         ? {
             name: tableHeadBase.name,
-            ids: filterTable!.map((v) => v[index]),
-            annotations: tableHeadBase.annotateList.map(
+            ids: filterTable.map((v) => v[index]),
+            fields: tableHeadBase.annotateList.map(
               (annotate) => annotate.variable,
             ),
+            variables: tableHeadBase.annotateList.reduce((prev, curr) => {
+              const tmp = curr.items
+                ?.filter((v) => v.checked)
+                .map((v) => v.label);
+              return tmp?.length
+                ? {
+                    ...prev,
+                    [curr.variable]: { value: tmp, type: "[String!]" },
+                  }
+                : prev;
+            }, {}),
           }
         : null,
       async (key) => {
@@ -37,6 +51,33 @@ const ResultModalActionTable = ({
       },
     );
   });
+
+  const filterTableAnnotate = useMemo(() => {
+    if (
+      !filterTable ||
+      isCompact ||
+      !tableHeadList.some((v) =>
+        v.annotateList.some(
+          (w) => w.checked && w.items?.some((x) => x.checked),
+        ),
+      )
+    ) {
+      return filterTable;
+    }
+
+    const idsList = resultList.map((v) =>
+      v.data ? Object.keys(v.data) : v.data,
+    );
+
+    return filterTable.filter((data) =>
+      tableHeadList.every((tableHead, i) => {
+        return (
+          !tableHead.annotateList.some((v) => v.checked) ||
+          idsList[tableHead.index]?.includes(data[i])
+        );
+      }),
+    );
+  }, [isCompact, filterTable, tableHeadList, resultList]);
 
   const updateAnnotate = (
     tableIndex: number,
@@ -214,8 +255,8 @@ const ResultModalActionTable = ({
       </thead>
       <tbody>
         {!isLoading &&
-          (filterTable?.length ? (
-            filterTable.map((data, i) => (
+          (filterTableAnnotate?.length ? (
+            filterTableAnnotate.map((data, i) => (
               <tr key={i}>
                 {data.map((d, j) => (
                   <Fragment key={j}>
@@ -267,9 +308,9 @@ const ResultModalActionTable = ({
                             <td key={`${i}-${j}-${annotate.variable}`}>
                               <span>
                                 {
-                                  resultList[tableHeadList[j].index].data?.[d][
-                                    annotate.variable
-                                  ]
+                                  resultList?.[tableHeadList[j].index]?.data?.[
+                                    d
+                                  ]?.[annotate.variable]
                                 }
                               </span>
                             </td>
