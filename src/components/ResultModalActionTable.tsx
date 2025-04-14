@@ -52,6 +52,33 @@ const ResultModalActionTable = ({
     );
   });
 
+  const filterTableAnnotate = useMemo(() => {
+    if (
+      !filterTable ||
+      isCompact ||
+      !tableHeadList.some((v) =>
+        v.annotateList.some(
+          (w) => w.checked && w.items?.some((x) => x.checked),
+        ),
+      )
+    ) {
+      return filterTable;
+    }
+
+    const idsList = resultList.map((v) =>
+      v.data ? Object.keys(v.data) : v.data,
+    );
+
+    return filterTable.filter((data) =>
+      tableHeadList.every((tableHead, i) => {
+        return (
+          !tableHead.annotateList.some((v) => v.checked) ||
+          idsList[tableHead.index]?.includes(data[i])
+        );
+      }),
+    );
+  }, [isCompact, filterTable, tableHeadList, resultList]);
+
   const updateAnnotate = (
     tableIndex: number,
     annotateIndex: number,
@@ -228,8 +255,8 @@ const ResultModalActionTable = ({
       </thead>
       <tbody>
         {!isLoading &&
-          (filterTable?.length ? (
-            filterTable.map((data, i) => (
+          (filterTableAnnotate?.length ? (
+            filterTableAnnotate.map((data, i) => (
               <tr key={i}>
                 {data.map((d, j) => (
                   <Fragment key={j}>
