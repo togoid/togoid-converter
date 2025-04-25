@@ -7,7 +7,7 @@ const report = signal<"matched" | "unmatched">("matched");
 
 type Props = {
   pubdictionariesParam: Signal<{
-    labels: string;
+    labelList: string[];
     dictionaries: string;
     tags?: string;
     threshold?: number;
@@ -34,19 +34,23 @@ const LabelToIdTable = ({
 
   const { data: tableData, isLoading } = useSWRImmutable(
     pubdictionariesParam.value,
-    async (key) => {
+    async () => {
       NProgress.start();
       const res = await axios.get<any>(
         "https://pubdictionaries.org/find_ids.json",
         {
-          params: key,
+          params: {
+            labels: pubdictionariesParam.value.labelList.join("|"),
+            dictionaries: pubdictionariesParam.value.dictionaries,
+            tags: pubdictionariesParam.value.tags,
+            threshold: pubdictionariesParam.value.threshold,
+            verbose: pubdictionariesParam.value.verbose,
+          },
         },
       );
 
-      const labelList = pubdictionariesParam.value.labels.split("|");
-
       const result = await Promise.all(
-        labelList.map(async (label) => {
+        pubdictionariesParam.value.labelList.map(async (label) => {
           const tableBaseData = res.data[label] as any[];
 
           const preferredDictionary =
@@ -76,14 +80,12 @@ const LabelToIdTable = ({
               type: dataset.value.label_resolver.dictionaries.find(
                 (w: any) => w.dictionary === v.dictionary,
               )?.label,
-              symbol:
+              symbolOrName:
                 v.dictionary === preferredDictionary
                   ? v.label
-                  : res2?.data[v.identifier][0].label,
-              name:
-                v.dictionary === preferredDictionary
-                  ? v.label
-                  : res2?.data[v.identifier][0].label,
+                  : Array.isArray(res2?.data[v.identifier])
+                    ? res2?.data[v.identifier][0].label
+                    : res2?.data[v.identifier].label,
               score: v.score,
               identifier: v.identifier,
             };
@@ -96,30 +98,29 @@ const LabelToIdTable = ({
     },
   );
 
-  const tableDataMod = useSignal<NonNullable<typeof tableData>[number]>([]);
-  useEffect(() => {
-    if (!tableData) {
-      return;
-    }
+  const tableDataMod = useMemo(() => {
+    return computed(() => {
+      if (!tableData) {
+        return [];
+      }
 
-    if (report.value === "matched") {
-      tableDataMod.value = tableData.flat();
-    } else {
-      const labelList = pubdictionariesParam.value.labels.split("|");
-      tableDataMod.value = tableData.flatMap((v, i) => {
-        return v.length
-          ? v
-          : {
-              label: labelList[i],
-              type: "Unmatched",
-              symbol: "",
-              name: "",
-              score: "",
-              identifier: "",
-            };
-      });
-    }
-  }, [report.value, tableData]);
+      if (report.value === "matched") {
+        return tableData.flat();
+      } else {
+        return tableData.flatMap((v, i) => {
+          return v.length
+            ? v
+            : {
+                label: pubdictionariesParam.value.labelList[i],
+                type: "Unmatched",
+                symbolOrName: "",
+                score: "",
+                identifier: "",
+              };
+        });
+      }
+    });
+  }, [tableData]);
 
   const inputResultId = () => {
     const idList = tableDataMod.value
@@ -160,14 +161,14 @@ const LabelToIdTable = ({
         return {
           Input: v.label,
           "Match type": v.type,
-          Symbol: v.symbol,
+          Symbol: v.symbolOrName,
           ID: id,
         };
       } else {
         return {
           Input: v.label,
           "Match type": v.type,
-          Name: v.name,
+          Name: v.symbolOrName,
           Score: v.score,
           ID: id,
         };
@@ -274,11 +275,11 @@ const LabelToIdTable = ({
                       <td>{v.label}</td>
                       <td>{v.type}</td>
                       {dataset.value?.label_resolver?.taxonomy && (
-                        <td>{v.symbol}</td>
+                        <td>{v.symbolOrName}</td>
                       )}
                       {dataset.value?.label_resolver?.threshold && (
                         <>
-                          <td>{v.name}</td>
+                          <td>{v.symbolOrName}</td>
                           <td>{v.score}</td>
                         </>
                       )}
