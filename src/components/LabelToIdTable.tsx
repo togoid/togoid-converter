@@ -7,7 +7,7 @@ const report = signal<"matched" | "unmatched">("matched");
 
 type Props = {
   pubdictionariesParam: Signal<{
-    labels: string;
+    labelList: string[];
     dictionaries: string;
     tags?: string;
     threshold?: number;
@@ -34,92 +34,133 @@ const LabelToIdTable = ({
 
   const { data: tableData, isLoading } = useSWRImmutable(
     pubdictionariesParam.value,
-    async (key) => {
+    async () => {
       NProgress.start();
-      const res = await axios.get<any>(
-        "https://pubdictionaries.org/find_ids.json",
-        {
-          params: key,
-        },
-      );
 
-      const labelList = pubdictionariesParam.value.labels.split("|");
+      if (dataset.value.label_resolver!.sparqlist) {
+        const res = await axios.get<{
+          [key: string]: {
+            label: string;
+            identifier: string;
+            label_type: string;
+            preferred: string;
+          }[];
+        }>(
+          `https://dx.dbcls.jp/togoid/sparqlist/api/${dataset.value.label_resolver!.sparqlist}`,
+          {
+            params: {
+              labels: pubdictionariesParam.value.labelList.join(","),
+              label_types: pubdictionariesParam.value.dictionaries,
+              taxon: pubdictionariesParam.value.tags,
+            },
+          },
+        );
 
-      const result = await Promise.all(
-        labelList.map(async (label) => {
-          const tableBaseData = res.data[label] as any[];
-
-          const preferredDictionary =
-            dataset.value.label_resolver.dictionaries.find(
-              (v: any) => v.preferred,
-            )?.dictionary;
-
-          const synonymIdList = tableBaseData
-            .filter((v: any) => v.dictionary !== preferredDictionary)
-            .map((v) => v.identifier);
-
-          const res2 = synonymIdList.length
-            ? await axios.get<any>(
-                "https://pubdictionaries.org/find_terms.json",
-                {
-                  params: {
-                    ids: synonymIdList.join("|"),
-                    dictionaries: preferredDictionary,
-                  },
-                },
-              )
-            : null;
+        const result = pubdictionariesParam.value.labelList.map((label) => {
+          const tableBaseData = res.data[label];
 
           return tableBaseData.map((v) => {
             return {
               label: label,
-              type: dataset.value.label_resolver.dictionaries.find(
-                (w: any) => w.dictionary === v.dictionary,
+              type: dataset.value.label_resolver!.label_types!.find(
+                (w: any) => w.label_type === v.label_type,
               )?.label,
-              symbol:
-                v.dictionary === preferredDictionary
-                  ? v.label
-                  : res2?.data[v.identifier][0].label,
-              name:
-                v.dictionary === preferredDictionary
-                  ? v.label
-                  : res2?.data[v.identifier][0].label,
-              score: v.score,
+              symbolOrName: v.preferred,
+              score: undefined,
               identifier: v.identifier,
             };
           });
-        }),
-      );
+        });
 
-      NProgress.done();
-      return result;
+        NProgress.done();
+        return result;
+      } else {
+        const res = await axios.get<{ [key: string]: any[] }>(
+          "https://pubdictionaries.org/find_ids.json",
+          {
+            params: {
+              labels: pubdictionariesParam.value.labelList.join("|"),
+              dictionaries: pubdictionariesParam.value.dictionaries,
+              tags: pubdictionariesParam.value.tags,
+              threshold: pubdictionariesParam.value.threshold,
+              verbose: pubdictionariesParam.value.verbose,
+            },
+          },
+        );
+
+        const result = await Promise.all(
+          pubdictionariesParam.value.labelList.map(async (label) => {
+            const tableBaseData = res.data[label];
+
+            const preferredDictionary =
+              dataset.value.label_resolver!.dictionaries!.find(
+                (v: any) => v.preferred,
+              )?.dictionary;
+
+            const synonymIdList = tableBaseData
+              .filter((v: any) => v.dictionary !== preferredDictionary)
+              .map((v) => v.identifier);
+
+            const res2 = synonymIdList.length
+              ? await axios.get<any>(
+                  "https://pubdictionaries.org/find_terms.json",
+                  {
+                    params: {
+                      ids: synonymIdList.join("|"),
+                      dictionaries: preferredDictionary,
+                    },
+                  },
+                )
+              : null;
+
+            return tableBaseData.map((v) => {
+              return {
+                label: label,
+                type: dataset.value.label_resolver!.dictionaries!.find(
+                  (w: any) => w.dictionary === v.dictionary,
+                )?.label,
+                symbolOrName:
+                  v.dictionary === preferredDictionary
+                    ? v.label
+                    : Array.isArray(res2?.data[v.identifier])
+                      ? res2?.data[v.identifier][0].label
+                      : res2?.data[v.identifier].label,
+                score: v.score,
+                identifier: v.identifier,
+              };
+            });
+          }),
+        );
+
+        NProgress.done();
+        return result;
+      }
     },
   );
 
-  const tableDataMod = useSignal<NonNullable<typeof tableData>[number]>([]);
-  useEffect(() => {
-    if (!tableData) {
-      return;
-    }
+  const tableDataMod = useMemo(() => {
+    return computed(() => {
+      if (!tableData) {
+        return [];
+      }
 
-    if (report.value === "matched") {
-      tableDataMod.value = tableData.flat();
-    } else {
-      const labelList = pubdictionariesParam.value.labels.split("|");
-      tableDataMod.value = tableData.flatMap((v, i) => {
-        return v.length
-          ? v
-          : {
-              label: labelList[i],
-              type: "Unmatched",
-              symbol: "",
-              name: "",
-              score: "",
-              identifier: "",
-            };
-      });
-    }
-  }, [report.value, tableData]);
+      if (report.value === "matched") {
+        return tableData.flat();
+      } else {
+        return tableData.flatMap((v, i) => {
+          return v.length
+            ? v
+            : {
+                label: pubdictionariesParam.value.labelList[i],
+                type: "Unmatched",
+                symbolOrName: "",
+                score: "",
+                identifier: "",
+              };
+        });
+      }
+    });
+  }, [tableData]);
 
   const inputResultId = () => {
     const idList = tableDataMod.value
@@ -160,14 +201,14 @@ const LabelToIdTable = ({
         return {
           Input: v.label,
           "Match type": v.type,
-          Symbol: v.symbol,
+          Symbol: v.symbolOrName,
           ID: id,
         };
       } else {
         return {
           Input: v.label,
           "Match type": v.type,
-          Name: v.name,
+          Name: v.symbolOrName,
           Score: v.score,
           ID: id,
         };
@@ -274,11 +315,11 @@ const LabelToIdTable = ({
                       <td>{v.label}</td>
                       <td>{v.type}</td>
                       {dataset.value?.label_resolver?.taxonomy && (
-                        <td>{v.symbol}</td>
+                        <td>{v.symbolOrName}</td>
                       )}
                       {dataset.value?.label_resolver?.threshold && (
                         <>
-                          <td>{v.name}</td>
+                          <td>{v.symbolOrName}</td>
                           <td>{v.score}</td>
                         </>
                       )}
@@ -291,7 +332,7 @@ const LabelToIdTable = ({
                                 ? lineMode.value
                                 : {
                                     key: "url",
-                                    value: dataset.value.prefix[0].uri,
+                                    value: dataset.value.prefix![0].uri,
                                   },
                             )}
                             target="_blank"

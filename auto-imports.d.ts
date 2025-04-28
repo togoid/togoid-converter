@@ -43,6 +43,7 @@ declare global {
   const atomWithStorage: typeof import('jotai/utils')['atomWithStorage']
   const categoryColor: typeof import('./src/lib/setting')['categoryColor']
   const colorLegendList: typeof import('./src/lib/setting')['colorLegendList']
+  const computed: typeof import('@preact/signals-react')['computed']
   const createJSONStorage: typeof import('jotai/utils')['createJSONStorage']
   const createRef: typeof import('react')['createRef']
   const executeAnnotateQuery: typeof import('./src/lib/queries')['executeAnnotateQuery']
