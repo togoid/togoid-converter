@@ -36,65 +36,98 @@ const LabelToIdTable = ({
     pubdictionariesParam.value,
     async () => {
       NProgress.start();
-      const res = await axios.get<any>(
-        "https://pubdictionaries.org/find_ids.json",
-        {
-          params: {
-            labels: pubdictionariesParam.value.labelList.join("|"),
-            dictionaries: pubdictionariesParam.value.dictionaries,
-            tags: pubdictionariesParam.value.tags,
-            threshold: pubdictionariesParam.value.threshold,
-            verbose: pubdictionariesParam.value.verbose,
+
+      if (dataset.value.label_resolver!.sparqlist) {
+        const res = await axios.get<{ [key: string]: any[] }>(
+          `https://dx.dbcls.jp/togoid/sparqlist/api/${dataset.value.label_resolver!.sparqlist}`,
+          {
+            params: {
+              labels: pubdictionariesParam.value.labelList.join(","),
+              label_types: pubdictionariesParam.value.dictionaries,
+              taxon: pubdictionariesParam.value.tags,
+            },
           },
-        },
-      );
+        );
 
-      const result = await Promise.all(
-        pubdictionariesParam.value.labelList.map(async (label) => {
-          const tableBaseData = res.data[label] as any[];
-
-          const preferredDictionary =
-            dataset.value.label_resolver.dictionaries.find(
-              (v: any) => v.preferred,
-            )?.dictionary;
-
-          const synonymIdList = tableBaseData
-            .filter((v: any) => v.dictionary !== preferredDictionary)
-            .map((v) => v.identifier);
-
-          const res2 = synonymIdList.length
-            ? await axios.get<any>(
-                "https://pubdictionaries.org/find_terms.json",
-                {
-                  params: {
-                    ids: synonymIdList.join("|"),
-                    dictionaries: preferredDictionary,
-                  },
-                },
-              )
-            : null;
+        const result = pubdictionariesParam.value.labelList.map((label) => {
+          const tableBaseData = res.data[label];
 
           return tableBaseData.map((v) => {
             return {
               label: label,
-              type: dataset.value.label_resolver.dictionaries.find(
-                (w: any) => w.dictionary === v.dictionary,
+              type: dataset.value.label_resolver!.label_types!.find(
+                (w: any) => w.label_type === v.label_type,
               )?.label,
-              symbolOrName:
-                v.dictionary === preferredDictionary
-                  ? v.label
-                  : Array.isArray(res2?.data[v.identifier])
-                    ? res2?.data[v.identifier][0].label
-                    : res2?.data[v.identifier].label,
+              symbolOrName: v.preferred,
               score: v.score,
               identifier: v.identifier,
             };
           });
-        }),
-      );
+        });
 
-      NProgress.done();
-      return result;
+        NProgress.done();
+        return result;
+      } else {
+        const res = await axios.get<{ [key: string]: any[] }>(
+          "https://pubdictionaries.org/find_ids.json",
+          {
+            params: {
+              labels: pubdictionariesParam.value.labelList.join("|"),
+              dictionaries: pubdictionariesParam.value.dictionaries,
+              tags: pubdictionariesParam.value.tags,
+              threshold: pubdictionariesParam.value.threshold,
+              verbose: pubdictionariesParam.value.verbose,
+            },
+          },
+        );
+
+        const result = await Promise.all(
+          pubdictionariesParam.value.labelList.map(async (label) => {
+            const tableBaseData = res.data[label];
+
+            const preferredDictionary =
+              dataset.value.label_resolver!.dictionaries!.find(
+                (v: any) => v.preferred,
+              )?.dictionary;
+
+            const synonymIdList = tableBaseData
+              .filter((v: any) => v.dictionary !== preferredDictionary)
+              .map((v) => v.identifier);
+
+            const res2 = synonymIdList.length
+              ? await axios.get<any>(
+                  "https://pubdictionaries.org/find_terms.json",
+                  {
+                    params: {
+                      ids: synonymIdList.join("|"),
+                      dictionaries: preferredDictionary,
+                    },
+                  },
+                )
+              : null;
+
+            return tableBaseData.map((v) => {
+              return {
+                label: label,
+                type: dataset.value.label_resolver!.dictionaries!.find(
+                  (w: any) => w.dictionary === v.dictionary,
+                )?.label,
+                symbolOrName:
+                  v.dictionary === preferredDictionary
+                    ? v.label
+                    : Array.isArray(res2?.data[v.identifier])
+                      ? res2?.data[v.identifier][0].label
+                      : res2?.data[v.identifier].label,
+                score: v.score,
+                identifier: v.identifier,
+              };
+            });
+          }),
+        );
+
+        NProgress.done();
+        return result;
+      }
     },
   );
 
@@ -292,7 +325,7 @@ const LabelToIdTable = ({
                                 ? lineMode.value
                                 : {
                                     key: "url",
-                                    value: dataset.value.prefix[0].uri,
+                                    value: dataset.value.prefix![0].uri,
                                   },
                             )}
                             target="_blank"

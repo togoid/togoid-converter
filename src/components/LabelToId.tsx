@@ -34,9 +34,15 @@ const LabelToId = ({ executeExamples }: Props) => {
     threshold.value = 0.5;
     dataset.value = value;
 
-    selectDictionaryList.value = value.label_resolver.dictionaries.map(
-      (v: any) => [v.dictionary, { label: v.label, checked: true }],
-    );
+    if (dataset.value.label_resolver!.sparqlist) {
+      selectDictionaryList.value = value.label_resolver!.label_types!.map(
+        (v: any) => [v.label_type, { label: v.label, checked: true }],
+      );
+    } else {
+      selectDictionaryList.value = value.label_resolver!.dictionaries!.map(
+        (v: any) => [v.dictionary, { label: v.label, checked: true }],
+      );
+    }
   };
 
   const handleExecute = () => {

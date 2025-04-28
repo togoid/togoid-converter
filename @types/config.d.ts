@@ -3,18 +3,34 @@ type DatasetConfig = {
     annotations?: {
       items?: string[];
       label: string;
+      numerical?: boolean;
       variable: string;
     }[];
-    catalog: string;
     category: string;
+    catalog: string;
     description?: string;
-    examples: string[];
+    examples: string[][];
     format?: string[];
     label: string;
-    label_resolver?: any;
+    label_resolver?: {
+      dictionaries?: {
+        dictionary: string;
+        label: string;
+      }[];
+      label_types?: {
+        label?: string;
+        label_type: string;
+        preferred?: boolean;
+      }[];
+      sparqlist?: string;
+      taxonomy?: boolean;
+      threshold?: boolean;
+    };
     linkTo: any;
-    prefix: {
+    method?: string;
+    prefix?: {
       label: string;
+      rdf?: boolean;
       uri: string;
     }[];
     regex: string;
