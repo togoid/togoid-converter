@@ -38,7 +38,14 @@ const LabelToIdTable = ({
       NProgress.start();
 
       if (dataset.value.label_resolver!.sparqlist) {
-        const res = await axios.get<{ [key: string]: any[] }>(
+        const res = await axios.get<{
+          [key: string]: {
+            label: string;
+            identifier: string;
+            label_type: string;
+            preferred: string;
+          }[];
+        }>(
           `https://dx.dbcls.jp/togoid/sparqlist/api/${dataset.value.label_resolver!.sparqlist}`,
           {
             params: {
@@ -59,7 +66,7 @@ const LabelToIdTable = ({
                 (w: any) => w.label_type === v.label_type,
               )?.label,
               symbolOrName: v.preferred,
-              score: v.score,
+              score: undefined,
               identifier: v.identifier,
             };
           });
