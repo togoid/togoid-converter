@@ -26,6 +26,7 @@ const nextConfig: NextConfig = {
           {
             "@preact/signals-react": [
               "signal",
+              "computed",
               "useSignal",
               "useComputed",
               "useSignalEffect",
