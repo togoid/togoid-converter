@@ -160,37 +160,57 @@ const ResultModalActionTable = ({
                     >
                       {tableHead.label}
                     </ResultModalActionTableSelect>
-                    {!isCompact && tableHead.annotateList.length && (
-                      <details className="detail">
-                        <summary className="detail__summary">
-                          ANNOTATION
-                        </summary>
-                        <div className="detail__contents">
-                          {tableHead.annotateList.map((annotate, j) => (
-                            <Fragment key={j}>
-                              <input
-                                id={annotate.label + "-" + i}
-                                className="checkbox"
-                                type="checkbox"
-                                checked={annotate.checked}
-                                onChange={(e) =>
-                                  updateAnnotateChecked(
-                                    tableHead.index,
-                                    annotate.index,
-                                    e.target.checked,
-                                  )
-                                }
-                              />
-                              <label
-                                htmlFor={annotate.label + "-" + i}
-                                className="checkbox-label"
-                              >
-                                {annotate.label}
-                              </label>
-                            </Fragment>
-                          ))}
-                        </div>
-                      </details>
+                    {!isCompact && tableHead.annotateList.length > 0 && (
+                      <div className="flex-box">
+                        {tableHead.annotateList.length > 1 && (
+                          <details className="detail">
+                            <summary className="detail__summary">
+                              ANNOTATION
+                            </summary>
+                            <div className="detail__contents">
+                              {tableHead.annotateList
+                                .slice(1)
+                                .map((annotate, j) => (
+                                  <Fragment key={j}>
+                                    <input
+                                      id={`${annotate.label}-${i}`}
+                                      className="checkbox"
+                                      type="checkbox"
+                                      checked={annotate.checked}
+                                      onChange={(e) =>
+                                        updateAnnotateChecked(
+                                          tableHead.index,
+                                          annotate.index,
+                                          e.target.checked,
+                                        )
+                                      }
+                                    />
+                                    <label
+                                      htmlFor={`${annotate.label}-${i}`}
+                                      className="checkbox-label"
+                                    >
+                                      {annotate.label}
+                                    </label>
+                                  </Fragment>
+                                ))}
+                            </div>
+                          </details>
+                        )}
+                        <input
+                          id={`showLabels${i}`}
+                          type="checkbox"
+                          className="c-switch"
+                          checked={tableHead.annotateList[0].checked}
+                          onChange={(e) =>
+                            updateAnnotateChecked(
+                              tableHead.index,
+                              tableHead.annotateList[0].index,
+                              e.target.checked,
+                            )
+                          }
+                        />
+                        <label htmlFor={`showLabels${i}`}>Show Labels</label>
+                      </div>
                     )}
                   </fieldset>
                 </th>
@@ -271,7 +291,7 @@ const ResultModalActionTable = ({
                                   ? tableHeadList[j].lineMode
                                   : {
                                       key: "url",
-                                      value: tableHeadList[j].prefix[0].uri,
+                                      value: tableHeadList[j].prefix![0].uri,
                                     },
                               )}
                               target="_blank"
@@ -293,7 +313,7 @@ const ResultModalActionTable = ({
                                 ? tableHeadList[j].lineMode
                                 : {
                                     key: "url",
-                                    value: tableHeadList[j].prefix[0].uri,
+                                    value: tableHeadList[j].prefix![0].uri,
                                   },
                             )}
                             target="_blank"
