@@ -24,7 +24,11 @@ const LabelToId = ({ executeExamples }: Props) => {
 
   const { datasetConfig } = useConfig();
 
-  const text = useAtomValue(textAtom);
+  const readText = useAtomCallback(
+    useCallback((get) => {
+      return get(textAtom);
+    }, []),
+  );
 
   const handleSelectDropDown = (
     value: DatasetConfig[number] & { key: string },
@@ -48,7 +52,7 @@ const LabelToId = ({ executeExamples }: Props) => {
   const handleExecute = () => {
     isShowTable.value = false;
 
-    const labelList = text
+    const labelList = readText()
       .replace(/[Ａ-Ｚａ-ｚ０-９]/g, (s) =>
         String.fromCharCode(s.charCodeAt(0) - 0xfee0),
       )
