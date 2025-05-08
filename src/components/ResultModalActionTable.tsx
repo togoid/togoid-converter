@@ -326,13 +326,29 @@ const ResultModalActionTable = ({
                           .filter((annotate) => annotate.checked)
                           .map((annotate) => (
                             <td key={`${i}-${j}-${annotate.variable}`}>
-                              <span>
-                                {
+                              {Array.isArray(
+                                resultList?.[tableHeadList[j].index]?.data?.[
+                                  d
+                                ]?.[annotate.variable],
+                              ) ? (
+                                (
                                   resultList?.[tableHeadList[j].index]?.data?.[
                                     d
-                                  ]?.[annotate.variable]
-                                }
-                              </span>
+                                  ]?.[annotate.variable] as string[]
+                                )?.map((a) => (
+                                  <Fragment key={a}>
+                                    <span>{a}</span>
+                                    <br />
+                                  </Fragment>
+                                ))
+                              ) : (
+                                <span>
+                                  {
+                                    resultList?.[tableHeadList[j].index]
+                                      ?.data?.[d]?.[annotate.variable]
+                                  }
+                                </span>
+                              )}
                             </td>
                           ))}
                       </>

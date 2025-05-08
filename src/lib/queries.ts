@@ -109,6 +109,6 @@ export const executeAnnotateQuery = async (option: {
       const { id, ...other } = curr;
       return { ...prev, [id]: other };
     },
-    {} as { [key: string]: any },
-  ) as { [key: string]: any };
+    {} as { [key: string]: { [key: string]: string | string[] } },
+  ) as { [key: string]: { [key: string]: string | string[] } };
 };
