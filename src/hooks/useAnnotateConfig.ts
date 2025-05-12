@@ -6,7 +6,7 @@ const useAnnotateConfig = () => {
     "annotateConfig",
     async () => {
       const response = await axios({
-        url: "https://dx.dbcls.jp/grasp-dev-togoid",
+        url: process.env.NEXT_PUBLIC_GRASP_ENDPOINT,
         method: "POST",
         data: {
           query:

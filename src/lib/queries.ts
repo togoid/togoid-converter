@@ -102,7 +102,7 @@ export const executeAnnotateQuery = async (option: {
 
   const res = await axios.post<{
     data: any[][];
-  }>("https://dx.dbcls.jp/grasp-dev-togoid", data);
+  }>(process.env.NEXT_PUBLIC_GRASP_ENDPOINT!, data);
 
   return Object.values(res.data.data)[0].reduce(
     (prev, curr) => {
