@@ -12,7 +12,7 @@ const Documents = () => {
     },
     async () => {
       const res = await axios.get(
-        `https://raw.githubusercontent.com/togoid/togoid-config/production/docs/help${
+        `${process.env.NEXT_PUBLIC_DOCUMENT_ENDPOINT}/help${
           language === "en" ? "" : "_ja"
         }.md`,
       );
