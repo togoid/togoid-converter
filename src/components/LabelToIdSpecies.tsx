@@ -11,7 +11,7 @@ const LabelToIdSpecies = ({ species }: Props) => {
 
   const { data: taxonomyList } = useSWRImmutable("taxonomy", async () => {
     const res = await axios.get<string[][]>(
-      `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/config/taxonomy`,
+      `${process.env.NEXT_PUBLIC_API_ENDPOINT}/config/taxonomy`,
     );
 
     return res.data;
