@@ -41,7 +41,7 @@ export const executeQuery = async <T extends string>(baseParams: {
       results: T extends "target" ? string[] : string[][];
       route: string[];
     }>(
-      `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert`,
+      `${process.env.NEXT_PUBLIC_API_ENDPOINT}/convert`,
       getConvertUrlSearchParams({ ...baseParams, format: "json" }),
     )
     .then((d) => d.data);
@@ -54,7 +54,7 @@ export const executeCountQuery = async (option: {
 }) => {
   return await axios
     .post(
-      `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/count/${option.relation}`,
+      `${process.env.NEXT_PUBLIC_API_ENDPOINT}/count/${option.relation}`,
       new URLSearchParams({
         ids: option.ids.join(","),
         link: option.link,
@@ -102,7 +102,7 @@ export const executeAnnotateQuery = async (option: {
 
   const res = await axios.post<{
     data: any[][];
-  }>("https://dx.dbcls.jp/grasp-dev-togoid", data);
+  }>(process.env.NEXT_PUBLIC_GRASP_ENDPOINT!, data);
 
   return Object.values(res.data.data)[0].reduce(
     (prev, curr) => {

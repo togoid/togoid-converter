@@ -157,12 +157,71 @@ const useResultModalAction = (
     }
   };
 
+  const updateAnnotate = (
+    tableIndex: number,
+    annotateIndex: number,
+    updater: (
+      annotate: TableHead["annotateList"][number],
+    ) => TableHead["annotateList"][number],
+  ) => {
+    setTableHeadBaseList((prev) => {
+      const table = prev[tableIndex];
+      const oldAnnotate = table.annotateList[annotateIndex];
+      const updatedAnnotate = updater(oldAnnotate);
+      const updatedAnnotateList = table.annotateList.with(
+        annotateIndex,
+        updatedAnnotate,
+      );
+      const updatedTable = { ...table, annotateList: updatedAnnotateList };
+      return prev.with(tableIndex, updatedTable);
+    });
+  };
+
+  const updateAnnotateChecked = (
+    tableIndex: number,
+    annotateIndex: number,
+    checked: boolean,
+  ) => {
+    updateAnnotate(tableIndex, annotateIndex, (annotate) => {
+      const updatedItems =
+        !checked && annotate.items
+          ? annotate.items.map((item) => ({
+              ...item,
+              checked: false,
+            }))
+          : annotate.items;
+
+      return {
+        ...annotate,
+        checked,
+        items: updatedItems,
+      };
+    });
+  };
+
+  const updateAnnotateItemChecked = (
+    tableIndex: number,
+    annotateIndex: number,
+    itemIndex: number,
+    checked: boolean,
+  ) => {
+    updateAnnotate(tableIndex, annotateIndex, (annotate) => {
+      const updatedItems = annotate.items!.with(itemIndex, {
+        ...annotate.items![itemIndex],
+        checked,
+      });
+      return { ...annotate, items: updatedItems };
+    });
+  };
+
   return {
     tableHeadBaseList,
     setTableHeadBaseList,
     tableHeadList,
     createExportTable,
     createExportTableHead,
+    updateAnnotateChecked,
+    updateAnnotateItemChecked,
   };
 };
 
