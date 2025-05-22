@@ -165,7 +165,7 @@ const ResultModalActionTable = ({
                         <input
                           id={`showLabels${i}`}
                           type="checkbox"
-                          className="c-switch"
+                          className="checkbox"
                           checked={tableHead.annotateList[0].checked}
                           onChange={(e) =>
                             updateAnnotateChecked(
