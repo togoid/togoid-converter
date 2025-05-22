@@ -8,17 +8,6 @@ type Props = {
   tableHeadList: TableHead[];
   filterTable?: string[][];
   isLoading: boolean;
-  updateAnnotateChecked: (
-    tableIndex: number,
-    annotateIndex: number,
-    checked: boolean,
-  ) => void;
-  updateAnnotateItemChecked: (
-    tableIndex: number,
-    annotateIndex: number,
-    itemIndex: number,
-    checked: boolean,
-  ) => void;
 };
 
 const ResultModalActionTable = ({
@@ -28,8 +17,6 @@ const ResultModalActionTable = ({
   tableHeadList,
   filterTable,
   isLoading,
-  updateAnnotateChecked,
-  updateAnnotateItemChecked,
 }: Props) => {
   const resultList = tableHeadBaseList.map((tableHeadBase, i) => {
     const index = tableHeadList.findIndex((v) => v.index === i)!;
@@ -92,6 +79,63 @@ const ResultModalActionTable = ({
     );
   }, [isCompact, filterTable, tableHeadList, resultList]);
 
+  const updateAnnotate = (
+    tableIndex: number,
+    annotateIndex: number,
+    updater: (
+      annotate: TableHead["annotateList"][number],
+    ) => TableHead["annotateList"][number],
+  ) => {
+    setTableHeadBaseList((prev) => {
+      const table = prev[tableIndex];
+      const oldAnnotate = table.annotateList[annotateIndex];
+      const updatedAnnotate = updater(oldAnnotate);
+      const updatedAnnotateList = table.annotateList.with(
+        annotateIndex,
+        updatedAnnotate,
+      );
+      const updatedTable = { ...table, annotateList: updatedAnnotateList };
+      return prev.with(tableIndex, updatedTable);
+    });
+  };
+
+  const updateAnnotateChecked = (
+    tableIndex: number,
+    annotateIndex: number,
+    checked: boolean,
+  ) => {
+    updateAnnotate(tableIndex, annotateIndex, (annotate) => {
+      const updatedItems =
+        !checked && annotate.items
+          ? annotate.items.map((item) => ({
+              ...item,
+              checked: false,
+            }))
+          : annotate.items;
+
+      return {
+        ...annotate,
+        checked,
+        items: updatedItems,
+      };
+    });
+  };
+
+  const updateAnnotateItemChecked = (
+    tableIndex: number,
+    annotateIndex: number,
+    itemIndex: number,
+    checked: boolean,
+  ) => {
+    updateAnnotate(tableIndex, annotateIndex, (annotate) => {
+      const updatedItems = annotate.items!.with(itemIndex, {
+        ...annotate.items![itemIndex],
+        checked,
+      });
+      return { ...annotate, items: updatedItems };
+    });
+  };
+
   return (
     <table className="table">
       <thead>
@@ -125,9 +169,7 @@ const ResultModalActionTable = ({
                             </summary>
                             <div className="detail__contents">
                               {tableHead.annotateList
-                                .filter(
-                                  (annotate) => annotate.variable !== "label",
-                                )
+                                .slice(1)
                                 .map((annotate, j) => (
                                   <Fragment key={j}>
                                     <input
@@ -154,7 +196,7 @@ const ResultModalActionTable = ({
                             </div>
                           </details>
                         )}
-                        {/* <input
+                        <input
                           id={`showLabels${i}`}
                           type="checkbox"
                           className="c-switch"
@@ -167,7 +209,7 @@ const ResultModalActionTable = ({
                             )
                           }
                         />
-                        <label htmlFor={`showLabels${i}`}>Show Labels</label> */}
+                        <label htmlFor={`showLabels${i}`}>Show Labels</label>
                       </div>
                     )}
                   </fieldset>
