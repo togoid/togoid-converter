@@ -343,18 +343,6 @@
           }
         }
 
-        .flex-box {
-          display: flex;
-          gap: 8px;
-          align-items: center;
-          margin: 8px 0 0;
-
-          .c-switch + label {
-            white-space: nowrap;
-            margin: 0;
-          }
-        }
-
         .detail {
           position: relative;
 
@@ -363,7 +351,6 @@
               family: g.$ff-oswald;
               weight: 700;
             }
-            white-space: nowrap;
             cursor: pointer;
           }
 

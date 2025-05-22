@@ -161,7 +161,7 @@ const ResultModalActionTable = ({
                       {tableHead.label}
                     </ResultModalActionTableSelect>
                     {!isCompact && tableHead.annotateList.length > 0 && (
-                      <div className="flex-box">
+                      <>
                         {tableHead.annotateList.length > 1 && (
                           <details className="detail">
                             <summary className="detail__summary">
@@ -210,7 +210,7 @@ const ResultModalActionTable = ({
                           }
                         />
                         <label htmlFor={`showLabels${i}`}>Show Labels</label>
-                      </div>
+                      </>
                     )}
                   </fieldset>
                 </th>
