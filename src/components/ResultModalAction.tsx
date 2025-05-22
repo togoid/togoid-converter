@@ -32,7 +32,7 @@ const ResultModalAction = (props: Props) => {
     updateAnnotateItemChecked,
   } = useResultModalAction(props.route, previewMode, isCompact);
 
-  const {data: filterTable, isLoading} = useSWRImmutable(
+  const { data: filterTable, isLoading } = useSWRImmutable(
     {
       route: props.route,
       ids: props.ids,
@@ -188,9 +188,9 @@ const ResultModalAction = (props: Props) => {
                     tableHead.annotateList[0]?.variable === "label",
                 )
                 .map((tableHead, i) => (
-                  <div key={i}>
+                  <div key={i} className="radio">
                     <input
-                      id={`label02-${i}`}
+                      id={`label-${i}`}
                       name="format"
                       type="checkbox"
                       checked={tableHead.annotateList[0].checked}
@@ -201,9 +201,8 @@ const ResultModalAction = (props: Props) => {
                           e.target.checked,
                         )
                       }
-                      className="checkbox"
                     />
-                    <label htmlFor={`label02-${i}`} className="checkbox-label">
+                    <label htmlFor={`label-${i}`} className="radio__label">
                       {tableHead.label}
                     </label>
                   </div>

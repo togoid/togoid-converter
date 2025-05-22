@@ -284,53 +284,9 @@
 
       &__inner {
         display: flex;
-        gap: 24px;
 
-        &:not(:last-of-type) {
-          margin: 0 0 8px;
-        }
-
-        .checkbox {
-          @include g.visuallyHidden;
-
-          &:checked {
-            & + .checkbox-label {
-              &::after {
-                left: 3px;
-                width: 14px;
-                border-radius: 2px;
-                background-color: g.$col-249EB3;
-              }
-            }
-          }
-
-          & + .checkbox-label {
-            position: relative;
-            font: {
-              family: "Noto Sans JP", sans-serif;
-              size: 1.2rem;
-            }
-            color: g.$col-5A5A5A;
-            cursor: pointer;
-            padding: 0 0 0 31px;
-
-            &::before,
-            &::after {
-              position: absolute;
-              top: 50%;
-              transform: translateY(-50%);
-              display: block;
-              aspect-ratio: 1;
-              content: "";
-            }
-
-            &::before {
-              left: 0;
-              width: 18px;
-              border-radius: 3px;
-              border: 1px solid g.$col-C4C4C4;
-            }
-          }
+        .radio {
+          margin: 0 24px 8px 0;
         }
       }
     }
