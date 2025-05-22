@@ -175,7 +175,7 @@ const ResultModalActionTable = ({
                             )
                           }
                         />
-                        <label htmlFor={`showLabels${i}`}>Show Labels</label>
+                        <label htmlFor={`showLabels${i}`}>Labels</label>
                         {tableHead.annotateList.length > 1 && (
                           <details className="detail">
                             <summary className="detail__summary">
