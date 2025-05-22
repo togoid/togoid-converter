@@ -162,6 +162,20 @@ const ResultModalActionTable = ({
                     </ResultModalActionTableSelect>
                     {!isCompact && tableHead.annotateList.length > 0 && (
                       <>
+                        <input
+                          id={`showLabels${i}`}
+                          type="checkbox"
+                          className="c-switch"
+                          checked={tableHead.annotateList[0].checked}
+                          onChange={(e) =>
+                            updateAnnotateChecked(
+                              tableHead.index,
+                              tableHead.annotateList[0].index,
+                              e.target.checked,
+                            )
+                          }
+                        />
+                        <label htmlFor={`showLabels${i}`}>Show Labels</label>
                         {tableHead.annotateList.length > 1 && (
                           <details className="detail">
                             <summary className="detail__summary">
@@ -196,20 +210,6 @@ const ResultModalActionTable = ({
                             </div>
                           </details>
                         )}
-                        <input
-                          id={`showLabels${i}`}
-                          type="checkbox"
-                          className="c-switch"
-                          checked={tableHead.annotateList[0].checked}
-                          onChange={(e) =>
-                            updateAnnotateChecked(
-                              tableHead.index,
-                              tableHead.annotateList[0].index,
-                              e.target.checked,
-                            )
-                          }
-                        />
-                        <label htmlFor={`showLabels${i}`}>Show Labels</label>
                       </>
                     )}
                   </fieldset>
