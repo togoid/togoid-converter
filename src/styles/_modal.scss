@@ -360,7 +360,9 @@
             display: flex;
             gap: 8px;
             flex-direction: column;
+            max-height: 15vh;
             padding: 16px;
+            overflow-y: auto;
             border-radius: 5px;
             border: 1px solid g.$col-D5D5D5;
             background-color: g.$col-FFF;
@@ -420,7 +422,7 @@
           }
         }
 
-        .checkbox {
+        .small-checkbox {
           @include g.visuallyHidden;
 
           &:checked {
