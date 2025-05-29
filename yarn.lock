@@ -4755,21 +4755,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jotai@npm:2.12.5":
-  version: 2.12.5
-  resolution: "jotai@npm:2.12.5"
-  peerDependencies:
-    "@types/react": ">=17.0.0"
-    react: ">=17.0.0"
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-    react:
-      optional: true
-  checksum: 10c0/5075b2c78f3e170d84a14b9f69a5903a5aa5b61242ee9acebc5665ce5a5fb13724748107dfd1069d00fe45b3a4ed15e07c40c0861dc817effc10532b733afabe
-  languageName: node
-  linkType: hard
-
 "js-cookie@npm:^2.2.1":
   version: 2.2.1
   resolution: "js-cookie@npm:2.2.1"
@@ -7616,7 +7601,6 @@ __metadata:
     fast-printf: "npm:1.6.10"
     file-saver: "npm:2.0.5"
     gql-query-builder: "npm:3.8.0"
-    jotai: "npm:2.12.5"
     next: "npm:15.3.2"
     next-rspack: "npm:15.3.2"
     nprogress: "npm:0.2.0"
