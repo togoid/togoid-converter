@@ -103,62 +103,60 @@ const LabelToId = ({ executeExamples }: Props) => {
           />
         </div>
 
-        {dataset.value && (
-          <>
-            {dataset.value?.label_resolver?.taxonomy && (
-              <LabelToIdSpecies species={species} />
-            )}
-            {dataset.value?.label_resolver?.threshold && (
-              <LabelToIdThreshold threshold={threshold} />
-            )}
-            <LabelToIdDictionaries />
+        <Show when={dataset}>
+          {
+            <>
+              {dataset.value?.label_resolver?.taxonomy && (
+                <LabelToIdSpecies species={species} />
+              )}
+              {dataset.value?.label_resolver?.threshold && (
+                <LabelToIdThreshold threshold={threshold} />
+              )}
+              <fieldset className="labels">
+                <legend className="label">Select label types</legend>
+                <div className="labels__wrapper">
+                  <For each={selectDictionaryList}>
+                    {([key, value], i) => (
+                      <Fragment key={value.label}>
+                        <input
+                          type="checkbox"
+                          id={value.label}
+                          className="checkbox"
+                          checked={value.checked}
+                          onChange={(e) => {
+                            selectDictionaryList.value =
+                              selectDictionaryList.value.with(i, [
+                                key,
+                                { ...value, checked: e.target.checked },
+                              ]);
+                          }}
+                        />
+                        <label htmlFor={value.label} className="checkbox-label">
+                          {value.label}
+                        </label>
+                      </Fragment>
+                    )}
+                  </For>
+                </div>
+              </fieldset>
 
-            <button className="submit" onClick={handleExecute}>
-              EXECUTE
-            </button>
-          </>
-        )}
+              <button className="submit" onClick={handleExecute}>
+                EXECUTE
+              </button>
+            </>
+          }
+        </Show>
       </div>
-      {isShowTable.value && (
+
+      <Show when={isShowTable}>
         <LabelToIdTable
           pubdictionariesParam={pubdictionariesParam}
           dataset={dataset as Signal<NonNullable<typeof dataset.value>>}
           executeExamples={executeExamples}
         />
-      )}
+      </Show>
     </div>
   );
 };
 
 export default LabelToId;
-
-const LabelToIdDictionaries = () => {
-  useSignals();
-
-  return (
-    <fieldset className="labels">
-      <legend className="label">Select label types</legend>
-      <div className="labels__wrapper">
-        {selectDictionaryList.value.map(([key, value], i) => (
-          <Fragment key={value.label}>
-            <input
-              type="checkbox"
-              id={value.label}
-              className="checkbox"
-              checked={value.checked}
-              onChange={(e) => {
-                selectDictionaryList.value = selectDictionaryList.value.with(
-                  i,
-                  [key, { ...value, checked: e.target.checked }],
-                );
-              }}
-            />
-            <label htmlFor={value.label} className="checkbox-label">
-              {value.label}
-            </label>
-          </Fragment>
-        ))}
-      </div>
-    </fieldset>
-  );
-};
