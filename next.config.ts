@@ -20,8 +20,6 @@ const nextConfig: NextConfig = {
       AutoImport({
         imports: [
           "react",
-          "jotai",
-          "jotai/utils",
           { react: ["Fragment"] },
           {
             "@preact/signals-react": [
@@ -35,7 +33,7 @@ const nextConfig: NextConfig = {
           { "@preact/signals-react/runtime": ["useSignals"] },
         ],
         defaultExportByFilename: true,
-        dirs: ["./src/hooks", "./src/lib", "./src/atoms", "./src/components"],
+        dirs: ["./src/hooks", "./src/lib", "./src/stores", "./src/components"],
       }),
     );
 
