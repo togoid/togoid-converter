@@ -31,6 +31,7 @@ const nextConfig: NextConfig = {
             ],
           },
           { "@preact/signals-react/runtime": ["useSignals"] },
+          { "@preact/signals-react/utils": ["Show", "For"] },
         ],
         defaultExportByFilename: true,
         dirs: ["./src/hooks", "./src/lib", "./src/stores", "./src/components"],
