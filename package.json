@@ -10,12 +10,12 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@preact/signals-react": "3.1.1",
+    "@preact/signals-react": "3.2.0",
     "axios": "1.9.0",
     "copy-to-clipboard": "3.3.3",
     "fast-printf": "1.6.10",
     "file-saver": "2.0.5",
-    "next": "15.3.2",
+    "next": "15.3.3",
     "nprogress": "0.2.0",
     "papaparse": "5.5.3",
     "react": "19.1.0",
@@ -31,22 +31,22 @@
   "devDependencies": {
     "@eslint/eslintrc": "3.3.1",
     "@types/file-saver": "^2.0.7",
-    "@types/node": "22.15.24",
+    "@types/node": "22.15.29",
     "@types/nprogress": "^0.2.3",
     "@types/papaparse": "5.3.16",
     "@types/react": "19.1.6",
-    "@types/react-dom": "19.1.5",
+    "@types/react-dom": "19.1.6",
     "@types/swagger-ui-react": "5.18.0",
-    "eslint": "9.27.0",
-    "eslint-config-next": "15.3.2",
+    "eslint": "9.28.0",
+    "eslint-config-next": "15.3.3",
     "eslint-config-prettier": "10.1.5",
-    "eslint-plugin-prettier": "5.4.0",
+    "eslint-plugin-prettier": "5.4.1",
     "gql-query-builder": "3.8.0",
-    "next-rspack": "15.3.2",
+    "next-rspack": "15.3.3",
     "prettier": "3.5.3",
-    "sass": "1.89.0",
+    "sass": "1.89.1",
     "typescript": "5.8.3",
     "unplugin-auto-import": "19.3.0"
   },
-  "packageManager": "yarn@4.9.1"
+  "packageManager": "yarn@4.9.2"
 }
