@@ -35,9 +35,11 @@ const ExploreResult = (props: any) => {
       });
     } else if (mode === "category") {
       return item.toSorted((a, b) => {
-        if (a.category < b.category) {
+        if (datasetConfig[a.name].category < datasetConfig[b.name].category) {
           return n * -1;
-        } else if (a.category > b.category) {
+        } else if (
+          datasetConfig[a.name].category > datasetConfig[b.name].category
+        ) {
           return n * 1;
         }
         return 0;
@@ -70,7 +72,6 @@ const ExploreResult = (props: any) => {
       mode: "name",
       direction: "down",
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.nodes]);
 
   const sortNode = (
