@@ -29,23 +29,24 @@ export const colorLegendList = [
   },
   {
     color: "#53C3C6",
-    categoryList: ["Variant"],
+    categoryList: ["Variant", "Genotype"],
   },
   {
     color: "#006400",
-    categoryList: ["Anatomy", "CellLine", "Genome", "Proteome", "Taxonomy"],
+    categoryList: ["Anatomy", "CellLine", "Genome", "Proteome", "Organism"],
   },
   {
     color: "#696969",
     categoryList: [
       "Analysis",
-      "Classification",
       "Experiment",
       "Project",
-      "Literature",
       "Sample",
       "SequenceRun",
       "Submission",
+      "Literature",
+      "AnnotationRule",
+      "Classification",
       "Function",
     ],
   },

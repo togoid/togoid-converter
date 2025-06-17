@@ -35,10 +35,14 @@ const ExploreResult = (props: any) => {
       });
     } else if (mode === "category") {
       return item.toSorted((a, b) => {
-        if (datasetConfig[a.name].category < datasetConfig[b.name].category) {
+        if (
+          Object.keys(categoryColor).indexOf(datasetConfig[a.name].category) <
+          Object.keys(categoryColor).indexOf(datasetConfig[b.name].category)
+        ) {
           return n * -1;
         } else if (
-          datasetConfig[a.name].category > datasetConfig[b.name].category
+          Object.keys(categoryColor).indexOf(datasetConfig[a.name].category) >
+          Object.keys(categoryColor).indexOf(datasetConfig[b.name].category)
         ) {
           return n * 1;
         }
