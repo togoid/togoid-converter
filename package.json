@@ -40,7 +40,7 @@
     "eslint": "9.29.0",
     "eslint-config-next": "15.3.3",
     "eslint-config-prettier": "10.1.5",
-    "eslint-plugin-prettier": "5.4.1",
+    "eslint-plugin-prettier": "5.5.0",
     "gql-query-builder": "3.8.0",
     "next-rspack": "15.3.3",
     "prettier": "3.5.3",
