@@ -17,6 +17,8 @@ const useResultModalAction = (
           checked: false,
           label: "Label",
           variable: "label",
+          isList: false,
+          isCompact: true,
         });
       }
       if (dataset.annotations?.length) {
@@ -30,6 +32,8 @@ const useResultModalAction = (
               checked: false,
               label: v,
             })),
+            isList: annotation.is_list ?? false,
+            isCompact: true,
           });
         });
       }

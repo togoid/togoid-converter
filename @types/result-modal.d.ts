@@ -10,6 +10,8 @@ type TableHead = {
     checked: boolean;
     label: string;
     variable: string;
+    isList: boolean;
+    isCompact: boolean;
     items?: {
       checked: boolean;
       label: string;
