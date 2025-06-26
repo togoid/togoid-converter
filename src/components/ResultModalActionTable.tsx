@@ -245,7 +245,7 @@ const ResultModalActionTable = ({
                           {annotate.isList && (
                             <>
                               <input
-                                id={`annotate-compact-${annotate.variable}`}
+                                id={`annotate-compact-${annotate.variable}-${tableHead.index}`}
                                 type="checkbox"
                                 className="small-checkbox"
                                 checked={annotate.isCompact}
@@ -258,7 +258,7 @@ const ResultModalActionTable = ({
                                 }
                               />
                               <label
-                                htmlFor={`annotate-compact-${annotate.variable}`}
+                                htmlFor={`annotate-compact-${annotate.variable}-${tableHead.index}`}
                               >
                                 Compact
                               </label>
