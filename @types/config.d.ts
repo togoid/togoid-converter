@@ -5,6 +5,7 @@ type DatasetConfig = {
       label: string;
       numerical?: boolean;
       variable: string;
+      is_list?: true;
     }[];
     category: string;
     catalog: string;
