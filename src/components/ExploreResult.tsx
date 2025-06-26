@@ -35,18 +35,13 @@ const ExploreResult = (props: any) => {
       });
     } else if (mode === "category") {
       return item.toSorted((a, b) => {
-        if (
-          Object.keys(categoryColor).indexOf(datasetConfig[a.name].category) <
-          Object.keys(categoryColor).indexOf(datasetConfig[b.name].category)
-        ) {
-          return n * -1;
-        } else if (
-          Object.keys(categoryColor).indexOf(datasetConfig[a.name].category) >
-          Object.keys(categoryColor).indexOf(datasetConfig[b.name].category)
-        ) {
-          return n * 1;
-        }
-        return 0;
+        return (
+          (Object.keys(categoryColor).indexOf(datasetConfig[a.name].category) -
+            Object.keys(categoryColor).indexOf(
+              datasetConfig[b.name].category,
+            )) *
+          n
+        );
       });
     } else if (mode === "sourceCount") {
       return item.toSorted((a, b) => (a.source - b.source) * n);

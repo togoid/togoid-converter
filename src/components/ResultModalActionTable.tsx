@@ -136,6 +136,28 @@ const ResultModalActionTable = ({
     });
   };
 
+  const updateAnnotateIsCompact = (
+    tableIndex: number,
+    annotateIndex: number,
+    isCompact: boolean,
+  ) => {
+    updateAnnotate(tableIndex, annotateIndex, (annotate) => {
+      const updatedItems =
+        !isCompact && annotate.items
+          ? annotate.items.map((item) => ({
+              ...item,
+              isCompact: false,
+            }))
+          : annotate.items;
+
+      return {
+        ...annotate,
+        isCompact,
+        items: updatedItems,
+      };
+    });
+  };
+
   return (
     <table className="table">
       <thead>
@@ -215,12 +237,33 @@ const ResultModalActionTable = ({
                   </fieldset>
                 </th>
                 {!isCompact &&
-                  tableHead.annotateList
-                    .filter((annotate) => annotate.checked)
-                    .map((annotate) => (
-                      <Fragment key={annotate.variable}>
-                        <th>
+                  tableHead.annotateList.map(
+                    (annotate, k) =>
+                      annotate.checked && (
+                        <th key={annotate.variable}>
                           {annotate.label}
+                          {annotate.isList && (
+                            <>
+                              <input
+                                id={`annotate-compact-${annotate.variable}-${tableHead.index}`}
+                                type="checkbox"
+                                className="small-checkbox"
+                                checked={annotate.isCompact}
+                                onChange={(e) =>
+                                  updateAnnotateIsCompact(
+                                    tableHead.index,
+                                    tableHead.annotateList[k].index,
+                                    e.target.checked,
+                                  )
+                                }
+                              />
+                              <label
+                                htmlFor={`annotate-compact-${annotate.variable}-${tableHead.index}`}
+                              >
+                                Compact
+                              </label>
+                            </>
+                          )}
                           {annotate.items?.length && (
                             <details className="detail">
                               <summary className="detail__summary">
@@ -267,8 +310,8 @@ const ResultModalActionTable = ({
                             </details>
                           )}
                         </th>
-                      </Fragment>
-                    ))}
+                      ),
+                  )}
               </Fragment>
             ))}
         </tr>

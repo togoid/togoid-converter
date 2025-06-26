@@ -17,6 +17,8 @@ const useResultModalAction = (
           checked: false,
           label: "Label",
           variable: "label",
+          isList: false,
+          isCompact: true,
         });
       }
       if (dataset.annotations?.length) {
@@ -30,6 +32,8 @@ const useResultModalAction = (
               checked: false,
               label: v,
             })),
+            isList: annotation.is_list ?? false,
+            isCompact: true,
           });
         });
       }
@@ -113,20 +117,29 @@ const useResultModalAction = (
             );
           }),
         )
-        .map((v) =>
-          tableHeadList.reduce<(string | undefined)[]>((prev, curr, j) => {
-            const idWithPrefix = joinPrefix(v[j], curr.lineMode);
-            prev.push(idWithPrefix);
-            curr.annotateList.forEach((annotate) => {
-              if (annotate.checked) {
-                const label = labelList?.[j]?.[v[j]]?.[annotate.variable];
-                prev.push(Array.isArray(label) ? label.join(" ") : label);
-              }
-            });
+        .flatMap((v) => {
+          const list = tableHeadList.reduce<(string | string[] | undefined)[]>(
+            (prev, curr, j) => {
+              const idWithPrefix = joinPrefix(v[j], curr.lineMode);
+              prev.push(idWithPrefix);
+              curr.annotateList.forEach((annotate) => {
+                if (annotate.checked) {
+                  const label = labelList?.[j]?.[v[j]]?.[annotate.variable];
+                  prev.push(
+                    Array.isArray(label) && annotate.isCompact
+                      ? label.join(" ")
+                      : label,
+                  );
+                }
+              });
 
-            return prev;
-          }, []),
-        );
+              return prev;
+            },
+            [],
+          );
+
+          return cartesianProduct(list);
+        });
     } else {
       // All converted IDs
       // origin and targets
@@ -139,6 +152,26 @@ const useResultModalAction = (
       );
     }
   };
+
+  function cartesianProduct<T extends string>(
+    args: (T | T[] | undefined)[],
+  ): (T | undefined)[][] {
+    return args.reduce<(T | undefined)[][]>(
+      (acc, curr) => {
+        let items: (T | undefined)[];
+        if (Array.isArray(curr)) {
+          // 空配列なら undefined 一要素に、そうでなければ中身をそのまま
+          items = curr.length === 0 ? [undefined] : curr;
+        } else {
+          // string または undefined
+          items = [curr];
+        }
+        return acc.flatMap((prev) => items.map((item) => [...prev, item]));
+      },
+      // 初期値：空の組み合わせを１つ
+      [[]],
+    );
+  }
 
   const createExportTableHead = () => {
     if (!isCompact) {
