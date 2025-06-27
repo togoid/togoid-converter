@@ -320,11 +320,11 @@ const ResultModalActionTable = ({
         {!isLoading &&
           (filterTableAnnotate?.length ? (
             filterTableAnnotate.map((data, i) => (
-              <tr key={i}>
-                {data.map((d, j) => (
-                  <Fragment key={j}>
-                    {isCompact ? (
-                      <td>
+              <Fragment key={i}>
+                {isCompact ? (
+                  <tr>
+                    {data.map((d, j) => (
+                      <td key={j}>
                         {d?.split(" ")?.map((f, k) => (
                           <Fragment key={k}>
                             <a
@@ -346,59 +346,16 @@ const ResultModalActionTable = ({
                           </Fragment>
                         ))}
                       </td>
-                    ) : (
-                      <>
-                        <td>
-                          <a
-                            href={joinPrefix(
-                              d,
-                              tableHeadList[j].lineMode.key === "url"
-                                ? tableHeadList[j].lineMode
-                                : {
-                                    key: "url",
-                                    value: tableHeadList[j].prefix![0].uri,
-                                  },
-                            )}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            {joinPrefix(d, tableHeadList[j].lineMode)}
-                          </a>
-                        </td>
-                        {tableHeadList[j].annotateList
-                          .filter((annotate) => annotate.checked)
-                          .map((annotate) => (
-                            <td key={`${i}-${j}-${annotate.variable}`}>
-                              {Array.isArray(
-                                resultList?.[tableHeadList[j].index]?.data?.[
-                                  d
-                                ]?.[annotate.variable],
-                              ) ? (
-                                (
-                                  resultList?.[tableHeadList[j].index]?.data?.[
-                                    d
-                                  ]?.[annotate.variable] as string[]
-                                )?.map((a) => (
-                                  <Fragment key={a}>
-                                    <span>{a}</span>
-                                    <br />
-                                  </Fragment>
-                                ))
-                              ) : (
-                                <span>
-                                  {
-                                    resultList?.[tableHeadList[j].index]
-                                      ?.data?.[d]?.[annotate.variable]
-                                  }
-                                </span>
-                              )}
-                            </td>
-                          ))}
-                      </>
-                    )}
-                  </Fragment>
-                ))}
-              </tr>
+                    ))}
+                  </tr>
+                ) : (
+                  <ResultModalActionTableRow
+                    data={data}
+                    tableHeadList={tableHeadList}
+                    resultList={resultList}
+                  />
+                )}
+              </Fragment>
             ))
           ) : (
             <tr>
