@@ -30,6 +30,7 @@ declare global {
   const ResultModal: typeof import('./src/components/ResultModal')['default']
   const ResultModalAction: typeof import('./src/components/ResultModalAction')['default']
   const ResultModalActionTable: typeof import('./src/components/ResultModalActionTable')['default']
+  const ResultModalActionTableRow: typeof import('./src/components/ResultModalActionTableRow')['default']
   const ResultModalActionTableSelect: typeof import('./src/components/ResultModalActionTableSelect')['default']
   const ResultModalClipboardButton: typeof import('./src/components/ResultModalClipboardButton')['default']
   const ResultModalSingleAction: typeof import('./src/components/ResultModalSingleAction')['default']
