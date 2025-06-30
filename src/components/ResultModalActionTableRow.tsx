@@ -16,7 +16,7 @@ const ResultModalActionTableRow = ({
         const annotated = th.annotateList
           .filter((a) => a.checked)
           .map((a) => {
-            const lbl = resultList[idx].data?.[base]?.[a.variable];
+            const lbl = resultList[th.index].data?.[base]?.[a.variable];
             return Array.isArray(lbl) && a.isCompact ? lbl.join("\n") : lbl;
           });
         return [base, ...annotated];

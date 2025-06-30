@@ -29,7 +29,7 @@ const ResultModalActionTable = ({
         tableHeadBase.annotateList.some((annotate) => annotate.checked)
         ? {
             name: tableHeadBase.name,
-            ids: filterTable.map((v) => v[index]),
+            ids: filterTable.map((v) => v[index]).filter((v) => v),
             fields: tableHeadBase.annotateList.map(
               (annotate) => annotate.variable,
             ),

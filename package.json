@@ -10,7 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@preact/signals-react": "3.2.0",
+    "@preact/signals-react": "3.2.1",
     "axios": "1.10.0",
     "copy-to-clipboard": "3.3.3",
     "fast-printf": "1.6.10",
@@ -31,19 +31,19 @@
   "devDependencies": {
     "@eslint/eslintrc": "3.3.1",
     "@types/file-saver": "^2.0.7",
-    "@types/node": "22.15.33",
+    "@types/node": "22.15.34",
     "@types/nprogress": "^0.2.3",
     "@types/papaparse": "5.3.16",
     "@types/react": "19.1.8",
     "@types/react-dom": "19.1.6",
     "@types/swagger-ui-react": "5.18.0",
-    "eslint": "9.29.0",
+    "eslint": "9.30.0",
     "eslint-config-next": "15.3.4",
     "eslint-config-prettier": "10.1.5",
     "eslint-plugin-prettier": "5.5.1",
     "gql-query-builder": "3.8.0",
     "next-rspack": "15.3.4",
-    "prettier": "3.6.1",
+    "prettier": "3.6.2",
     "sass": "1.89.2",
     "typescript": "5.8.3",
     "unplugin-auto-import": "19.3.0"
