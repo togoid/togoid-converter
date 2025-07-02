@@ -17,7 +17,18 @@ const ResultModalActionTableRow = ({
           .filter((a) => a.checked)
           .map((a) => {
             const lbl = resultList[th.index].data?.[base]?.[a.variable];
-            return Array.isArray(lbl) && a.isCompact ? lbl.join("\n") : lbl;
+
+            if (Array.isArray(lbl)) {
+              if (a.isCompact) {
+                return lbl.join("\n");
+              } else if (a.items?.some((x) => x.checked)) {
+                const checkedItems = a.items
+                  .filter((x) => x.checked)
+                  .map((x) => x.label);
+                return lbl.filter((v) => checkedItems.includes(v));
+              }
+            }
+            return lbl;
           });
         return [base, ...annotated];
       }),

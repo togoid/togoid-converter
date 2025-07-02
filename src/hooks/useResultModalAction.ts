@@ -109,27 +109,38 @@ const useResultModalAction = (
       const idsList = labelList.map((v) => (v ? Object.keys(v) : v));
 
       return tableRows
-        .filter((v) =>
+        .filter((row) =>
           tableHeadList.every((tableHead, i) => {
             return (
-              !tableHead.annotateList.some((v) => v.checked) ||
-              idsList[tableHead.index]?.includes(v[i])
+              tableHead.annotateList.every(
+                (annotate) =>
+                  !annotate.checked ||
+                  (annotate.items?.every((v) => !v.checked) && row[i] === null),
+              ) || idsList[i]?.includes(row[i])
             );
           }),
         )
-        .flatMap((v) => {
+        .flatMap((row) => {
           const list = tableHeadList.reduce<(string | string[] | undefined)[]>(
             (prev, curr, j) => {
-              const idWithPrefix = joinPrefix(v[j], curr.lineMode);
+              const idWithPrefix = joinPrefix(row[j], curr.lineMode);
               prev.push(idWithPrefix);
               curr.annotateList.forEach((annotate) => {
                 if (annotate.checked) {
-                  const label = labelList?.[j]?.[v[j]]?.[annotate.variable];
-                  prev.push(
-                    Array.isArray(label) && annotate.isCompact
-                      ? label.join(" ")
-                      : label,
-                  );
+                  const label = labelList?.[j]?.[row[j]]?.[annotate.variable];
+                  if (Array.isArray(label)) {
+                    if (annotate.isCompact) {
+                      prev.push(label.join(" "));
+                      return;
+                    } else if (annotate.items?.some((x) => x.checked)) {
+                      const checkedItems = annotate.items
+                        .filter((x) => x.checked)
+                        .map((x) => x.label);
+                      prev.push(label.filter((v) => checkedItems.includes(v)));
+                      return;
+                    }
+                  }
+                  prev.push(label);
                 }
               });
 
