@@ -306,6 +306,16 @@ const Datasets = ({ executeExamples }: Props) => {
                         </dd>
                       </div>
                     )}
+                    {datasetConfig[key].annotations?.length && (
+                      <div className="data__wrapper">
+                        <dt>ANNOTATIONS</dt>
+                        <dd>
+                          {datasetConfig[key].annotations
+                            .map((annotate) => annotate.label)
+                            .join(", ")}
+                        </dd>
+                      </div>
+                    )}
                   </dl>
                 </article>
               ))}
