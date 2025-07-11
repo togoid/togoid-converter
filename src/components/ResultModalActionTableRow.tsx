@@ -65,7 +65,7 @@ const ResultModalActionTableRow = ({
         const hrefMode =
           th.lineMode.key === "url"
             ? th.lineMode
-            : { key: "url" as const, value: th.prefix![0].uri };
+            : { key: "url" as const, value: th.prefix[0].uri };
         return { totalCells, lineMode: th.lineMode, hrefMode };
       }),
     [tableHeadList],

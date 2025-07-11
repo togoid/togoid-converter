@@ -29,7 +29,7 @@ type DatasetConfig = {
     };
     linkTo: any;
     method?: string;
-    prefix?: {
+    prefix: {
       label: string;
       rdf?: boolean;
       uri: string;

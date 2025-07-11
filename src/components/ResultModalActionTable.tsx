@@ -334,7 +334,7 @@ const ResultModalActionTable = ({
                                   ? tableHeadList[j].lineMode
                                   : {
                                       key: "url",
-                                      value: tableHeadList[j].prefix![0].uri,
+                                      value: tableHeadList[j].prefix[0].uri,
                                     },
                               )}
                               target="_blank"

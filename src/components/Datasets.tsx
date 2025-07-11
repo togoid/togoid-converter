@@ -286,18 +286,6 @@ const Datasets = ({ executeExamples }: Props) => {
                           </dd>
                         </div>
                       )}
-                    {datasetFilterObj[key].count && (
-                      <div className="data__wrapper">
-                        <dt>COUNT</dt>
-                        <dd>{datasetFilterObj[key].count}</dd>
-                      </div>
-                    )}
-                    {datasetFilterObj[key].lastUpdatedAt && (
-                      <div className="data__wrapper">
-                        <dt>LAST UPDATED AT</dt>
-                        <dd>{datasetFilterObj[key].lastUpdatedAt}</dd>
-                      </div>
-                    )}
                     {datasetConfig[key].examples && (
                       <div className="data__wrapper">
                         <dt>EXAMPLES</dt>
@@ -315,6 +303,16 @@ const Datasets = ({ executeExamples }: Props) => {
                               </a>
                             </li>
                           ))}
+                        </dd>
+                      </div>
+                    )}
+                    {datasetConfig[key].annotations?.length && (
+                      <div className="data__wrapper">
+                        <dt>ANNOTATIONS</dt>
+                        <dd>
+                          {datasetConfig[key].annotations
+                            .map((annotate) => annotate.label)
+                            .join(", ")}
                         </dd>
                       </div>
                     )}
