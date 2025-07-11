@@ -33,7 +33,7 @@ const ResultModalActionTableSelect = ({
         ) : (
           <option value={JSON.stringify({ key: "id", value: "" })}>ID</option>
         )}
-        {tableHead.prefix && tableHead.prefix.length > 1 ? (
+        {tableHead.prefix.length > 1 ? (
           tableHead.prefix.map((w) => (
             <option
               key={w.uri}
@@ -49,7 +49,7 @@ const ResultModalActionTableSelect = ({
           <option
             value={JSON.stringify({
               key: "url",
-              value: tableHead.prefix?.[0].uri,
+              value: tableHead.prefix[0].uri,
             })}
           >
             URL

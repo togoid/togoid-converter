@@ -332,7 +332,7 @@ const LabelToIdTable = ({
                                 ? lineMode.value
                                 : {
                                     key: "url",
-                                    value: dataset.value.prefix![0].uri,
+                                    value: dataset.value.prefix[0].uri,
                                   },
                             )}
                             target="_blank"
