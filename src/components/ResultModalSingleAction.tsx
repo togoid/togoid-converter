@@ -7,52 +7,30 @@ type Props = {
 };
 
 const ResultModalSingleAction = (props: Props) => {
-  const { datasetConfig } = useConfig();
+  const [previewMode] = useState("target");
+  const [isCompact] = useState(false);
 
-  const tableHead = useMemo<any[]>(
-    () =>
-      props.route.map((v, i) => ({
-        ...datasetConfig[v.name],
-        index: i,
-        name: v.name,
-      })),
-    [],
-  );
+  const {
+    tableHeadBaseList,
+    setTableHeadBaseList,
+    tableHeadList,
+    createExportTable,
+    createExportTableHead,
+  } = useResultModalAction(props.route, previewMode, isCompact);
 
-  const [lineMode, setLineMode] = useState<string[]>(
-    tableHead.map((v) => (v.format ? v.format[0] : "id")),
-  );
-  const [isShowLabelList, setIsShowLabelList] = useState<boolean[]>(
-    Array(props.route.length).fill(false),
-  );
-
-  const createExportTable = async (idList: string[]) => {
-    if (isShowLabelList[0]) {
-      const head = tableHead.flatMap((v) => [v.label, ""]);
-
-      const result = await executeAnnotateQuery({
-        name: tableHead[0].name,
-        ids: idList,
-      });
-
-      const row = idList.map((v) => {
-        return [joinPrefix(v, lineMode[0], tableHead[0].prefix), result[v]];
-      });
-
-      return { head: head, row: row };
-    } else {
-      const head = tableHead.map((v) => v.label);
-      const row = idList.map((v) => {
-        return [joinPrefix(v, lineMode[0], tableHead[0].prefix)];
-      });
-
-      return { head: head, row: row };
-    }
-  };
+  const filterTable = useMemo(() => {
+    return tableHeadList[0].format?.length
+      ? props.route[0].results.map((v) => [
+          tableHeadList[0].format!.reduce((prev, curr) => {
+            return sscanf(prev, curr) ?? prev;
+          }, v),
+        ])
+      : props.route[0].results.map((v) => [v]);
+  }, []);
 
   const copyClipboard = async () => {
-    const { row } = await createExportTable(props.route[0].results);
-    const text = invokeUnparse(row, "tsv");
+    const rows = await createExportTable(filterTable);
+    const text = invokeUnparse(rows, "tsv");
 
     copy(text, {
       format: "text/plain",
@@ -60,17 +38,11 @@ const ResultModalSingleAction = (props: Props) => {
   };
 
   const handleExportCsvTsv = async (extension: "csv" | "tsv") => {
-    const { head, row } = await createExportTable(props.route[0].results);
+    const head = createExportTableHead();
+    const rows = await createExportTable(filterTable);
 
-    exportCsvTsv([head, ...row], extension, `result.${extension}`);
+    exportCsvTsv([head, ...rows], extension, `result.${extension}`);
   };
-
-  const { filterTable, labelList } = useResultModalSinglePreview(
-    props.route,
-    tableHead,
-    isShowLabelList,
-    lineMode,
-  );
 
   return (
     <>
@@ -142,12 +114,11 @@ const ResultModalSingleAction = (props: Props) => {
 
       <ResultModalActionTable
         isCompact={false}
-        lineMode={lineMode}
-        setLineMode={setLineMode}
-        isShowLabelList={isShowLabelList}
-        setIsShowLabelList={setIsShowLabelList}
+        tableHeadBaseList={tableHeadBaseList}
+        setTableHeadBaseList={setTableHeadBaseList}
+        tableHeadList={tableHeadList}
         filterTable={filterTable}
-        labelList={labelList}
+        isLoading={false}
       />
     </>
   );

@@ -1,8 +1,6 @@
 import PaPa from "papaparse";
 import { saveAs } from "file-saver";
-import axios from "axios";
 import { printf } from "fast-printf";
-
 import type { Arrow, HeadStyleAlias } from "react-arrow-master";
 
 export const exportCsvTsv = (
@@ -22,121 +20,6 @@ export const invokeUnparse = (rows: unknown[], extension: "csv" | "tsv") => {
     tsv: "\t",
   };
   return PaPa.unparse(rows, { delimiter: delimiterList[extension] });
-};
-
-export const getConvertUrlSearchParams = (baseParams: {
-  route: Route[];
-  ids: string[];
-  report: string;
-  format: "csv" | "json";
-  limit?: number;
-  compact?: boolean;
-}) => {
-  const params = new URLSearchParams({
-    route: baseParams.route
-      .map((v, i) => (i === 0 ? v.name : `${v.relation?.link.label},${v.name}`))
-      .join(","),
-    ids: baseParams.ids.join(","),
-    report: baseParams.report,
-    format: baseParams.format,
-  });
-  if (baseParams.limit) {
-    params.set("limit", String(baseParams.limit));
-  }
-  if (baseParams.compact) {
-    params.set("compact", "1");
-  }
-
-  return params;
-};
-
-export const executeQuery = async (baseParams: {
-  route: Route[];
-  ids: string[];
-  report: string;
-  limit?: number;
-  compact?: boolean;
-}) => {
-  return await axios
-    .post<{
-      ids: string[];
-      results: string[][];
-      route: string[];
-    }>(
-      `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert`,
-      getConvertUrlSearchParams({ ...baseParams, format: "json" }),
-    )
-    .then((d) => d.data);
-};
-
-export const executeCountQuery = async (option: {
-  relation: string;
-  ids: string[];
-  link: string;
-}) => {
-  return await axios
-    .post(
-      `${process.env.NEXT_PUBLIC_API_ENDOPOINT}/count/${option.relation}`,
-      new URLSearchParams({
-        ids: option.ids.join(","),
-        link: option.link,
-      }),
-    )
-    .then((d) => d.data);
-};
-
-// export const executeAnnotateQuery = async (option: {
-//   name: string;
-//   ids: string[];
-// }) => {
-//   const res = await axios<{
-//     data: {
-//       id: string;
-//       iri: string;
-//       label: string;
-//     }[][];
-//   }>({
-//     url: "https://rdfportal.org/grasp-togoid",
-//     method: "POST",
-//     data: {
-//       query: `query {
-//       ${option.name}(id: ${JSON.stringify([...new Set(option.ids)])}) {
-//         iri
-//         id
-//         label
-//       }
-//     }`,
-//     },
-//   });
-
-//   return Object.values(res.data.data)[0];
-// };
-
-export const executeAnnotateQuery = async (option: {
-  name: string;
-  ids: string[];
-}) => {
-  const res = await axios<{
-    data: {
-      id: string;
-      label: string;
-    }[][];
-  }>({
-    url: "https://rdfportal.org/grasp-togoid",
-    method: "POST",
-    data: {
-      query: `query {
-      ${option.name}(id: ${JSON.stringify([...new Set(option.ids)])}) {
-        id
-        label
-      }
-    }`,
-    },
-  });
-
-  return Object.fromEntries(
-    Object.values(res.data.data)[0].map((v) => [v.id, v.label]),
-  );
 };
 
 export const mergePathStyle = (
@@ -201,29 +84,69 @@ export const getPathStyle = (
 
 export const joinPrefix = (
   id: string | undefined,
-  mode: string,
-  prefix: string,
+  mode: {
+    key: "id" | "url";
+    value: string;
+  },
   isCompact?: boolean,
 ) => {
   if (!id) {
     return "";
   }
 
-  if (mode === "id") {
-    return id;
-  } else if (mode === "url") {
+  if (mode.key === "id") {
+    if (!mode.value) {
+      return id;
+    }
     return isCompact
       ? id
           .split(" ")
-          .map((v) => prefix + v)
+          .map((v) => printf(mode.value, v))
           .join(" ")
-      : prefix + id;
-  } else {
+      : printf(mode.value, id);
+  } else if (mode.key === "url") {
     return isCompact
       ? id
           .split(" ")
-          .map((v) => printf(mode, v))
+          .map((v) => mode.value + v)
           .join(" ")
-      : printf(mode, id);
+      : mode.value + id;
   }
+
+  return "";
+};
+
+export const sscanf = (str: string, format: string) => {
+  const formatPatterns = {
+    "%s": "(.*?)",
+    "%d": "(\\d+)",
+    "%f": "([+-]?\\d+(?:\\.\\d+)?)",
+    "%u": "(\\d+)",
+    "%x": "([0-9a-f]+)",
+    "%X": "([0-9A-F]+)",
+    "%o": "([0-7]+)",
+    "%c": "(.)",
+    "%w": "(\\w+)",
+    "%a": "([a-zA-Z]+)",
+    "%e": "([+-]?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?)",
+  };
+
+  // 特殊文字をエスケープ
+  let regexStr = format.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
+
+  // 一致するフォーマットを1つだけ見つけて置換
+  let foundKey = null;
+  for (const [key, pattern] of Object.entries(formatPatterns)) {
+    if (regexStr.includes(key)) {
+      regexStr = regexStr.replace(key, pattern);
+      foundKey = key;
+      break; // 1つだけの前提なのでbreak
+    }
+  }
+
+  if (!foundKey) return null;
+
+  const regex = new RegExp("^" + regexStr + "$");
+  const match = str.match(regex);
+  return match ? match[1] : null;
 };

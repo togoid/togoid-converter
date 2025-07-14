@@ -267,7 +267,11 @@ const Datasets = ({ executeExamples }: Props) => {
                   <dl className="data">
                     <div className="data__wrapper">
                       <dt>PREFIX</dt>
-                      <dd>{datasetConfig[key].prefix}</dd>
+                      <dd>
+                        {datasetConfig[key].prefix.map((p, i) => (
+                          <li key={i}>{p.uri}</li>
+                        ))}
+                      </dd>
                     </div>
                     <div className="data__wrapper">
                       <dt>CATEGORY</dt>
@@ -282,18 +286,6 @@ const Datasets = ({ executeExamples }: Props) => {
                           </dd>
                         </div>
                       )}
-                    {datasetFilterObj[key].count && (
-                      <div className="data__wrapper">
-                        <dt>COUNT</dt>
-                        <dd>{datasetFilterObj[key].count}</dd>
-                      </div>
-                    )}
-                    {datasetFilterObj[key].lastUpdatedAt && (
-                      <div className="data__wrapper">
-                        <dt>LAST UPDATED AT</dt>
-                        <dd>{datasetFilterObj[key].lastUpdatedAt}</dd>
-                      </div>
-                    )}
                     {datasetConfig[key].examples && (
                       <div className="data__wrapper">
                         <dt>EXAMPLES</dt>
@@ -311,6 +303,16 @@ const Datasets = ({ executeExamples }: Props) => {
                               </a>
                             </li>
                           ))}
+                        </dd>
+                      </div>
+                    )}
+                    {datasetConfig[key].annotations?.length && (
+                      <div className="data__wrapper">
+                        <dt>ANNOTATIONS</dt>
+                        <dd>
+                          {datasetConfig[key].annotations
+                            .map((annotate) => annotate.label)
+                            .join(", ")}
                         </dd>
                       </div>
                     )}

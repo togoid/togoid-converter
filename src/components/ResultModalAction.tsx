@@ -1,3 +1,5 @@
+import useSWRImmutable from "swr/immutable";
+// import useSWR from "swr";
 import copy from "copy-to-clipboard";
 
 // 定数
@@ -17,160 +19,35 @@ type Props = {
 };
 
 const ResultModalAction = (props: Props) => {
-  const { datasetConfig } = useConfig();
-  const { annotateConfig } = useAnnotateConfig();
-
-  const tableHead = useMemo(
-    () =>
-      props.route.map((v, i) => ({
-        ...datasetConfig[v.name],
-        index: i,
-        name: v.name,
-      })),
-    [],
-  );
-
   const [previewMode, setPreviewMode] = useState("all");
   const [isCompact, setIsCompact] = useState(false);
-  const [lineMode, setLineMode] = useState<string[]>(
-    tableHead.map((v) => (v.format ? v.format[0] : "id")),
-  );
-  const [isShowLabelList, setIsShowLabelList] = useState<boolean[]>(
-    Array(props.route.length).fill(false),
-  );
 
-  const createExportTable = async (tableRows: string[][]) => {
-    const headList = getHeadList(tableHead, previewMode);
+  const {
+    tableHeadBaseList,
+    setTableHeadBaseList,
+    tableHeadList,
+    createExportTable,
+    createExportTableHead,
+  } = useResultModalAction(props.route, previewMode, isCompact);
 
-    if (!isCompact && isShowLabelList.some((v) => v)) {
-      if (
-        previewMode === "all" ||
-        previewMode === "pair" ||
-        previewMode === "full"
-      ) {
-        // All converted IDs
-        // origin and targets
-        // All including unconverted IDs
-        const transposeList = tableRows[0].map((_, i) =>
-          tableRows.map((row) => row[i]).filter((v) => v),
-        );
+  const { data: filterTable, isLoading } = useSWRImmutable(
+    {
+      route: props.route,
+      ids: props.ids,
+      report: previewMode,
+      limit: 100,
+      compact: isCompact,
+    },
+    async (key) => {
+      const data = await executeQuery(key);
 
-        const labelList = await Promise.all(
-          headList.map(async (head, i) => {
-            if (
-              annotateConfig?.includes(head.name) &&
-              isShowLabelList[head.index]
-            ) {
-              return await executeAnnotateQuery({
-                name: head.name,
-                ids: transposeList[i],
-              });
-            }
-          }),
-        );
-
-        return {
-          heading: headList.reduce<string[]>((prev, curr) => {
-            isShowLabelList[curr.index]
-              ? prev.push(curr.label, "")
-              : prev.push(curr.label);
-
-            return prev;
-          }, []),
-          rows: tableRows.map((v) =>
-            headList.reduce<(string | undefined)[]>((prev, curr, j) => {
-              const idWithPrefix = joinPrefix(
-                v[j],
-                lineMode[curr.index],
-                tableHead[curr.index].prefix,
-              );
-
-              isShowLabelList[curr.index]
-                ? prev.push(idWithPrefix, labelList[j]?.[v[j]])
-                : prev.push(idWithPrefix);
-
-              return prev;
-            }, []),
-          ),
-        };
-      } else if (previewMode === "target") {
-        // Target IDs
-        const labelList = [
-          await (async () => {
-            if (
-              annotateConfig?.includes(tableHead[tableHead.length - 1].name) &&
-              isShowLabelList[tableHead.length - 1]
-            ) {
-              return await executeAnnotateQuery({
-                name: tableHead[tableHead.length - 1].name,
-                ids: tableRows as unknown as string[],
-              });
-            }
-          })(),
-        ];
-
-        return {
-          heading: headList.reduce<string[]>((prev, curr) => {
-            isShowLabelList[curr.index]
-              ? prev.push(curr.label, "")
-              : prev.push(curr.label);
-
-            return prev;
-          }, []),
-          rows: (tableRows as unknown as string[]).map((v) => {
-            const idWithPrefix = joinPrefix(
-              v,
-              lineMode[lineMode.length - 1],
-              tableHead[tableHead.length - 1].prefix,
-            );
-            return isShowLabelList[tableHead.length - 1]
-              ? [idWithPrefix, labelList[0]?.[v]]
-              : [idWithPrefix];
-          }),
-        };
+      if (!isCompact && previewMode === "target") {
+        return data.results.map((v) => [v]) as unknown as string[][];
       }
-    } else {
-      if (
-        previewMode === "all" ||
-        previewMode === "pair" ||
-        previewMode === "full"
-      ) {
-        // All converted IDs
-        // origin and targets
-        // All including unconverted IDs
-        return {
-          heading: headList.map((v) => v.label),
-          rows: tableRows.map((v) =>
-            headList.map((head, i) =>
-              joinPrefix(
-                v[i],
-                lineMode[head.index],
-                tableHead[head.index].prefix,
-                isCompact,
-              ),
-            ),
-          ),
-        };
-      } else if (previewMode === "target") {
-        // Target IDs
-        return {
-          heading: headList.map((v) => v.label),
-          rows: tableRows.map((v) => [
-            joinPrefix(
-              // @ts-expect-error
-              v,
-              lineMode[lineMode.length - 1],
-              tableHead[tableHead.length - 1].prefix,
-              isCompact,
-            ),
-          ]),
-        };
-      }
-    }
 
-    // この部分を通過することはないが型のため
-    return { heading: [], rows: [] };
-  };
+      return data.results;
+    },
+  );
 
   const copyClipboard = async () => {
     const d = await executeQuery({
@@ -180,7 +57,11 @@ const ResultModalAction = (props: Props) => {
       compact: isCompact,
     });
 
-    const { rows } = await createExportTable(d.results)!;
+    if (previewMode === "target") {
+      d.results = d.results.map((v) => [v]) as unknown as string[][];
+    }
+
+    const rows = await createExportTable(d.results)!;
     const text = invokeUnparse(rows, "tsv");
 
     copy(text, {
@@ -196,8 +77,13 @@ const ResultModalAction = (props: Props) => {
       compact: isCompact,
     });
 
-    const { heading, rows } = await createExportTable(d.results)!;
-    exportCsvTsv([heading, ...rows], extension, `result.${extension}`);
+    if (previewMode === "target") {
+      d.results = d.results.map((v) => [v]) as unknown as string[][];
+    }
+
+    const head = createExportTableHead();
+    const rows = await createExportTable(d.results)!;
+    exportCsvTsv([head, ...rows], extension, `result.${extension}`);
   };
 
   const copyClipboardURL = () => {
@@ -209,7 +95,7 @@ const ResultModalAction = (props: Props) => {
       compact: isCompact,
     }).toString();
 
-    copy(`${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert?${text}`, {
+    copy(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/convert?${text}`, {
       format: "text/plain",
     });
   };
@@ -224,21 +110,12 @@ const ResultModalAction = (props: Props) => {
     }).toString();
 
     copy(
-      `curl -X POST -d "${text}" "${process.env.NEXT_PUBLIC_API_ENDOPOINT}/convert"`,
+      `curl -X POST -d "${text}" "${process.env.NEXT_PUBLIC_API_ENDPOINT}/convert"`,
       {
         format: "text/plain",
       },
     );
   };
-
-  const { filterTable, labelList, getHeadList } = useResultModalPreview(
-    previewMode,
-    isCompact,
-    props.route,
-    props.ids,
-    tableHead,
-    isShowLabelList,
-  );
 
   return (
     <>
@@ -372,12 +249,11 @@ const ResultModalAction = (props: Props) => {
 
       <ResultModalActionTable
         isCompact={isCompact}
-        lineMode={lineMode}
-        setLineMode={setLineMode}
-        isShowLabelList={isShowLabelList}
-        setIsShowLabelList={setIsShowLabelList}
+        tableHeadBaseList={tableHeadBaseList}
+        setTableHeadBaseList={setTableHeadBaseList}
+        tableHeadList={tableHeadList}
         filterTable={filterTable}
-        labelList={labelList}
+        isLoading={isLoading}
       />
     </>
   );

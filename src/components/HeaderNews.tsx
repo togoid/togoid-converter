@@ -5,7 +5,7 @@ import ReactMarkdown from "react-markdown";
 const HeaderNews = () => {
   const { data: news } = useSWRImmutable("news", async () => {
     const res = await axios.get(
-      `https://raw.githubusercontent.com/togoid/togoid-config/main/docs/news.md`,
+      `${process.env.NEXT_PUBLIC_DOCUMENT_ENDPOINT}/news.md`,
     );
 
     return res.data;

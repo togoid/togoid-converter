@@ -35,12 +35,13 @@ const ExploreResult = (props: any) => {
       });
     } else if (mode === "category") {
       return item.toSorted((a, b) => {
-        if (a.category < b.category) {
-          return n * -1;
-        } else if (a.category > b.category) {
-          return n * 1;
-        }
-        return 0;
+        return (
+          (Object.keys(categoryColor).indexOf(datasetConfig[a.name].category) -
+            Object.keys(categoryColor).indexOf(
+              datasetConfig[b.name].category,
+            )) *
+          n
+        );
       });
     } else if (mode === "sourceCount") {
       return item.toSorted((a, b) => (a.source - b.source) * n);
@@ -70,7 +71,6 @@ const ExploreResult = (props: any) => {
       mode: "name",
       direction: "down",
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.nodes]);
 
   const sortNode = (

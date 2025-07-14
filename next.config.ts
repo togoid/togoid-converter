@@ -1,36 +1,40 @@
+import withRspack from "next-rspack";
+import type { NextConfig } from "next";
+
 import path from "path";
 import { fileURLToPath } from "url";
-import AutoImport from "unplugin-auto-import/webpack";
+import AutoImport from "unplugin-auto-import/rspack";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig: NextConfig = {
+  /* config options here */
+  reactStrictMode: true,
   output: "export",
   sassOptions: {
     includePaths: [path.join(__dirname, "styles")],
   },
-  webpack: (config, options) => {
+  webpack: (config) => {
     config.plugins.push(
       AutoImport({
         imports: [
           "react",
-          "jotai",
-          "jotai/utils",
           { react: ["Fragment"] },
           {
             "@preact/signals-react": [
               "signal",
+              "computed",
               "useSignal",
               "useComputed",
               "useSignalEffect",
             ],
           },
           { "@preact/signals-react/runtime": ["useSignals"] },
+          { "@preact/signals-react/utils": ["Show", "For"] },
         ],
         defaultExportByFilename: true,
-        dirs: ["./src/hooks", "./src/lib", "./src/atoms", "./src/components"],
+        dirs: ["./src/hooks", "./src/lib", "./src/stores", "./src/components"],
       }),
     );
 
@@ -45,4 +49,4 @@ const nextConfig = {
   trailingSlash: true,
 };
 
-export default nextConfig;
+export default withRspack(nextConfig);

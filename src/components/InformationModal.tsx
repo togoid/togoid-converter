@@ -84,16 +84,17 @@ const InformationModal = ({ setIsShowInfomationModal, ...props }: Props) => {
         <dl className="modal--through__data_list">
           <div className="modal--through__data_list__item">
             <dt>PREFIX</dt>
-            <dd>{datasetConfig[props.database].prefix}</dd>
+            <dd>
+              {datasetConfig[props.database].prefix.map((p, i) => (
+                <li key={i}>{p.uri}</li>
+              ))}
+            </dd>
           </div>
           <div className="modal--through__data_list__item">
             <dt>CATEGORY</dt>
             <dd>{datasetConfig[props.database].category}</dd>
           </div>
-          {Object.prototype.hasOwnProperty.call(
-            descriptionConfig,
-            props.database,
-          ) &&
+          {descriptionConfig[props.database] &&
             descriptionConfig[props.database][`organization_${language}`] && (
               <div className="modal--through__data_list__item">
                 <dt>ORGANIZATION</dt>

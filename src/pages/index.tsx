@@ -26,12 +26,19 @@ const Home = () => {
 
   const { datasetConfig, relationConfig } = useConfig(true);
 
+  // 実行だけは先に行う必要がある
+  useAnnotateConfig();
+
   useUpdateEffect(() => {
+    const query: { [key: string]: string } = {};
+    if (routerRoute.length) {
+      query["route"] = routerRoute.join(",");
+    }
+    if (ids.length) {
+      query["ids"] = ids.join(",");
+    }
     router.replace({
-      query: {
-        route: routerRoute.length ? routerRoute.join(",") : undefined,
-        ids: ids.length ? ids.join(",") : undefined,
-      },
+      query: query,
     });
   }, [routerRoute, ids]);
 
@@ -43,7 +50,6 @@ const Home = () => {
           if (route.length === 1) {
             setDatabaseNodesList([databaseNodesList[0]]);
           }
-          // eslint-disable-next-line no-empty
         } else if (activeTab === "ANNOTATE") {
         } else if (isUseKeepRoute) {
           const r = route;
@@ -188,7 +194,6 @@ const Home = () => {
           _v.target = 0;
         }
 
-        // @ts-expect-error
         _v.results = convert.results;
         return _v;
       }),
@@ -210,7 +215,8 @@ const Home = () => {
         if (
           value.regex &&
           id.match(value.regex) &&
-          Object.keys(relationConfig).some((d) => d.split("-").includes(key))
+          (activeTab !== "NAVIGATE" ||
+            Object.keys(relationConfig).some((d) => d.split("-").includes(key)))
         ) {
           const candidate = candidateList.find(
             (databases) => databases.name === key,
@@ -236,11 +242,12 @@ const Home = () => {
     }
 
     if (exampleTarget) {
-      // Examplesで選択したものは必ず見つかる前提
-      setRoute([candidateList.find((v) => v.name === exampleTarget)!]);
-      setRouterRoute([
-        candidateList.find((v) => v.name === exampleTarget)!.name,
-      ]);
+      // Examplesで選択したとき
+      const candidate = candidateList.find((v) => v.name === exampleTarget);
+      if (candidate) {
+        setRoute([candidate]);
+        setRouterRoute([candidate.name]);
+      }
     } else if (
       routerRoute.length &&
       candidateList.some((v) => v.name === routerRoute[0])

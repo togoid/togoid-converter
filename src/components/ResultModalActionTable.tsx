@@ -1,160 +1,369 @@
+import useSWRImmutable from "swr/immutable";
+// import useSWR from "swr";
+
 type Props = {
   isCompact: boolean;
-  lineMode: string[];
-  setLineMode: Dispatch<SetStateAction<string[]>>;
-  isShowLabelList: boolean[];
-  setIsShowLabelList: Dispatch<SetStateAction<boolean[]>>;
-  filterTable: ReturnType<typeof useResultModalPreview>["filterTable"];
-  labelList: ReturnType<typeof useResultModalPreview>["labelList"];
+  tableHeadBaseList: TableHead[];
+  setTableHeadBaseList: Dispatch<SetStateAction<TableHead[]>>;
+  tableHeadList: TableHead[];
+  filterTable?: string[][];
+  isLoading: boolean;
 };
 
 const ResultModalActionTable = ({
   isCompact,
-  lineMode,
-  setLineMode,
-  isShowLabelList,
-  setIsShowLabelList,
+  tableHeadBaseList,
+  setTableHeadBaseList,
+  tableHeadList,
   filterTable,
-  labelList,
+  isLoading,
 }: Props) => {
-  const { annotateConfig } = useAnnotateConfig();
+  const resultList = tableHeadBaseList.map((tableHeadBase, i) => {
+    const index = tableHeadList.findIndex((v) => v.index === i)!;
+
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    return useSWRImmutable(
+      index !== -1 &&
+        filterTable &&
+        !isCompact &&
+        tableHeadBase.annotateList.some((annotate) => annotate.checked)
+        ? {
+            name: tableHeadBase.name,
+            ids: filterTable.map((v) => v[index]).filter((v) => v),
+            fields: tableHeadBase.annotateList.map(
+              (annotate) => annotate.variable,
+            ),
+            variables: tableHeadBase.annotateList.reduce((prev, curr) => {
+              const tmp = curr.items
+                ?.filter((v) => v.checked)
+                .map((v) => v.label);
+              return tmp?.length
+                ? {
+                    ...prev,
+                    [curr.variable]: { value: tmp, type: "[String!]" },
+                  }
+                : prev;
+            }, {}),
+          }
+        : null,
+      async (key) => {
+        return await executeAnnotateQuery(key);
+      },
+    );
+  });
+
+  const filterTableAnnotate = useMemo(() => {
+    if (
+      !filterTable ||
+      isCompact ||
+      !tableHeadList.some((v) =>
+        v.annotateList.some(
+          (w) => w.checked && w.items?.some((x) => x.checked),
+        ),
+      )
+    ) {
+      return filterTable;
+    }
+
+    const idsList = resultList.map((v) =>
+      v.data ? Object.keys(v.data) : v.data,
+    );
+
+    return filterTable.filter((data) =>
+      tableHeadList.every((tableHead, i) => {
+        return (
+          !tableHead.annotateList.some((v) => v.checked) ||
+          idsList[tableHead.index]?.includes(data[i])
+        );
+      }),
+    );
+  }, [isCompact, filterTable, tableHeadList, resultList]);
+
+  const updateAnnotate = (
+    tableIndex: number,
+    annotateIndex: number,
+    updater: (
+      annotate: TableHead["annotateList"][number],
+    ) => TableHead["annotateList"][number],
+  ) => {
+    setTableHeadBaseList((prev) => {
+      const table = prev[tableIndex];
+      const oldAnnotate = table.annotateList[annotateIndex];
+      const updatedAnnotate = updater(oldAnnotate);
+      const updatedAnnotateList = table.annotateList.with(
+        annotateIndex,
+        updatedAnnotate,
+      );
+      const updatedTable = { ...table, annotateList: updatedAnnotateList };
+      return prev.with(tableIndex, updatedTable);
+    });
+  };
+
+  const updateAnnotateChecked = (
+    tableIndex: number,
+    annotateIndex: number,
+    checked: boolean,
+  ) => {
+    updateAnnotate(tableIndex, annotateIndex, (annotate) => {
+      const updatedItems =
+        !checked && annotate.items
+          ? annotate.items.map((item) => ({
+              ...item,
+              checked: false,
+            }))
+          : annotate.items;
+
+      return {
+        ...annotate,
+        checked,
+        items: updatedItems,
+      };
+    });
+  };
+
+  const updateAnnotateItemChecked = (
+    tableIndex: number,
+    annotateIndex: number,
+    itemIndex: number,
+    checked: boolean,
+  ) => {
+    updateAnnotate(tableIndex, annotateIndex, (annotate) => {
+      const updatedItems = annotate.items!.with(itemIndex, {
+        ...annotate.items![itemIndex],
+        checked,
+      });
+      return { ...annotate, items: updatedItems };
+    });
+  };
+
+  const updateAnnotateIsCompact = (
+    tableIndex: number,
+    annotateIndex: number,
+    isCompact: boolean,
+  ) => {
+    updateAnnotate(tableIndex, annotateIndex, (annotate) => {
+      const updatedItems =
+        !isCompact && annotate.items
+          ? annotate.items.map((item) => ({
+              ...item,
+              isCompact: false,
+            }))
+          : annotate.items;
+
+      return {
+        ...annotate,
+        isCompact,
+        items: updatedItems,
+      };
+    });
+  };
 
   return (
     <table className="table">
       <thead>
         <tr>
-          {filterTable?.rows?.length &&
-            filterTable.heading.map((v, i) => {
-              return (
-                <Fragment key={i}>
-                  <th>
-                    <fieldset>
-                      <label htmlFor={String(i)} className="select__label">
-                        {v.label}
-                      </label>
-                      <select
-                        id={String(v.index)}
-                        className="select white"
-                        value={lineMode[v.index]}
-                        onChange={(e) =>
-                          setLineMode(
-                            lineMode.toSpliced(v.index, 1, e.target.value),
-                          )
-                        }
-                      >
-                        {v.format ? (
-                          v.format.map((w: string) => (
-                            <option key={w} value={w}>
-                              {w === "%s"
-                                ? "ID"
-                                : `ID (${w.replace("%s", "")})`}
-                            </option>
-                          ))
-                        ) : (
-                          <option value="id">ID</option>
+          {filterTable?.length &&
+            tableHeadList.map((tableHead, i) => (
+              <Fragment key={tableHead.index}>
+                <th>
+                  <fieldset>
+                    <ResultModalActionTableSelect
+                      id={String(tableHead.index)}
+                      value={tableHead.lineMode}
+                      tableHead={tableHead}
+                      onChange={(value: TableHead["lineMode"]) =>
+                        setTableHeadBaseList(
+                          tableHeadBaseList.with(tableHead.index, {
+                            ...tableHeadBaseList[tableHead.index],
+                            lineMode: value,
+                          }),
+                        )
+                      }
+                    >
+                      {tableHead.label}
+                    </ResultModalActionTableSelect>
+                    {!isCompact && tableHead.annotateList.length > 0 && (
+                      <>
+                        <input
+                          id={`showLabels${i}`}
+                          type="checkbox"
+                          className="small-checkbox"
+                          checked={tableHead.annotateList[0].checked}
+                          onChange={(e) =>
+                            updateAnnotateChecked(
+                              tableHead.index,
+                              tableHead.annotateList[0].index,
+                              e.target.checked,
+                            )
+                          }
+                        />
+                        <label htmlFor={`showLabels${i}`}>Labels</label>
+                        {tableHead.annotateList.length > 1 && (
+                          <details className="detail">
+                            <summary className="detail__summary">
+                              ANNOTATION
+                            </summary>
+                            <div className="detail__contents">
+                              {tableHead.annotateList
+                                .slice(1)
+                                .map((annotate, j) => (
+                                  <Fragment key={j}>
+                                    <input
+                                      id={`${annotate.label}-${i}`}
+                                      className="checkbox"
+                                      type="checkbox"
+                                      checked={annotate.checked}
+                                      onChange={(e) =>
+                                        updateAnnotateChecked(
+                                          tableHead.index,
+                                          annotate.index,
+                                          e.target.checked,
+                                        )
+                                      }
+                                    />
+                                    <label
+                                      htmlFor={`${annotate.label}-${i}`}
+                                      className="checkbox-label"
+                                    >
+                                      {annotate.label}
+                                    </label>
+                                  </Fragment>
+                                ))}
+                            </div>
+                          </details>
                         )}
-                        <option value="url">URL</option>
-                      </select>
-
-                      {!isCompact && annotateConfig?.includes(v.name) && (
-                        <>
-                          <input
-                            id={"showLabels" + i}
-                            type="checkbox"
-                            className="c-switch"
-                            checked={isShowLabelList[v.index]}
-                            onChange={(e) =>
-                              setIsShowLabelList(
-                                isShowLabelList.toSpliced(
-                                  v.index,
-                                  1,
-                                  e.target.checked,
-                                ),
-                              )
-                            }
-                          />
-                          <label htmlFor={"showLabels" + i}>Show Labels</label>
-                        </>
-                      )}
-                    </fieldset>
-                  </th>
-                  {!isCompact &&
-                    annotateConfig?.includes(v.name) &&
-                    isShowLabelList[v.index] && <th></th>}
-                </Fragment>
-              );
-            })}
+                      </>
+                    )}
+                  </fieldset>
+                </th>
+                {!isCompact &&
+                  tableHead.annotateList.map(
+                    (annotate, k) =>
+                      annotate.checked && (
+                        <th key={annotate.variable}>
+                          {annotate.label}
+                          {annotate.isList && (
+                            <>
+                              <input
+                                id={`annotate-compact-${annotate.variable}-${tableHead.index}`}
+                                type="checkbox"
+                                className="small-checkbox"
+                                checked={annotate.isCompact}
+                                onChange={(e) =>
+                                  updateAnnotateIsCompact(
+                                    tableHead.index,
+                                    tableHead.annotateList[k].index,
+                                    e.target.checked,
+                                  )
+                                }
+                              />
+                              <label
+                                htmlFor={`annotate-compact-${annotate.variable}-${tableHead.index}`}
+                              >
+                                Compact
+                              </label>
+                            </>
+                          )}
+                          {annotate.items?.length && (
+                            <details className="detail">
+                              <summary className="detail__summary">
+                                FILTER
+                              </summary>
+                              <div className="detail__contents">
+                                {annotate.items.map((item, j) => (
+                                  <Fragment key={j}>
+                                    <input
+                                      id={
+                                        annotate.label +
+                                        "-" +
+                                        i +
+                                        "-" +
+                                        item.label
+                                      }
+                                      className="checkbox"
+                                      type="checkbox"
+                                      checked={item.checked}
+                                      onChange={(e) =>
+                                        updateAnnotateItemChecked(
+                                          tableHead.index,
+                                          annotate.index,
+                                          j,
+                                          e.target.checked,
+                                        )
+                                      }
+                                    />
+                                    <label
+                                      htmlFor={
+                                        annotate.label +
+                                        "-" +
+                                        i +
+                                        "-" +
+                                        item.label
+                                      }
+                                      className="checkbox-label"
+                                    >
+                                      {item.label}
+                                    </label>
+                                  </Fragment>
+                                ))}
+                              </div>
+                            </details>
+                          )}
+                        </th>
+                      ),
+                  )}
+              </Fragment>
+            ))}
         </tr>
       </thead>
       <tbody>
-        {filterTable?.heading?.length && filterTable?.rows?.length
-          ? filterTable.rows.map((data, i) => (
-              <tr key={i}>
-                {data.map((d, j) => (
-                  <Fragment key={j}>
-                    {isCompact ? (
-                      <td>
+        {!isLoading &&
+          (filterTableAnnotate?.length ? (
+            filterTableAnnotate.map((data, i) => (
+              <Fragment key={i}>
+                {isCompact ? (
+                  <tr>
+                    {data.map((d, j) => (
+                      <td key={j}>
                         {d?.split(" ")?.map((f, k) => (
                           <Fragment key={k}>
                             <a
                               href={joinPrefix(
                                 f,
-                                "url",
-                                filterTable.heading![j].prefix,
+                                tableHeadList[j].lineMode.key === "url"
+                                  ? tableHeadList[j].lineMode
+                                  : {
+                                      key: "url",
+                                      value: tableHeadList[j].prefix[0].uri,
+                                    },
                               )}
                               target="_blank"
                               rel="noreferrer"
                             >
-                              {joinPrefix(
-                                f,
-                                lineMode[filterTable.heading![j].index],
-                                filterTable.heading![j].prefix,
-                              )}
+                              {joinPrefix(f, tableHeadList[j].lineMode)}
                             </a>
                             <br />
                           </Fragment>
                         ))}
                       </td>
-                    ) : (
-                      <>
-                        <td>
-                          <a
-                            href={joinPrefix(
-                              d,
-                              "url",
-                              filterTable.heading![j].prefix,
-                            )}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            {joinPrefix(
-                              d,
-                              lineMode[filterTable.heading![j].index],
-                              filterTable.heading![j].prefix,
-                            )}
-                          </a>
-                        </td>
-                        {isShowLabelList[filterTable.heading![j].index] && (
-                          <td>
-                            <span>{labelList?.[j]?.[d]}</span>
-                          </td>
-                        )}
-                      </>
-                    )}
-                  </Fragment>
-                ))}
-              </tr>
+                    ))}
+                  </tr>
+                ) : (
+                  <ResultModalActionTableRow
+                    data={data}
+                    tableHeadList={tableHeadList}
+                    resultList={resultList}
+                  />
+                )}
+              </Fragment>
             ))
-          : filterTable?.heading && (
-              <tr>
-                <td
-                  colSpan={filterTable?.heading.length}
-                  className="no_results"
-                >
-                  No Results
-                </td>
-              </tr>
-            )}
+          ) : (
+            <tr>
+              <td colSpan={tableHeadList.length} className="no_results">
+                No Results
+              </td>
+            </tr>
+          ))}
       </tbody>
     </table>
   );

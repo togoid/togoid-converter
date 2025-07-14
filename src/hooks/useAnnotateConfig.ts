@@ -6,7 +6,7 @@ const useAnnotateConfig = () => {
     "annotateConfig",
     async () => {
       const response = await axios({
-        url: "https://rdfportal.org/grasp-togoid",
+        url: process.env.NEXT_PUBLIC_GRASP_ENDPOINT,
         method: "POST",
         data: {
           query:
@@ -21,7 +21,7 @@ const useAnnotateConfig = () => {
   );
 
   return {
-    annotateConfig,
+    annotateConfig: annotateConfig ?? [],
   };
 };
 
