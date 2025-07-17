@@ -83,6 +83,17 @@
               "type": "integer",
               "default": 0
             }
+          },
+          {
+            "name": "noheader",
+            "in": "query",
+            "description": "If '1' is specified, the header row will be omitted from the output. This parameter is only effective when the 'format' is 'csv' or 'tsv'.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "1"
+              ]
+            }
           }
         ],
         "responses": {
