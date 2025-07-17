@@ -1,7 +1,4 @@
 import { useClickAway } from "react-use";
-import { ArrowArea } from "react-arrow-master";
-
-import type { Arrow } from "react-arrow-master";
 
 type Props = {
   route: Route[];
@@ -12,36 +9,6 @@ type Props = {
 
 const ResultModal = ({ setIsShowResultModal, ...props }: Props) => {
   const { datasetConfig } = useConfig();
-
-  const routePath = useMemo<Arrow[]>(
-    () =>
-      props.route.flatMap((_, i) => {
-        if (i === 0) {
-          return getPathStyle(`label-${i}`, `link-${i + 1}`, {
-            head: "none",
-            isResult: true,
-          });
-        } else if (i === props.route.length - 1) {
-          return getPathStyle(`link-${i}`, `label-${i}`, {
-            head: "default",
-            isResult: true,
-          });
-        } else {
-          return [
-            getPathStyle(`link-${i}`, `label-${i}`, {
-              head: "default",
-              isResult: true,
-            }),
-            getPathStyle(`label-${i}`, `link-${i + 1}`, {
-              head: "none",
-              isResult: true,
-            }),
-          ];
-        }
-      }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  );
 
   const ref = useRef(null);
   useClickAway(ref, () => {
@@ -69,42 +36,62 @@ const ResultModal = ({ setIsShowResultModal, ...props }: Props) => {
             <p className="modal__heading">Route</p>
             <div className="modal__path__frame">
               <div className="modal__path__frame__inner">
-                <ArrowArea arrows={routePath}>
-                  <div className="modal__path__frame__inner">
-                    {props.route.map((v, i) => (
-                      <div className="modal__path__frame__item" key={i}>
-                        {i !== 0 && (
-                          <div className="path_label white" id={`link-${i}`}>
-                            {v.relation?.link.display_label}
-                          </div>
-                        )}
-                        <div
-                          key={i}
-                          className="path_label green"
-                          id={`label-${i}`}
-                          style={{
-                            backgroundColor:
-                              categoryColor[datasetConfig[v.name].category],
-                          }}
+                {props.route.map((v, i) => (
+                  <Fragment key={i}>
+                    {i !== 0 && (
+                      <div className="path_label white" id={`link-${i}`}>
+                        <span>{v.relation?.link.display_label}</span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 40 20"
+                          className="path_label__arrow"
                         >
-                          {i !== 0 && props.convertedCount[i].source && (
-                            <span id={`converted${i}`} className="total">
-                              {props.convertedCount[i].source}
-                            </span>
-                          )}
-                          <span className="path_label__inner">
-                            {datasetConfig[v.name].label}
-                          </span>
-                          {props.convertedCount[i].target && (
-                            <span id={`total${i}`} className="total">
-                              {props.convertedCount[i].target}
-                            </span>
-                          )}
-                        </div>
+                          <path
+                            d="M10,0,20,40H0Z"
+                            transform="translate(40) rotate(90)"
+                            fill="#249eb3"
+                          />
+                        </svg>
                       </div>
-                    ))}
-                  </div>
-                </ArrowArea>
+                    )}
+                    <div
+                      className="path_label green"
+                      id={`label-${i}`}
+                      style={{
+                        backgroundColor:
+                          categoryColor[datasetConfig[v.name].category],
+                      }}
+                    >
+                      {i !== 0 && props.convertedCount[i].source && (
+                        <span id={`converted${i}`} className="total">
+                          {props.convertedCount[i].source}
+                        </span>
+                      )}
+                      <span className="path_label__inner">
+                        {datasetConfig[v.name].label}
+                      </span>
+                      {props.convertedCount[i].target && (
+                        <span id={`total${i}`} className="total">
+                          {props.convertedCount[i].target}
+                        </span>
+                      )}
+
+                      {i !== 0 && (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 40 20"
+                          className="path_label__arrow"
+                        >
+                          <path
+                            d="M10,0,20,40H0Z"
+                            transform="translate(40) rotate(90)"
+                            fill="#249eb3"
+                          />
+                        </svg>
+                      )}
+                    </div>
+                  </Fragment>
+                ))}
               </div>
             </div>
           </div>

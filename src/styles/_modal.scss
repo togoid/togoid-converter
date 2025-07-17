@@ -169,30 +169,57 @@
 
     &__frame {
       width: 100%;
-      padding: 18px 0 19px 19px;
-      overflow: auto;
+      padding: 20px 40px;
       background: g.$col-FAFAFA;
 
       &__inner {
         display: flex;
-        flex-wrap: nowrap;
+        gap: 10px 40px;
+        flex-wrap: wrap;
         align-items: center;
 
         .path_label {
-          & + .path_label {
-            position: relative;
-            margin: 0 0 0 40px;
+          position: relative;
 
+          &::before,
+          &::after {
+            position: absolute;
+            top: 50%;
+            content: none;
+            display: inline-block;
+            width: 40px;
+            height: 1px;
+            background-color: g.$col-249EB3;;
+          }
+
+          &:first-of-type {
+            margin: 0 0 0 -20px;
+          }
+
+          &:last-of-type {
+            .path_label__arrow {
+              display: none;
+            }
+          }
+
+          &:not(:first-of-type) {
             &::before {
-              position: absolute;
-              top: 50%;
               left: -40px;
               content: '';
-              display: inline-block;
-              width: 40px;
-              height: 1px;
-              background: g.$col-249EB3;
             }
+          }
+
+          &:not(:last-of-type) {
+            &::after {
+              right: -40px;
+              content: '';
+            }
+          }
+
+          &__arrow {
+            position: absolute;
+            right: -40px;
+            width: 14px;
           }
         }
       }
@@ -202,20 +229,47 @@
         flex-wrap: nowrap;
         align-items: center;
 
-        & + .modal__path__frame__item {
+        &:has( + .modal__path__frame__item) {
           position: relative;
-          margin: 0 0 0 40px;
+          background: {
+            image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 40 20"><path fill="%23249eb3" d="d="M10,0,20,40H0Z" transform="translate(40) rotate(90)" /></svg>');
+            repeat: no-repeat;
+            position: right center;
+            size: 20px;
+          }
 
-          &::before {
+          &::after {
             position: absolute;
             top: 50%;
-            left: -40px;
+            right: 0;
             content: '';
             display: inline-block;
             width: 40px;
             height: 1px;
             background: g.$col-249EB3;
           }
+        }
+
+        &:first-of-type {
+          &::after {
+            right: -40px;
+          }
+        }
+
+        & + .modal__path__frame__item {
+          position: relative;
+          margin: 0 40px;
+
+          //&::before {
+          //  position: absolute;
+          //  top: 50%;
+          //  left: -40px;
+          //  content: '';
+          //  display: inline-block;
+          //  width: 40px;
+          //  height: 1px;
+          //  background: g.$col-249EB3;
+          //}
         }
       }
     }
@@ -289,9 +343,127 @@
           }
         }
 
-        .c-switch {
+        .detail {
+          position: relative;
+
+          &__summary {
+            font: {
+              family: g.$ff-oswald;
+              weight: 700;
+            }
+            cursor: pointer;
+          }
+
+          &__contents {
+            position: absolute;
+            top: 100%;
+            display: flex;
+            gap: 8px;
+            flex-direction: column;
+            max-height: 15vh;
+            padding: 16px;
+            overflow-y: auto;
+            border-radius: 5px;
+            border: 1px solid g.$col-D5D5D5;
+            background-color: g.$col-FFF;
+
+            .checkbox {
+              @include g.visuallyHidden;
+
+              + .checkbox-label {
+                position: relative;
+                font: {
+                  family: g.$ff-oswald;
+                  size: 1.4rem;
+                }
+
+                white-space: nowrap;
+                cursor: pointer;
+                color: g.$col-5A5A5A;
+                padding: 0 0 0 33px;
+                line-height: 24px;
+
+                &::before,
+                &::after {
+                  position: absolute;
+                  display: block;
+                  content: "";
+                }
+
+                &::before {
+                  top: 0;
+                  left: 0;
+                  width: 22px;
+                  height: 22px;
+                  border-radius: 5px;
+                  border: 1px solid g.$col-C4C4C4;
+                  background-color: g.$col-FFF;
+                }
+
+                &::after {
+                  top: 4px;
+                  left: 4px;
+                  width: 16px;
+                  height: 16px;
+                  opacity: 0;
+                  border-radius: 2px;
+                  background-color: g.$col-249EB3;
+                }
+              }
+
+              &:checked {
+                + .checkbox-label {
+                  &::after {
+                    opacity: 1;
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        .small-checkbox {
+          @include g.visuallyHidden;
+
+          &:checked {
+            & + label {
+              &::after {
+                opacity: 1;
+              }
+            }
+          }
+
           & + label {
+            position: relative;
+            display: block;
+            cursor: pointer;
+            padding: 0 0 0 28px;
             margin: 8px 0 0;
+
+            &::before,
+            &::after {
+              position: absolute;
+              top: 50%;
+              transform: translateY(-50%);
+              content: "";
+              aspect-ratio: 1;
+            }
+
+            &::before {
+              left: 0;
+              width: 16px;
+              border-radius: 4px;
+              border: 1px solid g.$col-C4C4C4;
+              background-color: g.$col-FFF;
+            }
+
+            &::after {
+              left: 3px;
+              width: 12px;
+              opacity: 0;
+              border-radius: 2px;
+              background-color: g.$col-249EB3;
+            }
           }
         }
       }

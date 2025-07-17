@@ -1,8 +1,8 @@
 const IdInput = (props: any) => {
-  const [text, setText] = useAtom(textAtom);
+  useSignals();
 
   useEffect(() => {
-    setText(props.ids.join("\n"));
+    text.value = props.ids.join("\n");
   }, [props.ids]);
 
   const handleIdTextsSubmit = (t: string) => {
@@ -20,7 +20,7 @@ const IdInput = (props: any) => {
   const handleSubmit = (e: any) => {
     if (e) e.preventDefault();
 
-    handleIdTextsSubmit(text);
+    handleIdTextsSubmit(text.value);
   };
 
   const handleKeyDown = (e: any) => {
@@ -41,7 +41,7 @@ const IdInput = (props: any) => {
     reader.readAsText(file);
 
     reader.onload = () => {
-      setText(reader.result as string);
+      text.value = reader.result as string;
       handleIdTextsSubmit(reader.result as string);
     };
     reader.onerror = () => {
@@ -54,20 +54,7 @@ const IdInput = (props: any) => {
   return (
     <div className="input_area">
       <form onSubmit={handleSubmit} className="textarea">
-        <div className="textarea_wrapper">
-          <textarea
-            cols={30}
-            rows={10}
-            placeholder="Input your ID (set), separated by comma, space, or newline (e.g. 5460, 6657, 9314, 4609 for NCBI gene)."
-            className="textarea__input"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            onKeyDown={handleKeyDown}
-          />
-          {text && (
-            <button onClick={() => setText("")} className="textarea_clear" />
-          )}
-        </div>
+        <IdInputTextarea handleKeyDown={handleKeyDown} />
         <div className="input">
           <input type="submit" value="Submit" className="button_large" />
           <input
@@ -136,3 +123,28 @@ const IdInput = (props: any) => {
 };
 
 export default IdInput;
+
+const IdInputTextarea = ({
+  handleKeyDown,
+}: {
+  handleKeyDown: (e: any) => void;
+}) => {
+  useSignals();
+
+  return (
+    <div className="textarea_wrapper">
+      <textarea
+        cols={30}
+        rows={10}
+        placeholder="Input your ID (set), separated by comma, space, or newline (e.g. 5460, 6657, 9314, 4609 for NCBI gene)."
+        className="textarea__input"
+        value={text.value}
+        onChange={(e) => (text.value = e.target.value)}
+        onKeyDown={handleKeyDown}
+      />
+      <Show when={text}>
+        <button onClick={() => (text.value = "")} className="textarea_clear" />
+      </Show>
+    </div>
+  );
+};
