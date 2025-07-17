@@ -94,7 +94,10 @@
                   "type": "object",
                   "properties": {
                     "ids": {
-                      "type": "string",
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
                       "example": [
                         "26199",
                         "38937",
@@ -109,11 +112,15 @@
                       ]
                     },
                     "route": {
-                      "type": "string",
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
                       "example": ["hgnc", "ensembl_gene"]
                     },
                     "result": {
-                      "type": "string",
+                      "type": "array",
+                      "items": {"type": "string"},
                       "example": [
                         "ENSG00000100364",
                         "ENSG00000154719",
@@ -181,11 +188,11 @@
                   "type": "object",
                   "properties": {
                     "source": {
-                      "type": "string",
+                      "type": "integer",
                       "example": 2
                     },
                     "target": {
-                      "type": "string",
+                      "type": "integer",
                       "example": 2
                     }
                   }
@@ -411,7 +418,10 @@
                           "example": "^(?:CHEBI[:_])?(?<id>\\d+)$"
                         },
                         "format": {
-                          "type": "string",
+                          "type": "array",
+                          "items":{
+                            "type":"string"
+                          },
                           "example": ["%s", "CHEBI:%s", "CHEBI_%"]
                         },
                         "prefix": {
@@ -595,7 +605,10 @@
                           "example": "^(VCV0*)?(?<id>(\\d{1,9}))$"
                         },
                         "format": {
-                          "type": "string",
+                          "type": "array",
+                          "items":{
+                            "type":"string"
+                          },
                           "example": ["%s", "VCV%09d"]
                         },
                         "prefix": {
@@ -723,7 +736,10 @@
                           "example": "^DO(?:ID)?[:_](?<id>\\d+)$"
                         },
                         "format": {
-                          "type": "string",
+                          "type": "array",
+                          "items":{
+                            "type":"string"
+                          },
                           "example": ["DO:%s", "DOID:%s", "DOID_%s"]
                         },
                         "prefix": {
@@ -839,7 +855,10 @@
                           "example": "^(?:EC:)?(?<id>\\d+\\.(?:(?:-\\.-\\.-)|\\d+\\.(?:(?:-\\.-)|\\d+\\.(?:-|n?\\d+))))$"
                         },
                         "format": {
-                          "type": "string",
+                          "type": "array",
+                          "items":{
+                            "type":"string"
+                          },
                           "example": ["%s", "EC:%s"]
                         },
                         "prefix": {
@@ -1099,7 +1118,10 @@
                           "example": "^GO[:_](?<id>\\d{7})$"
                         },
                         "format": {
-                          "type": "string",
+                          "type": "array",
+                          "items":{
+                            "type":"string"
+                          },
                           "example": ["GO:%s", "GO_%s"]
                         },
                         "prefix": {
@@ -1159,7 +1181,10 @@
                           "example": "^(?:(?:HGNC|hgnc):)?(?<id>\\d{1,5})$"
                         },
                         "format": {
-                          "type": "string",
+                          "type": "array",
+                          "items":{
+                            "type":"string"
+                          },
                           "example": ["%s", "HGNC:%s", "hgnc:%s"]
                         },
                         "prefix": {
@@ -1275,7 +1300,10 @@
                           "example": "^(?:hmdb:)?(?<id>HMDB\\d+)$"
                         },
                         "format": {
-                          "type": "string",
+                          "type": "array",
+                          "items":{
+                            "type":"string"
+                          },
                           "example": ["%s", "hmdb:%s"]
                         },
                         "prefix": {
@@ -1368,7 +1396,10 @@
                           "example": "^HP[:_](?<id>\\d{7})$"
                         },
                         "format": {
-                          "type": "string",
+                          "type": "array",
+                          "items":{
+                            "type":"string"
+                          },
                           "example": ["HP:%s", "HP_%s"]
                         },
                         "prefix": {
@@ -1917,7 +1948,10 @@
                           "example": "^(?:(?:MedDRA|meddra):)?(?<id>\\d+)$"
                         },
                         "format": {
-                          "type": "string",
+                          "type": "array",
+                          "items":{
+                            "type":"string"
+                          },
                           "example": ["%s", "MedDRA:%s", "meddra:%s"]
                         },
                         "prefix": {
@@ -2077,7 +2111,10 @@
                           "example": "^(?:MGI|mgi):(?<id>\\d{5,})$"
                         },
                         "format": {
-                          "type": "string",
+                          "type": "array",
+                          "items":{
+                            "type":"string"
+                          },
                           "example": ["MGI:%s", "mgi:%s"]
                         },
                         "prefix": {
@@ -2181,7 +2218,10 @@
                           "example": "^MONDO[:_](?<id>\\d{7})$"
                         },
                         "format": {
-                          "type": "string",
+                          "type": "array",
+                          "items":{
+                            "type":"string"
+                          },
                           "example": ["MONDO:%s", "MONDO_%s"]
                         },
                         "prefix": {
@@ -2241,7 +2281,10 @@
                           "example": "^NANDO[:_](?<id>\\d{7})$"
                         },
                         "format": {
-                          "type": "string",
+                          "type": "array",
+                          "items":{
+                            "type":"string"
+                          },
                           "example": ["NANDO:%s", "NANDO_%s"]
                         },
                         "prefix": {
@@ -2457,7 +2500,10 @@
                           "example": "^(?:O?MIM:)?(?<id>\\d{6})$"
                         },
                         "format": {
-                          "type": "string",
+                          "type": "array",
+                          "items":{
+                            "type":"string"
+                          },
                           "example": ["%s", "OMIM:%s", "MIM:%s"]
                         },
                         "prefix": {
@@ -2529,7 +2575,10 @@
                           "example": "^(?:O?MIM:)?(?<id>\\d{6})$"
                         },
                         "format": {
-                          "type": "string",
+                          "type": "array",
+                          "items":{
+                            "type":"string"
+                          },
                           "example": ["%s", "OMIM:%s", "MIM:%s"]
                         },
                         "prefix": {
@@ -2601,7 +2650,10 @@
                           "example": "^(?:ORPHA|ORDO|Orphanet)[:_](?<id>[A-Z0-9]+)$"
                         },
                         "format": {
-                          "type": "string",
+                          "type": "array",
+                          "items":{
+                            "type":"string"
+                          },
                           "example": ["ORPHA:%s", "ORDO:%s", "Orphanet:%s", "Orphanet_%s"]
                         },
                         "prefix": {
@@ -2785,7 +2837,10 @@
                           "example": "^(?:CID)?(?<id>\\d+)$"
                         },
                         "format": {
-                          "type": "string",
+                          "type": "array",
+                          "items":{
+                            "type":"string"
+                          },
                           "example": ["%s", "CID%s"]
                         },
                         "prefix": {
@@ -2845,7 +2900,10 @@
                           "example": "^(?:SID)?(?<id>\\d+)$"
                         },
                         "format": {
-                          "type": "string",
+                          "type": "array",
+                          "items":{
+                            "type": "string"
+                          },
                           "example": ["%s", "SID%s"]
                         },
                         "prefix": {
@@ -2905,7 +2963,10 @@
                           "example": "^(?:pmid:|PMID:)?(?<id>\\d+)$"
                         },
                         "format": {
-                          "type": "string",
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
                           "example": ["%s", "pmid:%s", "PMID:%s"]
                         },
                         "prefix": {
@@ -3235,7 +3296,10 @@
                           "example": "^(?:(?:RGD|rgd):)?(?<id>\\d{4,})$"
                         },
                         "format": {
-                          "type": "string",
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
                           "example": ["%s", "RGD:%s", "rgd:%s"]
                         },
                         "prefix": {
