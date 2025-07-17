@@ -7730,8 +7730,35 @@
                       "example": "^(?:(?<id1>[A-NR-Z][0-9](?:[A-Z][A-Z0-9][A-Z0-9][0-9]){1,2}(?:-\\d+)?)|(?<id2>[OPQ][0-9][A-Z0-9][A-Z0-9][A-Z0-9][0-9](?:-\\d+)?)(?:\\.\\d+)?)$"
                     },
                     "prefix": {
-                      "type": "string",
-                      "example": "http://purl.uniprot.org/uniprot/"
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "rdf": {
+                            "type": "boolean"
+                          },
+                          "uri": {
+                            "type": "string"
+                          },
+                          "label": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "uri"
+                        ]
+                      },
+                      "example": [
+                        {
+                          "rdf": true,
+                          "uri": "http://purl.uniprot.org/uniprot/",
+                          "label": "UniProt"
+                        },
+                        {
+                          "uri": "https://www.ebi.ac.uk/interpro/protein/",
+                          "label": "InterPro"
+                        }
+                      ]
                     },
                     "catalog": {
                       "type": "string",
@@ -7744,8 +7771,13 @@
                     "examples": {
                       "type": "array",
                       "items": {
-                        "type": "string",
-                        "example": [
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "example": [
+                        [
                           "A0A174V9D2",
                           "A0A1V4U2Y9",
                           "Q7NXD4",
@@ -7757,9 +7789,112 @@
                           "D3TBR4",
                           "D4ILS5"
                         ]
-                      }
+                      ]
+                    },
+                    "annotations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "label": {
+                            "type": "string"
+                          },
+                          "variable": {
+                            "type": "string"
+                          },
+                          "items": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "required": [
+                          "label",
+                          "variable"
+                        ]
+                      },
+                      "example": [
+                        {
+                          "label": "SwissProt",
+                          "variable": "reviewed",
+                          "items": [
+                            "true",
+                            "false"
+                          ]
+                        },
+                        {
+                          "label": "Short name",
+                          "variable": "short_name"
+                        }
+                      ]
                     }
                   }
+                },
+                "example": {
+                  "label": "UniProt",
+                  "regex": "^(?:(?<id1>[A-NR-Z][0-9](?:[A-Z][A-Z0-9][A-Z0-9][0-9]){1,2}(?:-\\d+)?)|(?<id2>[OPQ][0-9][A-Z0-9][A-Z0-9][A-Z0-9][0-9](?:-\\d+)?)(?:\\.\\d+)?)$",
+                  "prefix": [
+                    {
+                      "rdf": true,
+                      "uri": "http://purl.uniprot.org/uniprot/",
+                      "label": "UniProt"
+                    },
+                    {
+                      "uri": "https://www.ebi.ac.uk/interpro/protein/",
+                      "label": "InterPro"
+                    },
+                    {
+                      "uri": "https://globe.jpostdb.org/protein?id=",
+                      "label": "jPOST"
+                    },
+                    {
+                      "uri": "https://glycosmos.org/glycoproteins/show/uniprot/",
+                      "label": "GlyCosmos"
+                    },
+                    {
+                      "uri": "https://pharos.nih.gov/targets/",
+                      "label": "Pharos"
+                    },
+                    {
+                      "uri": "https://www.ebi.ac.uk/intact/search?query=id:",
+                      "label": "IntAct"
+                    },
+                    {
+                      "uri": "https://alphafold.ebi.ac.uk/entry/",
+                      "label": "AlphaFold DB"
+                    }
+                  ],
+                  "catalog": "nbdc00221",
+                  "category": "Protein",
+                  "examples": [
+                    [
+                      "A0A174V9D2",
+                      "A0A1V4U2Y9",
+                      "Q7NXD4",
+                      "P0AAM3",
+                      "O43423",
+                      "D4IJI4",
+                      "Q66SS1",
+                      "B5IDU9",
+                      "D3TBR4",
+                      "D4ILS5"
+                    ]
+                  ],
+                  "annotations": [
+                    {
+                      "items": [
+                        "true",
+                        "false"
+                      ],
+                      "label": "SwissProt",
+                      "variable": "reviewed"
+                    },
+                    {
+                      "label": "Short name",
+                      "variable": "short_name"
+                    }
+                  ]
                 }
               }
             }
