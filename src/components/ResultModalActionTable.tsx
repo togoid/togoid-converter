@@ -360,7 +360,7 @@ const ResultModalActionTable = ({
           ) : (
             <tr>
               <td colSpan={tableHeadList.length} className="no_results">
-                No Results
+                No results within preview.
               </td>
             </tr>
           ))}
