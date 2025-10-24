@@ -4949,30 +4949,25 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "link": {
-                      "type": "object",
-                      "properties": {
-                        "forward": {
-                          "type": "object",
-                          "properties": {
-                            "label": {
-                              "type": "string",
-                              "example": "is attached to"
-                            }
-                          }
-                        },
-                        "reverse": {
-                          "type": "object",
-                          "properties": {
-                            "label": {
-                              "type": "string",
-                              "example": "is modified with"
-                            }
-                          }
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "forward": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "display_label": { "type": "string" }
                         }
-                      }
+                      },
+                      "reverse": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "display_label": { "type": "string" }
+                        }
+                      },
+                      "description": { "type": "string" }
                     }
                   }
                 }
