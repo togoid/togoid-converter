@@ -18,6 +18,15 @@
     },
     {
       "name": "config"
+    },
+    {
+      "name": "search"
+    },
+    {
+      "name": "lookup"
+    },
+    {
+      "name": "route"
     }
   ],
   "paths": {
@@ -12347,6 +12356,181 @@
         }
       }
     },
+    "/search/databases/{name}": {
+      "get": {
+        "tags": ["search"],
+        "summary": "Search databases by partial name match",
+        "operationId": "searchDatabases",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "Partial database name to search for",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": ["ncbigene", "ensembl_gene", "hgnc"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        }
+      }
+    },
+    "/search/id/{id_string}": {
+      "get": {
+        "tags": ["search"],
+        "summary": "Find databases matching an ID pattern using regex",
+        "operationId": "searchByIdPattern",
+        "parameters": [
+          {
+            "name": "id_string",
+            "in": "path",
+            "description": "ID string to match against database regex patterns",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": ["NM_001110", "GCA_000001405"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        }
+      }
+    },
+    "/lookup/id/{id_string}": {
+      "get": {
+        "tags": ["lookup"],
+        "summary": "Find tables containing a specific ID (2-stage approach)",
+        "operationId": "lookupId",
+        "parameters": [
+          {
+            "name": "id_string",
+            "in": "path",
+            "description": "ID to look up in database tables",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": ["NM_001110", "1553582_a_at"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        }
+      }
+    },
+    "/route/{src}/{dst}": {
+      "get": {
+        "tags": ["route"],
+        "summary": "Find all routes between databases with configurable max_hops",
+        "operationId": "findRoute",
+        "parameters": [
+          {
+            "name": "src",
+            "in": "path",
+            "description": "Source database name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dst",
+            "in": "path",
+            "description": "Destination database name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "max_hops",
+            "in": "query",
+            "description": "Maximum number of hops (default: 3, max: 5)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 3,
+              "minimum": 1,
+              "maximum": 5
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "example": [
+                    ["ncbigene", "ensembl_gene"],
+                    ["ncbigene", "hgnc", "ensembl_gene"]
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        }
+      }
+    },
     "/config/descriptions": {
       "get": {
         "tags": [
@@ -13997,6 +14181,80 @@
                     "wikipathways": {
                       "type": "object"
                     }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        }
+      }
+    },
+    "/config/statistics": {
+      "get": {
+        "tags": ["config"],
+        "summary": "Get database statistics",
+        "operationId": "getStatistics",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                      "count": {
+                        "type": "integer",
+                        "example": 1000000
+                      },
+                      "last_updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-01-15T12:00:00Z"
+                      }
+                    }
+                  },
+                  "example": {
+                    "ncbigene-ensembl_gene": {
+                      "count": 1000000,
+                      "last_updated_at": "2025-01-15T12:00:00Z"
+                    },
+                    "ncbigene-hgnc": {
+                      "count": 500000,
+                      "last_updated_at": "2025-01-15T12:00:00Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        }
+      }
+    },
+    "/config/taxonomy": {
+      "get": {
+        "tags": ["config"],
+        "summary": "Get taxonomy list",
+        "operationId": "getTaxonomy",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "example": {
+                    "ncbigene": "gene",
+                    "ensembl_gene": "gene",
+                    "hgnc": "gene"
                   }
                 }
               }
