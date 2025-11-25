@@ -1,3 +1,5 @@
+import ReactMarkdown from "react-markdown";
+
 type Props = {
   executeExamples: (idList: string[], exampleTarget: string) => void;
 };
@@ -212,9 +214,13 @@ const Datasets = ({ executeExamples }: Props) => {
                     <div className="description">
                       {language === "ja" &&
                       datasetFilterObj[key].description_ja ? (
-                        <p>{datasetFilterObj[key].description_ja}</p>
+                        <ReactMarkdown>
+                          {datasetFilterObj[key].description_ja}
+                        </ReactMarkdown>
                       ) : datasetFilterObj[key].description ? (
-                        <p>{datasetFilterObj[key].description}</p>
+                        <ReactMarkdown>
+                          {datasetFilterObj[key].description}
+                        </ReactMarkdown>
                       ) : (
                         <>
                           <p>

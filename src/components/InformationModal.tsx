@@ -1,4 +1,5 @@
 import { useClickAway } from "react-use";
+import ReactMarkdown from "react-markdown";
 
 type Props = {
   setIsShowInfomationModal: Dispatch<SetStateAction<boolean>>;
@@ -32,9 +33,13 @@ const InformationModal = ({ setIsShowInfomationModal, ...props }: Props) => {
           <div className="modal--through__description">
             {language === "ja" &&
             datasetConfig[props.database].description_ja ? (
-              <p>{datasetConfig[props.database].description_ja}</p>
+              <ReactMarkdown>
+                {datasetConfig[props.database].description_ja}
+              </ReactMarkdown>
             ) : datasetConfig[props.database].description ? (
-              <p>{datasetConfig[props.database].description}</p>
+              <ReactMarkdown>
+                {datasetConfig[props.database].description}
+              </ReactMarkdown>
             ) : (
               <>
                 <p>
