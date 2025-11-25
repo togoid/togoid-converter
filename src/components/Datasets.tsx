@@ -208,18 +208,13 @@ const Datasets = ({ executeExamples }: Props) => {
                   {((language === "ja" &&
                     datasetFilterObj[key].description_ja) ||
                     datasetFilterObj[key].description ||
-                    (descriptionConfig[key] &&
-                      descriptionConfig[key][`description_${language}`])) && (
+                    descriptionConfig[key]?.[`description_${language}`]) && (
                     <div className="description">
-                      {(language === "ja" &&
-                        datasetFilterObj[key].description_ja) ||
-                      datasetFilterObj[key].description ? (
-                        <p>
-                          {language === "ja" &&
-                          datasetFilterObj[key].description_ja
-                            ? datasetFilterObj[key].description_ja
-                            : datasetFilterObj[key].description}
-                        </p>
+                      {language === "ja" &&
+                      datasetFilterObj[key].description_ja ? (
+                        <p>{datasetFilterObj[key].description_ja}</p>
+                      ) : datasetFilterObj[key].description ? (
+                        <p>{datasetFilterObj[key].description}</p>
                       ) : (
                         <>
                           <p>

@@ -30,15 +30,11 @@ const InformationModal = ({ setIsShowInfomationModal, ...props }: Props) => {
           datasetConfig[props.database].description ||
           descriptionConfig[props.database]?.[`description_${language}`]) && (
           <div className="modal--through__description">
-            {(language === "ja" &&
-              datasetConfig[props.database].description_ja) ||
-            datasetConfig[props.database].description ? (
-              <p>
-                {language === "ja" &&
-                datasetConfig[props.database].description_ja
-                  ? datasetConfig[props.database].description_ja
-                  : datasetConfig[props.database].description}
-              </p>
+            {language === "ja" &&
+            datasetConfig[props.database].description_ja ? (
+              <p>{datasetConfig[props.database].description_ja}</p>
+            ) : datasetConfig[props.database].description ? (
+              <p>{datasetConfig[props.database].description}</p>
             ) : (
               <>
                 <p>
