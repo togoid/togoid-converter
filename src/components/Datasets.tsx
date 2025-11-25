@@ -205,12 +205,21 @@ const Datasets = ({ executeExamples }: Props) => {
                       {datasetConfig[key].label}
                     </span>
                   </h3>
-                  {(datasetFilterObj[key].description ||
+                  {((language === "ja" &&
+                    datasetFilterObj[key].description_ja) ||
+                    datasetFilterObj[key].description ||
                     (descriptionConfig[key] &&
                       descriptionConfig[key][`description_${language}`])) && (
                     <div className="description">
-                      {datasetFilterObj[key].description ? (
-                        <p>{datasetFilterObj[key].description}</p>
+                      {(language === "ja" &&
+                        datasetFilterObj[key].description_ja) ||
+                      datasetFilterObj[key].description ? (
+                        <p>
+                          {language === "ja" &&
+                          datasetFilterObj[key].description_ja
+                            ? datasetFilterObj[key].description_ja
+                            : datasetFilterObj[key].description}
+                        </p>
                       ) : (
                         <>
                           <p>

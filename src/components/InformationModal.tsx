@@ -26,36 +26,40 @@ const InformationModal = ({ setIsShowInfomationModal, ...props }: Props) => {
           {datasetConfig[props.database].label}
         </h2>
         <LanguageButton language={language} setLanguage={setLanguage} />
-        {datasetConfig[props.database].description ||
-          (descriptionConfig[props.database]?.[`description_${language}`] && (
-            <div className="modal--through__description">
-              {datasetConfig[props.database].description ? (
-                <p>{datasetConfig[props.database].description}</p>
-              ) : (
-                <>
-                  <p>
-                    {
-                      descriptionConfig[props.database][
-                        `description_${language}`
-                      ]
-                    }
-                  </p>
-                  <p>
-                    Cited from{" "}
-                    <a
-                      href={`https://integbio.jp/dbcatalog/record/${
-                        datasetConfig[props.database].catalog
-                      }`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Integbio Database Catalog
-                    </a>
-                  </p>
-                </>
-              )}
-            </div>
-          ))}
+        {((language === "ja" && datasetConfig[props.database].description_ja) ||
+          datasetConfig[props.database].description ||
+          descriptionConfig[props.database]?.[`description_${language}`]) && (
+          <div className="modal--through__description">
+            {(language === "ja" &&
+              datasetConfig[props.database].description_ja) ||
+            datasetConfig[props.database].description ? (
+              <p>
+                {language === "ja" &&
+                datasetConfig[props.database].description_ja
+                  ? datasetConfig[props.database].description_ja
+                  : datasetConfig[props.database].description}
+              </p>
+            ) : (
+              <>
+                <p>
+                  {descriptionConfig[props.database][`description_${language}`]}
+                </p>
+                <p>
+                  Cited from{" "}
+                  <a
+                    href={`https://integbio.jp/dbcatalog/record/${
+                      datasetConfig[props.database].catalog
+                    }`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Integbio Database Catalog
+                  </a>
+                </p>
+              </>
+            )}
+          </div>
+        )}
 
         <div className="modal--through__buttons path">
           <div className="path_label small white">LINK TO</div>
