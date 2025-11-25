@@ -1,5 +1,4 @@
 import { useClickAway } from "react-use";
-import ReactMarkdown from "react-markdown";
 
 type Props = {
   setIsShowInfomationModal: Dispatch<SetStateAction<boolean>>;
@@ -30,36 +29,11 @@ const InformationModal = ({ setIsShowInfomationModal, ...props }: Props) => {
         {((language === "ja" && datasetConfig[props.database].description_ja) ||
           datasetConfig[props.database].description ||
           descriptionConfig[props.database]?.[`description_${language}`]) && (
-          <div className="modal--through__description">
-            {language === "ja" &&
-            datasetConfig[props.database].description_ja ? (
-              <ReactMarkdown>
-                {datasetConfig[props.database].description_ja}
-              </ReactMarkdown>
-            ) : datasetConfig[props.database].description ? (
-              <ReactMarkdown>
-                {datasetConfig[props.database].description}
-              </ReactMarkdown>
-            ) : (
-              <>
-                <p>
-                  {descriptionConfig[props.database][`description_${language}`]}
-                </p>
-                <p>
-                  Cited from{" "}
-                  <a
-                    href={`https://integbio.jp/dbcatalog/record/${
-                      datasetConfig[props.database].catalog
-                    }`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Integbio Database Catalog
-                  </a>
-                </p>
-              </>
-            )}
-          </div>
+          <DatasetsDescription
+            className="modal--through__description"
+            datasetKey={props.database}
+            language={language}
+          />
         )}
 
         <div className="modal--through__buttons path">

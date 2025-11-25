@@ -7,6 +7,7 @@
 export {}
 declare global {
   const Datasets: typeof import('./src/components/Datasets').default
+  const DatasetsDescription: typeof import('./src/components/DatasetsDescription').default
   const Documents: typeof import('./src/components/Documents').default
   const Explore: typeof import('./src/components/Explore').default
   const ExploreResult: typeof import('./src/components/ExploreResult').default

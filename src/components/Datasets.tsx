@@ -1,5 +1,3 @@
-import ReactMarkdown from "react-markdown";
-
 type Props = {
   executeExamples: (idList: string[], exampleTarget: string) => void;
 };
@@ -211,34 +209,11 @@ const Datasets = ({ executeExamples }: Props) => {
                     datasetFilterObj[key].description_ja) ||
                     datasetFilterObj[key].description ||
                     descriptionConfig[key]?.[`description_${language}`]) && (
-                    <div className="description">
-                      {language === "ja" &&
-                      datasetFilterObj[key].description_ja ? (
-                        <ReactMarkdown>
-                          {datasetFilterObj[key].description_ja}
-                        </ReactMarkdown>
-                      ) : datasetFilterObj[key].description ? (
-                        <ReactMarkdown>
-                          {datasetFilterObj[key].description}
-                        </ReactMarkdown>
-                      ) : (
-                        <>
-                          <p>
-                            {descriptionConfig[key][`description_${language}`]}
-                          </p>
-                          <p>
-                            Cited from{" "}
-                            <a
-                              href={`https://integbio.jp/dbcatalog/record/${datasetConfig[key].catalog}`}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              Integbio Database Catalog
-                            </a>
-                          </p>
-                        </>
-                      )}
-                    </div>
+                    <DatasetsDescription
+                      className="description"
+                      datasetKey={key}
+                      language={language}
+                    />
                   )}
                   <div className="path">
                     <div className="path_label small white">LINK TO</div>
