@@ -8,7 +8,7 @@ type Props = {
 const InformationModal = ({ setIsShowInfomationModal, ...props }: Props) => {
   const [language, setLanguage] = useState<"en" | "ja">("en");
 
-  const { datasetConfig, descriptionConfig } = useConfig();
+  const { datasetConfig, descriptionConfig, linkToMap } = useConfig();
 
   const ref = useRef(null);
   useClickAway(ref, () => {
@@ -45,7 +45,7 @@ const InformationModal = ({ setIsShowInfomationModal, ...props }: Props) => {
             />
           </svg>
           <div className="path_children">
-            {[...datasetConfig[props.database].linkTo].map(([v, count], i) => (
+            {[...linkToMap[props.database]].map(([v, count], i) => (
               <div
                 className="path_label small green"
                 style={{

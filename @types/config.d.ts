@@ -30,7 +30,6 @@ type DatasetConfig = {
       taxonomy?: boolean;
       threshold?: boolean;
     };
-    linkTo: any;
     method?: string;
     prefix: {
       label: string;

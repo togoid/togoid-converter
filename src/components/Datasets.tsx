@@ -5,7 +5,7 @@ type Props = {
 const Datasets = ({ executeExamples }: Props) => {
   useSignals();
 
-  const { datasetConfig, descriptionConfig } = useConfig();
+  const { datasetConfig, descriptionConfig, linkToMap } = useConfig();
 
   const [language, setLanguage] = useState<"en" | "ja">("en");
   const [datasetFilterObj, setDatasetFilterObj] = useState(datasetConfig);
@@ -224,7 +224,7 @@ const Datasets = ({ executeExamples }: Props) => {
                       />
                     </svg>
                     <div className="path__children">
-                      {[...datasetFilterObj[key].linkTo].map(([l, count], i) =>
+                      {[...linkToMap[key]].map(([l, count], i) =>
                         datasetConfig[l] ? (
                           <a
                             href={
