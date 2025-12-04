@@ -106,7 +106,7 @@ const LabelToIdTable = ({
                   "https://pubdictionaries.org/find_terms.json",
                   {
                     params: {
-                      ids: synonymIdList.join("|"),
+                      identifiers: synonymIdList.join("|"),
                       dictionaries: preferredDictionary,
                     },
                   },
