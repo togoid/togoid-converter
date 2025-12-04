@@ -6,6 +6,7 @@
 // biome-ignore lint: disable
 export {}
 declare global {
+  const Activity: typeof import('react').Activity
   const Datasets: typeof import('./src/components/Datasets').default
   const DatasetsDescription: typeof import('./src/components/DatasetsDescription').default
   const Documents: typeof import('./src/components/Documents').default
@@ -36,10 +37,14 @@ declare global {
   const ResultModalClipboardButton: typeof import('./src/components/ResultModalClipboardButton').default
   const ResultModalSingleAction: typeof import('./src/components/ResultModalSingleAction').default
   const Show: typeof import('@preact/signals-react/utils').Show
+  const Suspense: typeof import('react').Suspense
   const TabWrapper: typeof import('./src/components/TabWrapper').default
+  const cache: typeof import('react').cache
+  const cacheSignal: typeof import('react').cacheSignal
   const categoryColor: typeof import('./src/lib/setting').categoryColor
   const colorLegendList: typeof import('./src/lib/setting').colorLegendList
   const computed: typeof import('@preact/signals-react').computed
+  const createContext: typeof import('react').createContext
   const createRef: typeof import('react').createRef
   const executeAnnotateQuery: typeof import('./src/lib/queries').executeAnnotateQuery
   const executeCountQuery: typeof import('./src/lib/queries').executeCountQuery
@@ -58,6 +63,8 @@ declare global {
   const startTransition: typeof import('react').startTransition
   const text: typeof import('./src/stores/text').text
   const topExamples: typeof import('./src/lib/examples').topExamples
+  const use: typeof import('react').use
+  const useActionState: typeof import('react').useActionState
   const useAnnotateConfig: typeof import('./src/hooks/useAnnotateConfig').default
   const useCallback: typeof import('react').useCallback
   const useComputed: typeof import('@preact/signals-react').useComputed
@@ -66,11 +73,13 @@ declare global {
   const useDebugValue: typeof import('react').useDebugValue
   const useDeferredValue: typeof import('react').useDeferredValue
   const useEffect: typeof import('react').useEffect
+  const useEffectEvent: typeof import('react').useEffectEvent
   const useId: typeof import('react').useId
   const useImperativeHandle: typeof import('react').useImperativeHandle
   const useInsertionEffect: typeof import('react').useInsertionEffect
   const useLayoutEffect: typeof import('react').useLayoutEffect
   const useMemo: typeof import('react').useMemo
+  const useOptimistic: typeof import('react').useOptimistic
   const useReducer: typeof import('react').useReducer
   const useRef: typeof import('react').useRef
   const useResultModalAction: typeof import('./src/hooks/useResultModalAction').default
