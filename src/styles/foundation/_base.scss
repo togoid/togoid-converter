@@ -1,0 +1,99 @@
+@use "../global" as g;
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  font-size: 1.4rem;
+  font-family: g.$ff-hiragino;
+  font-family: g.$ff-noto-sans;
+  padding: 0;
+  margin: 0;
+  overflow: auto;
+
+  & * {
+    box-sizing: border-box;
+  }
+}
+
+main {
+  display: block;
+}
+
+p { margin: 0; }
+
+a {
+  text-decoration: none;
+  opacity: 1;
+  transition: all 0.3s ease;
+
+  &:hover {
+    opacity: 0.5;
+  }
+}
+
+dl,
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+dd { margin: 0; }
+
+figure {
+  margin: 0;
+}
+
+img {
+  height: auto;
+  max-width: 100%;
+}
+
+@for $i from 1 through 6 {
+  h#{$i}{
+    font-size: 1em;
+    font-weight: normal;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+table {
+  max-width: 100%;
+  border-collapse: collapse;
+  word-break: break-word;
+}
+
+fieldset {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+input,
+select {
+  font-size: 16px;
+
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+}
+
+select {
+  position: relative;
+  appearance: none;
+
+  &::-ms-expand {
+    display: none;
+  }
+}
+
+button {
+  cursor: pointer;
+
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+}

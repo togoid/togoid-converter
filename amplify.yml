@@ -1,0 +1,18 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - nvm install 22
+        - node -v
+        - yarn
+    build:
+      commands:
+        - yarn build2
+  artifacts:
+    baseDirectory: out
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
