@@ -1,15 +1,16 @@
 type DatasetConfig = {
   [key: string]: {
     annotations?: {
+      is_list?: true;
       items?: string[];
       label: string;
       numerical?: boolean;
       variable: string;
-      is_list?: true;
     }[];
     category: string;
     catalog: string;
     description?: string;
+    description_ja?: string;
     examples: string[][];
     format?: string[];
     label: string;
@@ -17,9 +18,11 @@ type DatasetConfig = {
       dictionaries?: {
         dictionary: string;
         label: string;
+        label_type?: string;
+        preferred?: boolean;
       }[];
       label_types?: {
-        label?: string;
+        label: string;
         label_type: string;
         preferred?: boolean;
       }[];
@@ -27,7 +30,6 @@ type DatasetConfig = {
       taxonomy?: boolean;
       threshold?: boolean;
     };
-    linkTo: any;
     method?: string;
     prefix: {
       label: string;
@@ -47,5 +49,11 @@ type RelationConfig = {
 };
 
 type DescriptionConfig = {
-  [key: string]: { [key: string]: any };
+  [key: string]: {
+    description_en?: string;
+    description_ja?: string;
+    name?: string;
+    organization_en?: string;
+    organization_ja?: string;
+  };
 };
