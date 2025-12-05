@@ -11,20 +11,34 @@ const DatasetsDescription = ({ datasetKey, language, ...rest }: Props) => {
   return (
     <div {...rest}>
       {language === "ja" && datasetConfig[datasetKey].description_ja ? (
-        <ReactMarkdown>
+        <ReactMarkdown
+          components={{
+            a: ({ node, ...props }) => (
+              <a {...props} target="_blank" rel="noopener noreferrer" />
+            ),
+          }}
+        >
           {datasetConfig[datasetKey].description_ja}
         </ReactMarkdown>
       ) : datasetConfig[datasetKey].description ? (
-        <ReactMarkdown>{datasetConfig[datasetKey].description}</ReactMarkdown>
+        <ReactMarkdown
+          components={{
+            a: ({ node, ...props }) => (
+              <a {...props} target="_blank" rel="noopener noreferrer" />
+            ),
+          }}
+        >
+          {datasetConfig[datasetKey].description}
+        </ReactMarkdown>
       ) : (
         <>
           <p>{descriptionConfig[datasetKey][`description_${language}`]}</p>
           <p>
             Cited from{" "}
             <a
-              href={`https://integbio.jp/dbcatalog/record/${datasetConfig[datasetKey].catalog}`}
+              href={`https://catalog.integbio.jp/dbcatalog/record/${datasetConfig[datasetKey].catalog}`}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
             >
               Integbio Database Catalog
             </a>
