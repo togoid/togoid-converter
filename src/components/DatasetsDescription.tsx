@@ -36,7 +36,7 @@ const DatasetsDescription = ({ datasetKey, language, ...rest }: Props) => {
           <p>
             Cited from{" "}
             <a
-              href={`https://integbio.jp/dbcatalog/record/${datasetConfig[datasetKey].catalog}`}
+              href={`https://catalog.integbio.jp/dbcatalog/record/${datasetConfig[datasetKey].catalog}`}
               target="_blank"
               rel="noopener noreferrer"
             >
