@@ -25,7 +25,13 @@ const RelationModal = ({ setIsShowRelationModal, ...props }: Props) => {
           <LanguageButton language={language} setLanguage={setLanguage} />
         )}
         <div className="modal--through__description">
-          <ReactMarkdown>
+          <ReactMarkdown
+            components={{
+              a: ({ node, ...props }) => (
+                <a {...props} target="_blank" rel="noopener noreferrer" />
+              ),
+            }}
+          >
             {language === "ja" && props.v.relation.description_ja
               ? props.v.relation.description_ja
               : props.v.relation.description}
