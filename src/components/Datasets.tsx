@@ -219,7 +219,7 @@ const Datasets = ({ executeExamples }: Props) => {
                           <p>
                             Cited from{" "}
                             <a
-                              href={`https://integbio.jp/dbcatalog/record/${datasetConfig[key].catalog}`}
+                              href={`https://catalog.integbio.jp/dbcatalog/record/${datasetConfig[key].catalog}`}
                               target="_blank"
                               rel="noreferrer"
                             >
