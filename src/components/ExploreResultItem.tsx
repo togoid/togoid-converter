@@ -80,9 +80,9 @@ const ExploreResultItem = (props: any) => {
         className="radio__input"
         checked={Boolean(
           props.route[props.i] &&
-            props.route[props.i].name === props.v.name &&
-            props.route[props.i].relation?.link.label ===
-              props.v.relation?.link.label,
+          props.route[props.i].name === props.v.name &&
+          props.route[props.i].relation?.link.label ===
+            props.v.relation?.link.label,
         )}
         onChange={() => props.selectDatabase(props.v, props.i)}
         disabled={props.i > 0 && !props.v.target}

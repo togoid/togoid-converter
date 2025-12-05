@@ -96,14 +96,12 @@ const Home = () => {
 
       convertFunc();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route]);
 
   useEffect(() => {
     if (ids.length && Object.keys(datasetConfig).length) {
       searchDatabase(ids);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [datasetConfig]);
 
   const createNodesList = async (beforeRoute: Route) => {
