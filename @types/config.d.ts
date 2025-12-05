@@ -45,6 +45,7 @@ type RelationConfig = {
     forward: { id: string; display_label: string };
     reverse?: { id: string; display_label: string };
     description?: string;
+    description_ja?: string;
   }[];
 };
 
