@@ -77,7 +77,7 @@ const Home = () => {
           setRoute(r);
           setRouterRoute(
             r.flatMap((v, i) =>
-              i === 0 ? [v.name] : [v.relation!.link.id, v.name],
+              i === 0 ? [v.name] : [v.relation!.link.label, v.name],
             ),
           );
           setIsUseKeepRoute(false);
@@ -122,6 +122,7 @@ const Home = () => {
                 label: value.forward.id,
               },
               description: value.description,
+              description_ja: value.description_ja,
             },
           });
         });
@@ -143,6 +144,7 @@ const Home = () => {
                   label: value.forward.id, // 必ずforward側を使う
                 },
                 description: value.description,
+                description_ja: value.description_ja,
               },
             });
           }
@@ -436,10 +438,11 @@ const Home = () => {
         name,
         relation: {
           link: {
-            display_label: value[direction].display_label,
+            display_label: value[direction]!.display_label,
             label: value.forward.id, // labelは必ずforward側を使う
           },
           description: value.description,
+          description_ja: value.description_ja,
         },
       };
       return beforeRoute ? [...beforeRoute, obj] : [obj];
