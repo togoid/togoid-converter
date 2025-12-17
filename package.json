@@ -17,6 +17,7 @@
     "file-saver": "2.0.5",
     "next": "16.0.7",
     "nprogress": "0.2.0",
+    "p-limit": "7.2.0",
     "papaparse": "5.5.3",
     "react": "19.2.1",
     "react-arrow-master": "https://github.com/InfoLoungeLLC/react-arrow-master",
