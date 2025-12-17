@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import NProgress from "nprogress";
 import { useUpdateEffect } from "react-use";
+import pLimit from "p-limit";
 
 const Home = () => {
   const router = useRouter();
@@ -153,50 +154,53 @@ const Home = () => {
     });
 
     NProgress.start();
+    const limit = pLimit(500);
     const result = await Promise.all(
-      candidateList.map(async (v) => {
-        // 変換結果を取得
-        const convert = await executeQuery({
-          route: [beforeRoute, v],
-          ids: beforeRoute.results,
-          report: "target",
-          limit: 10000,
-        }).catch(() => null);
-        NProgress.inc(1 / candidateList.length);
+      candidateList.map((v) =>
+        limit(async () => {
+          // 変換結果を取得
+          const convert = await executeQuery({
+            route: [beforeRoute, v],
+            ids: beforeRoute.results,
+            report: "target",
+            limit: 10000,
+          }).catch(() => null);
+          NProgress.inc(1 / candidateList.length);
 
-        const _v = structuredClone(v);
-        if (convert === null) {
-          _v.message = "ERROR";
-          return _v;
-        }
+          const _v = structuredClone(v);
+          if (convert === null) {
+            _v.message = "ERROR";
+            return _v;
+          }
 
-        if (convert.results.length) {
-          if (convert.results.length < 10000) {
-            // 変換結果が0より多く10000未満の時は個数を取得する
-            const count = await executeCountQuery({
-              relation: `${beforeRoute.name}-${v.name}`,
-              ids: beforeRoute.results,
-              link: v.relation!.link.label,
-            }).catch(() => null);
-            if (count === null) {
-              _v.message = "ERROR";
+          if (convert.results.length) {
+            if (convert.results.length < 10000) {
+              // 変換結果が0より多く10000未満の時は個数を取得する
+              const count = await executeCountQuery({
+                relation: `${beforeRoute.name}-${v.name}`,
+                ids: beforeRoute.results,
+                link: v.relation!.link.label,
+              }).catch(() => null);
+              if (count === null) {
+                _v.message = "ERROR";
+              } else {
+                _v.source = count.source;
+                _v.target = count.target;
+              }
             } else {
-              _v.source = count.source;
-              _v.target = count.target;
+              // targetが0のままでは変換が0個と同じ扱いになってしまうため1以上にしておく
+              _v.target = 1;
+              _v.message = `${convert.results.length}+`;
             }
           } else {
-            // targetが0のままでは変換が0個と同じ扱いになってしまうため1以上にしておく
-            _v.target = 1;
-            _v.message = `${convert.results.length}+`;
+            _v.source = 0;
+            _v.target = 0;
           }
-        } else {
-          _v.source = 0;
-          _v.target = 0;
-        }
 
-        _v.results = convert.results;
-        return _v;
-      }),
+          _v.results = convert.results;
+          return _v;
+        }),
+      ),
     );
     NProgress.done();
 
@@ -373,36 +377,39 @@ const Home = () => {
     });
 
     NProgress.start();
+    const limit = pLimit(500);
     const result = (
       await Promise.all(
-        candidateList.map(async (v) => {
-          // 変換結果を取得
-          const convert = await executeQuery({
-            // @ts-expect-error
-            route: route.concat(v),
-            ids: ids,
-            report: "target",
-            limit: 10000,
-          }).catch(() => null);
-          NProgress.inc(1 / candidateList.length);
+        candidateList.map((v) =>
+          limit(async () => {
+            // 変換結果を取得
+            const convert = await executeQuery({
+              // @ts-expect-error
+              route: route.concat(v),
+              ids: ids,
+              report: "target",
+              limit: 10000,
+            }).catch(() => null);
+            NProgress.inc(1 / candidateList.length);
 
-          if (convert === null) {
-            // 変換に失敗したとき
-            v[v.length - 1].message = "ERROR";
-            return v;
-          } else if (convert.results.length) {
-            // 変換に成功して結果が存在するとき 10000未満かどうかで分ける
-            if (convert.results.length < 10000) {
-              v[v.length - 1].target = convert.results.length;
+            if (convert === null) {
+              // 変換に失敗したとき
+              v[v.length - 1].message = "ERROR";
+              return v;
+            } else if (convert.results.length) {
+              // 変換に成功して結果が存在するとき 10000未満かどうかで分ける
+              if (convert.results.length < 10000) {
+                v[v.length - 1].target = convert.results.length;
+              } else {
+                v[v.length - 1].message = `${convert.results.length}+`;
+              }
+              return v;
             } else {
-              v[v.length - 1].message = `${convert.results.length}+`;
+              // 変換結果が空のとき
+              return null;
             }
-            return v;
-          } else {
-            // 変換結果が空のとき
-            return null;
-          }
-        }),
+          }),
+        ),
       )
     ).filter((v) => v !== null);
     NProgress.done();
