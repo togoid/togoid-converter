@@ -1,6 +1,7 @@
 import useSWRImmutable from "swr/immutable";
 // import useSWR from "swr";
 import copy from "copy-to-clipboard";
+import NProgress from "nprogress";
 
 // 定数
 const previewModeList = [
@@ -50,6 +51,7 @@ const ResultModalAction = (props: Props) => {
   );
 
   const copyClipboard = async () => {
+    NProgress.start();
     const d = await executeQuery({
       route: props.route,
       ids: props.ids,
@@ -63,6 +65,7 @@ const ResultModalAction = (props: Props) => {
 
     const rows = await createExportTable(d.results)!;
     const text = invokeUnparse(rows, "tsv");
+    NProgress.done();
 
     copy(text, {
       format: "text/plain",
@@ -70,6 +73,7 @@ const ResultModalAction = (props: Props) => {
   };
 
   const handleExportCsvTsv = async (extension: "csv" | "tsv") => {
+    NProgress.start();
     const d = await executeQuery({
       route: props.route,
       ids: props.ids,
@@ -83,6 +87,8 @@ const ResultModalAction = (props: Props) => {
 
     const head = createExportTableHead();
     const rows = await createExportTable(d.results)!;
+    NProgress.done();
+
     exportCsvTsv([head, ...rows], extension, `result.${extension}`);
   };
 

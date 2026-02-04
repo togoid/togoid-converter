@@ -7,6 +7,7 @@ type Route = {
   relation?: {
     link: { label: string; display_label: string };
     description: string | undefined;
+    description_ja: string | undefined;
   };
 };
 
@@ -19,5 +20,6 @@ type NavigateRoute = {
   relation?: {
     link: { label: string; display_label: string };
     description: string | undefined;
+    description_ja: string | undefined;
   };
 };

@@ -5,8 +5,8 @@ type Props = {
   databaseNodesList: any[][];
   route: Route[];
   ids: string[];
-  setRoute: Function;
-  setRouterRoute: Function;
+  setRoute: (key: any) => any;
+  setRouterRoute: (key: any) => any;
 };
 
 const Explore = (props: Props) => {
@@ -28,7 +28,6 @@ const Explore = (props: Props) => {
     });
 
     return candidatePathList;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.databaseNodesList]);
 
   // @ts-expect-error
