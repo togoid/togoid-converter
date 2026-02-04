@@ -1,5 +1,6 @@
 import useSWRImmutable from "swr/immutable";
 // import useSWR from "swr";
+import NProgress from "nprogress";
 
 type Props = {
   isCompact: boolean;
@@ -29,7 +30,9 @@ const ResultModalActionTable = ({
         tableHeadBase.annotateList.some((annotate) => annotate.checked)
         ? {
             name: tableHeadBase.name,
-            ids: filterTable.map((v) => v[index]).filter((v) => v),
+            ids: [...new Set(filterTable.map((v) => v[index]))].filter(
+              (v) => v,
+            ),
             fields: tableHeadBase.annotateList.map(
               (annotate) => annotate.variable,
             ),
@@ -47,7 +50,10 @@ const ResultModalActionTable = ({
           }
         : null,
       async (key) => {
-        return await executeAnnotateQuery(key);
+        NProgress.start();
+        const data = await executeAnnotateQuery(key);
+        NProgress.done();
+        return data;
       },
     );
   });
@@ -360,7 +366,7 @@ const ResultModalActionTable = ({
           ) : (
             <tr>
               <td colSpan={tableHeadList.length} className="no_results">
-                No Results
+                No results within preview.
               </td>
             </tr>
           ))}

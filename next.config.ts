@@ -6,14 +6,13 @@ import { fileURLToPath } from "url";
 import AutoImport from "unplugin-auto-import/rspack";
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: true,
   output: "export",
   sassOptions: {
-    includePaths: [path.join(__dirname, "styles")],
+    includePaths: [path.join(path.dirname(__filename), "styles")],
   },
   webpack: (config) => {
     config.plugins.push(
@@ -39,9 +38,6 @@ const nextConfig: NextConfig = {
     );
 
     return config;
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
   },
   typescript: {
     ignoreBuildErrors: true,
