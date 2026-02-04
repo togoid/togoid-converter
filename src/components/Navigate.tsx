@@ -7,8 +7,8 @@ type Props = {
   databaseNodesList: any[][];
   route: Route[];
   ids: string[];
-  setRoute: Function;
-  lookupRoute: Function;
+  setRoute: (key: any) => any;
+  lookupRoute: (key: any) => any;
 };
 
 const Navigate = (props: Props) => {
@@ -19,7 +19,7 @@ const Navigate = (props: Props) => {
   const isShowDropdown = useMemo(() => {
     return Boolean(
       (props.route.length === 1 && props.databaseNodesList.length === 1) ||
-        (props.databaseNodesList[1] && props.databaseNodesList[1].length === 0),
+      (props.databaseNodesList[1] && props.databaseNodesList[1].length === 0),
     );
   }, [props.route, props.databaseNodesList]);
 
@@ -101,7 +101,6 @@ const Navigate = (props: Props) => {
     }
 
     return candidatePaths;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.databaseNodesList, props.route]);
 
   const selectDatabase = (database: any) => {

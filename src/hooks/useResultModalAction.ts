@@ -76,32 +76,48 @@ const useResultModalAction = (
       // Target IDs
       // All including unconverted IDs
       const transposeList = tableRows[0].map((_, i) =>
-        tableRows.map((row) => row[i]).filter((v) => v),
+        [...new Set(tableRows.map((row) => row[i]))].filter((v) => v),
       );
 
       const labelList = await Promise.all(
         tableHeadList.map(async (tablehead, i) => {
           if (tablehead.annotateList.some((annotate) => annotate.checked)) {
-            return await executeAnnotateQuery({
-              name: tablehead.name,
-              ids: transposeList[i],
-              fields: tablehead.annotateList
-                .filter((annotate) => annotate.checked)
-                .map((annotate) => annotate.variable),
-              variables: tablehead.annotateList
-                .filter((annotate) => annotate.checked)
-                .reduce((prev, curr) => {
-                  const tmp = curr.items
-                    ?.filter((v) => v.checked)
-                    .map((v) => v.label);
-                  return tmp?.length
-                    ? {
-                        ...prev,
-                        [curr.variable]: { value: tmp, type: "[String!]" },
-                      }
-                    : prev;
-                }, {}),
-            });
+            const chunkSize = 1000;
+            const ids = transposeList[i];
+            const chunks = Array.from(
+              { length: Math.ceil(ids.length / chunkSize) },
+              (_, idx) => ids.slice(idx * chunkSize, (idx + 1) * chunkSize),
+            );
+
+            return (
+              await Promise.all(
+                chunks.map((chunkIds) =>
+                  executeAnnotateQuery({
+                    name: tablehead.name,
+                    ids: chunkIds,
+                    fields: tablehead.annotateList
+                      .filter((annotate) => annotate.checked)
+                      .map((annotate) => annotate.variable),
+                    variables: tablehead.annotateList
+                      .filter((annotate) => annotate.checked)
+                      .reduce((prev, curr) => {
+                        const tmp = curr.items
+                          ?.filter((v) => v.checked)
+                          .map((v) => v.label);
+                        return tmp?.length
+                          ? {
+                              ...prev,
+                              [curr.variable]: {
+                                value: tmp,
+                                type: "[String!]",
+                              },
+                            }
+                          : prev;
+                      }, {}),
+                  }),
+                ),
+              )
+            ).reduce((prev, curr) => ({ ...prev, ...curr }), {});
           }
         }),
       );

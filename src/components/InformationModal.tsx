@@ -8,7 +8,7 @@ type Props = {
 const InformationModal = ({ setIsShowInfomationModal, ...props }: Props) => {
   const [language, setLanguage] = useState<"en" | "ja">("en");
 
-  const { datasetConfig, descriptionConfig } = useConfig();
+  const { datasetConfig, descriptionConfig, linkToMap } = useConfig();
 
   const ref = useRef(null);
   useClickAway(ref, () => {
@@ -26,36 +26,15 @@ const InformationModal = ({ setIsShowInfomationModal, ...props }: Props) => {
           {datasetConfig[props.database].label}
         </h2>
         <LanguageButton language={language} setLanguage={setLanguage} />
-        {datasetConfig[props.database].description ||
-          (descriptionConfig[props.database]?.[`description_${language}`] && (
-            <div className="modal--through__description">
-              {datasetConfig[props.database].description ? (
-                <p>{datasetConfig[props.database].description}</p>
-              ) : (
-                <>
-                  <p>
-                    {
-                      descriptionConfig[props.database][
-                        `description_${language}`
-                      ]
-                    }
-                  </p>
-                  <p>
-                    Cited from{" "}
-                    <a
-                      href={`https://integbio.jp/dbcatalog/record/${
-                        datasetConfig[props.database].catalog
-                      }`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Integbio Database Catalog
-                    </a>
-                  </p>
-                </>
-              )}
-            </div>
-          ))}
+        {((language === "ja" && datasetConfig[props.database].description_ja) ||
+          datasetConfig[props.database].description ||
+          descriptionConfig[props.database]?.[`description_${language}`]) && (
+          <DatasetsDescription
+            className="modal--through__description"
+            datasetKey={props.database}
+            language={language}
+          />
+        )}
 
         <div className="modal--through__buttons path">
           <div className="path_label small white">LINK TO</div>
@@ -66,7 +45,7 @@ const InformationModal = ({ setIsShowInfomationModal, ...props }: Props) => {
             />
           </svg>
           <div className="path_children">
-            {[...datasetConfig[props.database].linkTo].map(([v, count], i) => (
+            {[...linkToMap[props.database]].map(([v, count], i) => (
               <div
                 className="path_label small green"
                 style={{

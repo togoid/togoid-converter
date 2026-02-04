@@ -5,7 +5,7 @@ type Props = {
 const Datasets = ({ executeExamples }: Props) => {
   useSignals();
 
-  const { datasetConfig, descriptionConfig } = useConfig();
+  const { datasetConfig, descriptionConfig, linkToMap } = useConfig();
 
   const [language, setLanguage] = useState<"en" | "ja">("en");
   const [datasetFilterObj, setDatasetFilterObj] = useState(datasetConfig);
@@ -205,30 +205,15 @@ const Datasets = ({ executeExamples }: Props) => {
                       {datasetConfig[key].label}
                     </span>
                   </h3>
-                  {(datasetFilterObj[key].description ||
-                    (descriptionConfig[key] &&
-                      descriptionConfig[key][`description_${language}`])) && (
-                    <div className="description">
-                      {datasetFilterObj[key].description ? (
-                        <p>{datasetFilterObj[key].description}</p>
-                      ) : (
-                        <>
-                          <p>
-                            {descriptionConfig[key][`description_${language}`]}
-                          </p>
-                          <p>
-                            Cited from{" "}
-                            <a
-                              href={`https://integbio.jp/dbcatalog/record/${datasetConfig[key].catalog}`}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              Integbio Database Catalog
-                            </a>
-                          </p>
-                        </>
-                      )}
-                    </div>
+                  {((language === "ja" &&
+                    datasetFilterObj[key].description_ja) ||
+                    datasetFilterObj[key].description ||
+                    descriptionConfig[key]?.[`description_${language}`]) && (
+                    <DatasetsDescription
+                      className="description"
+                      datasetKey={key}
+                      language={language}
+                    />
                   )}
                   <div className="path">
                     <div className="path_label small white">LINK TO</div>
@@ -239,7 +224,7 @@ const Datasets = ({ executeExamples }: Props) => {
                       />
                     </svg>
                     <div className="path__children">
-                      {[...datasetFilterObj[key].linkTo].map(([l, count], i) =>
+                      {[...linkToMap[key]].map(([l, count], i) =>
                         datasetConfig[l] ? (
                           <a
                             href={

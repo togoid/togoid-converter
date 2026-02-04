@@ -12,44 +12,45 @@ const configFetcher = async () => {
     axios.get<DescriptionConfig>(
       `${process.env.NEXT_PUBLIC_API_ENDPOINT}/config/descriptions`,
     ),
-    axios.get(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/config/statistics`),
+    axios.get<{
+      [key: string]: { count: number; last_updated_at: string };
+    }>(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/config/statistics`),
   ]);
 
+  const datasetConfig = res[0].data;
   const relationConfig = res[1].data;
   const descriptionConfig = res[2].data;
-  const statisticConfig = res[3].data as {
-    [key: string]: { count: number; last_updated_at: string };
-  };
+  const statisticConfig = res[3].data;
 
-  const datasetConfig = Object.entries(res[0].data).reduce(
-    (prev, [key, value]) => {
-      const linkTo = new Map();
-      Object.keys(relationConfig).forEach((k) => {
-        const names = k.split("-");
-        if (names[0] === key) {
-          linkTo.set(names[1], statisticConfig[k]?.count);
-        }
-      });
+  const linkToMap = Object.keys(datasetConfig).reduce<{
+    [key: string]: Map<string, number | undefined>;
+  }>((prev, key) => {
+    const linkTo = new Map<string, number | undefined>();
+    Object.keys(relationConfig).forEach((k) => {
+      const names = k.split("-");
+      if (names[0] === key) {
+        linkTo.set(names[1], statisticConfig[k]?.count);
+      }
+    });
 
-      Object.keys(relationConfig).forEach((k) => {
-        const names = k.split("-");
-        if (names[1] === key && !linkTo.has(names[0])) {
-          linkTo.set(names[0], statisticConfig[k]?.count);
-        }
-      });
+    Object.keys(relationConfig).forEach((k) => {
+      const names = k.split("-");
+      if (names[1] === key && !linkTo.has(names[0])) {
+        linkTo.set(names[0], statisticConfig[k]?.count);
+      }
+    });
 
-      return {
-        ...prev,
-        [key]: { ...value, linkTo },
-      };
-    },
-    {} as DatasetConfig,
-  );
+    return {
+      ...prev,
+      [key]: linkTo,
+    };
+  }, {});
 
   return {
     datasetConfig,
     relationConfig,
     descriptionConfig,
+    linkToMap,
   };
 };
 
@@ -58,7 +59,7 @@ const configFetcher = async () => {
  */
 const useConfig = (isFetch?: boolean) => {
   const {
-    data: { datasetConfig, relationConfig, descriptionConfig },
+    data: { datasetConfig, relationConfig, descriptionConfig, linkToMap },
   } = useSWR("config", isFetch ? configFetcher : null, {
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
@@ -66,6 +67,7 @@ const useConfig = (isFetch?: boolean) => {
       datasetConfig: {},
       relationConfig: {},
       descriptionConfig: {},
+      linkToMap: {},
     },
   });
 
@@ -73,6 +75,7 @@ const useConfig = (isFetch?: boolean) => {
     datasetConfig,
     relationConfig,
     descriptionConfig,
+    linkToMap,
   };
 };
 
