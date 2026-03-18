@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "TogoID API",
-    "version": "2.1.0"
+    "version": "2.2.0"
   },
   "servers": [
     {
@@ -18,6 +18,15 @@
     },
     {
       "name": "config"
+    },
+    {
+      "name": "search"
+    },
+    {
+      "name": "route"
+    },
+    {
+      "name": "lookup"
     }
   ],
   "paths": {
@@ -14004,6 +14013,213 @@
           },
           "400": {
             "description": "Bad request"
+          }
+        }
+      }
+    },
+    "/search/databases/{name}": {
+      "get": {
+        "tags": [
+          "search"
+        ],
+        "summary": "Search databases by name",
+        "description": "Returns dataset names whose internal name partially matches the supplied string.",
+        "operationId": "searchDatabases",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "A partial or full name of the dataset to search for.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "ensembl"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": [
+                    "ensembl_gene",
+                    "ensembl_transcript"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The dataset name is empty or malformed."
+          }
+        }
+      }
+    },
+    "/search/id/{id_string}": {
+      "get": {
+        "tags": [
+          "search"
+        ],
+        "summary": "Search databases by ID pattern",
+        "description": "Returns dataset names whose configured ID regex matches the supplied ID string.",
+        "operationId": "searchById",
+        "parameters": [
+          {
+            "name": "id_string",
+            "in": "path",
+            "description": "An ID string to match against database regex patterns.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "HGNC:5"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": [
+                    "hgnc",
+                    "ncbi_gene"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The ID string is empty or malformed."
+          }
+        }
+      }
+    },
+    "/route/{src}/{dst}": {
+      "get": {
+        "tags": [
+          "route"
+        ],
+        "summary": "Find routes between two databases",
+        "description": "Returns candidate conversion routes as ordered dataset-name lists from src to dst.",
+        "operationId": "findRoute",
+        "parameters": [
+          {
+            "name": "src",
+            "in": "path",
+            "description": "Source database name.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "hgnc"
+            }
+          },
+          {
+            "name": "dst",
+            "in": "path",
+            "description": "Destination database name.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "ensembl_gene"
+            }
+          },
+          {
+            "name": "max_hops",
+            "in": "query",
+            "description": "Maximum number of hops (1-5, default: 3).",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5,
+              "default": 3,
+              "example": 3
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "description": "Candidate routes. Each item is an ordered list of dataset names from src to dst.",
+                  "items": {
+                    "type": "array",
+                    "minItems": 2,
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "example": [
+                    [
+                      "hgnc",
+                      "ncbi_gene",
+                      "ensembl_gene"
+                    ]
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "src, dst, or max_hops is invalid."
+          }
+        }
+      }
+    },
+    "/lookup/id/{id_string}": {
+      "get": {
+        "tags": [
+          "lookup"
+        ],
+        "summary": "Lookup which tables contain an ID",
+        "description": "Returns relation table names that contain the supplied ID.",
+        "operationId": "lookupId",
+        "parameters": [
+          {
+            "name": "id_string",
+            "in": "path",
+            "description": "An ID string to search for in database tables.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "HGNC:5"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "description": "Relation table name in the form {source_dataset}-{target_dataset}."
+                  },
+                  "example": [
+                    "hgnc-ncbi_gene",
+                    "ncbi_gene-ensembl_gene"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The ID string is empty or malformed."
           }
         }
       }
