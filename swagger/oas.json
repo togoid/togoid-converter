@@ -14077,7 +14077,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "example": "ENSG00000139618"
+              "example": "HGNC:5"
             }
           }
         ],
@@ -14195,7 +14195,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "example": "ENSG00000139618"
+              "example": "HGNC:5"
             }
           }
         ],
