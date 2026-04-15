@@ -8,6 +8,7 @@ export const getConvertUrlSearchParams = (baseParams: {
   format: "csv" | "json";
   limit?: number;
   compact?: boolean;
+  prefix?: string;
 }) => {
   const params = new URLSearchParams({
     route: baseParams.route
@@ -23,6 +24,9 @@ export const getConvertUrlSearchParams = (baseParams: {
   }
   if (baseParams.compact) {
     params.set("compact", "1");
+  }
+  if (baseParams.prefix) {
+    params.set("prefix", baseParams.prefix);
   }
 
   return params;
@@ -42,7 +46,11 @@ export const executeQuery = async <T extends string>(baseParams: {
       route: string[];
     }>(
       `${process.env.NEXT_PUBLIC_API_ENDPOINT}/convert`,
-      getConvertUrlSearchParams({ ...baseParams, format: "json" }),
+      getConvertUrlSearchParams({
+        ...baseParams,
+        format: "json",
+        prefix: "no",
+      }),
     )
     .then((d) => d.data);
 };
