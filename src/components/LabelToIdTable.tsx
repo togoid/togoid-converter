@@ -6,19 +6,19 @@ import NProgress from "nprogress";
 const report = signal<"matched" | "unmatched">("matched");
 
 type Props = {
-  pubdictionariesParam: Signal<{
-    labelList: string[];
-    dictionaries: string;
-    tags?: string;
+  labelToIdParam: Signal<{
+    dataset: string;
+    labels: string[];
+    labelTypes: string[];
+    taxon?: string;
     threshold?: number;
-    verbose: boolean;
   }>;
   dataset: Signal<DatasetConfig[number] & { key: string }>;
   executeExamples: (idList: string[], exampleTarget: string) => void;
 };
 
 const LabelToIdTable = ({
-  pubdictionariesParam,
+  labelToIdParam,
   dataset,
   executeExamples,
 }: Props) => {
@@ -33,107 +33,27 @@ const LabelToIdTable = ({
   });
 
   const { data: tableData, isLoading } = useSWRImmutable(
-    pubdictionariesParam.value,
-    async () => {
+    labelToIdParam.value,
+    async (param) => {
       NProgress.start();
-
-      if (dataset.value.label_resolver!.sparqlist) {
-        const res = await axios.get<{
-          [key: string]: {
-            label: string;
-            identifier: string;
-            label_type: string;
-            preferred: string;
-          }[];
-        }>(
-          `https://dx.dbcls.jp/togoid/sparqlist/api/${dataset.value.label_resolver!.sparqlist}`,
+      try {
+        const res = await axios.get<Label2idRow[]>(
+          `${process.env.NEXT_PUBLIC_API_ENDPOINT}/label2id`,
           {
             params: {
-              labels: pubdictionariesParam.value.labelList.join(","),
-              label_types: pubdictionariesParam.value.dictionaries,
-              taxon: pubdictionariesParam.value.tags,
+              dataset: param.dataset,
+              labels: param.labels.join(","),
+              label_types: param.labelTypes.join(","),
+              taxon: param.taxon,
+              threshold: param.threshold,
+              // 未マッチ行も含めて取得し、Report の切り替えは再取得せず手元で絞る
+              report: "full",
             },
           },
         );
-
-        const result = pubdictionariesParam.value.labelList.map((label) => {
-          const tableBaseData = res.data[label];
-
-          return tableBaseData.map((v) => {
-            return {
-              label: label,
-              type: dataset.value.label_resolver!.label_types!.find(
-                (w: any) => w.label_type === v.label_type,
-              )?.label,
-              symbolOrName: v.preferred,
-              score: undefined,
-              identifier: v.identifier,
-            };
-          });
-        });
-
+        return res.data;
+      } finally {
         NProgress.done();
-        return result;
-      } else {
-        const res = await axios.get<{ [key: string]: any[] }>(
-          "https://pubdictionaries.org/find_ids.json",
-          {
-            params: {
-              labels: pubdictionariesParam.value.labelList.join("|"),
-              dictionaries: pubdictionariesParam.value.dictionaries,
-              tags: pubdictionariesParam.value.tags,
-              threshold: pubdictionariesParam.value.threshold,
-              verbose: pubdictionariesParam.value.verbose,
-            },
-          },
-        );
-
-        const result = await Promise.all(
-          pubdictionariesParam.value.labelList.map(async (label) => {
-            const tableBaseData = res.data[label];
-
-            const preferredDictionary =
-              dataset.value.label_resolver!.dictionaries!.find(
-                (v: any) => v.preferred,
-              )?.dictionary;
-
-            const synonymIdList = tableBaseData
-              .filter((v: any) => v.dictionary !== preferredDictionary)
-              .map((v) => v.identifier);
-
-            const res2 = synonymIdList.length
-              ? await axios.get<any>(
-                  "https://pubdictionaries.org/find_terms.json",
-                  {
-                    params: {
-                      identifiers: synonymIdList.join("|"),
-                      dictionaries: preferredDictionary,
-                    },
-                  },
-                )
-              : null;
-
-            return tableBaseData.map((v) => {
-              return {
-                label: label,
-                type: dataset.value.label_resolver!.dictionaries!.find(
-                  (w: any) => w.dictionary === v.dictionary,
-                )?.label,
-                symbolOrName:
-                  v.dictionary === preferredDictionary
-                    ? v.label
-                    : Array.isArray(res2?.data[v.identifier])
-                      ? res2?.data[v.identifier][0].label
-                      : res2?.data[v.identifier].label,
-                score: v.score,
-                identifier: v.identifier,
-              };
-            });
-          }),
-        );
-
-        NProgress.done();
-        return result;
       }
     },
   );
@@ -144,30 +64,19 @@ const LabelToIdTable = ({
         return [];
       }
 
-      if (report.value === "matched") {
-        return tableData.flat();
-      } else {
-        return tableData.flatMap((v, i) => {
-          return v.length
-            ? v
-            : {
-                label: pubdictionariesParam.value.labelList[i],
-                type: "Unmatched",
-                symbolOrName: "",
-                score: "",
-                identifier: "",
-              };
-        });
-      }
+      // report=full で取得しているので、Matched は id を持つ行だけに絞る
+      return report.value === "matched"
+        ? tableData.filter((v) => v.id)
+        : tableData;
     });
   }, [tableData]);
 
   const inputResultId = () => {
     const idList = tableDataMod.value
-      .filter((v) => v.identifier)
+      .filter((v) => v.id)
       .map((v) =>
         joinPrefix(
-          v.identifier,
+          v.id ?? undefined,
           lineMode.value.key === "id"
             ? lineMode.value
             : {
@@ -195,21 +104,22 @@ const LabelToIdTable = ({
 
   const createExportTable = () => {
     return tableDataMod.value.map((v) => {
-      const id = v.identifier ? joinPrefix(v.identifier, lineMode.value) : "";
+      const id = v.id ? joinPrefix(v.id, lineMode.value) : "";
+      const matchType = v.match_type ?? "Unmatched";
 
       if (dataset.value?.label_resolver?.taxonomy) {
         return {
-          Input: v.label,
-          "Match type": v.type,
-          Symbol: v.symbolOrName,
+          Input: v.input,
+          "Match type": matchType,
+          Symbol: v.name ?? "",
           ID: id,
         };
       } else {
         return {
-          Input: v.label,
-          "Match type": v.type,
-          Name: v.symbolOrName,
-          Score: v.score,
+          Input: v.input,
+          "Match type": matchType,
+          Name: v.name ?? "",
+          Score: v.score ?? "",
           ID: id,
         };
       }
@@ -312,22 +222,22 @@ const LabelToIdTable = ({
                 <tbody>
                   {tableDataMod.value.map((v, i) => (
                     <tr key={i}>
-                      <td>{v.label}</td>
-                      <td>{v.type}</td>
+                      <td>{v.input}</td>
+                      <td>{v.match_type ?? "Unmatched"}</td>
                       {dataset.value?.label_resolver?.taxonomy && (
-                        <td>{v.symbolOrName}</td>
+                        <td>{v.name}</td>
                       )}
                       {dataset.value?.label_resolver?.threshold && (
                         <>
-                          <td>{v.symbolOrName}</td>
+                          <td>{v.name}</td>
                           <td>{v.score}</td>
                         </>
                       )}
                       <td>
-                        {v.identifier && (
+                        {v.id && (
                           <a
                             href={joinPrefix(
-                              v.identifier,
+                              v.id,
                               lineMode.value.key === "url"
                                 ? lineMode.value
                                 : {
@@ -338,7 +248,7 @@ const LabelToIdTable = ({
                             target="_blank"
                             rel="noreferrer"
                           >
-                            {joinPrefix(v.identifier, lineMode.value)}
+                            {joinPrefix(v.id, lineMode.value)}
                           </a>
                         )}
                       </td>
