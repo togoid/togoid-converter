@@ -32,31 +32,32 @@ const LabelToIdTable = ({
     value: dataset.value.format?.[0] ?? "",
   });
 
-  const { data: tableData, isLoading } = useSWRImmutable(
-    labelToIdParam.value,
-    async (param) => {
-      NProgress.start();
-      try {
-        const res = await axios.get<Label2idRow[]>(
-          `${process.env.NEXT_PUBLIC_API_ENDPOINT}/label2id`,
-          {
-            params: {
-              dataset: param.dataset,
-              labels: param.labels.join(","),
-              label_types: param.labelTypes.join(","),
-              taxon: param.taxon,
-              threshold: param.threshold,
-              // 未マッチ行も含めて取得し、Report の切り替えは再取得せず手元で絞る
-              report: "full",
-            },
+  const {
+    data: tableData,
+    error,
+    isLoading,
+  } = useSWRImmutable(labelToIdParam.value, async (param) => {
+    NProgress.start();
+    try {
+      const res = await axios.get<Label2idRow[]>(
+        `${process.env.NEXT_PUBLIC_API_ENDPOINT}/label2id`,
+        {
+          params: {
+            dataset: param.dataset,
+            labels: param.labels.join(","),
+            label_types: param.labelTypes.join(","),
+            taxon: param.taxon,
+            threshold: param.threshold,
+            // 未マッチ行も含めて取得し、Report の切り替えは再取得せず手元で絞る
+            report: "full",
           },
-        );
-        return res.data;
-      } finally {
-        NProgress.done();
-      }
-    },
-  );
+        },
+      );
+      return res.data;
+    } finally {
+      NProgress.done();
+    }
+  });
 
   const tableDataMod = useMemo(() => {
     return computed(() => {
@@ -70,6 +71,20 @@ const LabelToIdTable = ({
         : tableData;
     });
   }, [tableData]);
+
+  const errorMessage = useMemo(() => {
+    if (!error) {
+      return null;
+    }
+    // /label2id は 400 / 502 を {"message": "..."} で返す
+    if (axios.isAxiosError(error)) {
+      return (
+        (error.response?.data as { message?: string } | undefined)?.message ??
+        error.message
+      );
+    }
+    return "Failed to resolve labels.";
+  }, [error]);
 
   const inputResultId = () => {
     const idList = tableDataMod.value
@@ -128,7 +143,8 @@ const LabelToIdTable = ({
 
   return (
     <div className="label-to-id-table">
-      {(!isLoading || Boolean(tableDataMod.value.length)) && (
+      {errorMessage && <p className="error">{errorMessage}</p>}
+      {!errorMessage && (!isLoading || Boolean(tableDataMod.value.length)) && (
         <>
           <div className="buttons">
             <p className="heading">Report</p>
