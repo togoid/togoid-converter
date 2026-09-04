@@ -6,7 +6,7 @@ const useAnnotateConfig = () => {
     "annotateConfig",
     async () => {
       const response = await axios({
-        url: process.env.NEXT_PUBLIC_GRASP_ENDPOINT,
+        url: `${process.env.NEXT_PUBLIC_API_ENDPOINT}/grasp`,
         method: "POST",
         data: {
           query:
