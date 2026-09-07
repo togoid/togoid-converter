@@ -677,32 +677,73 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "link": {
-                      "type": "object",
-                      "properties": {
-                        "forward": {
-                          "type": "object",
-                          "properties": {
-                            "label": {
-                              "type": "string",
-                              "example": "is attached to"
-                            }
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "description": {
+                        "type": "string",
+                        "description": "Optional English description of the relationship"
+                      },
+                      "description_ja": {
+                        "type": "string",
+                        "description": "Optional Japanese description of the relationship"
+                      },
+                      "forward": {
+                        "type": "object",
+                        "properties": {
+                          "display_label": {
+                            "type": "string",
+                            "description": "Label describing the source-to-target relationship"
+                          },
+                          "id": {
+                            "type": "string",
+                            "description": "Relation Ontology term ID"
                           }
                         },
-                        "reverse": {
-                          "type": "object",
-                          "properties": {
-                            "label": {
-                              "type": "string",
-                              "example": "is modified with"
-                            }
+                        "required": [
+                          "display_label",
+                          "id"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "reverse": {
+                        "type": "object",
+                        "properties": {
+                          "display_label": {
+                            "type": "string",
+                            "description": "Label describing the target-to-source relationship"
+                          },
+                          "id": {
+                            "type": "string",
+                            "description": "Relation Ontology term ID"
                           }
-                        }
+                        },
+                        "required": [
+                          "display_label",
+                          "id"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "forward",
+                      "reverse"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "example": [
+                    {
+                      "forward": {
+                        "display_label": "has gene product",
+                        "id": "TIO_000025"
+                      },
+                      "reverse": {
+                        "display_label": "is product of gene",
+                        "id": "TIO_000024"
                       }
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -742,9 +783,9 @@
                     "type": "string"
                   },
                   "example": [
-                    "ncbigene",
                     "ensembl_gene",
-                    "hgnc"
+                    "ensembl_protein",
+                    "ensembl_transcript"
                   ]
                 }
               }
@@ -785,8 +826,10 @@
                     "type": "string"
                   },
                   "example": [
-                    "NM_001110",
-                    "GCA_000001405"
+                    "hgnc_symbol",
+                    "insdc",
+                    "insdc_cds",
+                    "uniprot"
                   ]
                 }
               }
@@ -827,8 +870,12 @@
                     "type": "string"
                   },
                   "example": [
-                    "NM_001110",
-                    "1553582_a_at"
+                    "interpro-pdb",
+                    "pdb-interpro",
+                    "pdb-pdb_ccd",
+                    "pdb-pfam",
+                    "pdb-uniprot",
+                    "uniprot-pdb"
                   ]
                 }
               }
