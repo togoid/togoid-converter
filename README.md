@@ -2,7 +2,7 @@
 
 ## Set env
 ```bash
-cp .env.sample .env
+cp .env.example .env
 # Rewrite environment variables of .env
 ```
 

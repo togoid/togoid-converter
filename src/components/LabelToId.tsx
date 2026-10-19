@@ -11,12 +11,12 @@ const selectDictionaryList = signal<
   [string, { label: string; checked: boolean }][]
 >([]);
 const isShowTable = signal(false);
-const pubdictionariesParam = signal({
-  labelList: [] as string[],
-  dictionaries: "",
-  tags: undefined as string | undefined,
+const labelToIdParam = signal({
+  dataset: "",
+  labels: [] as string[],
+  labelTypes: [] as string[],
+  taxon: undefined as string | undefined,
   threshold: undefined as number | undefined,
-  verbose: true,
 });
 
 const LabelToId = ({ executeExamples }: Props) => {
@@ -54,16 +54,21 @@ const LabelToId = ({ executeExamples }: Props) => {
       .filter((v) => v)
       .map((v) => v.trim());
 
-    // exanple: ovarian cancer
-    pubdictionariesParam.value = {
-      labelList: labelList,
-      dictionaries: selectDictionaryList.value
+    // example: ovarian cancer
+    labelToIdParam.value = {
+      dataset: dataset.value!.key,
+      labels: labelList,
+      labelTypes: selectDictionaryList.value
         .filter(([_, value]) => value.checked)
-        .map(([key, _]) => key)
-        .join(","),
-      tags: dataset.value?.label_resolver?.taxonomy ? species.value : undefined,
-      threshold: dataset.value?.label_resolver?.threshold ? threshold.value : 1,
-      verbose: true,
+        .map(([key, _]) => key),
+      taxon: dataset.value?.label_resolver?.taxonomy
+        ? species.value
+        : undefined,
+      // 閾値非対応のデータセットに 1 を送って完全一致にする逆算はサーバ側の既定に任せる。
+      // verbose も /label2id が内部で固定するため送らない
+      threshold: dataset.value?.label_resolver?.threshold
+        ? threshold.value
+        : undefined,
     };
 
     isShowTable.value = true;
@@ -150,7 +155,7 @@ const LabelToId = ({ executeExamples }: Props) => {
 
       <Show when={isShowTable}>
         <LabelToIdTable
-          pubdictionariesParam={pubdictionariesParam}
+          labelToIdParam={labelToIdParam}
           dataset={dataset as Signal<NonNullable<typeof dataset.value>>}
           executeExamples={executeExamples}
         />
