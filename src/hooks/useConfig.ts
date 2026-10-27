@@ -4,17 +4,17 @@ import useSWR from "swr";
 const configFetcher = async () => {
   const res = await Promise.all([
     axios.get<DatasetConfig>(
-      `${process.env.NEXT_PUBLIC_API_ENDPOINT}/config/dataset`,
+      `${getApiEndpoint()}/config/dataset`,
     ),
     axios.get<RelationConfig>(
-      `${process.env.NEXT_PUBLIC_API_ENDPOINT}/config/relation`,
+      `${getApiEndpoint()}/config/relation`,
     ),
     axios.get<DescriptionConfig>(
-      `${process.env.NEXT_PUBLIC_API_ENDPOINT}/config/descriptions`,
+      `${getApiEndpoint()}/config/descriptions`,
     ),
     axios.get<{
       [key: string]: { count: number; last_updated_at: string };
-    }>(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/config/statistics`),
+    }>(`${getApiEndpoint()}/config/statistics`),
   ]);
 
   const datasetConfig = res[0].data;

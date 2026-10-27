@@ -53,6 +53,7 @@ declare global {
   const executeQuery: typeof import('./src/lib/queries').executeQuery
   const exportCsvTsv: typeof import('./src/lib/util').exportCsvTsv
   const forwardRef: typeof import('react').forwardRef
+  const getApiEndpoint: typeof import('./src/lib/apiEndpoint').getApiEndpoint
   const getConvertUrlSearchParams: typeof import('./src/lib/queries').getConvertUrlSearchParams
   const getPathStyle: typeof import('./src/lib/util').getPathStyle
   const invokeUnparse: typeof import('./src/lib/util').invokeUnparse
