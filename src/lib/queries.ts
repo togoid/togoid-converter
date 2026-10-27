@@ -45,7 +45,7 @@ export const executeQuery = async <T extends string>(baseParams: {
       results: T extends "target" ? string[] : string[][];
       route: string[];
     }>(
-      `${process.env.NEXT_PUBLIC_API_ENDPOINT}/convert`,
+      `${getApiEndpoint()}/convert`,
       getConvertUrlSearchParams({
         ...baseParams,
         format: "json",
@@ -62,7 +62,7 @@ export const executeCountQuery = async (option: {
 }) => {
   return await axios
     .post(
-      `${process.env.NEXT_PUBLIC_API_ENDPOINT}/count/${option.relation}`,
+      `${getApiEndpoint()}/count/${option.relation}`,
       new URLSearchParams({
         ids: option.ids.join(","),
         link: option.link,

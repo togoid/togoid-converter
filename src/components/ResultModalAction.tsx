@@ -101,7 +101,7 @@ const ResultModalAction = (props: Props) => {
       compact: isCompact,
     }).toString();
 
-    copy(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/convert?${text}`, {
+    copy(`${getApiEndpoint()}/convert?${text}`, {
       format: "text/plain",
     });
   };
@@ -115,12 +115,9 @@ const ResultModalAction = (props: Props) => {
       compact: isCompact,
     }).toString();
 
-    copy(
-      `curl -X POST -d "${text}" "${process.env.NEXT_PUBLIC_API_ENDPOINT}/convert"`,
-      {
-        format: "text/plain",
-      },
-    );
+    copy(`curl -X POST -d "${text}" "${getApiEndpoint()}/convert"`, {
+      format: "text/plain",
+    });
   };
 
   return (
