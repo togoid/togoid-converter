@@ -1,17 +1,30 @@
+const TS_ENDPOINT = "https://d2msbksmqrw746.cloudfront.net";
+const STORAGE_KEY = "apiEndpoint";
+
 /**
  * APIの接続先を返す
- * NEXT_PUBLIC_API_ENDPOINT_TS が設定されているビルドでのみ、URLにクエリパラメータ ?api=ts が付いているときだけ接続先をそちらに切り替える
+ * URLにクエリパラメータ ?api=ts を付けると接続先を切り替え、localStorage に保存する
+ * (?api=default で解除)
  */
 export const getApiEndpoint = () => {
-  const tsEndpoint = process.env.NEXT_PUBLIC_API_ENDPOINT_TS;
+  const defaultEndpoint = process.env.NEXT_PUBLIC_API_ENDPOINT;
 
-  if (
-    tsEndpoint &&
-    typeof window !== "undefined" &&
-    new URLSearchParams(window.location.search).get("api") === "ts"
-  ) {
-    return tsEndpoint;
+  if (typeof window === "undefined") {
+    return defaultEndpoint;
   }
 
-  return process.env.NEXT_PUBLIC_API_ENDPOINT;
+  try {
+    const param = new URLSearchParams(window.location.search).get("api");
+    if (param === "ts") {
+      localStorage.setItem(STORAGE_KEY, "ts");
+    } else if (param === "default") {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+
+    return localStorage.getItem(STORAGE_KEY) === "ts"
+      ? TS_ENDPOINT
+      : defaultEndpoint;
+  } catch {
+    return defaultEndpoint;
+  }
 };
