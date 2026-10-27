@@ -115,12 +115,9 @@ const ResultModalAction = (props: Props) => {
       compact: isCompact,
     }).toString();
 
-    copy(
-      `curl -X POST -d "${text}" "${getApiEndpoint()}/convert"`,
-      {
-        format: "text/plain",
-      },
-    );
+    copy(`curl -X POST -d "${text}" "${getApiEndpoint()}/convert"`, {
+      format: "text/plain",
+    });
   };
 
   return (
